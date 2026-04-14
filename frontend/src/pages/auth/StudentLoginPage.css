@@ -1,0 +1,97 @@
+.student-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 40%, #7dd3fc 100%);
+  padding: 24px;
+  position: relative;
+}
+
+/* "Er du laerer?" link in top-left */
+.teacher-link {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  transition: background 0.2s, color 0.2s;
+}
+
+.teacher-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+/* Main card */
+.student-login__card {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 56px 44px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.student-login__title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 8px;
+}
+
+.student-login__subtitle {
+  font-size: 1.15rem;
+  color: var(--gray-500);
+  margin-bottom: 40px;
+}
+
+.student-login__feide-btn {
+  width: 100%;
+  padding: 16px 24px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--white);
+  background: #0284c7;
+  border: none;
+  border-radius: 14px;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+}
+
+.student-login__feide-btn:hover {
+  background: #0369a1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+}
+
+.student-login__feide-btn:active {
+  transform: translateY(0);
+}
+
+.student-login__hint {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: var(--gray-400);
+}
+
+@media (max-width: 480px) {
+  .student-login__card {
+    padding: 40px 24px;
+    border-radius: 20px;
+  }
+
+  .student-login__title {
+    font-size: 1.75rem;
+  }
+
+  .teacher-link {
+    top: 12px;
+    left: 12px;
+  }
+}
