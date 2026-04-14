@@ -6,12 +6,17 @@ Closes #
 ## Type of change
 - [ ] Bug fix
 - [ ] New feature
+- [ ] Refactor
 - [ ] Breaking change
-- [ ] Documentation update
+
+## Screenshots (if UI change)
+<!-- drag & drop image here -->
 
 ## How to test
+1. 
+2. 
 
 ## Checklist
-- [ ] My code follows the project's style guidelines
-- [ ] I've added tests where applicable
-- [ ] I've updated the docs if needed
+- [ ] Follows project style guidelines
+- [ ] Tests added/updated where applicable
+- [ ] No console errors or warnings
