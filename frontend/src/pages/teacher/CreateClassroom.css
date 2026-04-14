@@ -1,0 +1,110 @@
+.create-classroom {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.create-classroom__header {
+  margin-bottom: 32px;
+}
+
+.create-classroom__back {
+  display: inline-block;
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+  margin-bottom: 12px;
+  transition: color 0.15s;
+}
+
+.create-classroom__back:hover {
+  color: var(--accent);
+}
+
+.create-classroom__title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.create-classroom__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.create-classroom__label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.create-classroom__optional {
+  font-weight: 400;
+  color: var(--text);
+}
+
+.create-classroom__input,
+.create-classroom__textarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: var(--sans);
+  color: var(--text-h);
+  background: var(--teacher-card-bg);
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 8px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  resize: vertical;
+}
+
+.create-classroom__input:focus,
+.create-classroom__textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.create-classroom__submit {
+  align-self: flex-start;
+  padding: 10px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.create-classroom__submit:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.create-classroom__submit:active {
+  transform: translateY(0);
+}
+
+.create-classroom__submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.create-classroom__error {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  margin: 0;
+}

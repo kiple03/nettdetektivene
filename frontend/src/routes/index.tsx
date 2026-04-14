@@ -6,7 +6,7 @@ import FeideFake from "@/pages/auth/FeideFake";
 import Homescreen from "@/pages/student/homescreen";
 import GameMap from "@/pages/student/GameMap";
 import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
-import CreateClassroom from "@/pages/teacher/CreateClassroom";
+import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
 import ClassroomDetail from "@/pages/teacher/ClassroomDetail";
 import StudentDetail from "@/pages/teacher/StudentDetail";
 import MysterySubmissions from "@/pages/teacher/MysterySubmissions";
@@ -54,6 +54,7 @@ export const router = createBrowserRouter([
     {
         path: '/teacher/classroom/new',
         element: <CreateClassroom />,
+        action: createClassroomAction,
     },
     {
         path: '/teacher/classroom/:id',
