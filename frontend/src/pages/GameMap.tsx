@@ -1,3 +1,4 @@
+import BackButton from "../components/BackButton";
 
 function GameMap(){
     
@@ -5,6 +6,7 @@ function GameMap(){
         <>
             <section>
                 <div>
+                    <BackButton />
                     <p>Placeholder. Helllllo</p>
                 </div>
             </section>
