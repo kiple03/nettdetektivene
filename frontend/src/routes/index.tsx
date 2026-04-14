@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
-
+import MapPage from "../pages/student/MapPage";
+import LevelOne from "../pages/student/LevelOnePage";
 import StudentLoginPage from "@/pages/auth/StudentLoginPage";
 import TeacherLoginPage from "@/pages/auth/TeacherLoginPage";
 import FeideFake from "@/pages/auth/FeideFake";
 import Homescreen from "@/pages/student/homescreen";
-import GameMap from "@/pages/student/GameMap";
 import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
 import ClassroomDetail from "@/pages/teacher/ClassroomDetail";
@@ -44,9 +44,14 @@ export const router = createBrowserRouter([
     },
     {
         path: '/map',
-        element: <GameMap />,
+        element: <MapPage />,
     },
-    // Teacher routes
+    {
+        path: '/levelOne',
+        element: <LevelOne />,
+    },
+    
+      // Teacher routes
     {
         path: '/teacher',
         element: <TeacherDashboard />,
