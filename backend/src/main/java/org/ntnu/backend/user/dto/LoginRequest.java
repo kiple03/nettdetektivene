@@ -16,10 +16,10 @@ public class LoginRequest {
   @NotBlank
   @Size(min = 8, max = 255)
   @Schema(description = "The username")
-  public String username;
+  private String username;
 
   @NotBlank
   @Size(min = 8, max = 255)
   @Schema(description = "User's password")
-  public String password;
+  private String password;
 }

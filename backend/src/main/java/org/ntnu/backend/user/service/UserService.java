@@ -2,7 +2,7 @@ package org.ntnu.backend.user.service;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.ntnu.backend.exceptions.UserAlreadyExistsException;
+import org.ntnu.backend.exception.UserAlreadyExistsException;
 import org.ntnu.backend.security.JwtService;
 import org.ntnu.backend.security.UserPrincipal;
 import org.ntnu.backend.user.dto.CreateUserRequest;
@@ -14,7 +14,6 @@ import org.ntnu.backend.user.model.UserModel;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 
 import org.ntnu.backend.user.repository.UserRepository;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,6 +46,11 @@ public class UserService {
       throw new UserAlreadyExistsException("username", request.getUsername());
     }
 
+    String encodedPassword = passwordEncoder.encode(request.getPassword());
+    UserModel user = userMapper.toUserModel(request, encodedPassword);
+    userRepository.save(user);
+
+    return buildLoginResponse(user);
   }
 
   /**
@@ -62,6 +66,8 @@ public class UserService {
     if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
       throw new BadCredentialsException("Invalid credentials");
     }
+
+    return buildLoginResponse(user);
   }
 
   /**
@@ -72,6 +78,6 @@ public class UserService {
     UserPrincipal principal = new UserPrincipal(user);
     String accessToken = jwtService.generateToken(principal);
     String refreshToken = jwtService.generateRefreshToken(principal);
-    return userMapper.toLoginResponse(accessToken, refreshToken, user);
+    return userMapper.toLoginResponse(accessToken, refreshToken);
   }
 }

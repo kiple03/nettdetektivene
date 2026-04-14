@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 
 /**
  * Request DTO for creation a new user.
@@ -16,15 +17,19 @@ public class CreateUserRequest {
   @NotBlank
   @Email
   @Schema(description = "User's email address", example = "john.doe@example.com")
-  public String email;
+  private String email;
 
   @NotBlank
   @Size(min = 8, max = 255)
   @Schema(description = "The username")
-  public String username;
+  private String username;
 
   @NotBlank
   @Size(min = 8, max = 255)
   @Schema(description = "User's password")
-  public String password;
+  private String password;
+
+  @NotBlank
+  @Schema(description = "Users role", example = "STUDENT")
+  private RoleEnum role;
 }

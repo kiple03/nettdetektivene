@@ -1,4 +1,4 @@
-package org.ntnu.backend.exceptions;
+package org.ntnu.backend.exception;
 
 /**
  * Thrown during registration when a user with the given email already exists.
