@@ -1,8 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-
-
-import App from '../App';
-import Homescreen from "../pages/student/homescreen";
 import MapPage from "../pages/student/MapPage";
 import LevelOne from "../pages/student/LevelOnePage";
 import StudentLoginPage from "@/pages/auth/StudentLoginPage";
