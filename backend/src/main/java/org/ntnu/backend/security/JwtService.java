@@ -64,9 +64,7 @@ public class JwtService {
   public String generateToken(UserPrincipal principal) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("userId", principal.getUser().getId().toString());
-    claims.put("role", principal.getAuthorities().stream()
-        .map(GrantedAuthority::getAuthority)
-        .collect(Collectors.toList()));
+    claims.put("role", principal.getAuthorities().iterator().next().getAuthority());
 
     return Jwts.builder()
         .claims(claims)
@@ -96,28 +94,8 @@ public class JwtService {
         .compact();
   }
 
-  /**
-   * Validates that the token is not expired and that the subject matches with expected email.
-   *
-   * @param token the JWT string
-   * @param email the email subject is expected to match
-   * @return true if token is valid
-   */
-  public boolean validateToken(String token, String email) {
-    return extractEmail(token).equals(email);
-  }
-
-  public String extractEmail(String token) {
-    return getClaims(token).getSubject();
-  }
-
-  @SuppressWarnings("unchecked")
-  public List<String> extractRoles(String token) {
-    return getClaims(token).get("roles", List.class);
-  }
-
-  public UUID extractUserId(String token) {
-    return UUID.fromString(getClaims(token).get("userId", String.class));
+  public Claims parseAndValidate(String token) {
+    return getClaims(token);
   }
 
 
