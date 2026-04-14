@@ -1,9 +1,10 @@
-package java.org.ntnu.backend.levelcontroller;
+package org.ntnu.backend.levelcontroller;
 
-import java.org.ntnu.backend.level.dto.ValidateLevelAnswerRequest;
-import java.org.ntnu.backend.level.dto.ValidateLevelAnswerResponse;
-import java.org.ntnu.backend.level.service.LevelService;
+import org.ntnu.backend.level.dto.ValidateLevelAnswerRequest;
+import org.ntnu.backend.level.dto.ValidateLevelAnswerResponse;
+import org.ntnu.backend.level.service.LevelService;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RequestController
 @RequestMapping("/api/levels")
@@ -17,8 +18,8 @@ public class LevelController {
     @PostMapping("/{levelId}/validate")
     public ValidateLevelAnswerResponse validateAnswer(
              @PathVariable int levelId,
-             @RequestBody ValidateLevelAnswerRequest request)
-    {
+             @Valid @RequestBody ValidateLevelAnswerRequest request
+    ) {
         return levelService.validateAnswer(levelId, request);
     }
 }

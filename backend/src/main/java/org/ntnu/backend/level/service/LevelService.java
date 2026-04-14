@@ -1,7 +1,7 @@
-package java.org.ntnu.backend.level.service;
+package org.ntnu.backend.level.service;
 
-import java.org.ntnu.backend.level.dto.ValidateLevelAnswerRequest;
-import java.org.ntnu.backend.level.dto.ValidateLevelAnswerResponse;
+import org.ntnu.backend.level.dto.ValidateLevelAnswerRequest;
+import org.ntnu.backend.level.dto.ValidateLevelAnswerResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,10 +10,6 @@ public class LevelService {
             int levelID,
             ValidateLevelAnswerRequest request
     ) {
-        if (request.getOptionId == null || request.getOptionId().isBlank()) {
-            throw new ValidateLevelAnswerResponse(false, "Du må velge ett alternativ!", false);
-        }
-
         if (!hasAccessToLevel(levelID)) {
             return new ValidateLevelAnswerResponse(false, "Du har ikke åpnet dette nivået enda!", false);
         }

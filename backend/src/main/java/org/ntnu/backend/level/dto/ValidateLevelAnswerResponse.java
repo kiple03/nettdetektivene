@@ -1,4 +1,4 @@
-package java.org.ntnu.backend.level.dto;
+package org.ntnu.backend.level.dto;
 
 public class ValidateLevelAnswerResponse {
     private final boolean isCorrect;
