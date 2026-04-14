@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import "./LevelOnePage.module.css";
-import BackButton from "../components/BackButton";
+import BackButton from "../../components/BackButton";
 
 export default function Level1() {
     const [answer, setAnswer] = useState("");

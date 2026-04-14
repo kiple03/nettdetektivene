@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import BackButton from '../components/BackButton';
-import ConfettiComp from '../components/ConfettiComp';
+import BackButton from '../../components/BackButton';
+import ConfettiComp from '../../components/ConfettiComp';
 import styles from './homescreen.module.css';
 
 function Homescreen(){

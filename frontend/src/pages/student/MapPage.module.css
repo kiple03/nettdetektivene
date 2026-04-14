@@ -7,7 +7,7 @@
     width: 100vw;
     background-color: #f0f4f8;
 
-    background-image: url(../styles/map_bg.png);
+    background-image: url(../../styles/map_bg.png);
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;

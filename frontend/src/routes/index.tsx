@@ -1,9 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import App from '../App';
-import Homescreen from "../pages/homescreen";
-import MapPage from "../pages/MapPage";
-import LevelOne from "../pages/LevelOnePage";
+import Homescreen from "../pages/student/homescreen";
+import MapPage from "../pages/student/MapPage";
+import LevelOne from "../pages/student/LevelOnePage";
 
 export const router = createBrowserRouter([
     {
