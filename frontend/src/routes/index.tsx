@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 
 import App from '../App';
-import Homescreen from "../pages/Homescreen";
-import GameMap from "../pages/GameMap";
+import Homescreen from "../pages/homescreen";
+import MapPage from "../pages/MapPage";
 
 export const router = createBrowserRouter([
     {
@@ -15,6 +15,6 @@ export const router = createBrowserRouter([
     },
     {
         path: '/map',
-        element: <GameMap />,
+        element: <MapPage />,
     }
 ]);

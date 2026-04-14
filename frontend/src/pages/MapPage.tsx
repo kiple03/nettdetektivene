@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/MapPage.module.css"
+import BackButton from "../components/BackButton";
 
 interface Level {
     step: string;
@@ -50,9 +51,7 @@ export default function MapPage() {
               Start
             </button>
 
-            <button onClick={() => navigate(-1)}>
-                Tilbake
-            </button>
+            <BackButton />
         </div>
     );
 }
