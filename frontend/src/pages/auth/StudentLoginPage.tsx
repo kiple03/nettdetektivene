@@ -69,26 +69,28 @@ function StudentLoginPage() {
       </Link>
 
       <div className="student-login__card">
-        <div className="student-login__badge">🔍</div>
-        <h1 className="student-login__title">Nettdetektivene</h1>
-        <p className="student-login__subtitle">
-          Bli med og beskytt internettbyen!
-        </p>
+        <div className="student-login__paper">
+          <div className="student-login__badge">🔍</div>
+          <h1 className="student-login__title">Nettdetektivene</h1>
+          <p className="student-login__subtitle">
+            Bli med og beskytt internettbyen!
+          </p>
 
-        <button className="student-login__feide-btn" onClick={handleFeideLogin}>
-          Logg inn med Feide
-        </button>
+          <button className="student-login__feide-btn" onClick={handleFeideLogin}>
+            Logg inn med Feide
+          </button>
 
-        <div className="student-login__divider">
-          <span>eller</span>
+          <div className="student-login__divider">
+            <span>eller</span>
+          </div>
+
+          <button
+            className="student-login__register-btn"
+            onClick={() => setShowRegister(true)}
+          >
+            Registrer ny bruker
+          </button>
         </div>
-
-        <button
-          className="student-login__register-btn"
-          onClick={() => setShowRegister(true)}
-        >
-          Registrer ny bruker
-        </button>
       </div>
 
       {/* ── Registration modal ── */}
