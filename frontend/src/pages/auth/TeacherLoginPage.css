@@ -1,0 +1,163 @@
+.teacher-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+  padding: 24px;
+  position: relative;
+}
+
+/* "Tilbake" link in top-left */
+.student-link {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  transition: background 0.2s, color 0.2s;
+}
+
+.student-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* Main card */
+.teacher-login__card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 48px 40px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.teacher-login__badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6366f1;
+  background: #eef2ff;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.teacher-login__title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 6px;
+}
+
+.teacher-login__subtitle {
+  font-size: 0.95rem;
+  color: var(--gray-500);
+  margin-bottom: 32px;
+}
+
+/* Form */
+.teacher-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+
+.teacher-login__field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 6px;
+}
+
+.teacher-login__field input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  border: 2px solid var(--gray-200);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.2s;
+  background: var(--white);
+  color: var(--gray-900);
+}
+
+.teacher-login__field input:focus {
+  border-color: #6366f1;
+}
+
+.teacher-login__field input::placeholder {
+  color: var(--gray-400);
+}
+
+.teacher-login__error {
+  background: var(--red-100);
+  color: var(--red-600);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.teacher-login__submit {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  background: #4f46e5;
+  border: none;
+  border-radius: 12px;
+  margin-top: 4px;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+}
+
+.teacher-login__submit:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35);
+}
+
+.teacher-login__submit:active {
+  transform: translateY(0);
+}
+
+.teacher-login__register-prompt {
+  margin-top: 24px;
+  font-size: 0.875rem;
+  color: var(--gray-500);
+}
+
+.teacher-login__register-link {
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+.teacher-login__register-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .teacher-login__card {
+    padding: 36px 24px;
+  }
+
+  .teacher-login__title {
+    font-size: 1.5rem;
+  }
+
+  .student-link {
+    top: 12px;
+    left: 12px;
+  }
+}
