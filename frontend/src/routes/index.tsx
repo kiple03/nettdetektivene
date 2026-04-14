@@ -90,6 +90,12 @@ export const router = createBrowserRouter([
     {
         path: '/teacher/notifications',
         element: <Notifications />,
-        loader: () => getNotifications(),
+        loader: async () => {
+            const [notifications, summaries] = await Promise.all([
+                getNotifications(),
+                getClassroomSummaries(),
+            ]);
+            return { notifications, classrooms: summaries.map(s => s.classroom) };
+        },
     },
 ]);
