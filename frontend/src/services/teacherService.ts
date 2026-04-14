@@ -7,7 +7,6 @@
 import type {
   AppUser,
   ClassroomSummary,
-  MysterySubmission,
   MysterySubmissionWithStudent,
   Notification,
   StudentDetail,
