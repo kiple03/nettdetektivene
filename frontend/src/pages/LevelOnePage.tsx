@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
-import "./LevelPage.module.css";
+import "./LevelOnePage.module.css";
 import BackButton from "../components/BackButton";
 
 export default function Level1() {
@@ -8,8 +8,6 @@ export default function Level1() {
     const [feedback, setFeedback] = useState("");
     const [isCorrect, setIsCorrect] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
-    const navigate = useNavigate();
 
     async function handleAnswer() {
         setIsLoading(true);
@@ -64,9 +62,7 @@ export default function Level1() {
             {feedback && <p>{feedback}</p>}
 
             {isCorrect && (
-                <button onClick={() => navigate("/MapPage")}>
-                    Fortsett
-                </button>
+                <Link to="/levelOne">Gå til Nivå En!</Link>
             )}
         </div>
     );

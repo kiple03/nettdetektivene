@@ -16,7 +16,7 @@ const levels: Level [] = [
         step:"1",
         title: "Nivå 1",
         description:"Klarer du å løse emailene???????!!!!!",
-        route: "/Level1Page"
+        route: "/levelOne"
     }
 ]
 
@@ -48,9 +48,7 @@ export default function MapPage() {
             <button
                 onClick={() => selectedLevelData && navigate(selectedLevelData.route)}
                 disabled={!selectedLevel}
-            >
-              Start
-            </button>
+            >Start</button>
 
             <BackButton />
         </div>
