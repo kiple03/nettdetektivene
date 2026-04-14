@@ -62,8 +62,9 @@ public class SecurityConfig {
    * Configures the HTTP security filter chain.
    *
    * <p>Registers the {@link JwtAuthFilter} before the default username/password filter,
-   * sets sessions to stateless, disables CSRF, and defines URL-level access rules. Auth and Swagger
-   * endpoints are publicly accessible; all other requests require authentication.
+   * sets sessions to stateless, disables CSRF (since we use jwt), and defines URL-level access
+   * rules. Auth and Swagger endpoints are publicly accessible, all other requests require
+   * authentication.
    *
    * @param http the {@link HttpSecurity} builder
    * @return the built {@link SecurityFilterChain}
