@@ -69,6 +69,7 @@ function StudentLoginPage() {
       </Link>
 
       <div className="student-login__card">
+        <div className="student-login__badge">🔍</div>
         <h1 className="student-login__title">Nettdetektivene</h1>
         <p className="student-login__subtitle">
           Bli med og beskytt internettbyen!
