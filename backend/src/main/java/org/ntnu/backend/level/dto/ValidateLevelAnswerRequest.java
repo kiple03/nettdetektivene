@@ -1,16 +1,11 @@
 package org.ntnu.backend.level.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
+@Data
 public class ValidateLevelAnswerRequest {
-    @NotBlank(message = "Option must be selected")
+
+    @NotBlank(message = "Du må velge ett alternativ")
     private String optionId;
-
-    public string getOptionId() {
-        return optionId;
-    }
-
-    public void setAnswer(String optionId) {
-        this.optionId = optionId;
-    }
 }
