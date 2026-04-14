@@ -1,6 +1,7 @@
 package org.ntnu.backend.security;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -71,8 +72,6 @@ public class UserPrincipal implements UserDetails {
    */
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return user.getRoles().stream()
-        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName().name()))
-        .collect(Collectors.toSet());
+    return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
   }
 }

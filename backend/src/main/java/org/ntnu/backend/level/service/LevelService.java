@@ -1,5 +1,6 @@
 package org.ntnu.backend.level.service;
 
+import lombok.AllArgsConstructor;
 import org.ntnu.backend.level.dto.LevelResponse;
 import org.ntnu.backend.level.dto.ValidateLevelAnswerRequest;
 import org.ntnu.backend.level.dto.ValidateLevelAnswerResponse;
@@ -12,15 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@AllArgsConstructor
 public class LevelService {
 
     private final LevelRepository levelRepository;
     private final OptionRepository optionRepository;
 
-    public LevelService(LevelRepository levelRepository, OptionRepository optionRepository) {
-        this.levelRepository = levelRepository;
-        this.optionRepository = optionRepository;
-    }
 
     public LevelResponse getLevel(int levelId) {
         Level level = levelRepository.findById(levelId)

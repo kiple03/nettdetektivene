@@ -40,7 +40,7 @@ public class UserController {
     LoginResponse response = userService.register(request);
 
     return ResponseEntity.ok()
-        .header(HttpHeaders.SET_COOKIE, createRefreshCookie(request.getRefreshToken()))
+        .header(HttpHeaders.SET_COOKIE, createRefreshCookie(response.getRefreshToken()))
         .body(response);
   }
 
@@ -52,7 +52,7 @@ public class UserController {
     LoginResponse response = userService.login(request);
 
     return ResponseEntity.ok()
-        .header(HttpHeaders.SET_COOKIE, createRefreshCookie(request.getRefreshToken()))
+        .header(HttpHeaders.SET_COOKIE, createRefreshCookie(response.getRefreshToken()))
         .body(response);
   }
 
@@ -74,13 +74,14 @@ public class UserController {
         .build();
   }
 
-  private ResponseCookie createRefreshCookie(String refreshToken) {
+  private String createRefreshCookie(String refreshToken) {
     return ResponseCookie.from("refreshToken", refreshToken)
         .httpOnly(true)
         .secure(true)
         .sameSite("Lax")
         .path("/api/auth/refresh")
         .maxAge(refreshExpiration)
-        .build();
+        .build()
+        .toString();
   }
 }

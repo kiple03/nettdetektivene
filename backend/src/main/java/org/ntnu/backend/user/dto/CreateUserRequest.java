@@ -3,6 +3,7 @@ package org.ntnu.backend.user.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.ntnu.backend.user.model.enums.RoleEnum;
@@ -29,7 +30,7 @@ public class CreateUserRequest {
   @Schema(description = "User's password")
   private String password;
 
-  @NotBlank
+  @NotNull(message = "Role is required")
   @Schema(description = "Users role", example = "STUDENT")
   private RoleEnum role;
 }
