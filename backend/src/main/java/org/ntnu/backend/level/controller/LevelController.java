@@ -29,5 +29,4 @@ public class LevelController {
     ) {
         return levelService.validateAnswer(levelId, request);
     }
-
 }
