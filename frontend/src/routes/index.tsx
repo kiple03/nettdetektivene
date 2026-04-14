@@ -19,6 +19,7 @@ import {
     getMysterySubmissions,
     getNotifications,
     getClassroom,
+    getStops,
 } from "@/services/teacherService";
 
 export const router = createBrowserRouter([
@@ -61,11 +62,12 @@ export const router = createBrowserRouter([
         element: <ClassroomDetail />,
         loader: async ({ params }) => {
             const id = Number(params.id);
-            const [classroom, students] = await Promise.all([
+            const [classroom, students, stops] = await Promise.all([
                 getClassroom(id),
                 getStudentProgress(id),
+                getStops(id),
             ]);
-            return { classroom, students };
+            return { classroom, students, stops };
         },
     },
     {

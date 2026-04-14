@@ -11,11 +11,13 @@ import type {
   Notification,
   StudentDetail,
   StudentProgress,
+  Stop,
 } from '../types/classroom';
 import {
   MOCK_CLASSROOMS,
   MOCK_MYSTERY_SUBMISSIONS,
   MOCK_NOTIFICATIONS,
+  MOCK_STOPS,
   buildClassroomSummaries,
   buildStudentDetail,
   buildStudentProgress,
@@ -67,6 +69,10 @@ export async function createClassroom(title: string, description: string | null)
   };
   MOCK_CLASSROOMS.push(classroom);
   return classroom;
+}
+
+export async function getStops(classroom_id: number): Promise<Stop[]> {
+  return MOCK_STOPS.filter((s) => s.classroom_id === classroom_id);
 }
 
 export async function getStudentsForClassroom(classroom_id: number) {
