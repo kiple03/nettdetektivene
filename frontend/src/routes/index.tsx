@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import StudentLoginPage from "../pages/auth/StudentLoginPage";
-import TeacherLoginPage from "../pages/auth/TeacherLoginPage";
-import FeideFake from "../pages/auth/FeideFake";
-import Homescreen from "../pages/student/homescreen";
-import GameMap from "../pages/student/GameMap";
+import StudentLoginPage from "@/pages/auth/StudentLoginPage";
+import TeacherLoginPage from "@/pages/auth/TeacherLoginPage";
+import FeideFake from "@/pages/auth/FeideFake";
+import Homescreen from "@/pages/student/homescreen";
+import GameMap from "@/pages/student/GameMap";
 
 export const router = createBrowserRouter([
     // Auth routes
