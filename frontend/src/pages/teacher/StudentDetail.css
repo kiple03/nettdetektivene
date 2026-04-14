@@ -1,0 +1,187 @@
+.student-detail {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  text-align: left;
+}
+
+.student-detail__header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 32px;
+}
+
+.student-detail__back {
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+  width: fit-content;
+}
+
+.student-detail__back:hover {
+  color: var(--accent);
+}
+
+.student-detail__name {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.student-detail__meta {
+  font-size: 14px;
+  color: var(--text);
+  margin: 0;
+}
+
+/* Section cards */
+.student-detail__section {
+  background: var(--teacher-card-bg);
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.student-detail__section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 16px;
+}
+
+/* Table */
+.student-detail__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.student-detail__th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 12px 10px 0;
+  border-bottom: 1px solid var(--teacher-card-border);
+}
+
+.student-detail__th--right {
+  text-align: right;
+  padding-right: 0;
+}
+
+.student-detail__th--center {
+  text-align: center;
+}
+
+.student-detail__tr:hover {
+  background: var(--accent-bg);
+}
+
+.student-detail__td {
+  padding: 12px 12px 12px 0;
+  font-size: 14px;
+  color: var(--text-h);
+  border-bottom: 1px solid var(--teacher-card-border);
+}
+
+.student-detail__td--right {
+  text-align: right;
+  padding-right: 0;
+}
+
+.student-detail__td--center {
+  text-align: center;
+}
+
+.student-detail__td--mono {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+
+.student-detail__tr:last-child .student-detail__td {
+  border-bottom: none;
+}
+
+/* Badges */
+.student-detail__badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.student-detail__badge--earned {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+}
+
+.student-detail__badge--none {
+  color: var(--text);
+}
+
+.student-detail__badge--pending {
+  background: var(--teacher-card-bg);
+  color: var(--text);
+  border: 1px solid var(--teacher-card-border);
+}
+
+.student-detail__badge--auto {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+}
+
+.student-detail__badge--student {
+  background: var(--teacher-card-bg);
+  color: var(--text-h);
+  border: 1px solid var(--teacher-card-border);
+}
+
+/* Notes list */
+.student-detail__notes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.student-detail__note {
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.student-detail__note-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.student-detail__note-date {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.student-detail__note-content {
+  font-size: 14px;
+  color: var(--text-h);
+  margin: 0;
+}
+
+/* Empty */
+.student-detail__empty {
+  color: var(--text);
+  font-size: 14px;
+  margin: 0;
+}
