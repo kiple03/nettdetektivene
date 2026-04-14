@@ -1,0 +1,204 @@
+.notifs {
+  width: 100%;
+  padding: 32px 40px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.notifs__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.notifs__back {
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+  width: fit-content;
+}
+
+.notifs__back:hover {
+  color: var(--accent);
+}
+
+.notifs__title-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.notifs__title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notifs__unread-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.notifs__mark-all {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 7px;
+  padding: 5px 14px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.notifs__mark-all:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Classroom filter */
+.notifs__filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.notifs__filter-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.notifs__filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.notifs__filter-btn--active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* List */
+.notifs__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.notifs__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--teacher-card-bg);
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.notifs__item--read {
+  background: transparent;
+  opacity: 0.65;
+}
+
+.notifs__icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.notifs__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notifs__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.notifs__type {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.notifs__classroom {
+  font-size: 12px;
+  color: var(--text);
+  background: var(--teacher-card-border);
+  padding: 1px 7px;
+  border-radius: 8px;
+}
+
+.notifs__date {
+  font-size: 12px;
+  color: var(--text);
+  margin-left: auto;
+}
+
+.notifs__message {
+  font-size: 14px;
+  color: var(--text-h);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.notifs__read-btn {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 7px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+  align-self: center;
+}
+
+.notifs__read-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Empty state */
+.notifs__empty {
+  color: var(--text);
+  font-size: 14px;
+  margin: 0;
+}
