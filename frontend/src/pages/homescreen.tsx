@@ -11,7 +11,7 @@ function Homescreen(){
 
             <section className={styles.container}>
                 <Link to="/map" className="gameMap">
-                    <button>Kart!</button>
+                    <button className={styles.mapButton}>Kart!</button>
                 </Link>
                 <BackButton />
             </section>
