@@ -1,10 +1,13 @@
 package org.ntnu.backend.exception;
 
+import lombok.Getter;
+
 /**
  * Thrown during registration when a user with the given email already exists.
  *
  * <p>Handled by {@link GlobalExceptionHandler} and mapped to a 409 Conflict response.
  */
+@Getter
 public class UserAlreadyExistsException extends RuntimeException {
   private final String field;
 
@@ -17,8 +20,5 @@ public class UserAlreadyExistsException extends RuntimeException {
   public UserAlreadyExistsException(String field, String value) {
     super(String.format("User already exists with %s: %s", field, value));
     this.field = field;
-  }
-  public String getField() {
-    return field;
   }
 }

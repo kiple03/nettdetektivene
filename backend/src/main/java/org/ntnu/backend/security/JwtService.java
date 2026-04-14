@@ -40,9 +40,6 @@ public class JwtService {
   @Value("${jwt.access-expiration-ms}")
   private long expiration;
 
-  @Value("${jwt.refresh-expiration-ms}")
-  private long refreshExpiration;
-
   private Claims getClaims(String token) {
     return Jwts.parser()
         .verifyWith(getSigningKey())
@@ -71,25 +68,6 @@ public class JwtService {
         .subject(principal.getUsername())
         .issuedAt(new Date())
         .expiration(new Date(System.currentTimeMillis() + expiration))
-        .signWith(getSigningKey())
-        .compact();
-  }
-
-  /**
-   * Generates a refresh token
-   *
-   * <p>This token only carries the username, no other data. Is used to prove that a user has
-   * been previously authenticated, and can be used for getting a new JWT when it has expired. This
-   * token has 7 day expiration</p>
-   *
-   * @param principal the authenticated user
-   * @return a token
-   */
-  public String generateRefreshToken(UserPrincipal principal) {
-    return Jwts.builder()
-        .subject(principal.getUsername())
-        .issuedAt(new Date())
-        .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
         .signWith(getSigningKey())
         .compact();
   }
