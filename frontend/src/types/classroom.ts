@@ -81,6 +81,10 @@ export interface Notification {
 }
 
 // Composite view types used by the teacher dashboard
+
+export interface MysterySubmissionWithStudent extends MysterySubmission {
+  student_username: string;
+}
 export interface ClassroomSummary {
   classroom: Classroom;
   student_count: number;

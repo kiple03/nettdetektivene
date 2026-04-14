@@ -8,6 +8,7 @@ import type {
   AppUser,
   ClassroomSummary,
   MysterySubmission,
+  MysterySubmissionWithStudent,
   Notification,
   StudentDetail,
   StudentProgress,
@@ -42,10 +43,16 @@ export async function getStudentDetail(classroom_id: number, student_id: number)
   return buildStudentDetail(enrollment.id);
 }
 
-export async function getMysterySubmissions(classroom_id: number): Promise<MysterySubmission[]> {
+export async function getMysterySubmissions(classroom_id: number): Promise<MysterySubmissionWithStudent[]> {
   const enrollments = MOCK_ENROLLMENTS.filter((e) => e.classroom_id === classroom_id);
   const enrollmentIds = new Set(enrollments.map((e) => e.id));
-  return MOCK_MYSTERY_SUBMISSIONS.filter((s) => enrollmentIds.has(s.enrollment_id));
+  return MOCK_MYSTERY_SUBMISSIONS
+    .filter((s) => enrollmentIds.has(s.enrollment_id))
+    .map((s) => {
+      const enrollment = enrollments.find((e) => e.id === s.enrollment_id);
+      const student = enrollment ? MOCK_STUDENTS.find((u) => u.id === enrollment.user_id) : undefined;
+      return { ...s, student_username: student?.username ?? 'Ukjent' };
+    });
 }
 
 export async function getNotifications(): Promise<Notification[]> {

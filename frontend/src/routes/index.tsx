@@ -78,7 +78,14 @@ export const router = createBrowserRouter([
     {
         path: '/teacher/classroom/:id/mystery',
         element: <MysterySubmissions />,
-        loader: ({ params }) => getMysterySubmissions(Number(params.id)),
+        loader: async ({ params }) => {
+            const id = Number(params.id);
+            const [classroom, submissions] = await Promise.all([
+                getClassroom(id),
+                getMysterySubmissions(id),
+            ]);
+            return { classroom, submissions };
+        },
     },
     {
         path: '/teacher/notifications',
