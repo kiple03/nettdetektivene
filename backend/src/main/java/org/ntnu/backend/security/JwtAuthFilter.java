@@ -1,5 +1,6 @@
 package org.ntnu.backend.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,7 +34,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Component
 @AllArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
-
 
   private final JwtService jwtService;
 
@@ -71,7 +71,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
    */
   private void authenticateUser(String jwt) {
     try {
-      String claims = jwtService.parseAndValidate(jwt);
+      Claims claims = jwtService.parseAndValidate(jwt);
       if (SecurityContextHolder.getContext().getAuthentication() != null) return;
 
       UUID userId = UUID.fromString(claims.get("userId", String.class));
@@ -79,8 +79,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
       JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-          userId,
           claims.getSubject(),
+          userId,
+          role,
           authorities
       );
 
