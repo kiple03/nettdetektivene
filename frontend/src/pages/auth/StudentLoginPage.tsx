@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
+import { login, register } from '@/api/authApi';
+import { setToken } from '@/stores/authStore';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
 
 function StudentLoginPage() {
   const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
   const [regUsername, setRegUsername] = useState('');
+  const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirm, setRegConfirm] = useState('');
   const [regError, setRegError] = useState('');
@@ -16,11 +22,29 @@ function StudentLoginPage() {
     navigate('/auth/feide');
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+
+    if (!loginUsername || !loginPassword) {
+      setLoginError('Vennligst fyll inn alle feltene.');
+      return;
+    }
+
+    try {
+      const res = await login({ username: loginUsername, password: loginPassword });
+      setToken(res.token);
+      navigate('/student/home');
+    } catch {
+      setLoginError('Feil brukernavn eller passord.');
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError('');
 
-    if (!regUsername || !regPassword || !regConfirm) {
+    if (!regUsername || !regEmail || !regPassword || !regConfirm) {
       setRegError('Vennligst fyll inn alle feltene.');
       return;
     }
@@ -29,9 +53,13 @@ function StudentLoginPage() {
       return;
     }
 
-    // TODO: connect to backend API for student registration
-    console.log('Student register:', { regUsername, regPassword });
-    setShowRegister(false);
+    try {
+      const res = await register({ username: regUsername, email: regEmail, password: regPassword, role: 'STUDENT' });
+      setToken(res.token);
+      navigate('/student/home');
+    } catch {
+      setRegError('Registrering feilet. Prøv igjen.');
+    }
   };
 
   return (
@@ -46,13 +74,41 @@ function StudentLoginPage() {
           Bli med og beskytt internettbyen!
         </p>
 
+        <form className="student-login__form" onSubmit={handleLogin}>
+          {loginError && <p className="student-login__error">{loginError}</p>}
+
+          <div className="student-login__field">
+            <label htmlFor="login-username">Brukernavn</label>
+            <input
+              id="login-username"
+              type="text"
+              placeholder="Ditt brukernavn"
+              value={loginUsername}
+              onChange={(e) => setLoginUsername(e.target.value)}
+              autoComplete="username"
+            />
+          </div>
+
+          <div className="student-login__field">
+            <label htmlFor="login-password">Passord</label>
+            <input
+              id="login-password"
+              type="password"
+              placeholder="Ditt passord"
+              value={loginPassword}
+              onChange={(e) => setLoginPassword(e.target.value)}
+              autoComplete="current-password"
+            />
+          </div>
+
+          <button type="submit" className="student-login__submit-btn">
+            Logg inn
+          </button>
+        </form>
+
         <button className="student-login__feide-btn" onClick={handleFeideLogin}>
           Logg inn med Feide
         </button>
-
-        <p className="student-login__hint">
-          Trykk på knappen over for å logge inn med Feide-kontoen din.
-        </p>
 
         <div className="student-login__divider">
           <span>eller</span>
@@ -94,6 +150,18 @@ function StudentLoginPage() {
                   value={regUsername}
                   onChange={(e) => setRegUsername(e.target.value)}
                   autoComplete="username"
+                />
+              </div>
+
+              <div className="register-modal__field">
+                <label htmlFor="reg-email">E-post</label>
+                <input
+                  id="reg-email"
+                  type="email"
+                  placeholder="din.epost@eksempel.no"
+                  value={regEmail}
+                  onChange={(e) => setRegEmail(e.target.value)}
+                  autoComplete="email"
                 />
               </div>
 
