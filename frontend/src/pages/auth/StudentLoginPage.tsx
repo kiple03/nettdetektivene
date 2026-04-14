@@ -1,14 +1,15 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
 
 function StudentLoginPage() {
+  const navigate = useNavigate();
   const handleFeideLogin = () => {
-    // TODO: connect to simulated Feide authentication
-    console.log('Feide login triggered');
+    navigate('/auth/feide');
   };
 
   return (
-    <div className="student-login">
+    <div className="student-login" style={{ backgroundImage: `url(${detectiveRoom})` }}>
       <Link to="/laerer/login" className="teacher-link">
         Er du lærer?
       </Link>
