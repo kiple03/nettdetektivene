@@ -22,4 +22,5 @@ public class ValidateLevelAnswerResponse {
     public boolean isUnlockedNextLevel() {
         return unlockedNextLevel;
     }
+
 }
