@@ -1,6 +1,6 @@
 // Paste this at dbdiagram.io
 
-Table user {
+Table app_user {
   id            bigint    [pk, increment]
   role          varchar   [not null, note: 'student or teacher']
   username      varchar   [not null]
@@ -115,12 +115,12 @@ Table mystery_submission {
   is_featured            boolean   [not null, default: false]
 }
 
-Ref: user_avatar_unlock.user_id > user.id
+Ref: user_avatar_unlock.user_id > app_user.id
 Ref: user_avatar_unlock.avatar_item_id > avatar_item.id
-Ref: enrollment.user_id > user.id
+Ref: enrollment.user_id > app_user.id
 Ref: enrollment.classroom_id > classroom.id
 Ref: classroom_teacher.classroom_id > classroom.id
-Ref: classroom_teacher.user_id > user.id
+Ref: classroom_teacher.user_id > app_user.id
 Ref: stop.classroom_id > classroom.id
 Ref: task.stop_id > stop.id
 Ref: task_progress.enrollment_id > enrollment.id
@@ -130,4 +130,4 @@ Ref: medal.stop_id > stop.id
 Ref: notepad_entry.enrollment_id > enrollment.id
 Ref: notepad_entry.stop_id > stop.id
 Ref: mystery_submission.enrollment_id > enrollment.id
-Ref: mystery_submission.reviewed_by_teacher_id > user.id
+Ref: mystery_submission.reviewed_by_teacher_id > app_user.id
