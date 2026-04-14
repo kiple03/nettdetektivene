@@ -74,38 +74,6 @@ function StudentLoginPage() {
           Bli med og beskytt internettbyen!
         </p>
 
-        <form className="student-login__form" onSubmit={handleLogin}>
-          {loginError && <p className="student-login__error">{loginError}</p>}
-
-          <div className="student-login__field">
-            <label htmlFor="login-username">Brukernavn</label>
-            <input
-              id="login-username"
-              type="text"
-              placeholder="Ditt brukernavn"
-              value={loginUsername}
-              onChange={(e) => setLoginUsername(e.target.value)}
-              autoComplete="username"
-            />
-          </div>
-
-          <div className="student-login__field">
-            <label htmlFor="login-password">Passord</label>
-            <input
-              id="login-password"
-              type="password"
-              placeholder="Ditt passord"
-              value={loginPassword}
-              onChange={(e) => setLoginPassword(e.target.value)}
-              autoComplete="current-password"
-            />
-          </div>
-
-          <button type="submit" className="student-login__submit-btn">
-            Logg inn
-          </button>
-        </form>
-
         <button className="student-login__feide-btn" onClick={handleFeideLogin}>
           Logg inn med Feide
         </button>
