@@ -6,32 +6,23 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LevelService {
-    public ValidateLevelAnswerResponse response(
-            int levelID,
+
+    public ValidateLevelAnswerResponse validateAnswer(
+            int levelId,
             ValidateLevelAnswerRequest request
     ) {
-        if (!hasAccessToLevel(levelID)) {
-            return new ValidateLevelAnswerResponse(false, "Du har ikke åpnet dette nivået enda!", false);
+        boolean correct = isCorrectAnswer(levelId, request.getOptionId());
+
+        if (correct) {
+            return new ValidateLevelAnswerResponse(true, "Correct answer!", true);
         }
 
-        boolean correct = isCorrectAnswer(levelID, request.getOptionId());
-
-        if (!correct) {
-            return new ValidateLevelAnswerResponse(false, "Du fikk feil, prøv igjen", false);
-        }
-
-        unlockNextLevelForUser(levelID);
-
-        return new ValidateLevelAnswerResponse(false, "Riktig svar!", false)
+        return new ValidateLevelAnswerResponse(false, "Wrong answer, try again.", false);
     }
 
-    private boolean hasAccessToLevel(int levelID) {
-        return levelID == 1;
-    }
-
-    private boolean isCorrectAnswer(int levelID, String optionId) {
-        if (levelID == 1) {
-            return optionId.equals("A");
+    private boolean isCorrectAnswer(int levelId, String optionId) {
+        if (levelId == 1) {
+            return "A".equals(optionId);
         }
 
         return false;
