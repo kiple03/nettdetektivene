@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import "../styles/LevelPage.module.css";
+import "./LevelPage.module.css";
+import BackButton from "../components/BackButton";
 
 export default function Level1() {
     const [answer, setAnswer] = useState("");
@@ -34,6 +35,7 @@ export default function Level1() {
         } catch (error) {
             setFeedback("Kunne ikke validere svaret akkurat nå.");
             setIsCorrect(false);
+            console.error(error);
         } finally {
             setIsLoading(false);
         }
@@ -56,9 +58,7 @@ export default function Level1() {
                     {isLoading ? "Sjekker..." : "Sjekk svar"}
                 </button>
 
-                <button onClick={() => navigate(-1)}>
-                    Tilbake
-                </button>
+                <BackButton />
             </div>
 
             {feedback && <p>{feedback}</p>}

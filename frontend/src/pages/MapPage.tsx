@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/MapPage.module.css"
+import "./MapPage.module.css"
 import BackButton from "../components/BackButton";
 
 interface Level {
