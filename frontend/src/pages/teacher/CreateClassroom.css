@@ -1,7 +1,8 @@
 .create-classroom {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 32px 24px;
+  width: 100%;
+  padding: 32px 40px;
+  box-sizing: border-box;
+  text-align: left;
 }
 
 .create-classroom__header {
@@ -30,18 +31,23 @@
 }
 
 .create-classroom__form {
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
 .create-classroom__label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: block;
   font-size: 14px;
   font-weight: 500;
   color: var(--text-h);
+}
+
+.create-classroom__input,
+.create-classroom__textarea {
+  display: block;
+  margin-top: 6px;
 }
 
 .create-classroom__optional {

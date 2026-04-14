@@ -19,6 +19,11 @@ export default function TeacherDashboard() {
       )}
 
       <div className="teacher-dashboard__grid">
+        <Link to="/teacher/classroom/new" className="classroom-card classroom-card--new">
+          <span className="classroom-card__plus">+</span>
+          <span className="classroom-card__new-label">Opprett ny klasse</span>
+        </Link>
+
         {summaries.map(({ classroom, student_count, total_score }) => (
           <Link
             key={classroom.id}
@@ -41,11 +46,6 @@ export default function TeacherDashboard() {
             </div>
           </Link>
         ))}
-
-        <Link to="/teacher/classroom/new" className="classroom-card classroom-card--new">
-          <span className="classroom-card__plus">+</span>
-          <span className="classroom-card__new-label">Opprett ny klasse</span>
-        </Link>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 .classroom-detail {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 32px 24px;
+  width: 100%;
+  padding: 32px 40px;
+  box-sizing: border-box;
   text-align: left;
 }
 
