@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.user.dto.CreateUserRequest;
+import org.ntnu.backend.user.dto.LoginResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -44,7 +46,7 @@ public class UserController {
   @ApiResponse(responseCode = "200", description = "Login successful")
   @ApiResponse(responseCode = "401", description = "Login failed")
   @PostMapping("/login")
-  public ResponseEntity<LoginRespone> login(@RequestBody @Valid LoginRequest request) {
+  public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
     LoginResponse response = userService.login(request);
 
     return ResponseEntity.ok()
