@@ -2,8 +2,12 @@ package org.ntnu.backend.classroom.repository;
 
 import java.util.UUID;
 import org.ntnu.backend.classroom.model.Enrollment;
+import org.ntnu.backend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {}
+public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
+
+  boolean existsByUserAndLeftAtIsNull(User student);
+}

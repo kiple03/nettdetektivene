@@ -1,10 +1,13 @@
 package org.ntnu.backend.classroom.controller;
 
 import jakarta.validation.Valid;
+import java.util.UUID;
 import org.ntnu.backend.classroom.dto.*;
 import org.ntnu.backend.classroom.service.ClassroomService;
+import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -30,7 +33,7 @@ public class ClassroomController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('TEACHER')")
     public ClassroomResponse updateClassroom(
-            @PathVariable String id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateClassroomRequest request
     ) {
         return classroomService.updateClassroom(id, request);
@@ -39,7 +42,7 @@ public class ClassroomController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
-    public void deleteClassroom(@PathVariable String id) {
+    public void deleteClassroom(@PathVariable UUID id) {
         classroomService.deleteClassroom(id);
     }
 
@@ -47,7 +50,7 @@ public class ClassroomController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
-    public ClassroomResponse getClassroom(@PathVariable String id) {
+    public ClassroomResponse getClassroom(@PathVariable UUID id) {
         return classroomService.getClassroom(id);
     }
 
@@ -56,7 +59,8 @@ public class ClassroomController {
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('STUDENT')")
-    public ClassroomResponse joinClassroom(@Valid @RequestBody JoinClassroomRequest request) {
-        return classroomService.joinClassroom(request);
+    public ClassroomResponse joinClassroom(@Valid @RequestBody JoinClassroomRequest request,
+        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return classroomService.joinClassroom(request, principal.getUserId());
     }
 }
