@@ -3,7 +3,6 @@ package org.ntnu.backend.user.service;
 import jakarta.validation.Valid;
 import java.time.Instant;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.UserAlreadyExistsException;
 import org.ntnu.backend.security.JwtService;
@@ -14,10 +13,7 @@ import org.ntnu.backend.user.dto.CreateUserRequest;
 import org.ntnu.backend.user.dto.LoginRequest;
 import org.ntnu.backend.user.dto.LoginResponse;
 import org.ntnu.backend.user.mapper.UserMapper;
-import org.ntnu.backend.user.model.ClassroomModel;
-import org.ntnu.backend.user.model.UserModel;
-import org.ntnu.backend.user.model.enums.RoleEnum;
-
+import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -38,17 +34,6 @@ public class UserService {
   @Value("${jwt.refresh-expiration-ms}")
   private long refreshExpiration;
 
-
-  public void joinClassroom(UserModel student, ClassroomModel classroom) {
-    if (student.getRole() != RoleEnum.STUDENT) {
-      throw new IllegalArgumentException("Must be student to join classroom");
-    }
-    if (!student.getClassrooms().isEmpty()) {
-      throw new IllegalStateException("Student already in a classroom");
-    }
-    student.getClassrooms().add(classroom);
-  }
-
   public LoginResponse register(@Valid CreateUserRequest request) {
     if (userRepository.existsByEmail(request.getEmail())) {
       throw new UserAlreadyExistsException("email", request.getEmail());
@@ -58,12 +43,11 @@ public class UserService {
     }
 
     String encodedPassword = passwordEncoder.encode(request.getPassword());
-    UserModel user = userMapper.toUserModel(request, encodedPassword);
+    User user = userMapper.toUser(request, encodedPassword);
     userRepository.save(user);
 
     return buildLoginResponse(user);
   }
-
 
   @Transactional
   public LoginResponse refresh(String token) {
@@ -79,35 +63,23 @@ public class UserService {
     return buildLoginResponse(refreshToken.getUser());
   }
 
-
-  /**
-   * Authenticates a user with username and password and returns login tokens.
-   *
-   * @param request the login credentials
-   * @return login response with access and refresh tokens
-   */
   public LoginResponse login(@Valid LoginRequest request) {
-    UserModel user = userRepository.findByUsername(request.getUsername())
+    User user = userRepository.findByUsername(request.getUsername())
         .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
 
-    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+    if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
       throw new BadCredentialsException("Invalid credentials");
     }
 
     return buildLoginResponse(user);
   }
 
-
   @Transactional
   public void logout(String token) {
     refreshTokenRepository.deleteByToken(token);
   }
 
-  /**
-   * Builds a LoginResponse with fresh tokens for the given user. The refresh token is included here
-   * but the controller moves it to an HttpOnly cookie.
-   */
-  private LoginResponse buildLoginResponse(UserModel user) {
+  private LoginResponse buildLoginResponse(User user) {
     UserPrincipal principal = new UserPrincipal(user);
     String accessToken = jwtService.generateToken(principal);
 

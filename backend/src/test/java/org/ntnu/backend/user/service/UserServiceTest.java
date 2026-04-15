@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +26,7 @@ import org.ntnu.backend.user.dto.CreateUserRequest;
 import org.ntnu.backend.user.dto.LoginRequest;
 import org.ntnu.backend.user.dto.LoginResponse;
 import org.ntnu.backend.user.mapper.UserMapper;
-import org.ntnu.backend.user.model.ClassroomModel;
-import org.ntnu.backend.user.model.UserModel;
+import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -52,19 +50,18 @@ class UserServiceTest {
   @InjectMocks
   private UserService userService;
 
-  private UserModel testUser;
+  private User testUser;
 
   @BeforeEach
   void setUp() {
     ReflectionTestUtils.setField(userService, "refreshExpiration", 604800000L);
 
-    testUser = UserModel.builder()
+    testUser = User.builder()
         .id(UUID.randomUUID())
         .username("testuser")
         .email("test@test.no")
-        .password("encodedPassword")
+        .passwordHash("encodedPassword")
         .role(RoleEnum.TEACHER)
-        .classrooms(new HashSet<>())
         .build();
   }
 
@@ -81,7 +78,7 @@ class UserServiceTest {
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
     when(userRepository.existsByUsername(anyString())).thenReturn(false);
     when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-    when(userMapper.toUserModel(any(), anyString())).thenReturn(testUser);
+    when(userMapper.toUser(any(), anyString())).thenReturn(testUser);
     when(jwtService.generateToken(any(UserPrincipal.class))).thenReturn("access-token");
     when(refreshTokenRepository.save(any(RefreshTokenModel.class)))
         .thenAnswer(inv -> inv.getArgument(0));
@@ -228,47 +225,6 @@ class UserServiceTest {
     verify(refreshTokenRepository).deleteByToken("some-token");
   }
 
-  // ===== JOIN CLASSROOM =====
-
-  @Test
-  void joinClassroom_studentSuccess() {
-    UserModel student = UserModel.builder()
-        .role(RoleEnum.STUDENT)
-        .classrooms(new HashSet<>())
-        .build();
-    ClassroomModel classroom = new ClassroomModel();
-
-    userService.joinClassroom(student, classroom);
-
-    assertThat(student.getClassrooms()).contains(classroom);
-  }
-
-  @Test
-  void joinClassroom_teacherThrows() {
-    UserModel teacher = UserModel.builder()
-        .role(RoleEnum.TEACHER)
-        .classrooms(new HashSet<>())
-        .build();
-
-    assertThatThrownBy(() -> userService.joinClassroom(teacher, new ClassroomModel()))
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  void joinClassroom_alreadyInClassroom_throws() {
-    ClassroomModel existing = new ClassroomModel();
-    HashSet<ClassroomModel> classrooms = new HashSet<>();
-    classrooms.add(existing);
-
-    UserModel student = UserModel.builder()
-        .role(RoleEnum.STUDENT)
-        .classrooms(classrooms)
-        .build();
-
-    assertThatThrownBy(() -> userService.joinClassroom(student, new ClassroomModel()))
-        .isInstanceOf(IllegalStateException.class);
-  }
-
   // ===== REGISTER EDGE CASES =====
 
   @Test
@@ -283,11 +239,10 @@ class UserServiceTest {
         .isInstanceOf(UserAlreadyExistsException.class)
         .hasMessageContaining("email");
 
-    // Verify username check never runs — email fails first
     verify(userRepository, never()).existsByUsername(anyString());
   }
 
-// ===== LOGIN EDGE CASES =====
+  // ===== LOGIN EDGE CASES =====
 
   @Test
   void login_correctUsernameWrongPassword_doesNotLeakUsernameExists() {
@@ -300,10 +255,10 @@ class UserServiceTest {
 
     assertThatThrownBy(() -> userService.login(request))
         .isInstanceOf(BadCredentialsException.class)
-        .hasMessage("Invalid credentials"); // Same message as unknown user
+        .hasMessage("Invalid credentials");
   }
 
-// ===== REFRESH EDGE CASES =====
+  // ===== REFRESH EDGE CASES =====
 
   @Test
   void refresh_tokenExpiredJustNow_throws() {
@@ -318,21 +273,5 @@ class UserServiceTest {
 
     assertThatThrownBy(() -> userService.refresh("just-expired"))
         .isInstanceOf(BadCredentialsException.class);
-  }
-
-// ===== JOIN CLASSROOM EDGE CASES =====
-
-  @Test
-  void joinClassroom_studentJoinsSameClassroomTwice_noDuplicate() {
-    ClassroomModel classroom = new ClassroomModel();
-    UserModel student = UserModel.builder()
-        .role(RoleEnum.STUDENT)
-        .classrooms(new HashSet<>())
-        .build();
-
-    userService.joinClassroom(student, classroom);
-    // Second join should fail — already in a classroom
-    assertThatThrownBy(() -> userService.joinClassroom(student, classroom))
-        .isInstanceOf(IllegalStateException.class);
   }
 }

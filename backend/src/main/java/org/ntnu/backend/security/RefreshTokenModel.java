@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.ntnu.backend.user.model.UserModel;
+import org.ntnu.backend.user.model.User;
 
 @Entity
 @Getter
@@ -32,7 +32,7 @@ public class RefreshTokenModel {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private UserModel user;
+  private User user;
 
   @Column(nullable = false)
   private Instant expiresAt;
