@@ -1,14 +1,24 @@
 import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { AxiosError } from 'axios';
 import { login } from '@/api/authApi';
 import { decodeToken, setToken } from '@/stores/authStore';
+import type { Role } from '@/types/user';
 import feideGlobe from '../../assets/feide_globe.png';
 import './FeideFake.css';
 
+interface LocationState {
+  portalRole?: Role;
+}
+
 function FeideFake() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Portal role is passed as router state by each login page so Feide knows
+  // which portal the user came from and can enforce it server-side.
+  const portalRole: Role = (location.state as LocationState)?.portalRole ?? 'STUDENT';
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [fieldErrors, setFieldErrors] = useState({ username: '', password: '' });
@@ -34,7 +44,7 @@ function FeideFake() {
 
     setSubmitting(true);
     try {
-      const res = await login({ username, password });
+      const res = await login({ username, password, portalRole });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
       const role = decodeToken(res.accessToken)?.role;
@@ -46,6 +56,9 @@ function FeideFake() {
           username: 'Feil brukernavn eller passord.',
           password: 'Feil brukernavn eller passord.',
         });
+      } else if (axiosErr.response?.status === 403) {
+        const portalLabel = portalRole === 'TEACHER' ? 'lærerportalen' : 'elevportalen';
+        setError(`Denne kontoen har ikke tilgang til ${portalLabel}.`);
       } else {
         setError('Innlogging feilet. Prøv igjen.');
       }
@@ -53,6 +66,8 @@ function FeideFake() {
       setSubmitting(false);
     }
   };
+
+  const portalLabel = portalRole === 'TEACHER' ? 'lærer' : 'elev';
 
   return (
     <div id="wrapper">
@@ -74,7 +89,7 @@ function FeideFake() {
             <button type="button" className="feide-back-button" onClick={handleBack}>
               ← Tilbake
             </button>
-            <p className="feide-role-marker">Innlogging som lærer</p>
+            <p className="feide-role-marker">Innlogging som {portalLabel}</p>
             <h1>Logg på med Feide</h1>
 
             <div className="feide-intro-row">

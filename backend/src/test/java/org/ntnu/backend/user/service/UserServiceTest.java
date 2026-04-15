@@ -32,6 +32,7 @@ import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -126,6 +127,7 @@ class UserServiceTest {
     LoginRequest request = new LoginRequest();
     request.setUsername("testuser");
     request.setPassword("password123");
+    request.setPortalRole(RoleEnum.TEACHER);
 
     when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
     when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
@@ -145,6 +147,7 @@ class UserServiceTest {
     LoginRequest request = new LoginRequest();
     request.setUsername("unknown");
     request.setPassword("password123");
+    request.setPortalRole(RoleEnum.TEACHER);
 
     when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
 
@@ -157,6 +160,7 @@ class UserServiceTest {
     LoginRequest request = new LoginRequest();
     request.setUsername("testuser");
     request.setPassword("wrongpassword");
+    request.setPortalRole(RoleEnum.TEACHER);
 
     when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
     when(passwordEncoder.matches("wrongpassword", "encodedPassword")).thenReturn(false);
@@ -249,6 +253,7 @@ class UserServiceTest {
     LoginRequest request = new LoginRequest();
     request.setUsername("testuser");
     request.setPassword("wrong");
+    request.setPortalRole(RoleEnum.TEACHER);
 
     when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
     when(passwordEncoder.matches("wrong", "encodedPassword")).thenReturn(false);
@@ -256,6 +261,21 @@ class UserServiceTest {
     assertThatThrownBy(() -> userService.login(request))
         .isInstanceOf(BadCredentialsException.class)
         .hasMessage("Invalid credentials");
+  }
+
+  @Test
+  void login_wrongPortalRole_throws403() {
+    LoginRequest request = new LoginRequest();
+    request.setUsername("testuser");
+    request.setPassword("password123");
+    request.setPortalRole(RoleEnum.STUDENT); // testUser is TEACHER
+
+    when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+    when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
+
+    assertThatThrownBy(() -> userService.login(request))
+        .isInstanceOf(ResponseStatusException.class)
+        .hasMessageContaining("portal");
   }
 
   // ===== REFRESH EDGE CASES =====

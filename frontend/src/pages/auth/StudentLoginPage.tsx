@@ -39,7 +39,7 @@ function StudentLoginPage() {
   };
 
   const handleFeideLogin = () => {
-    navigate('/auth/feide');
+    navigate('/auth/feide', { state: { portalRole: 'STUDENT' } });
   };
 
   const handleRegister = async (e: React.FormEvent) => {

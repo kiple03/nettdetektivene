@@ -42,6 +42,12 @@ async function performRefresh(): Promise<string | null> {
   }
 }
 
+/** Returns the login page for the current path so unauthenticated redirects land on the right portal. */
+function loginPathForCurrentRoute(): string {
+  if (typeof window === 'undefined') return '/';
+  return window.location.pathname.startsWith('/teacher') ? '/laerer/login' : '/';
+}
+
 apiClient.interceptors.response.use(
   (res) => res,
   async (error: AxiosError) => {
@@ -66,8 +72,9 @@ apiClient.interceptors.response.use(
         original.headers.Authorization = `Bearer ${newToken}`;
         return apiClient(original);
       }
-      if (typeof window !== 'undefined' && window.location.pathname !== '/') {
-        window.location.assign('/');
+      const loginPath = loginPathForCurrentRoute();
+      if (typeof window !== 'undefined' && window.location.pathname !== loginPath) {
+        window.location.assign(loginPath);
       }
     }
 
