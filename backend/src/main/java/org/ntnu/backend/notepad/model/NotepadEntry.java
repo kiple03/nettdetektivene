@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.ntnu.backend.enrollment.model.Enrollment;
+import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.stop.model.Stop;
 
 @Entity

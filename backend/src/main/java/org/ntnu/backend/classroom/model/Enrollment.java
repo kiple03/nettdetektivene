@@ -1,4 +1,4 @@
-package org.ntnu.backend.enrollment.model;
+package org.ntnu.backend.classroom.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,7 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.user.model.User;
 
 @Entity

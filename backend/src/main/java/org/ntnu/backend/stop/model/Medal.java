@@ -17,7 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ntnu.backend.enrollment.model.Enrollment;
+import org.ntnu.backend.classroom.model.Enrollment;
 
 @Entity
 @Table(

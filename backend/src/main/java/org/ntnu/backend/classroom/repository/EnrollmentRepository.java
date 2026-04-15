@@ -1,7 +1,7 @@
-package org.ntnu.backend.enrollment.repository;
+package org.ntnu.backend.classroom.repository;
 
 import java.util.UUID;
-import org.ntnu.backend.enrollment.model.Enrollment;
+import org.ntnu.backend.classroom.model.Enrollment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

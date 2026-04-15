@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ntnu.backend.user.model.ClassroomModel;
 import org.ntnu.backend.user.model.UserModel;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.test.util.ReflectionTestUtils;

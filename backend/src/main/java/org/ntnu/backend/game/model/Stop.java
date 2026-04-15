@@ -23,6 +23,4 @@ public class Stop {
 
     private String name;
 
-    @OneToMany(mappedBy = "stop", cascade = CascadeType.ALL)
-    private List<Level> levels;
 }

@@ -1,4 +1,4 @@
-package org.ntnu.backend.level.repository;
+package org.ntnu.backend.game.repository;
 
 import java.util.UUID;
 import org.ntnu.backend.level.model.LevelCompletion;

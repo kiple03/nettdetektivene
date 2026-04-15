@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
-import org.ntnu.backend.user.model.ClassroomModel;
+import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -70,7 +70,7 @@ public class JwtService {
     claims.put("role", principal.getAuthorities().iterator().next().getAuthority());
 
     if (principal.getUser().getRole() == RoleEnum.STUDENT) {
-      Set<ClassroomModel> classrooms = principal.getUser().getClassrooms();
+      Set<Classroom> classrooms = principal.getUser().getClassrooms();
       if (!classrooms.isEmpty()) {
         claims.put("classroomId", classrooms.iterator().next().getId().toString());
       }
