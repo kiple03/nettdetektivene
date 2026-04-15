@@ -15,6 +15,10 @@ import Notifications from "@/pages/teacher/Notifications";
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
 // wrappers below and uncommenting this import.
 // import RequireAuth from "@/routes/RequireAuth";
+// Route guard temporarily disabled during game development so we don't
+// have to log in on every reload. Re-enable by restoring the <RequireAuth>
+// wrappers below and uncommenting this import.
+// import RequireAuth from "@/routes/RequireAuth";
 
 import {
     getClassroomSummaries,
@@ -44,6 +48,8 @@ export const router = createBrowserRouter([
     // Student routes
     // NOTE: <RequireAuth role="STUDENT"> wrappers removed during game dev.
     // Re-add them (and the import above) once game flows don't need the pages to be open.
+    // NOTE: <RequireAuth role="STUDENT"> wrappers removed during game dev.
+    // Re-add them (and the import above) once game flows don't need the pages to be open.
     {
         path: '/home',
         element: <StudentHomePage />,
@@ -59,6 +65,7 @@ export const router = createBrowserRouter([
 
 
       // Teacher routes
+      // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
       // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
     {
         path: '/teacher',
