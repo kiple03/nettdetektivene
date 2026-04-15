@@ -1,25 +1,34 @@
-import detectiveRoom from '../../assets/detective_room_interior.png';
 import BoardItem from "@/components/dashboard/BoardItem.tsx";
-import './HomeBoard.css';
 import BackButton from "@/components/BackButton.tsx";
+import corkBoard from '../../assets/cork_board.png';
+import detectiveRoom from '../../assets/detective_room_interior.png';
+import './HomeBoard.css';
 
-function HomeBoard() {
+type BoardItemData = {
+  id: string;
+  label: string;
+  to: string;
+  top: string;
+  left: string;
+};
+
+type HomeBoardProps = {
+  items: BoardItemData[];
+};
+
+function HomeBoard({ items }: HomeBoardProps) {
   return(
-      <div className="home-board">
-        <img src={detectiveRoom} className="board-bg" alt="Hjemskjerm bakgrunn"/>
-        <BackButton />
+      <div className="home-board" style={{backgroundImage: `url(${detectiveRoom})`}}>
+        <BackButton/>
 
-        <div className="cork-board">
-          <BoardItem
-            label="kart"
-            to="/map"
-            top="30%"
-            left="50%"
-            />
+        <div className="cork-board" style={{backgroundImage: `url(${corkBoard})`}}>
+          {items.map((items) => (
+              <BoardItem key={items.id} {...items} />
+          ))}
         </div>
       </div>
-
   );
 }
+
 
 export default HomeBoard;

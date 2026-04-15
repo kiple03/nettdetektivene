@@ -1,12 +1,21 @@
 .back-button {
   position: absolute;
+  transform: translate(-10%, -10%);
   padding: 12px 20px;
   background: #fff8dc;
   border: 2px solid #333;
-  border-radius: 10px;
+  border-radius: 0px;
   text-decoration: none;
   color: #222;
-  font-weight: bold;
+  font-family: Rockwell;
+  font-size: 15px;
   cursor: pointer;
   transition: transform 0.2s ease;
+  z-index: 10;
+  top: 20px;
+  right: 20px;
+}
+
+.back-button:hover {
+  transform: translate(-10%, -10%) scale(1.08);
 }

@@ -8,7 +8,7 @@ function BackButton(){
     };
 
     return(
-        <button onClick={handleGoBack} className="back-button">Go back</button>
+        <button onClick={handleGoBack} className="back-button">Gå tilbake</button>
     );
 }
 
