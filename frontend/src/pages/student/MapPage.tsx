@@ -96,16 +96,14 @@ const levels: Level[] = [
 ];
 
 export default function MapPage() {
-    const [selectedLevel, setSelectedLevel] = useState<string>("1");
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const navigate = useNavigate();
 
-    const selectedLevelData = levels.find((level) => level.step === selectedLevel);
-
     const handleLevelClick = (level: Level) => {
         if (level.unlocked) {
-            setSelectedLevel(level.step);
+            // Navigate directly when the user clicks the unlocked icon
+            navigate(level.route);
             return;
         }
 
@@ -118,15 +116,6 @@ export default function MapPage() {
             <div className={styles.header}>
                 <h1>Velg nivå</h1>
                 <p>Velge neste nivå</p>
-
-                <div className={styles.startButton}>
-                    <Button
-                        onClick={() => selectedLevelData && navigate(selectedLevelData.route)}
-                        disabled={!selectedLevelData || !selectedLevelData.unlocked}
-                    >
-                        Start
-                    </Button>
-                </div>
             </div>
 
             <div className={styles.levelGrid}>
