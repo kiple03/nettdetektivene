@@ -11,7 +11,6 @@ import ClassroomDetail from "@/pages/teacher/ClassroomDetail";
 import StudentDetail from "@/pages/teacher/StudentDetail";
 import MysterySubmissions from "@/pages/teacher/MysterySubmissions";
 import Notifications from "@/pages/teacher/Notifications";
-import RequireAuth from "@/routes/RequireAuth";
 
 import {
     getClassroomSummaries,
@@ -38,34 +37,34 @@ export const router = createBrowserRouter([
         element: <FeideFake />,
     },
 
-    // Student routes — only accessible by authenticated STUDENT accounts
+    // Student routes — open during development
     {
         path: '/home',
-        element: <RequireAuth role="STUDENT"><StudentHomePage /></RequireAuth>,
+        element: <StudentHomePage />,
     },
     {
         path: '/map',
-        element: <RequireAuth role="STUDENT"><MapPage /></RequireAuth>,
+        element: <MapPage />,
     },
     {
         path: '/levelOne',
-        element: <RequireAuth role="STUDENT"><LevelOne /></RequireAuth>,
+        element: <LevelOne />,
     },
 
-    // Teacher routes — only accessible by authenticated TEACHER accounts
+    // Teacher routes — open during development
     {
         path: '/teacher',
-        element: <RequireAuth role="TEACHER"><TeacherDashboard /></RequireAuth>,
+        element: <TeacherDashboard />,
         loader: () => getClassroomSummaries(),
     },
     {
         path: '/teacher/classroom/new',
-        element: <RequireAuth role="TEACHER"><CreateClassroom /></RequireAuth>,
+        element: <CreateClassroom />,
         action: createClassroomAction,
     },
     {
         path: '/teacher/classroom/:id',
-        element: <RequireAuth role="TEACHER"><ClassroomDetail /></RequireAuth>,
+        element: <ClassroomDetail />,
         loader: async ({ params }) => {
             const id = Number(params.id);
             const [classroom, students, stops] = await Promise.all([
@@ -78,12 +77,12 @@ export const router = createBrowserRouter([
     },
     {
         path: '/teacher/classroom/:id/student/:studentId',
-        element: <RequireAuth role="TEACHER"><StudentDetail /></RequireAuth>,
+        element: <StudentDetail />,
         loader: async ({ params }) => getStudentDetail(Number(params.id), Number(params.studentId)),
     },
     {
         path: '/teacher/classroom/:id/mystery',
-        element: <RequireAuth role="TEACHER"><MysterySubmissions /></RequireAuth>,
+        element: <MysterySubmissions />,
         loader: async ({ params }) => {
             const id = Number(params.id);
             const [classroom, submissions] = await Promise.all([
@@ -95,7 +94,7 @@ export const router = createBrowserRouter([
     },
     {
         path: '/teacher/notifications',
-        element: <RequireAuth role="TEACHER"><Notifications /></RequireAuth>,
+        element: <Notifications />,
         loader: async () => {
             const [notifications, summaries] = await Promise.all([
                 getNotifications(),
