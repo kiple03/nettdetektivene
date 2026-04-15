@@ -46,10 +46,10 @@ public class JwtAuthenticatedPrincipal {
   }
 
   public boolean isTeacher() {
-    return "ROLE_TEACHER".equals(role);
+    return "TEACHER".equals(role);
   }
 
   public boolean isStudent() {
-    return "ROLE_STUDENT".equals(role);
+    return "STUDENT".equals(role);
   }
 }
