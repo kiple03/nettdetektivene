@@ -31,7 +31,7 @@ import {
 } from "@/services/teacherService";
 
 export const router = createBrowserRouter([
-    // Auth routes
+    // Auth routes (public)
     {
         path: '/',
         element: <StudentLoginPage />,
@@ -45,9 +45,7 @@ export const router = createBrowserRouter([
         element: <FeideFake />,
     },
 
-    // Student routes
-    // NOTE: <RequireAuth role="STUDENT"> wrappers removed during game dev.
-    // Re-add them (and the import above) once game flows don't need the pages to be open.
+    // Student routes — only accessible by authenticated STUDENT accounts
     {
         path: '/home',
         element: <StudentHomePage />,
