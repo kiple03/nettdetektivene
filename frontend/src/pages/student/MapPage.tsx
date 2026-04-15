@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MapPage.module.css";
-import BackButton from "../../components/ui/buttons/backButton/BackButton.tsx";
+import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 import styles from "./MapPage.module.css";
-import datasenteret from "../../assets/images/datasenteret.svg";
-import detektivkontoret from "../../assets/images/detektivkontoret.svg";
-import fotografen from "../../assets/images/fotografen.svg";
-import markedsplassen from "../../assets/images/markedsplassen.svg";
-import moteplassen from "../../assets/images/møteplassen.svg";
-import nyhetskvartalet from "../../assets/images/nyhetskvartalet.svg";
-import passordbanken from "../../assets/images/passordbanken.svg";
-import postkontoret from "../../assets/images/postkontoret.svg";
+import datasenteret from "@/assets/images/datasenteret.svg";
+import detektivkontoret from "@/assets/images/detektivkontoret.svg";
+import fotografen from "@/assets/images/fotografen.svg";
+import markedsplassen from "@/assets/images/markedsplassen.svg";
+import moteplassen from "@/assets/images/møteplassen.svg";
+import nyhetskvartalet from "@/assets/images/nyhetskvartalet.svg";
+import passordbanken from "@/assets/images/passordbanken.svg";
+import postkontoret from "@/assets/images/postkontoret.svg";
 import {
     AlertDialog,
     AlertDialogContent,
