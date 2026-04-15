@@ -8,6 +8,7 @@
 - Game content (stops, tasks) is **teacher-created per classroom**. No predefined global templates.
 - Task content is stored as `content_json` (JSON column) to handle all task types flexibly without separate tables per type.
 - **Single user table** with a `role` column (`student`/`teacher`) instead of separate tables. Chosen to align with Spring Security's role-based auth model.
+- **Primary keys are UUIDs** (`CHAR(36)`) across all tables. Java model class is `User`; table name is `app_user` (since `user` is a reserved SQL keyword).
 
 ---
 
@@ -19,7 +20,7 @@
 -- ============================================================
 
 CREATE TABLE app_user (
-    id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id            CHAR(36)     PRIMARY KEY,          -- UUID
     role          ENUM('student', 'teacher') NOT NULL,
     username      VARCHAR(100) NOT NULL,
     email         VARCHAR(255),        -- teachers only
@@ -34,7 +35,7 @@ CREATE TABLE app_user (
 
 -- Catalog of all unlockable cosmetic items.
 CREATE TABLE avatar_item (
-    id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id               CHAR(36)     PRIMARY KEY,        -- UUID
     name             VARCHAR(100) NOT NULL,
     category         VARCHAR(50)  NOT NULL,  -- e.g. 'hat', 'clothing', 'accessory'
     unlock_condition VARCHAR(255)             -- e.g. 'earn 3 medals', 'complete final boss'
@@ -44,8 +45,8 @@ CREATE TABLE avatar_item (
 -- is_equipped = TRUE means this item is the one the student is currently wearing.
 -- Current appearance is derived by querying WHERE is_equipped = TRUE for a given student.
 CREATE TABLE user_avatar_unlock (
-    user_id        BIGINT    NOT NULL,
-    avatar_item_id BIGINT    NOT NULL,
+    user_id        CHAR(36) NOT NULL,
+    avatar_item_id CHAR(36) NOT NULL,
     unlocked_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_equipped    BOOLEAN   NOT NULL DEFAULT FALSE,
     PRIMARY KEY (user_id, avatar_item_id),
@@ -58,7 +59,7 @@ CREATE TABLE user_avatar_unlock (
 -- ============================================================
 
 CREATE TABLE classroom (
-    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id          CHAR(36)     PRIMARY KEY,             -- UUID
     title       VARCHAR(200) NOT NULL,
     description TEXT,
     join_code   VARCHAR(20)  NOT NULL UNIQUE,
@@ -67,9 +68,9 @@ CREATE TABLE classroom (
 
 -- A classroom can have multiple teachers; one is the owner.
 CREATE TABLE classroom_teacher (
-    classroom_id BIGINT  NOT NULL,
-    user_id      BIGINT  NOT NULL,
-    is_owner     BOOLEAN NOT NULL DEFAULT FALSE,
+    classroom_id CHAR(36) NOT NULL,
+    user_id      CHAR(36) NOT NULL,
+    is_owner     BOOLEAN  NOT NULL DEFAULT FALSE,
     PRIMARY KEY (classroom_id, user_id),
     FOREIGN KEY (classroom_id) REFERENCES classroom(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id)      REFERENCES app_user(id)  ON DELETE CASCADE
@@ -77,9 +78,9 @@ CREATE TABLE classroom_teacher (
 
 -- Student enrollment. left_at NULL = currently active. One active enrollment at a time.
 CREATE TABLE enrollment (
-    id           BIGINT    AUTO_INCREMENT PRIMARY KEY,
-    user_id      BIGINT    NOT NULL,
-    classroom_id BIGINT    NOT NULL,
+    id           CHAR(36)  PRIMARY KEY,               -- UUID
+    user_id      CHAR(36)  NOT NULL,
+    classroom_id CHAR(36)  NOT NULL,
     enrolled_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     left_at      TIMESTAMP NULL,
     FOREIGN KEY (user_id)      REFERENCES app_user(id)  ON DELETE CASCADE,
@@ -91,8 +92,8 @@ CREATE TABLE enrollment (
 -- ============================================================
 
 CREATE TABLE stop (
-    id            BIGINT AUTO_INCREMENT PRIMARY KEY,
-    classroom_id  BIGINT       NOT NULL,
+    id            CHAR(36)     PRIMARY KEY,           -- UUID
+    classroom_id  CHAR(36)     NOT NULL,
     title         VARCHAR(200) NOT NULL,
     description   TEXT,
     display_order INT          NOT NULL,
@@ -103,8 +104,8 @@ CREATE TABLE stop (
 -- Example: { "type": "news", "articles": [{ "text": "...", "is_real": true }, ...] }
 -- Example: { "type": "image", "images": [{ "url": "...", "label": "ai_generated" }, ...] }
 CREATE TABLE task (
-    id            BIGINT    AUTO_INCREMENT PRIMARY KEY,
-    stop_id       BIGINT    NOT NULL,
+    id            CHAR(36)  PRIMARY KEY,              -- UUID
+    stop_id       CHAR(36)  NOT NULL,
     display_order INT       NOT NULL,
     difficulty    TINYINT   NOT NULL DEFAULT 1,
     content_json  JSON      NOT NULL,
@@ -116,9 +117,9 @@ CREATE TABLE task (
 -- ============================================================
 
 CREATE TABLE task_progress (
-    id            BIGINT    AUTO_INCREMENT PRIMARY KEY,
-    enrollment_id BIGINT    NOT NULL,
-    task_id       BIGINT    NOT NULL,
+    id            CHAR(36)  PRIMARY KEY,              -- UUID
+    enrollment_id CHAR(36)  NOT NULL,
+    task_id       CHAR(36)  NOT NULL,
     completed_at  TIMESTAMP NULL,
     attempts      INT       NOT NULL DEFAULT 0,
     UNIQUE (enrollment_id, task_id),
@@ -128,9 +129,9 @@ CREATE TABLE task_progress (
 
 -- One medal per stop per enrollment, earned when all tasks in that stop are completed.
 CREATE TABLE medal (
-    id            BIGINT    AUTO_INCREMENT PRIMARY KEY,
-    enrollment_id BIGINT    NOT NULL,
-    stop_id       BIGINT    NOT NULL,
+    id            CHAR(36)  PRIMARY KEY,              -- UUID
+    enrollment_id CHAR(36)  NOT NULL,
+    stop_id       CHAR(36)  NOT NULL,
     earned_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (enrollment_id, stop_id),
     FOREIGN KEY (enrollment_id) REFERENCES enrollment(id) ON DELETE CASCADE,
@@ -144,13 +145,13 @@ CREATE TABLE medal (
 -- type 'auto'    = theory/tips added automatically by the system when a task is completed.
 -- type 'student' = free-text reflection written by the student.
 CREATE TABLE notepad_entry (
-    id            BIGINT                       AUTO_INCREMENT PRIMARY KEY,
-    enrollment_id BIGINT                       NOT NULL,
-    stop_id       BIGINT                       NULL,  -- NULL = general / not tied to a stop
-    type          ENUM('auto', 'student')      NOT NULL,
-    content       TEXT                         NOT NULL,
-    created_at    TIMESTAMP                    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at    TIMESTAMP                    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id            CHAR(36)                      PRIMARY KEY,  -- UUID
+    enrollment_id CHAR(36)                      NOT NULL,
+    stop_id       CHAR(36)                      NULL,  -- NULL = general / not tied to a stop
+    type          ENUM('auto', 'student')        NOT NULL,
+    content       TEXT                           NOT NULL,
+    created_at    TIMESTAMP                      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP                      NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (enrollment_id) REFERENCES enrollment(id) ON DELETE CASCADE,
     FOREIGN KEY (stop_id)       REFERENCES stop(id)       ON DELETE SET NULL
 );
@@ -160,13 +161,13 @@ CREATE TABLE notepad_entry (
 -- ============================================================
 
 CREATE TABLE mystery_submission (
-    id                     BIGINT AUTO_INCREMENT PRIMARY KEY,
-    enrollment_id          BIGINT       NOT NULL,
+    id                     CHAR(36)     PRIMARY KEY,          -- UUID
+    enrollment_id          CHAR(36)     NOT NULL,
     content                TEXT,
     image_url              VARCHAR(500),
     submitted_at           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status                 ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
-    reviewed_by_teacher_id BIGINT       NULL,
+    reviewed_by_teacher_id CHAR(36)     NULL,
     reviewed_at            TIMESTAMP    NULL,
     is_featured            BOOLEAN      NOT NULL DEFAULT FALSE,  -- shown as "ukens mysterium"
     FOREIGN KEY (enrollment_id)          REFERENCES enrollment(id) ON DELETE CASCADE,
@@ -181,3 +182,4 @@ CREATE TABLE mystery_submission (
 - **Leaderboard scores** are derived (not stored): count completed stops/medals per enrollment for individual ranking; sum across all enrollments in a classroom for classroom-vs-classroom ranking.
 - **Notifications** to teachers (student stuck, completed stop, inappropriate content, mystery submission) are application-level events triggered by changes to `task_progress`, `mystery_submission`, and `notepad_entry` — no separate notification table needed for MVP.
 - **Feide login for students** is simulated per the vision document requirements.
+- **Level/Question/Option** models exist in the codebase (`/api/levels`) from an earlier design and are not yet reconciled with this plan.
