@@ -1,15 +1,45 @@
-import type { FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
+import { AxiosError } from 'axios';
+import { login } from '@/api/authApi';
+import { decodeToken, setToken } from '@/stores/authStore';
 import feideGlobe from '../../assets/feide_globe.png';
 import './FeideFake.css';
 
 function FeideFake() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleLogin = (event: FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    navigate('/home');
+    setError('');
+
+    if (!username || !password) {
+      setError('Vennligst fyll inn brukernavn og passord.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await login({ username, password });
+      setToken(res.accessToken);
+      window.dispatchEvent(new Event('auth-changed'));
+      const role = decodeToken(res.accessToken)?.role;
+      navigate(role === 'TEACHER' ? '/teacher' : '/home');
+    } catch (err) {
+      const axiosErr = err as AxiosError;
+      if (axiosErr.response?.status === 401) {
+        setError('Feil brukernavn eller passord.');
+      } else {
+        setError('Innlogging feilet. Prøv igjen.');
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -45,13 +75,29 @@ function FeideFake() {
 
             <form className="feide-login-form" onSubmit={handleLogin}>
               <label htmlFor="username">Brukernavn</label>
-              <input id="username" name="username" type="text" autoComplete="username" />
+              <input
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
 
               <label htmlFor="password">Passord</label>
-              <input id="password" name="password" type="password" autoComplete="current-password" />
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
-              <button type="submit" className="feide-login-button">
-                Logg inn
+              {error && <p className="feide-login-error">{error}</p>}
+
+              <button type="submit" className="feide-login-button" disabled={submitting}>
+                {submitting ? 'Logger inn…' : 'Logg inn'}
               </button>
             </form>
 
