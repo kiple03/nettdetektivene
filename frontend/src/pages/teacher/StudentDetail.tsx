@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useParams } from 'react-router-dom';
-import type { StudentDetail as StudentDetailType } from '../../types/classroom';
+import type { StudentDetail as StudentDetailType } from '@/types/classroom';
 import './StudentDetail.css';
 
 export default function StudentDetail() {

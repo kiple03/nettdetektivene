@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
-import type { Classroom, Notification } from '../../types/classroom';
+import type { Classroom, Notification } from '@/types/classroom.ts';
 import './Notifications.css';
 
 type LoaderData = {

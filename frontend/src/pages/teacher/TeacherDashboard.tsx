@@ -1,5 +1,5 @@
 import { Link, useLoaderData } from 'react-router-dom';
-import type { ClassroomSummary } from '../../types/classroom';
+import type { ClassroomSummary } from '@/types/classroom.ts';
 import './TeacherDashboard.css';
 
 export default function TeacherDashboard() {

@@ -23,8 +23,6 @@ public class ClassroomService {
         this.classroomRepository = classroomRepository;
     }
 
-    // ---------- Classroom ----------
-
     public ClassroomResponse createClassroom(CreateClassroomRequest request) {
         Classroom classroom = new Classroom();
         classroom.setTitle(request.getTitle());
