@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,6 +57,19 @@ public class UserController {
         .body(response);
   }
 
+  @Operation(summary = "Refresh the access token")
+  @ApiResponse(responseCode = "200", description = "New access token issued")
+  @ApiResponse(responseCode = "400", description = "Missing access token cookie")
+  @ApiResponse(responseCode = "401", description = "Invalid or expired refresh token")
+  @PostMapping("/refresh")
+  public ResponseEntity<LoginResponse> refresh(
+      @CookieValue(name = "refreshToken") String refreshToken) {
+    LoginResponse response = userService.refresh(refreshToken);
+    return ResponseEntity.ok()
+        .header(HttpHeaders.SET_COOKIE, createRefreshCookie(response.getRefreshToken()))
+        .body(response);
+  }
+
   // TODO: Should invalidate token
   @Operation(summary = "Logs the user out")
   @ApiResponse(responseCode = "200", description = "Successful logout")
@@ -80,7 +94,7 @@ public class UserController {
         .secure(true)
         .sameSite("Lax")
         .path("/api/auth/refresh")
-        .maxAge(refreshExpiration)
+        .maxAge(refreshExpiration / 1000)
         .build()
         .toString();
   }

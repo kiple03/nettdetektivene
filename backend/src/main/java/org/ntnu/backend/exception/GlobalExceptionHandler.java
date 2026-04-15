@@ -4,6 +4,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.*;
 
 @RestControllerAdvice
@@ -23,6 +24,14 @@ public class GlobalExceptionHandler {
             "success", false,
             "field", ex.getField(),
             "message", ex.getMessage()
+        ));
+    }
+
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<Map<String, Object>> handleMissingCookie(MissingRequestCookieException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+            "success", false,
+            "message", "Refresh token missing"
         ));
     }
 }
