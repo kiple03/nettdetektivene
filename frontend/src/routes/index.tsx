@@ -15,6 +15,7 @@ import LeaderboardPage from "@/pages/student/LeaderboardPage.tsx";
 import NotesPage from "@/pages/student/NotesPage";
 import BadgesPage from "@/pages/student/BadgesPage";
 import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
+import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 // Route guard temporarily disabled during game development so we don't
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
 // wrappers below and uncommenting this import.
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
     {
         path: '/home',
         element: <StudentHomePage />,
+    },
+    {
+        path: '/join-with-code',
+        element: <JoinWithCodePage />,
     },
     {
         path: '/map',
