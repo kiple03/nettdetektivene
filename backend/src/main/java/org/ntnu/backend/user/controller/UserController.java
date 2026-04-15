@@ -73,12 +73,16 @@ public class UserController {
         .body(response);
   }
 
-  // TODO: Should invalidate token
   @Operation(summary = "Logs the user out")
   @ApiResponse(responseCode = "200", description = "Successful logout")
   @PostMapping("/logout")
-  public ResponseEntity<Void> logout() {
-    ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+  public ResponseEntity<Void> logout(
+      @CookieValue(name = "refreshToken", required = false) String refreshToken) {
+    if (refreshToken != null) {
+      userService.logout(refreshToken);
+    }
+
+    ResponseCookie expiredCookie = ResponseCookie.from("refreshToken", "")
         .httpOnly(true)
         .secure(cookieSecure)
         .path("/api/auth/refresh")
@@ -87,7 +91,7 @@ public class UserController {
         .build();
 
     return ResponseEntity.ok()
-        .header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .header(HttpHeaders.SET_COOKIE, expiredCookie.toString())
         .build();
   }
 
