@@ -13,5 +13,10 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
+}
+
+export interface ApiErrorBody {
+  field?: string;
+  message?: string;
 }
