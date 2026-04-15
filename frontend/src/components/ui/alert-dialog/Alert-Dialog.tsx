@@ -1,4 +1,4 @@
-import {useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import styles from "./alert-dialog.module.css";
 
 interface AlertDialogProps {
@@ -44,7 +44,24 @@ export function AlertDialog({ open, onOpenChange, children }: AlertDialogProps) 
 }
 
 export function AlertDialogContent({ children }: AlertDialogContentProps) {
-    return <div className={styles.content}>{children}</div>;
+    return (
+        <div className={styles.content}>
+            <div className={styles.decorations} aria-hidden="true">
+                <span className={styles.emojiOne}>⭐</span>
+                <span className={styles.emojiTwo}>🧩</span>
+                <span className={styles.emojiThree}>🔍</span>
+                <span className={styles.emojiFive}>✨</span>
+                <span className={styles.emojiSeven}>🎉</span>
+                <span className={styles.emojiEight}>🔒</span>
+            </div>
+
+            <div className={styles.heroIcon} aria-hidden="true">
+                🔒
+            </div>
+
+            {children}
+        </div>
+    );
 }
 
 export function AlertDialogTitle({ children }: AlertDialogTextProps) {
