@@ -8,7 +8,7 @@ import java.util.List;
 @Entity
 @Table(name = "levels")
 @Getter @Setter
-public class Level {
+public class  Level {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
