@@ -50,11 +50,11 @@ export const router = createBrowserRouter([
     },
     {
         path: '/map',
-        element: <MapPage />,
+        element: <RequireAuth role="STUDENT"><MapPage /></RequireAuth>,
     },
     {
         path: '/levelOne',
-        element: <LevelOne />,
+        element: <RequireAuth role="STUDENT"><LevelOne /></RequireAuth>,
     },
 
 
@@ -62,17 +62,17 @@ export const router = createBrowserRouter([
       // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
     {
         path: '/teacher',
-        element: <TeacherDashboard />,
+        element: <RequireAuth role="TEACHER"><TeacherDashboard /></RequireAuth>,
         loader: () => getClassroomSummaries(),
     },
     {
         path: '/teacher/classroom/new',
-        element: <CreateClassroom />,
+        element: <RequireAuth role="TEACHER"><CreateClassroom /></RequireAuth>,
         action: createClassroomAction,
     },
     {
         path: '/teacher/classroom/:id',
-        element: <ClassroomDetail />,
+        element: <RequireAuth role="TEACHER"><ClassroomDetail /></RequireAuth>,
         loader: async ({ params }) => {
             const id = Number(params.id);
             const [classroom, students, stops] = await Promise.all([
@@ -85,12 +85,12 @@ export const router = createBrowserRouter([
     },
     {
         path: '/teacher/classroom/:id/student/:studentId',
-        element: <StudentDetail />,
+        element: <RequireAuth role="TEACHER"><StudentDetail /></RequireAuth>,
         loader: async ({ params }) => getStudentDetail(Number(params.id), Number(params.studentId)),
     },
     {
         path: '/teacher/classroom/:id/mystery',
-        element: <MysterySubmissions />,
+        element: <RequireAuth role="TEACHER"><MysterySubmissions /></RequireAuth>,
         loader: async ({ params }) => {
             const id = Number(params.id);
             const [classroom, submissions] = await Promise.all([
@@ -102,7 +102,7 @@ export const router = createBrowserRouter([
     },
     {
         path: '/teacher/notifications',
-        element: <Notifications />,
+        element: <RequireAuth role="TEACHER"><Notifications /></RequireAuth>,
         loader: async () => {
             const [notifications, summaries] = await Promise.all([
                 getNotifications(),
