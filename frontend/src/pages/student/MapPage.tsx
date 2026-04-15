@@ -177,4 +177,5 @@ export default function MapPage() {
             </AlertDialog>
         </div>
     );
+
 }
