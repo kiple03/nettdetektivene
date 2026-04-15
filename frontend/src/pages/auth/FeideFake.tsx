@@ -1,15 +1,57 @@
-import type { FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
+import { AxiosError } from 'axios';
+import { login } from '@/api/authApi';
+import { decodeToken, setToken } from '@/stores/authStore';
 import feideGlobe from '../../assets/feide_globe.png';
 import './FeideFake.css';
 
 function FeideFake() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleLogin = (event: FormEvent<HTMLFormElement>) => {
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    navigate('/home');
+    setError('');
+    setFieldErrors({ username: '', password: '' });
+
+    if (!username || !password) {
+      setFieldErrors({
+        username: username ? '' : 'Brukernavn er påkrevd.',
+        password: password ? '' : 'Passord er påkrevd.',
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await login({ username, password });
+      setToken(res.accessToken);
+      window.dispatchEvent(new Event('auth-changed'));
+      const role = decodeToken(res.accessToken)?.role;
+      navigate(role === 'TEACHER' ? '/teacher' : '/home');
+    } catch (err) {
+      const axiosErr = err as AxiosError;
+      if (axiosErr.response?.status === 401) {
+        setFieldErrors({
+          username: 'Feil brukernavn eller passord.',
+          password: 'Feil brukernavn eller passord.',
+        });
+      } else {
+        setError('Innlogging feilet. Prøv igjen.');
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -29,13 +71,17 @@ function FeideFake() {
 
           {/* ── Card (all white) ── */}
           <section className="feide-card">
+            <button type="button" className="feide-back-button" onClick={handleBack}>
+              ← Tilbake
+            </button>
+            <p className="feide-role-marker">Innlogging som lærer</p>
             <h1>Logg på med Feide</h1>
 
             <div className="feide-intro-row">
               <img src={feideGlobe} alt="Feide globe" className="feide-globe" />
               <p>
                 Du må logge inn via Feide for å få tilgang til
-                Salaby.
+                Datatektektivene.
               </p>
             </div>
 
@@ -45,13 +91,43 @@ function FeideFake() {
 
             <form className="feide-login-form" onSubmit={handleLogin}>
               <label htmlFor="username">Brukernavn</label>
-              <input id="username" name="username" type="text" autoComplete="username" />
+              <input
+                className={fieldErrors.username ? 'feide-input feide-input--error' : 'feide-input'}
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (fieldErrors.username) {
+                    setFieldErrors((current) => ({ ...current, username: '' }));
+                  }
+                }}
+              />
+              {fieldErrors.username && <p className="feide-field-error">{fieldErrors.username}</p>}
 
               <label htmlFor="password">Passord</label>
-              <input id="password" name="password" type="password" autoComplete="current-password" />
+              <input
+                className={fieldErrors.password ? 'feide-input feide-input--error' : 'feide-input'}
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (fieldErrors.password) {
+                    setFieldErrors((current) => ({ ...current, password: '' }));
+                  }
+                }}
+              />
+              {fieldErrors.password && <p className="feide-field-error">{fieldErrors.password}</p>}
 
-              <button type="submit" className="feide-login-button">
-                Logg inn
+              {error && <p className="feide-login-error">{error}</p>}
+
+              <button type="submit" className="feide-login-button" disabled={submitting}>
+                {submitting ? 'Logger inn…' : 'Logg inn'}
               </button>
             </form>
 

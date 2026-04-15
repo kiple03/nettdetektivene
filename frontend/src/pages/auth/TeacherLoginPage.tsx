@@ -1,8 +1,18 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { AxiosError } from 'axios';
 import { register } from '@/api/authApi';
 import { setToken } from '@/stores/authStore';
+import AuthRegisterModal from '@/components/auth/AuthRegisterModal';
+import type { ApiErrorBody } from '@/types/user';
+import {
+  hasAuthErrors,
+  type AuthFieldErrors,
+  validateEmail,
+  validatePassword,
+  validatePasswordConfirm,
+  validateUsername,
+} from '@/utils/validators';
 import './TeacherLoginPage.css';
 
 function TeacherLoginPage() {
@@ -12,7 +22,20 @@ function TeacherLoginPage() {
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirm, setRegConfirm] = useState('');
+  const [regFieldErrors, setRegFieldErrors] = useState<AuthFieldErrors>({});
   const [regError, setRegError] = useState('');
+
+  const validateFields = () => {
+    const nextErrors: AuthFieldErrors = {
+      username: validateUsername(regUsername),
+      email: validateEmail(regEmail),
+      password: validatePassword(regPassword),
+      confirm: validatePasswordConfirm(regPassword, regConfirm),
+    };
+
+    setRegFieldErrors(nextErrors);
+    return nextErrors;
+  };
 
   const handleFeideLogin = () => {
     navigate('/auth/feide');
@@ -21,22 +44,31 @@ function TeacherLoginPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError('');
+    const nextErrors = validateFields();
 
-    if (!regUsername || !regEmail || !regPassword || !regConfirm) {
-      setRegError('Vennligst fyll inn alle feltene.');
-      return;
-    }
-    if (regPassword !== regConfirm) {
-      setRegError('Passordene stemmer ikke overens.');
+    if (hasAuthErrors(nextErrors)) {
       return;
     }
 
     try {
       const res = await register({ username: regUsername, email: regEmail, password: regPassword, role: 'TEACHER' });
-      setToken(res.token);
-      navigate('/teacher/home');
-    } catch {
-      setRegError('Registrering feilet. Prøv igjen.');
+      setToken(res.accessToken);
+      window.dispatchEvent(new Event('auth-changed'));
+      navigate('/teacher');
+    } catch (err) {
+      const axiosErr = err as AxiosError<ApiErrorBody>;
+      if (axiosErr.response?.status === 409) {
+        const field = axiosErr.response.data?.field;
+        if (field === 'username') {
+          setRegFieldErrors((current) => ({ ...current, username: 'Brukernavnet er allerede i bruk.' }));
+        } else if (field === 'email') {
+          setRegFieldErrors((current) => ({ ...current, email: 'E-posten er allerede i bruk.' }));
+        } else {
+          setRegError('Brukeren finnes allerede.');
+        }
+      } else {
+        setRegError('Registrering feilet. Prøv igjen.');
+      }
     }
   };
 
@@ -69,80 +101,58 @@ function TeacherLoginPage() {
         </button>
       </div>
 
-      {/* ── Registration modal ── */}
-      {showRegister && (
-        <div className="register-overlay" onClick={() => setShowRegister(false)}>
-          <div className="register-modal" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="register-modal__close"
-              onClick={() => setShowRegister(false)}
-            >
-              <X size={20} />
-            </button>
-
-            <h2 className="register-modal__title">Opprett lærerkonto</h2>
-            <p className="register-modal__subtitle">
-              Registrer deg for å administrere klasserom og elever.
-            </p>
-
-            <form className="register-modal__form" onSubmit={handleRegister}>
-              {regError && <p className="register-modal__error">{regError}</p>}
-
-              <div className="register-modal__field">
-                <label htmlFor="reg-username">Brukernavn</label>
-                <input
-                  id="reg-username"
-                  type="text"
-                  placeholder="Velg et brukernavn"
-                  value={regUsername}
-                  onChange={(e) => setRegUsername(e.target.value)}
-                  autoComplete="username"
-                />
-              </div>
-
-              <div className="register-modal__field">
-                <label htmlFor="reg-email">E-post</label>
-                <input
-                  id="reg-email"
-                  type="email"
-                  placeholder="din.epost@skole.no"
-                  value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
-                  autoComplete="email"
-                />
-              </div>
-
-              <div className="register-modal__field">
-                <label htmlFor="reg-password">Passord</label>
-                <input
-                  id="reg-password"
-                  type="password"
-                  placeholder="Velg et passord"
-                  value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
-                  autoComplete="new-password"
-                />
-              </div>
-
-              <div className="register-modal__field">
-                <label htmlFor="reg-confirm">Bekreft passord</label>
-                <input
-                  id="reg-confirm"
-                  type="password"
-                  placeholder="Skriv passordet på nytt"
-                  value={regConfirm}
-                  onChange={(e) => setRegConfirm(e.target.value)}
-                  autoComplete="new-password"
-                />
-              </div>
-
-              <button type="submit" className="register-modal__submit">
-                Opprett lærerkonto
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+        <AuthRegisterModal
+          open={showRegister}
+          title="Opprett lærerkonto"
+          subtitle="Registrer deg for å administrere klasserom og elever."
+          submitLabel="Opprett lærerkonto"
+          onClose={() => setShowRegister(false)}
+          onSubmit={handleRegister}
+          error={regError}
+          fieldErrors={regFieldErrors}
+          username={regUsername}
+          email={regEmail}
+          password={regPassword}
+          confirm={regConfirm}
+          onUsernameChange={(value) => {
+            setRegUsername(value);
+            if (regFieldErrors.username) setRegFieldErrors((current) => ({ ...current, username: '' }));
+          }}
+          onEmailChange={(value) => {
+            setRegEmail(value);
+            if (regFieldErrors.email) setRegFieldErrors((current) => ({ ...current, email: '' }));
+          }}
+          onPasswordChange={(value) => {
+            setRegPassword(value);
+            if (regFieldErrors.password || regFieldErrors.confirm) {
+              setRegFieldErrors((current) => ({
+                ...current,
+                password: '',
+                confirm: current.confirm === 'Passordene stemmer ikke overens.' ? '' : current.confirm,
+              }));
+            }
+          }}
+          onConfirmChange={(value) => {
+            setRegConfirm(value);
+            if (regFieldErrors.confirm) setRegFieldErrors((current) => ({ ...current, confirm: '' }));
+          }}
+          onUsernameBlur={() => {
+            setRegFieldErrors((current) => ({ ...current, username: validateUsername(regUsername) }));
+          }}
+          onEmailBlur={() => {
+            setRegFieldErrors((current) => ({ ...current, email: validateEmail(regEmail) }));
+          }}
+          onPasswordBlur={() => {
+            setRegFieldErrors((current) => ({
+              ...current,
+              password: validatePassword(regPassword),
+              confirm: regConfirm ? validatePasswordConfirm(regPassword, regConfirm) : current.confirm,
+            }));
+          }}
+          onConfirmBlur={() => {
+            setRegFieldErrors((current) => ({ ...current, confirm: validatePasswordConfirm(regPassword, regConfirm) }));
+          }}
+        />
     </div>
   );
 }

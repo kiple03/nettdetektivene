@@ -42,6 +42,34 @@
   background: #fff;
   padding: 2rem 2.5rem 1.5rem;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+.feide-back-button {
+  position: absolute;
+  top: 0.9rem;
+  left: 1rem;
+  border: 1px solid #bbb;
+  background: #f6f6f6;
+  color: #1a1a1a;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.3rem 0.55rem;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.feide-back-button:hover {
+  background: #eaeaea;
+}
+
+.feide-role-marker {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 /* Title */
@@ -94,16 +122,11 @@
   flex-direction: column;
   gap: 0.6rem;
   margin-bottom: 1.25rem;
+  text-align: left;
+  align-items: stretch;
 }
 
-.feide-login-form label {
-  margin: 0;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #1a1a1a;
-}
-
-.feide-login-form input {
+.feide-input {
   width: 100%;
   padding: 0.7rem 0.75rem;
   border: 2px solid #606ca5;
@@ -113,21 +136,49 @@
   font: inherit;
   font-size: 0.95rem;
   box-sizing: border-box;
+  text-align: left;
 }
 
-.feide-login-form input:focus {
+.feide-input:focus {
   outline: 2px solid #606ca5;
   outline-offset: 1px;
 }
 
-/* Login button — white bg, blue border */
+.feide-input--error,
+.feide-input--error:focus {
+  border-color: #dc2626;
+  outline-color: #dc2626;
+}
+
+.feide-field-error {
+  margin: 0.1rem 0 0;
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.feide-login-error {
+  margin: 0.2rem 0 0;
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.feide-login-form label {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1a1a1a;
+}
+
+/* Login button — same tone as header/footer strip */
 .feide-login-button {
   margin-top: 0.25rem;
   padding: 0.75rem 1rem;
-  border: 2px solid #606ca5;
+  border: 2px solid #b7c3d4;
   border-radius: 0;
-  background: #fff;
-  color: #606ca5;
+  background: #dee5f0;
+  color: #1a1a1a;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -135,8 +186,8 @@
 }
 
 .feide-login-button:hover {
-  background: #606ca5;
-  color: #fff;
+  background: #cfd9e8;
+  color: #1a1a1a;
 }
 
 /* Links row */
