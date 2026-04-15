@@ -1,4 +1,4 @@
-package org.ntnu.backend.level.model;
+package org.ntnu.backend.game.model;
 
 import jakarta.persistence.*;
 import java.util.Arrays;

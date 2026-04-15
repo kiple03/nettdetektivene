@@ -1,10 +1,10 @@
-package org.ntnu.backend.level.model;
+package org.ntnu.backend.game.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
-import org.ntnu.backend.level.model.enums.levelType;
+import org.ntnu.backend.game.model.enums.levelType;
 
 @Entity
 @Table(name = "levels")

@@ -1,6 +1,6 @@
-package org.ntnu.backend.level.repository;
+package org.ntnu.backend.game.repository;
 
-import org.ntnu.backend.level.model.Level;
+import org.ntnu.backend.game.model.Level;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LevelRepository extends JpaRepository<Level, Integer> {}

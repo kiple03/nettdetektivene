@@ -1,6 +1,6 @@
-package org.ntnu.backend.level.repository;
+package org.ntnu.backend.game.repository;
 
-import org.ntnu.backend.level.model.Option;
+import org.ntnu.backend.game.model.Option;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

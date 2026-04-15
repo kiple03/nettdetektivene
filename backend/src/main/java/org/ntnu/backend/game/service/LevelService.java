@@ -1,13 +1,13 @@
-package org.ntnu.backend.level.service;
+package org.ntnu.backend.game.service;
 
 import lombok.AllArgsConstructor;
-import org.ntnu.backend.level.dto.LevelResponse;
-import org.ntnu.backend.level.dto.ValidateLevelAnswerRequest;
-import org.ntnu.backend.level.dto.ValidateLevelAnswerResponse;
-import org.ntnu.backend.level.model.Level;
-import org.ntnu.backend.level.model.Option;
-import org.ntnu.backend.level.repository.LevelRepository;
-import org.ntnu.backend.level.repository.OptionRepository;
+import org.ntnu.backend.game.dto.LevelResponse;
+import org.ntnu.backend.game.dto.ValidateLevelAnswerRequest;
+import org.ntnu.backend.game.dto.ValidateLevelAnswerResponse;
+import org.ntnu.backend.game.model.Level;
+import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.repository.LevelRepository;
+import org.ntnu.backend.game.repository.OptionRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
