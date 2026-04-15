@@ -5,7 +5,7 @@ export type AuthFieldErrors = Partial<Record<AuthField, string>>;
 export function validateUsername(value: string): string {
 	if (!value.trim()) return 'Brukernavn er påkrevd.';
 	if (value.trim().length < 3) return 'Brukernavn må ha minst 3 tegn.';
-	if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Brukernavn kan bare inneholde bokstaver, tall og _. '; 
+	if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Brukernavn kan bare inneholde bokstaver, tall og _.';
 	return '';
 }
 
