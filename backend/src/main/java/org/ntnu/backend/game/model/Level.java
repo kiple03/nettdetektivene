@@ -9,7 +9,7 @@ import org.ntnu.backend.game.model.enums.levelType;
 @Entity
 @Table(name = "levels")
 @Getter @Setter
-public class Level {
+public class  Level {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.exception.UserAlreadyExistsException;
 import org.ntnu.backend.security.JwtService;
 import org.ntnu.backend.security.RefreshTokenModel;
@@ -14,6 +15,7 @@ import org.ntnu.backend.user.dto.LoginRequest;
 import org.ntnu.backend.user.dto.LoginResponse;
 import org.ntnu.backend.user.mapper.UserMapper;
 import org.ntnu.backend.user.model.User;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,6 +32,7 @@ public class UserService {
   private final JwtService jwtService;
   private final UserMapper userMapper;
   private final RefreshTokenRepository refreshTokenRepository;
+  private final EnrollmentRepository enrollmentRepository;
 
   @Value("${jwt.refresh-expiration-ms}")
   private long refreshExpiration;
@@ -82,15 +85,23 @@ public class UserService {
 
   private LoginResponse buildLoginResponse(User user) {
     UserPrincipal principal = new UserPrincipal(user);
-    String accessToken = jwtService.generateToken(principal);
 
-    RefreshTokenModel refreshToken = RefreshTokenModel.builder()
-        .token(UUID.randomUUID().toString())
-        .user(user)
-        .expiresAt(Instant.now().plusMillis(refreshExpiration))
-        .build();
-    refreshTokenRepository.save(refreshToken);
+    UUID classroomId = null;
+    if (user.getRole() == RoleEnum.STUDENT) {
+      classroomId = enrollmentRepository.findByUserAndLeftAtIsNull(user)
+          .map(enrollment -> enrollment.getClassroom().getId())
+          .orElse(null);
+    }
+      String accessToken = jwtService.generateToken(principal, classroomId);
 
-    return userMapper.toLoginResponse(accessToken, refreshToken.getToken());
+      RefreshTokenModel refreshToken = RefreshTokenModel.builder()
+          .token(UUID.randomUUID().toString())
+          .user(user)
+          .expiresAt(Instant.now().plusMillis(refreshExpiration))
+          .build();
+      refreshTokenRepository.save(refreshToken);
+
+      return userMapper.toLoginResponse(accessToken, refreshToken.getToken());
+
   }
 }

@@ -64,16 +64,13 @@ public class JwtService {
    * @param principal the authenticated user
    * @return a JWT string
    */
-  public String generateToken(UserPrincipal principal) {
+  public String generateToken(UserPrincipal principal, UUID classroomId) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("userId", principal.getUser().getId().toString());
     claims.put("role", principal.getAuthorities().iterator().next().getAuthority());
 
-    if (principal.getUser().getRole() == RoleEnum.STUDENT) {
-      Set<Classroom> classrooms = principal.getUser().getClassrooms();
-      if (!classrooms.isEmpty()) {
-        claims.put("classroomId", classrooms.iterator().next().getId().toString());
-      }
+    if (classroomId != null) {
+      claims.put("classroomId", classroomId.toString());
     }
 
     return Jwts.builder()

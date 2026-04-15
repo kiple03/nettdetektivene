@@ -1,0 +1,15 @@
+[
+  {
+    "id": "A",
+    "imageUrl": "",
+    "isCorrect": false,
+    "explanation": "Dette er en ekte nyhetsartikkel fordi..."
+  },
+  {
+    "id": "B",
+    "imageUrl": "",
+    "isCorrect": true,
+    "explanation": "Dette er IKKE en ekte nyhetsartikkel fordi..."
+  }
+]
+

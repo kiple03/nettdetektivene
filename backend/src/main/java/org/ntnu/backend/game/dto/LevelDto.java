@@ -1,6 +1,6 @@
-package org.ntnu.backend.level.dto;
+package org.ntnu.backend.game.dto;
 
-import org.ntnu.backend.level.model.enums.levelType;
+import org.ntnu.backend.game.model.enums.levelType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

@@ -1,10 +1,11 @@
-package org.ntnu.backend.level.dto;
+package org.ntnu.backend.game.dto;
 
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.ntnu.backend.game.dto.LevelDto;
 
 @Schema(description = "Data Transfer Object of game stop")
 public record StopDto (
