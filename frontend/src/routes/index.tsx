@@ -58,6 +58,7 @@ export const router = createBrowserRouter([
     },
 
 
+
       // Teacher routes
       // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
     {
