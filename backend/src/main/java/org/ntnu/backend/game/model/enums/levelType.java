@@ -1,4 +1,4 @@
-package org.ntnu.backend.level.model.enums;
+package org.ntnu.backend.game.model.enums;
 
 public enum levelType {
     TEXT_QUIZ,
