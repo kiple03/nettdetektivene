@@ -1,11 +1,16 @@
 package org.ntnu.backend.level.model;
 
 import jakarta.persistence.*;
+import java.util.Arrays;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "questions")
 @Getter @Setter
 public class Question {
@@ -14,12 +19,13 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String text;
+    @Column(nullable = false)
+    private String questionText;
+
+    @Column(columnDefinition = "JSON", nullable = false)
+    private String optionContent;
 
     @ManyToOne
     @JoinColumn(name = "level_id")
     private Level level;
-
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
-    private List<Option> options;
 }

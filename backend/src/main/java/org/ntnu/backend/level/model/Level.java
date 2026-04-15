@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
+import org.ntnu.backend.level.model.enums.levelType;
 
 @Entity
 @Table(name = "levels")
@@ -16,6 +17,9 @@ public class  Level {
 
     private String title;
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    private levelType levelType;
 
     @OneToMany(mappedBy = "level", cascade = CascadeType.ALL)
     private List<Question> questions;
