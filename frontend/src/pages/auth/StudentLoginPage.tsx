@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
-import { login, register } from '@/api/authApi';
+import { register } from '@/api/authApi';
 import { setToken } from '@/stores/authStore';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
@@ -9,9 +9,6 @@ import './StudentLoginPage.css';
 function StudentLoginPage() {
   const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
-  const [loginUsername, setLoginUsername] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
   const [regUsername, setRegUsername] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -20,24 +17,6 @@ function StudentLoginPage() {
 
   const handleFeideLogin = () => {
     navigate('/auth/feide');
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError('');
-
-    if (!loginUsername || !loginPassword) {
-      setLoginError('Vennligst fyll inn alle feltene.');
-      return;
-    }
-
-    try {
-      const res = await login({ username: loginUsername, password: loginPassword });
-      setToken(res.token);
-      navigate('/student/home');
-    } catch {
-      setLoginError('Feil brukernavn eller passord.');
-    }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
