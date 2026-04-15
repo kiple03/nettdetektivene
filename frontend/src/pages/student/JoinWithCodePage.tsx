@@ -56,14 +56,6 @@ export default function JoinWithCodePage() {
                 </div>
 
                 <div className={styles.bottomSection}>
-                    <div className={styles.detectiveBox}>
-                        <img
-                            src={detectiveImage}
-                            alt="Detektiv"
-                            className={styles.detectiveImage}
-                        />
-                    </div>
-
                     <div className={styles.formBox}>
                         <label htmlFor="classroom-code" className={styles.label}>
                             Skriv inn kode:
@@ -73,6 +65,13 @@ export default function JoinWithCodePage() {
                             className={styles.codeInputWrapper}
                             onClick={() => inputRef.current?.focus()}
                         >
+                            <img
+                                src={detectiveImage}
+                                alt=""
+                                aria-hidden="true"
+                                className={`${styles.innerDetective} ${styles.leftDetective}`}
+                            />
+
                             <input
                                 ref={inputRef}
                                 id="classroom-code"
@@ -90,8 +89,8 @@ export default function JoinWithCodePage() {
                             <div className={styles.codeDisplay} aria-hidden="true">
                                 {displayCode.split("").map((char, index) => {
                                     const isTyped =
-                                        (index < 3 && rawCode[index]) ||
-                                        (index > 3 && rawCode[index - 1]);
+                                        (index < 3 && Boolean(rawCode[index])) ||
+                                        (index > 3 && Boolean(rawCode[index - 1]));
 
                                     const isDash = char === "-";
 
@@ -111,6 +110,13 @@ export default function JoinWithCodePage() {
                                     );
                                 })}
                             </div>
+
+                            <img
+                                src={detectiveImage}
+                                alt=""
+                                aria-hidden="true"
+                                className={`${styles.innerDetective} ${styles.rightDetective}`}
+                            />
                         </div>
 
                         <button type="button" onClick={handleJoin} className={styles.button}>
