@@ -158,13 +158,18 @@ export default function MapPage() {
 
             <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
                 <AlertDialogContent>
-                    <AlertDialogTitle>Nivå låst</AlertDialogTitle>
+                    <AlertDialogTitle>Nivå låst 🔒</AlertDialogTitle>
+
                     <AlertDialogDescription>
                         {lockedLevelTitle} er ikke åpnet ennå. Du må fullføre de tidligere nivåene først.
                     </AlertDialogDescription>
 
                     <div className={styles.dialogActions}>
-                        <Button variant="destructive" onClick={() => setLockedDialogOpen(false)}>
+                        <Button
+                            variant="fun"
+                            type="button"
+                            onClick={() => setLockedDialogOpen(false)}
+                        >
                             Lukk
                         </Button>
                     </div>
@@ -172,4 +177,5 @@ export default function MapPage() {
             </AlertDialog>
         </div>
     );
+
 }

@@ -1,0 +1,37 @@
+.button {
+    border: none;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+.default {
+    background: #1f2937;
+    color: white;
+}
+
+.destructive {
+    background: #dc2626;
+    color: white;
+}
+
+.destructive:hover {
+    background: #b91c1c;
+}
+
+.fun {
+    background: linear-gradient(135deg, #ffd166, #8ecae6, #95d5b2);
+    color: #243b53;
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.14);
+}

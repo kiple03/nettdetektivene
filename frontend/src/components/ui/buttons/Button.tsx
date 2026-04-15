@@ -1,9 +1,9 @@
-import type {ButtonHTMLAttributes, ReactNode} from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import styles from "./button.module.css";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
-    variant?: "default" | "destructive";
+    variant?: "default" | "destructive" | "fun";
 }
 
 export function Button({
@@ -13,7 +13,11 @@ export function Button({
                            ...props
                        }: ButtonProps) {
     const variantClass =
-        variant === "destructive" ? styles.destructive : styles.default;
+        variant === "destructive"
+            ? styles.destructive
+            : variant === "fun"
+                ? styles.fun
+                : styles.default;
 
     return (
         <button
