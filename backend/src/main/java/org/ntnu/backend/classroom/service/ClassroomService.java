@@ -23,7 +23,7 @@ public class ClassroomService {
         this.classroomRepository = classroomRepository;
     }
 
-    // ---------- Classroom ----------
+    // ── Teacher operations ────────────────────────────────────────────────────
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request) {
         Classroom classroom = new Classroom();
@@ -34,17 +34,17 @@ public class ClassroomService {
         return toResponse(saved);
     }
 
-    public ClassroomResponse getClassroom(int id) {
-        return toResponse(findClassroom(id));
-    }
-
     public ClassroomResponse updateClassroom(int id, UpdateClassroomRequest request) {
         Classroom classroom = findClassroom(id);
         if (request.getTitle() != null && !request.getTitle().isBlank()) {
             classroom.setTitle(request.getTitle().trim());
         }
         if (request.getDescription() != null) {
-            classroom.setDescription(request.getDescription().trim().isEmpty() ? null : request.getDescription().trim());
+            classroom.setDescription(
+                    request.getDescription().trim().isEmpty()
+                            ? null
+                            : request.getDescription().trim()
+            );
         }
         return toResponse(classroomRepository.save(classroom));
     }
@@ -56,9 +56,32 @@ public class ClassroomService {
         classroomRepository.deleteById(id);
     }
 
+    // ── Shared operations ─────────────────────────────────────────────────────
+
+    public ClassroomResponse getClassroom(int id) {
+        return toResponse(findClassroom(id));
+    }
+
+    // ── Student operations ────────────────────────────────────────────────────
+
+    /**
+     * Allows a student to look up a classroom by its join code.
+     * Actual membership/enrollment logic should be added here once
+     * a student–classroom relationship entity exists.
+     */
+    public ClassroomResponse joinClassroom(JoinClassroomRequest request) {
+        Classroom classroom = classroomRepository.findByJoinCode(request.getJoinCode())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Ugyldig kode – klasserom ikke funnet"));
+        return toResponse(classroom);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
     private Classroom findClassroom(int id) {
         return classroomRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Klasserom ikke funnet"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Klasserom ikke funnet"));
     }
 
     private String generateUniqueCode() {
@@ -72,7 +95,8 @@ public class ClassroomService {
                 return code;
             }
         }
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Kunne ikke generere unik kode");
+        throw new ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR, "Kunne ikke generere unik kode");
     }
 
     private ClassroomResponse toResponse(Classroom c) {

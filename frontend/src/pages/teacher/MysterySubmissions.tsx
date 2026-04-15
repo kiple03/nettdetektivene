@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
-import type { Classroom, MysterySubmission, MysterySubmissionWithStudent } from '../../types/classroom';
+import type { Classroom, MysterySubmission, MysterySubmissionWithStudent } from '@/types/classroom.ts';
 import './MysterySubmissions.css';
 
 type LoaderData = {

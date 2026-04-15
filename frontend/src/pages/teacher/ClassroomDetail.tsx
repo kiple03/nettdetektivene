@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
-import type { Classroom, StudentProgress, Stop } from '../../types/classroom';
+import type { Classroom, StudentProgress, Stop } from '@/types/classroom.ts';
 import './ClassroomDetail.css';
 
 type LoaderData = {
