@@ -14,6 +14,10 @@ function FeideFake() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
@@ -59,13 +63,17 @@ function FeideFake() {
 
           {/* ── Card (all white) ── */}
           <section className="feide-card">
+            <button type="button" className="feide-back-button" onClick={handleBack}>
+              ← Tilbake
+            </button>
+            <p className="feide-role-marker">Innlogging som lærer</p>
             <h1>Logg på med Feide</h1>
 
             <div className="feide-intro-row">
               <img src={feideGlobe} alt="Feide globe" className="feide-globe" />
               <p>
                 Du må logge inn via Feide for å få tilgang til
-                Salaby.
+                Datatektektivene.
               </p>
             </div>
 
