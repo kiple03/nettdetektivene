@@ -6,9 +6,16 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
+import org.ntnu.backend.classroom.model.Classroom;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 /**
@@ -51,15 +58,22 @@ public class JwtService {
    * so the filter can create Spring Security authorities directly from the token. If the org is not
    * set (like on signup), the field is set to null.</p>
    *
+   * <p>Only STUDENTS will have their classroom id encoded, since they only belong in one classroom,
+   * and is used to pull e.g. custom questions a teacher has added to a classroom.</p>
+   *
    * @param principal the authenticated user
    * @return a JWT string
    */
-  public String generateToken(UserPrincipal principal) {
+  public String generateToken(UserPrincipal principal, UUID classroomId) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("userId", principal.getUser().getId().toString());
     // Store bare role name (e.g. "TEACHER") so the JWT is decoupled from Spring's
     // "ROLE_" authority prefix convention. JwtAuthFilter re-adds the prefix.
     claims.put("role", principal.getUser().getRole().name());
+
+    if (classroomId != null) {
+      claims.put("classroomId", classroomId.toString());
+    }
 
     return Jwts.builder()
         .claims(claims)

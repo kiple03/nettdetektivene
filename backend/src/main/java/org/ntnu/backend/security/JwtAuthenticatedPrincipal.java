@@ -28,6 +28,7 @@ public class JwtAuthenticatedPrincipal {
   private final String username;
   private final UUID userId;
   private final String role;
+  private final UUID classroomId;
   private final Collection<? extends GrantedAuthority> authorities;
 
   /**
@@ -44,6 +45,13 @@ public class JwtAuthenticatedPrincipal {
     }
     return principal;
   }
+
+  public UUID requireClassroomId() {
+    if (classroomId == null) {
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No classroom assigned");
+    }
+    return classroomId;
+    }
 
   public boolean isTeacher() {
     return "TEACHER".equals(role);

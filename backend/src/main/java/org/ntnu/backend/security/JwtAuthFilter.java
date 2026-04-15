@@ -75,6 +75,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       if (SecurityContextHolder.getContext().getAuthentication() != null) return;
 
       UUID userId = UUID.fromString(claims.get("userId", String.class));
+      String classroomIdStr = claims.get("classroomId", String.class);
+      UUID classroomId = classroomIdStr != null ? UUID.fromString(classroomIdStr) : null;
+
+
       // JWT claim stores the bare role name (e.g. "TEACHER"); Spring Security
       // expects the "ROLE_" prefix on GrantedAuthority, so we add it here.
       String role = claims.get("role", String.class);
@@ -85,6 +89,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
           claims.getSubject(),
           userId,
           role,
+          classroomId,
           authorities
       );
 

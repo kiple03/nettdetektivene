@@ -18,7 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ntnu.backend.enrollment.model.Enrollment;
+import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.mystery.model.enums.MysteryStatusEnum;
 import org.ntnu.backend.user.model.User;
 

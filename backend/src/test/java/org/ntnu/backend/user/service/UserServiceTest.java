@@ -80,12 +80,13 @@ class UserServiceTest {
     when(userRepository.existsByUsername(anyString())).thenReturn(false);
     when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
     when(userMapper.toUser(any(), anyString())).thenReturn(testUser);
-    when(jwtService.generateToken(any(UserPrincipal.class))).thenReturn("access-token");
+    when(jwtService.generateToken(any(UserPrincipal.class), any())).thenReturn("access-token");
     when(refreshTokenRepository.save(any(RefreshTokenModel.class)))
         .thenAnswer(inv -> inv.getArgument(0));
     when(userMapper.toLoginResponse(anyString(), anyString()))
         .thenReturn(new LoginResponse("access-token", "refresh-token"));
 
+    when(userRepository.save(any(User.class))).thenReturn(testUser);
     LoginResponse response = userService.register(request);
 
     assertThat(response.getAccessToken()).isEqualTo("access-token");
@@ -131,7 +132,7 @@ class UserServiceTest {
 
     when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
     when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
-    when(jwtService.generateToken(any(UserPrincipal.class))).thenReturn("access-token");
+    when(jwtService.generateToken(any(UserPrincipal.class), any())).thenReturn("access-token");
     when(refreshTokenRepository.save(any(RefreshTokenModel.class)))
         .thenAnswer(inv -> inv.getArgument(0));
     when(userMapper.toLoginResponse(anyString(), anyString()))
@@ -181,7 +182,7 @@ class UserServiceTest {
 
     when(refreshTokenRepository.findByToken("valid-token"))
         .thenReturn(Optional.of(refreshToken));
-    when(jwtService.generateToken(any(UserPrincipal.class))).thenReturn("new-access-token");
+    when(jwtService.generateToken(any(UserPrincipal.class), any())).thenReturn("new-access-token");
     when(refreshTokenRepository.save(any(RefreshTokenModel.class)))
         .thenAnswer(inv -> inv.getArgument(0));
     when(userMapper.toLoginResponse(anyString(), anyString()))

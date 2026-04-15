@@ -7,10 +7,12 @@ import org.ntnu.backend.classroom.model.ClassroomTeacherId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ClassroomTeacherRepository extends JpaRepository<ClassroomTeacher, ClassroomTeacherId> {
 
-    boolean existsByIdClassroomIdAndIdUserId(UUID classroomId, UUID userId);
+  boolean existsByClassroomIdAndUserId(UUID classroomId, UUID userId);
 
     @Query("""
         SELECT ct.classroom.id, ct.classroom.title, ct.classroom.description,
