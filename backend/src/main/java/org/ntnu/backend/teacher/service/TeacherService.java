@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
@@ -85,6 +86,7 @@ public class TeacherService {
 
     // ── 2. Create classroom ────────────────────────────────────────────────────
 
+    @Transactional
     public ClassroomSummary createClassroom(UUID teacherId, String title, String description) {
         Classroom classroom = new Classroom();
         classroom.setTitle(title);
@@ -168,6 +170,7 @@ public class TeacherService {
 
     // ── 6. Student detail ──────────────────────────────────────────────────────
 
+    @Transactional(readOnly = true)
     public StudentDetail getStudentDetail(UUID teacherId, UUID classroomId, UUID studentId) {
         assertTeacherOf(teacherId, classroomId);
         Enrollment enrollment = enrollmentRepository
@@ -211,6 +214,7 @@ public class TeacherService {
 
     // ── 8. Patch mystery submission ────────────────────────────────────────────
 
+    @Transactional
     public MysterySubmissionResponse patchMysterySubmission(
             UUID teacherId, UUID classroomId, UUID submissionId, PatchMysteryRequest req) {
         assertTeacherOf(teacherId, classroomId);
