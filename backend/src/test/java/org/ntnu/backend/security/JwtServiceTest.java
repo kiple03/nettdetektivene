@@ -5,11 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ntnu.backend.user.model.User;
+import org.ntnu.backend.user.model.UserModel;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -17,6 +21,8 @@ class JwtServiceTest {
 
   private JwtService jwtService;
   private UserPrincipal principal;
+  private UserPrincipal studentPrincipal;
+  private UUID classroomId;
   private final String secret = "dGVzdHNlY3JldGtleXRoYXRpc2xvbmdlbm91Z2hmb3JoczI1Ng=="; // base64 test key
 
   @BeforeEach
@@ -25,15 +31,34 @@ class JwtServiceTest {
     ReflectionTestUtils.setField(jwtService, "secret", secret);
     ReflectionTestUtils.setField(jwtService, "expiration", 300000L); // 5 min
 
-    User user = User.builder()
+    UserModel user = UserModel.builder()
         .id(UUID.randomUUID())
         .username("testuser")
         .email("test@test.no")
-        .passwordHash("encoded")
+        .password("encoded")
         .role(RoleEnum.TEACHER)
+        .classrooms(new HashSet<>())
         .build();
 
     principal = new UserPrincipal(user);
+
+    classroomId = UUID.randomUUID();
+    ClassroomModel classroom = new ClassroomModel();
+    ReflectionTestUtils.setField(classroom, "id", classroomId);
+
+    HashSet<ClassroomModel> classrooms = new HashSet<>();
+    classrooms.add(classroom);
+
+    UserModel student = UserModel.builder()
+        .id(UUID.randomUUID())
+        .username("student1")
+        .email("student@test.no")
+        .password("encoded")
+        .role(RoleEnum.STUDENT)
+        .classrooms(classrooms)
+        .build();
+
+    studentPrincipal = new UserPrincipal(student);
   }
 
   // ===== TOKEN GENERATION =====
@@ -58,12 +83,13 @@ class JwtServiceTest {
 
   @Test
   void generateToken_studentRole() {
-    User student = User.builder()
+    UserModel student = UserModel.builder()
         .id(UUID.randomUUID())
         .username("student1")
         .email("student@test.no")
-        .passwordHash("encoded")
+        .password("encoded")
         .role(RoleEnum.STUDENT)
+        .classrooms(new HashSet<>())
         .build();
 
     String token = jwtService.generateToken(new UserPrincipal(student));
@@ -119,5 +145,38 @@ class JwtServiceTest {
 
     assertThatThrownBy(() -> otherService.parseAndValidate(token))
         .isInstanceOf(Exception.class);
+  }
+
+  @Test
+  void generateToken_studentWithClassroom_containsClassroomId() {
+    String token = jwtService.generateToken(studentPrincipal);
+    Claims claims = jwtService.parseAndValidate(token);
+
+    assertThat(claims.get("classroomId", String.class)).isEqualTo(classroomId.toString());
+  }
+
+  @Test
+  void generateToken_studentWithoutClassroom_noClassroomId() {
+    UserModel studentNoClassroom = UserModel.builder()
+        .id(UUID.randomUUID())
+        .username("newstudent")
+        .email("new@test.no")
+        .password("encoded")
+        .role(RoleEnum.STUDENT)
+        .classrooms(new HashSet<>())
+        .build();
+
+    String token = jwtService.generateToken(new UserPrincipal(studentNoClassroom));
+    Claims claims = jwtService.parseAndValidate(token);
+
+    assertThat(claims.get("classroomId", String.class)).isNull();
+  }
+
+  @Test
+  void generateToken_teacher_noClassroomId() {
+    String token = jwtService.generateToken(principal);
+    Claims claims = jwtService.parseAndValidate(token);
+
+    assertThat(claims.get("classroomId", String.class)).isNull();
   }
 }
