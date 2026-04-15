@@ -34,6 +34,7 @@ public class UserService {
   @Value("${jwt.refresh-expiration-ms}")
   private long refreshExpiration;
 
+  @Transactional
   public LoginResponse register(@Valid CreateUserRequest request) {
     if (userRepository.existsByEmail(request.getEmail())) {
       throw new UserAlreadyExistsException("email", request.getEmail());
@@ -44,7 +45,7 @@ public class UserService {
 
     String encodedPassword = passwordEncoder.encode(request.getPassword());
     User user = userMapper.toUser(request, encodedPassword);
-    userRepository.save(user);
+    user = userRepository.save(user);
 
     return buildLoginResponse(user);
   }

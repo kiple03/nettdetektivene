@@ -33,7 +33,7 @@ function TeacherLoginPage() {
 
     try {
       const res = await register({ username: regUsername, email: regEmail, password: regPassword, role: 'TEACHER' });
-      setToken(res.token);
+      setToken(res.accessToken);
       navigate('/teacher/home');
     } catch {
       setRegError('Registrering feilet. Prøv igjen.');
