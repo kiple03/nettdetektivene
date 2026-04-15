@@ -1,7 +1,7 @@
 package org.ntnu.backend.security;
 
 import java.util.Optional;
-import org.ntnu.backend.user.model.UserModel;
+import org.ntnu.backend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshTokenModel, Long> {
@@ -10,5 +10,5 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshTokenModel,
 
   void deleteByToken(String token);
 
-  void deleteAllByUser(UserModel user);
+  void deleteAllByUser(User user);
 }

@@ -5,15 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ntnu.backend.user.model.UserModel;
+import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -29,13 +25,12 @@ class JwtServiceTest {
     ReflectionTestUtils.setField(jwtService, "secret", secret);
     ReflectionTestUtils.setField(jwtService, "expiration", 300000L); // 5 min
 
-    UserModel user = UserModel.builder()
+    User user = User.builder()
         .id(UUID.randomUUID())
         .username("testuser")
         .email("test@test.no")
-        .password("encoded")
+        .passwordHash("encoded")
         .role(RoleEnum.TEACHER)
-        .classrooms(new HashSet<>())
         .build();
 
     principal = new UserPrincipal(user);
@@ -63,13 +58,12 @@ class JwtServiceTest {
 
   @Test
   void generateToken_studentRole() {
-    UserModel student = UserModel.builder()
+    User student = User.builder()
         .id(UUID.randomUUID())
         .username("student1")
         .email("student@test.no")
-        .password("encoded")
+        .passwordHash("encoded")
         .role(RoleEnum.STUDENT)
-        .classrooms(new HashSet<>())
         .build();
 
     String token = jwtService.generateToken(new UserPrincipal(student));

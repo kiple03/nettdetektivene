@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
+import java.util.UUID;
 
 @Service
 public class ClassroomService {
@@ -34,8 +35,8 @@ public class ClassroomService {
         return toResponse(saved);
     }
 
-    public ClassroomResponse updateClassroom(int id, UpdateClassroomRequest request) {
-        Classroom classroom = findClassroom(id);
+    public ClassroomResponse updateClassroom(String id, UpdateClassroomRequest request) {
+        Classroom classroom = findClassroom(UUID.fromString(id));
         if (request.getTitle() != null && !request.getTitle().isBlank()) {
             classroom.setTitle(request.getTitle().trim());
         }
@@ -49,26 +50,22 @@ public class ClassroomService {
         return toResponse(classroomRepository.save(classroom));
     }
 
-    public void deleteClassroom(int id) {
-        if (!classroomRepository.existsById(id)) {
+    public void deleteClassroom(String id) {
+        UUID uuid = UUID.fromString(id);
+        if (!classroomRepository.existsById(uuid)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Klasserom ikke funnet");
         }
-        classroomRepository.deleteById(id);
+        classroomRepository.deleteById(uuid);
     }
 
     // ── Shared operations ─────────────────────────────────────────────────────
 
-    public ClassroomResponse getClassroom(int id) {
-        return toResponse(findClassroom(id));
+    public ClassroomResponse getClassroom(String id) {
+        return toResponse(findClassroom(UUID.fromString(id)));
     }
 
     // ── Student operations ────────────────────────────────────────────────────
 
-    /**
-     * Allows a student to look up a classroom by its join code.
-     * Actual membership/enrollment logic should be added here once
-     * a student–classroom relationship entity exists.
-     */
     public ClassroomResponse joinClassroom(JoinClassroomRequest request) {
         Classroom classroom = classroomRepository.findByJoinCode(request.getJoinCode())
                 .orElseThrow(() -> new ResponseStatusException(
@@ -78,7 +75,7 @@ public class ClassroomService {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private Classroom findClassroom(int id) {
+    private Classroom findClassroom(UUID id) {
         return classroomRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Klasserom ikke funnet"));
@@ -100,6 +97,6 @@ public class ClassroomService {
     }
 
     private ClassroomResponse toResponse(Classroom c) {
-        return new ClassroomResponse(c.getId(), c.getTitle(), c.getDescription(), c.getJoinCode());
+        return new ClassroomResponse(c.getId().toString(), c.getTitle(), c.getDescription(), c.getJoinCode());
     }
 }

@@ -30,7 +30,7 @@ public class ClassroomController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('TEACHER')")
     public ClassroomResponse updateClassroom(
-            @PathVariable int id,
+            @PathVariable String id,
             @Valid @RequestBody UpdateClassroomRequest request
     ) {
         return classroomService.updateClassroom(id, request);
@@ -39,7 +39,7 @@ public class ClassroomController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
-    public void deleteClassroom(@PathVariable int id) {
+    public void deleteClassroom(@PathVariable String id) {
         classroomService.deleteClassroom(id);
     }
 
@@ -47,7 +47,7 @@ public class ClassroomController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
-    public ClassroomResponse getClassroom(@PathVariable int id) {
+    public ClassroomResponse getClassroom(@PathVariable String id) {
         return classroomService.getClassroom(id);
     }
 

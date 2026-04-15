@@ -6,13 +6,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.Nullable;
-import org.ntnu.backend.user.model.UserModel;
+import org.ntnu.backend.user.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * Links the {@link UserModel} entity to Spring Security's {@link UserDetails}.
+ * Links the {@link User} entity to Spring Security's {@link UserDetails}.
  *
  * <p>Used only during login to verify credentials and extract roles
  * for JWT generation. Not used on the rest og the requests, those use {@link
@@ -21,14 +21,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
 
-  private final UserModel user;
+  private final User user;
 
   /**
-   * Returns the {@link UserModel} object
+   * Returns the {@link User} object
    *
    * @return the User
    */
-  public UserModel getUser() {
+  public User getUser() {
     return user;
   }
 
@@ -59,7 +59,7 @@ public class UserPrincipal implements UserDetails {
    */
   @Override
   public @Nullable String getPassword() {
-    return user.getPassword();
+    return user.getPasswordHash();
   }
 
   /**
