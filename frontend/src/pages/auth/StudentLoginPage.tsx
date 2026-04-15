@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
+import { AxiosError } from 'axios';
 import { register } from '@/api/authApi';
 import { setToken } from '@/stores/authStore';
+import type { ApiErrorBody } from '@/types/user';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
 
@@ -34,10 +36,19 @@ function StudentLoginPage() {
 
     try {
       const res = await register({ username: regUsername, email: regEmail, password: regPassword, role: 'STUDENT' });
-      setToken(res.token);
-      navigate('/student/home');
-    } catch {
-      setRegError('Registrering feilet. Prøv igjen.');
+      setToken(res.accessToken);
+      window.dispatchEvent(new Event('auth-changed'));
+      navigate('/home');
+    } catch (err) {
+      const axiosErr = err as AxiosError<ApiErrorBody>;
+      if (axiosErr.response?.status === 409) {
+        const field = axiosErr.response.data?.field;
+        if (field === 'username') setRegError('Brukernavnet er allerede i bruk.');
+        else if (field === 'email') setRegError('E-posten er allerede i bruk.');
+        else setRegError('Brukeren finnes allerede.');
+      } else {
+        setRegError('Registrering feilet. Prøv igjen.');
+      }
     }
   };
 
