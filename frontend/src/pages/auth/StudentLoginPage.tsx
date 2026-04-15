@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
-import { login, register } from '@/api/authApi';
+import { register } from '@/api/authApi';
 import { setToken } from '@/stores/authStore';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
@@ -9,9 +9,6 @@ import './StudentLoginPage.css';
 function StudentLoginPage() {
   const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
-  const [loginUsername, setLoginUsername] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
   const [regUsername, setRegUsername] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -20,24 +17,6 @@ function StudentLoginPage() {
 
   const handleFeideLogin = () => {
     navigate('/auth/feide');
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError('');
-
-    if (!loginUsername || !loginPassword) {
-      setLoginError('Vennligst fyll inn alle feltene.');
-      return;
-    }
-
-    try {
-      const res = await login({ username: loginUsername, password: loginPassword });
-      setToken(res.token);
-      navigate('/student/home');
-    } catch {
-      setLoginError('Feil brukernavn eller passord.');
-    }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -69,57 +48,28 @@ function StudentLoginPage() {
       </Link>
 
       <div className="student-login__card">
-        <h1 className="student-login__title">Nettdetektivene</h1>
-        <p className="student-login__subtitle">
-          Bli med og beskytt internettbyen!
-        </p>
+        <div className="student-login__paper">
+          <div className="student-login__badge">🔍</div>
+          <h1 className="student-login__title">Nettdetektivene</h1>
+          <p className="student-login__subtitle">
+            Bli med og beskytt internettbyen!
+          </p>
 
-        <form className="student-login__form" onSubmit={handleLogin}>
-          {loginError && <p className="student-login__error">{loginError}</p>}
-
-          <div className="student-login__field">
-            <label htmlFor="login-username">Brukernavn</label>
-            <input
-              id="login-username"
-              type="text"
-              placeholder="Ditt brukernavn"
-              value={loginUsername}
-              onChange={(e) => setLoginUsername(e.target.value)}
-              autoComplete="username"
-            />
-          </div>
-
-          <div className="student-login__field">
-            <label htmlFor="login-password">Passord</label>
-            <input
-              id="login-password"
-              type="password"
-              placeholder="Ditt passord"
-              value={loginPassword}
-              onChange={(e) => setLoginPassword(e.target.value)}
-              autoComplete="current-password"
-            />
-          </div>
-
-          <button type="submit" className="student-login__submit-btn">
-            Logg inn
+          <button className="student-login__feide-btn" onClick={handleFeideLogin}>
+            Logg inn med Feide
           </button>
-        </form>
 
-        <button className="student-login__feide-btn" onClick={handleFeideLogin}>
-          Logg inn med Feide
-        </button>
+          <div className="student-login__divider">
+            <span>eller</span>
+          </div>
 
-        <div className="student-login__divider">
-          <span>eller</span>
+          <button
+            className="student-login__register-btn"
+            onClick={() => setShowRegister(true)}
+          >
+            Registrer ny bruker
+          </button>
         </div>
-
-        <button
-          className="student-login__register-btn"
-          onClick={() => setShowRegister(true)}
-        >
-          Registrer ny bruker
-        </button>
       </div>
 
       {/* ── Registration modal ── */}

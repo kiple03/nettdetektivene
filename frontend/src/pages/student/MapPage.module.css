@@ -1,0 +1,26 @@
+.container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-image: url("../../assets/images/static_map_bg.svg");
+    background-size: cover;
+    background-position: center;
+}
+
+.hotspot {
+    position: absolute;
+    width: 20vw;
+    height: 20vw;
+    cursor: pointer;
+    display: flex;
+}
+
+.hotspot:hover {
+    transform: scale(1.1);
+    transition: 0.2s ease;
+}
+
+.icon {
+    width: 100%;
+    height: 100%;
+}

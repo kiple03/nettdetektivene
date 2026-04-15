@@ -1,39 +1,49 @@
 package org.ntnu.backend.level.service;
 
+import lombok.AllArgsConstructor;
+import org.ntnu.backend.level.dto.LevelResponse;
 import org.ntnu.backend.level.dto.ValidateLevelAnswerRequest;
 import org.ntnu.backend.level.dto.ValidateLevelAnswerResponse;
+import org.ntnu.backend.level.model.Level;
+import org.ntnu.backend.level.model.Option;
+import org.ntnu.backend.level.repository.LevelRepository;
+import org.ntnu.backend.level.repository.OptionRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@AllArgsConstructor
 public class LevelService {
-    public ValidateLevelAnswerResponse response(
-            int levelID,
-            ValidateLevelAnswerRequest request
-    ) {
-        if (!hasAccessToLevel(levelID)) {
-            return new ValidateLevelAnswerResponse(false, "Du har ikke åpnet dette nivået enda!", false);
-        }
 
-        boolean correct = isCorrectAnswer(levelID, request.getOptionId());
+    private final LevelRepository levelRepository;
+    private final OptionRepository optionRepository;
 
-        if (!correct) {
-            return new ValidateLevelAnswerResponse(false, "Du fikk feil, prøv igjen", false);
-        }
 
-        unlockNextLevelForUser(levelID);
+    public LevelResponse getLevel(int levelId) {
+        Level level = levelRepository.findById(levelId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Nivå ikke funnet"));
 
-        return new ValidateLevelAnswerResponse(false, "Riktig svar!", false)
+        var questions = level.getQuestions().stream().map(q -> {
+            var options = q.getOptions().stream()
+                    .map(o -> new LevelResponse.OptionDto(o.getId(), o.getText()))
+                    .toList();
+            return new LevelResponse.QuestionDto(q.getId(), q.getText(), options);
+        }).toList();
+
+        return new LevelResponse(level.getId(), level.getTitle(), level.getDescription(), questions);
     }
 
-    private boolean hasAccessToLevel(int levelID) {
-        return levelID == 1;
-    }
+    public ValidateLevelAnswerResponse validateAnswer(int levelId, ValidateLevelAnswerRequest request) {
+        int optionId = Integer.parseInt(request.getOptionId());
 
-    private boolean isCorrectAnswer(int levelID, String optionId) {
-        if (levelID == 1) {
-            return optionId.equals("A");
+        Option option = optionRepository.findByIdAndQuestion_Level_Id(optionId, levelId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Kan ikke velge dette alternativet"));
+
+        if (option.isCorrect()) {
+            return new ValidateLevelAnswerResponse(true, "Riktig svar!", true);
         }
 
-        return false;
+        return new ValidateLevelAnswerResponse(false, "Feil svar, prøv igjen.", false);
     }
 }

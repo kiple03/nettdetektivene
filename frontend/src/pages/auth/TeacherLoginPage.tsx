@@ -1,16 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
-import { login, register } from '@/api/authApi';
+import { register } from '@/api/authApi';
 import { setToken } from '@/stores/authStore';
 import './TeacherLoginPage.css';
 
 function TeacherLoginPage() {
   const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
-  const [loginUsername, setLoginUsername] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
   const [regUsername, setRegUsername] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -19,24 +16,6 @@ function TeacherLoginPage() {
 
   const handleFeideLogin = () => {
     navigate('/auth/feide');
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError('');
-
-    if (!loginUsername || !loginPassword) {
-      setLoginError('Vennligst fyll inn alle feltene.');
-      return;
-    }
-
-    try {
-      const res = await login({ username: loginUsername, password: loginPassword });
-      setToken(res.token);
-      navigate('/teacher/home');
-    } catch {
-      setLoginError('Feil brukernavn eller passord.');
-    }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -73,38 +52,6 @@ function TeacherLoginPage() {
         <p className="teacher-login__subtitle">
           Logg inn for å administrere dine klasserom
         </p>
-
-        <form className="teacher-login__form" onSubmit={handleLogin}>
-          {loginError && <p className="teacher-login__error">{loginError}</p>}
-
-          <div className="teacher-login__field">
-            <label htmlFor="login-username">Brukernavn</label>
-            <input
-              id="login-username"
-              type="text"
-              placeholder="Ditt brukernavn"
-              value={loginUsername}
-              onChange={(e) => setLoginUsername(e.target.value)}
-              autoComplete="username"
-            />
-          </div>
-
-          <div className="teacher-login__field">
-            <label htmlFor="login-password">Passord</label>
-            <input
-              id="login-password"
-              type="password"
-              placeholder="Ditt passord"
-              value={loginPassword}
-              onChange={(e) => setLoginPassword(e.target.value)}
-              autoComplete="current-password"
-            />
-          </div>
-
-          <button type="submit" className="teacher-login__submit-btn">
-            Logg inn
-          </button>
-        </form>
 
         <button className="teacher-login__feide-btn" onClick={handleFeideLogin}>
           Logg inn med Feide
