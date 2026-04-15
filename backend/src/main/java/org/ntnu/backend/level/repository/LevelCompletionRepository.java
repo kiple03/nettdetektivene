@@ -16,9 +16,14 @@ public interface LevelCompletionRepository extends JpaRepository<LevelCompletion
     List<LevelCompletion> findByEnrollmentId(UUID enrollmentId);
 
     @Query("""
-        SELECT lc FROM LevelCompletion lc, ClassroomTeacher ct
-        WHERE lc.enrollment.classroom = ct.classroom
-        AND ct.user.id = :teacherId
+        SELECT lc FROM LevelCompletion lc
+        JOIN FETCH lc.enrollment e
+        JOIN FETCH e.user
+        JOIN FETCH e.classroom
+        WHERE EXISTS (
+            SELECT ct FROM ClassroomTeacher ct
+            WHERE ct.classroom = e.classroom AND ct.user.id = :teacherId
+        )
         ORDER BY lc.completedAt DESC
         LIMIT 20
         """)

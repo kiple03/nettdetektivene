@@ -12,9 +12,14 @@ public interface MysterySubmissionRepository extends JpaRepository<MysterySubmis
     List<MysterySubmission> findByEnrollmentClassroomId(UUID classroomId);
 
     @Query("""
-        SELECT ms FROM MysterySubmission ms, ClassroomTeacher ct
-        WHERE ms.enrollment.classroom = ct.classroom
-        AND ct.user.id = :teacherId
+        SELECT ms FROM MysterySubmission ms
+        JOIN FETCH ms.enrollment e
+        JOIN FETCH e.user
+        JOIN FETCH e.classroom
+        WHERE EXISTS (
+            SELECT ct FROM ClassroomTeacher ct
+            WHERE ct.classroom = e.classroom AND ct.user.id = :teacherId
+        )
         ORDER BY ms.submittedAt DESC
         LIMIT 20
         """)

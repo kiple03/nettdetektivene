@@ -160,12 +160,12 @@ public class TeacherService {
 
     public List<StudentSummary> listStudents(UUID teacherId, UUID classroomId) {
         assertTeacherOf(teacherId, classroomId);
-        return enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroomId).stream()
-                .map(e -> new StudentSummary(
-                        e.getUser().getId().toString(),
-                        e.getUser().getUsername(),
-                        medalRepository.countByEnrollmentId(e.getId()),
-                        levelCompletionRepository.countByEnrollmentId(e.getId())
+        return enrollmentRepository.findStudentCountsByClassroomId(classroomId).stream()
+                .map(row -> new StudentSummary(
+                        row[0].toString(),
+                        (String) row[1],
+                        (Long) row[2],
+                        (Long) row[3]
                 ))
                 .toList();
     }
