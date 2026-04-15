@@ -11,6 +11,7 @@ function FeideFake() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -21,9 +22,13 @@ function FeideFake() {
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
+    setFieldErrors({ username: '', password: '' });
 
     if (!username || !password) {
-      setError('Vennligst fyll inn brukernavn og passord.');
+      setFieldErrors({
+        username: username ? '' : 'Brukernavn er påkrevd.',
+        password: password ? '' : 'Passord er påkrevd.',
+      });
       return;
     }
 
@@ -37,7 +42,10 @@ function FeideFake() {
     } catch (err) {
       const axiosErr = err as AxiosError;
       if (axiosErr.response?.status === 401) {
-        setError('Feil brukernavn eller passord.');
+        setFieldErrors({
+          username: 'Feil brukernavn eller passord.',
+          password: 'Feil brukernavn eller passord.',
+        });
       } else {
         setError('Innlogging feilet. Prøv igjen.');
       }
@@ -84,23 +92,37 @@ function FeideFake() {
             <form className="feide-login-form" onSubmit={handleLogin}>
               <label htmlFor="username">Brukernavn</label>
               <input
+                className={fieldErrors.username ? 'feide-input feide-input--error' : 'feide-input'}
                 id="username"
                 name="username"
                 type="text"
                 autoComplete="username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (fieldErrors.username) {
+                    setFieldErrors((current) => ({ ...current, username: '' }));
+                  }
+                }}
               />
+              {fieldErrors.username && <p className="feide-field-error">{fieldErrors.username}</p>}
 
               <label htmlFor="password">Passord</label>
               <input
+                className={fieldErrors.password ? 'feide-input feide-input--error' : 'feide-input'}
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (fieldErrors.password) {
+                    setFieldErrors((current) => ({ ...current, password: '' }));
+                  }
+                }}
               />
+              {fieldErrors.password && <p className="feide-field-error">{fieldErrors.password}</p>}
 
               {error && <p className="feide-login-error">{error}</p>}
 
