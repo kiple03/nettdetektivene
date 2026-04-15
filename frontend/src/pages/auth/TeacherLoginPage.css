@@ -387,7 +387,7 @@
   letter-spacing: 0.5px;
 }
 
-.register-modal__field input {
+.register-modal__input {
   width: 100%;
   padding: 12px 14px;
   font-size: 0.9rem;
@@ -400,14 +400,28 @@
   box-sizing: border-box;
 }
 
-.register-modal__field input:focus {
+.register-modal__input:focus {
   border-color: #4f46e5;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
-.register-modal__field input::placeholder {
+.register-modal__input::placeholder {
   color: #b8a08a;
+}
+
+.register-modal__input--error,
+.register-modal__input--error:focus {
+  border-color: #dc2626;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.register-modal__field-error {
+  margin: 6px 0 0;
+  color: #dc2626;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .register-modal__error {
