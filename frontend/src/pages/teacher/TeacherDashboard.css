@@ -40,6 +40,30 @@
   border-color: var(--accent-border);
 }
 
+.teacher-dashboard__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.teacher-dashboard__logout {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--teacher-card-bg);
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.teacher-dashboard__logout:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+  border-color: var(--accent-border);
+}
+
 .teacher-dashboard__empty {
   color: var(--text);
   font-size: 15px;
