@@ -1,7 +1,7 @@
 import ConfettiComp from '@/components/ConfettiComp';
 import HomeBoard from "@/components/dashboard/HomeBoard.tsx";
 import { studentBoardItems } from "@/data/studentBoardItems"
-import BackButton from "@/components/BackButton.tsx";
+import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 
 
 function StudentHomePage(){
