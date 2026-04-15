@@ -1,4 +1,4 @@
-package org.ntnu.backend.level.model;
+package org.ntnu.backend.game.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,28 +15,27 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ntnu.backend.stop.model.Stop;
 
 @Entity
-@Table(name = "level")
+@Table(name = "question")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Level {
+public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "stop_id", nullable = false)
-    private Stop stop;
+    @JoinColumn(name = "level_id", nullable = false)
+    private Level level;
 
     @Column(name = "display_order", nullable = false)
     private Integer displayOrder;
 
-    @Column(columnDefinition = "TINYINT", nullable = false)
-    private Byte difficulty;
+    @Column(name = "content_json", columnDefinition = "json", nullable = false)
+    private String contentJson;
 }
