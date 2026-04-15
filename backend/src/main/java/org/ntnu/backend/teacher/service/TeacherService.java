@@ -71,19 +71,15 @@ public class TeacherService {
     // ── 1. List classrooms ─────────────────────────────────────────────────────
 
     public List<ClassroomSummary> listClassrooms(UUID teacherId) {
-        return classroomTeacherRepository.findAllByIdUserId(teacherId).stream()
-                .map(ct -> {
-                    Classroom c = ct.getClassroom();
-                    long count = enrollmentRepository.countByClassroomIdAndLeftAtIsNull(c.getId());
-                    return new ClassroomSummary(
-                            c.getId().toString(),
-                            c.getTitle(),
-                            c.getDescription(),
-                            c.getJoinCode(),
-                            c.getCreatedAt().toString(),
-                            count
-                    );
-                })
+        return classroomTeacherRepository.findClassroomsWithStudentCountByTeacherId(teacherId).stream()
+                .map(row -> new ClassroomSummary(
+                        row[0].toString(),
+                        (String) row[1],
+                        (String) row[2],
+                        (String) row[3],
+                        row[4].toString(),
+                        (Long) row[5]
+                ))
                 .toList();
     }
 

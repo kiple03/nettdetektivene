@@ -13,7 +13,12 @@ public interface LevelCompletionRepository extends JpaRepository<LevelCompletion
 
     long countByEnrollmentId(UUID enrollmentId);
 
-    List<LevelCompletion> findByEnrollmentId(UUID enrollmentId);
+    @Query("""
+        SELECT lc FROM LevelCompletion lc
+        JOIN FETCH lc.level
+        WHERE lc.enrollment.id = :enrollmentId
+        """)
+    List<LevelCompletion> findByEnrollmentId(@Param("enrollmentId") UUID enrollmentId);
 
     @Query("""
         SELECT lc FROM LevelCompletion lc

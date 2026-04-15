@@ -9,7 +9,13 @@ import org.springframework.data.repository.query.Param;
 
 public interface MysterySubmissionRepository extends JpaRepository<MysterySubmission, UUID> {
 
-    List<MysterySubmission> findByEnrollmentClassroomId(UUID classroomId);
+    @Query("""
+        SELECT ms FROM MysterySubmission ms
+        JOIN FETCH ms.enrollment e
+        JOIN FETCH e.user
+        WHERE e.classroom.id = :classroomId
+        """)
+    List<MysterySubmission> findByEnrollmentClassroomId(@Param("classroomId") UUID classroomId);
 
     @Query("""
         SELECT ms FROM MysterySubmission ms

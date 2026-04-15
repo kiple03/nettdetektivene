@@ -34,4 +34,12 @@ public class GlobalExceptionHandler {
             "message", "Refresh token missing"
         ));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+            "success", false,
+            "message", ex.getMessage() != null ? ex.getMessage() : "Invalid request parameter"
+        ));
+    }
 }
