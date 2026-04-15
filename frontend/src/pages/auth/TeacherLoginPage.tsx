@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
 import { AxiosError } from 'axios';
 import { register } from '@/api/authApi';
 import { setToken } from '@/stores/authStore';
+import AuthRegisterModal from '@/components/auth/AuthRegisterModal';
 import type { ApiErrorBody } from '@/types/user';
 import {
   hasAuthErrors,
@@ -101,128 +101,58 @@ function TeacherLoginPage() {
         </button>
       </div>
 
-      {/* ── Registration modal ── */}
-      {showRegister && (
-        <div className="register-overlay" onClick={() => setShowRegister(false)}>
-          <div className="register-modal" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="register-modal__close"
-              onClick={() => setShowRegister(false)}
-            >
-              <X size={20} />
-            </button>
-
-            <h2 className="register-modal__title">Opprett lærerkonto</h2>
-            <p className="register-modal__subtitle">
-              Registrer deg for å administrere klasserom og elever.
-            </p>
-
-            <form className="register-modal__form" onSubmit={handleRegister}>
-              {regError && <p className="register-modal__error">{regError}</p>}
-
-              <div className="register-modal__field">
-                <label htmlFor="reg-username">Brukernavn</label>
-                <input
-                  className={regFieldErrors.username ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
-                  id="reg-username"
-                  type="text"
-                  placeholder="Velg et brukernavn"
-                  value={regUsername}
-                  onChange={(e) => {
-                    setRegUsername(e.target.value);
-                    if (regFieldErrors.username) {
-                      setRegFieldErrors((current) => ({ ...current, username: '' }));
-                    }
-                  }}
-                  onBlur={() => {
-                    setRegFieldErrors((current) => ({ ...current, username: validateUsername(regUsername) }));
-                  }}
-                  autoComplete="username"
-                />
-                {regFieldErrors.username && <p className="register-modal__field-error">{regFieldErrors.username}</p>}
-              </div>
-
-              <div className="register-modal__field">
-                <label htmlFor="reg-email">E-post</label>
-                <input
-                  className={regFieldErrors.email ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
-                  id="reg-email"
-                  type="email"
-                  placeholder="din.epost@skole.no"
-                  value={regEmail}
-                  onChange={(e) => {
-                    setRegEmail(e.target.value);
-                    if (regFieldErrors.email) {
-                      setRegFieldErrors((current) => ({ ...current, email: '' }));
-                    }
-                  }}
-                  onBlur={() => {
-                    setRegFieldErrors((current) => ({ ...current, email: validateEmail(regEmail) }));
-                  }}
-                  autoComplete="email"
-                />
-                {regFieldErrors.email && <p className="register-modal__field-error">{regFieldErrors.email}</p>}
-              </div>
-
-              <div className="register-modal__field">
-                <label htmlFor="reg-password">Passord</label>
-                <input
-                  className={regFieldErrors.password ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
-                  id="reg-password"
-                  type="password"
-                  placeholder="Velg et passord"
-                  value={regPassword}
-                  onChange={(e) => {
-                    setRegPassword(e.target.value);
-                    if (regFieldErrors.password) {
-                      setRegFieldErrors((current) => ({
-                        ...current,
-                        password: '',
-                        confirm: current.confirm === 'Passordene stemmer ikke overens.' ? '' : current.confirm,
-                      }));
-                    }
-                  }}
-                  onBlur={() => {
-                    setRegFieldErrors((current) => ({
-                      ...current,
-                      password: validatePassword(regPassword),
-                      confirm: regConfirm ? validatePasswordConfirm(regPassword, regConfirm) : current.confirm,
-                    }));
-                  }}
-                  autoComplete="new-password"
-                />
-                {regFieldErrors.password && <p className="register-modal__field-error">{regFieldErrors.password}</p>}
-              </div>
-
-              <div className="register-modal__field">
-                <label htmlFor="reg-confirm">Bekreft passord</label>
-                <input
-                  className={regFieldErrors.confirm ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
-                  id="reg-confirm"
-                  type="password"
-                  placeholder="Skriv passordet på nytt"
-                  value={regConfirm}
-                  onChange={(e) => {
-                    setRegConfirm(e.target.value);
-                    if (regFieldErrors.confirm) {
-                      setRegFieldErrors((current) => ({ ...current, confirm: '' }));
-                    }
-                  }}
-                  onBlur={() => {
-                    setRegFieldErrors((current) => ({ ...current, confirm: validatePasswordConfirm(regPassword, regConfirm) }));
-                  }}
-                  autoComplete="new-password"
-                />
-                {regFieldErrors.confirm && <p className="register-modal__field-error">{regFieldErrors.confirm}</p>}
-              </div>
-
-              <button type="submit" className="register-modal__submit">
-                Opprett lærerkonto
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+        <AuthRegisterModal
+          open={showRegister}
+          title="Opprett lærerkonto"
+          subtitle="Registrer deg for å administrere klasserom og elever."
+          submitLabel="Opprett lærerkonto"
+          onClose={() => setShowRegister(false)}
+          onSubmit={handleRegister}
+          error={regError}
+          fieldErrors={regFieldErrors}
+          username={regUsername}
+          email={regEmail}
+          password={regPassword}
+          confirm={regConfirm}
+          onUsernameChange={(value) => {
+            setRegUsername(value);
+            if (regFieldErrors.username) setRegFieldErrors((current) => ({ ...current, username: '' }));
+          }}
+          onEmailChange={(value) => {
+            setRegEmail(value);
+            if (regFieldErrors.email) setRegFieldErrors((current) => ({ ...current, email: '' }));
+          }}
+          onPasswordChange={(value) => {
+            setRegPassword(value);
+            if (regFieldErrors.password || regFieldErrors.confirm) {
+              setRegFieldErrors((current) => ({
+                ...current,
+                password: '',
+                confirm: current.confirm === 'Passordene stemmer ikke overens.' ? '' : current.confirm,
+              }));
+            }
+          }}
+          onConfirmChange={(value) => {
+            setRegConfirm(value);
+            if (regFieldErrors.confirm) setRegFieldErrors((current) => ({ ...current, confirm: '' }));
+          }}
+          onUsernameBlur={() => {
+            setRegFieldErrors((current) => ({ ...current, username: validateUsername(regUsername) }));
+          }}
+          onEmailBlur={() => {
+            setRegFieldErrors((current) => ({ ...current, email: validateEmail(regEmail) }));
+          }}
+          onPasswordBlur={() => {
+            setRegFieldErrors((current) => ({
+              ...current,
+              password: validatePassword(regPassword),
+              confirm: regConfirm ? validatePasswordConfirm(regPassword, regConfirm) : current.confirm,
+            }));
+          }}
+          onConfirmBlur={() => {
+            setRegFieldErrors((current) => ({ ...current, confirm: validatePasswordConfirm(regPassword, regConfirm) }));
+          }}
+        />
     </div>
   );
 }
