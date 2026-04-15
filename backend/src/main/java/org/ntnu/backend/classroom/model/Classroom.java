@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "classroom")
@@ -13,8 +14,8 @@ public class Classroom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", length = 36)
-    private String id;
+    @Column(name = "id")
+    private UUID id;
 
     @Column(name = "title", nullable = false, length = 200)
     private String title;

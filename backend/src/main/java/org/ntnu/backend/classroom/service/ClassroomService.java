@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
+import java.util.UUID;
 
 @Service
 public class ClassroomService {
@@ -35,7 +36,7 @@ public class ClassroomService {
     }
 
     public ClassroomResponse updateClassroom(String id, UpdateClassroomRequest request) {
-        Classroom classroom = findClassroom(id);
+        Classroom classroom = findClassroom(UUID.fromString(id));
         if (request.getTitle() != null && !request.getTitle().isBlank()) {
             classroom.setTitle(request.getTitle().trim());
         }
@@ -50,16 +51,17 @@ public class ClassroomService {
     }
 
     public void deleteClassroom(String id) {
-        if (!classroomRepository.existsById(id)) {
+        UUID uuid = UUID.fromString(id);
+        if (!classroomRepository.existsById(uuid)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Klasserom ikke funnet");
         }
-        classroomRepository.deleteById(id);
+        classroomRepository.deleteById(uuid);
     }
 
     // ── Shared operations ─────────────────────────────────────────────────────
 
     public ClassroomResponse getClassroom(String id) {
-        return toResponse(findClassroom(id));
+        return toResponse(findClassroom(UUID.fromString(id)));
     }
 
     // ── Student operations ────────────────────────────────────────────────────
@@ -73,7 +75,7 @@ public class ClassroomService {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private Classroom findClassroom(String id) {
+    private Classroom findClassroom(UUID id) {
         return classroomRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Klasserom ikke funnet"));
@@ -95,6 +97,6 @@ public class ClassroomService {
     }
 
     private ClassroomResponse toResponse(Classroom c) {
-        return new ClassroomResponse(c.getId(), c.getTitle(), c.getDescription(), c.getJoinCode());
+        return new ClassroomResponse(c.getId().toString(), c.getTitle(), c.getDescription(), c.getJoinCode());
     }
 }
