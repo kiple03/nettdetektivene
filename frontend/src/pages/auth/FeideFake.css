@@ -126,14 +126,7 @@
   align-items: stretch;
 }
 
-.feide-login-form label {
-  margin: 0;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #1a1a1a;
-}
-
-.feide-login-form input {
+.feide-input {
   width: 100%;
   padding: 0.7rem 0.75rem;
   border: 2px solid #606ca5;
@@ -146,9 +139,36 @@
   text-align: left;
 }
 
-.feide-login-form input:focus {
+.feide-input:focus {
   outline: 2px solid #606ca5;
   outline-offset: 1px;
+}
+
+.feide-input--error,
+.feide-input--error:focus {
+  border-color: #dc2626;
+  outline-color: #dc2626;
+}
+
+.feide-field-error {
+  margin: 0.1rem 0 0;
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.feide-login-error {
+  margin: 0.2rem 0 0;
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.feide-login-form label {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1a1a1a;
 }
 
 /* Login button — same tone as header/footer strip */

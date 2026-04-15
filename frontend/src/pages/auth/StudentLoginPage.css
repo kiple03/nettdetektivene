@@ -434,7 +434,7 @@
   letter-spacing: 0.5px;
 }
 
-.register-modal__field input {
+.register-modal__input {
   width: 100%;
   padding: 13px 14px;
   font-size: 0.95rem;
@@ -447,14 +447,28 @@
   box-sizing: border-box;
 }
 
-.register-modal__field input:focus {
+.register-modal__input:focus {
   border-color: #8b6340;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 0 0 3px rgba(139, 99, 64, 0.15);
 }
 
-.register-modal__field input::placeholder {
+.register-modal__input::placeholder {
   color: #b8a08a;
+}
+
+.register-modal__input--error,
+.register-modal__input--error:focus {
+  border-color: #dc2626;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.register-modal__field-error {
+  margin: 6px 0 0;
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 .register-modal__error {
@@ -465,6 +479,44 @@
   font-weight: 700;
   border-radius: 6px;
   border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.feide-input {
+  width: 100%;
+  padding: 0.7rem 0.75rem;
+  border: 2px solid #606ca5;
+  border-radius: 0;
+  background: #fff;
+  color: #1a1a1a;
+  font: inherit;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.feide-input:focus {
+  outline: 2px solid #606ca5;
+  outline-offset: 1px;
+}
+
+.feide-input--error,
+.feide-input--error:focus {
+  border-color: #dc2626;
+  outline-color: #dc2626;
+}
+
+.feide-field-error {
+  margin: 0.1rem 0 0;
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.feide-login-error {
+  margin: 0.2rem 0 0;
+  color: #dc2626;
+  font-size: 0.82rem;
+  font-weight: 600;
 }
 
 .register-modal__submit {

@@ -5,6 +5,14 @@ import { AxiosError } from 'axios';
 import { register } from '@/api/authApi';
 import { setToken } from '@/stores/authStore';
 import type { ApiErrorBody } from '@/types/user';
+import {
+  hasAuthErrors,
+  type AuthFieldErrors,
+  validateEmail,
+  validatePassword,
+  validatePasswordConfirm,
+  validateUsername,
+} from '@/utils/validators';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
 
@@ -15,7 +23,20 @@ function StudentLoginPage() {
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirm, setRegConfirm] = useState('');
+  const [regFieldErrors, setRegFieldErrors] = useState<AuthFieldErrors>({});
   const [regError, setRegError] = useState('');
+
+  const validateFields = () => {
+    const nextErrors: AuthFieldErrors = {
+      username: validateUsername(regUsername),
+      email: validateEmail(regEmail),
+      password: validatePassword(regPassword),
+      confirm: validatePasswordConfirm(regPassword, regConfirm),
+    };
+
+    setRegFieldErrors(nextErrors);
+    return nextErrors;
+  };
 
   const handleFeideLogin = () => {
     navigate('/auth/feide');
@@ -24,13 +45,9 @@ function StudentLoginPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError('');
+    const nextErrors = validateFields();
 
-    if (!regUsername || !regEmail || !regPassword || !regConfirm) {
-      setRegError('Vennligst fyll inn alle feltene.');
-      return;
-    }
-    if (regPassword !== regConfirm) {
-      setRegError('Passordene stemmer ikke overens.');
+    if (hasAuthErrors(nextErrors)) {
       return;
     }
 
@@ -43,9 +60,13 @@ function StudentLoginPage() {
       const axiosErr = err as AxiosError<ApiErrorBody>;
       if (axiosErr.response?.status === 409) {
         const field = axiosErr.response.data?.field;
-        if (field === 'username') setRegError('Brukernavnet er allerede i bruk.');
-        else if (field === 'email') setRegError('E-posten er allerede i bruk.');
-        else setRegError('Brukeren finnes allerede.');
+        if (field === 'username') {
+          setRegFieldErrors((current) => ({ ...current, username: 'Brukernavnet er allerede i bruk.' }));
+        } else if (field === 'email') {
+          setRegFieldErrors((current) => ({ ...current, email: 'E-posten er allerede i bruk.' }));
+        } else {
+          setRegError('Brukeren finnes allerede.');
+        }
       } else {
         setRegError('Registrering feilet. Prøv igjen.');
       }
@@ -105,49 +126,93 @@ function StudentLoginPage() {
               <div className="register-modal__field">
                 <label htmlFor="reg-username">Brukernavn</label>
                 <input
+                  className={regFieldErrors.username ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
                   id="reg-username"
                   type="text"
                   placeholder="Velg et brukernavn"
                   value={regUsername}
-                  onChange={(e) => setRegUsername(e.target.value)}
+                  onChange={(e) => {
+                    setRegUsername(e.target.value);
+                    if (regFieldErrors.username) {
+                      setRegFieldErrors((current) => ({ ...current, username: '' }));
+                    }
+                  }}
+                  onBlur={() => {
+                    setRegFieldErrors((current) => ({ ...current, username: validateUsername(regUsername) }));
+                  }}
                   autoComplete="username"
                 />
+                {regFieldErrors.username && <p className="register-modal__field-error">{regFieldErrors.username}</p>}
               </div>
 
               <div className="register-modal__field">
                 <label htmlFor="reg-email">E-post</label>
                 <input
+                  className={regFieldErrors.email ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
                   id="reg-email"
                   type="email"
                   placeholder="din.epost@eksempel.no"
                   value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
+                  onChange={(e) => {
+                    setRegEmail(e.target.value);
+                    if (regFieldErrors.email) {
+                      setRegFieldErrors((current) => ({ ...current, email: '' }));
+                    }
+                  }}
+                  onBlur={() => {
+                    setRegFieldErrors((current) => ({ ...current, email: validateEmail(regEmail) }));
+                  }}
                   autoComplete="email"
                 />
+                {regFieldErrors.email && <p className="register-modal__field-error">{regFieldErrors.email}</p>}
               </div>
 
               <div className="register-modal__field">
                 <label htmlFor="reg-password">Passord</label>
                 <input
+                  className={regFieldErrors.password ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
                   id="reg-password"
                   type="password"
                   placeholder="Velg et passord"
                   value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
+                  onChange={(e) => {
+                    setRegPassword(e.target.value);
+                    if (regFieldErrors.password) {
+                      setRegFieldErrors((current) => ({ ...current, password: '', confirm: current.confirm === 'Passordene stemmer ikke overens.' ? '' : current.confirm }));
+                    }
+                  }}
+                  onBlur={() => {
+                    setRegFieldErrors((current) => ({
+                      ...current,
+                      password: validatePassword(regPassword),
+                      confirm: regConfirm ? validatePasswordConfirm(regPassword, regConfirm) : current.confirm,
+                    }));
+                  }}
                   autoComplete="new-password"
                 />
+                {regFieldErrors.password && <p className="register-modal__field-error">{regFieldErrors.password}</p>}
               </div>
 
               <div className="register-modal__field">
                 <label htmlFor="reg-confirm">Bekreft passord</label>
                 <input
+                  className={regFieldErrors.confirm ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
                   id="reg-confirm"
                   type="password"
                   placeholder="Skriv passordet på nytt"
                   value={regConfirm}
-                  onChange={(e) => setRegConfirm(e.target.value)}
+                  onChange={(e) => {
+                    setRegConfirm(e.target.value);
+                    if (regFieldErrors.confirm) {
+                      setRegFieldErrors((current) => ({ ...current, confirm: '' }));
+                    }
+                  }}
+                  onBlur={() => {
+                    setRegFieldErrors((current) => ({ ...current, confirm: validatePasswordConfirm(regPassword, regConfirm) }));
+                  }}
                   autoComplete="new-password"
                 />
+                {regFieldErrors.confirm && <p className="register-modal__field-error">{regFieldErrors.confirm}</p>}
               </div>
 
               <button type="submit" className="register-modal__submit">
