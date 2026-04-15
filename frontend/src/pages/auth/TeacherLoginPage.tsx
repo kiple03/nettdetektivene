@@ -38,7 +38,7 @@ function TeacherLoginPage() {
   };
 
   const handleFeideLogin = () => {
-    navigate('/auth/feide');
+    navigate('/auth/feide', { state: { portalRole: 'TEACHER' } });
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -54,7 +54,7 @@ function TeacherLoginPage() {
       const res = await register({ username: regUsername, email: regEmail, password: regPassword, role: 'TEACHER' });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
-      navigate('/teacher/home');
+      navigate('/teacher');
     } catch (err) {
       const axiosErr = err as AxiosError<ApiErrorBody>;
       if (axiosErr.response?.status === 409) {
