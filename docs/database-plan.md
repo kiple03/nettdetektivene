@@ -100,39 +100,31 @@ CREATE TABLE stop (
     FOREIGN KEY (classroom_id) REFERENCES classroom(id) ON DELETE CASCADE
 );
 
-CREATE TABLE level (
+-- content_json stores all task-type-specific data.
+-- Example: { "type": "news", "articles": [{ "text": "...", "is_real": true }, ...] }
+-- Example: { "type": "image", "images": [{ "url": "...", "label": "ai_generated" }, ...] }
+CREATE TABLE task (
     id            CHAR(36)  PRIMARY KEY,              -- UUID
     stop_id       CHAR(36)  NOT NULL,
     display_order INT       NOT NULL,
     difficulty    TINYINT   NOT NULL DEFAULT 1,
-    FOREIGN KEY (stop_id) REFERENCES stop(id) ON DELETE CASCADE
-);
-
--- content_json stores all question-type-specific data.
--- Example: { "type": "news", "articles": [{ "text": "...", "is_real": true }, ...] }
--- Example: { "type": "image", "images": [{ "url": "...", "label": "ai_generated" }, ...] }
-CREATE TABLE question (
-    id            CHAR(36)  PRIMARY KEY,              -- UUID
-    level_id      CHAR(36)  NOT NULL,
-    display_order INT       NOT NULL,
     content_json  JSON      NOT NULL,
-    FOREIGN KEY (level_id) REFERENCES level(id) ON DELETE CASCADE
+    FOREIGN KEY (stop_id) REFERENCES stop(id) ON DELETE CASCADE
 );
 
 -- ============================================================
 -- PROGRESS (per enrollment)
 -- ============================================================
 
--- A row here means the level is fully completed. No partial progress is stored.
--- If a student quits mid-level, they must redo all questions from scratch.
-CREATE TABLE level_completion (
+CREATE TABLE task_progress (
     id            CHAR(36)  PRIMARY KEY,              -- UUID
     enrollment_id CHAR(36)  NOT NULL,
-    level_id      CHAR(36)  NOT NULL,
-    completed_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (enrollment_id, level_id),
+    task_id       CHAR(36)  NOT NULL,
+    completed_at  TIMESTAMP NULL,
+    attempts      INT       NOT NULL DEFAULT 0,
+    UNIQUE (enrollment_id, task_id),
     FOREIGN KEY (enrollment_id) REFERENCES enrollment(id) ON DELETE CASCADE,
-    FOREIGN KEY (level_id)      REFERENCES level(id)      ON DELETE CASCADE
+    FOREIGN KEY (task_id)       REFERENCES task(id)       ON DELETE CASCADE
 );
 
 -- One medal per stop per enrollment, earned when all tasks in that stop are completed.
@@ -188,6 +180,6 @@ CREATE TABLE mystery_submission (
 ## Notes
 
 - **Leaderboard scores** are derived (not stored): count completed stops/medals per enrollment for individual ranking; sum across all enrollments in a classroom for classroom-vs-classroom ranking.
-- **Notifications** to teachers (student stuck, completed stop, inappropriate content, mystery submission) are application-level events triggered by changes to `level_completion`, `mystery_submission`, and `notepad_entry` — no separate notification table needed for MVP.
+- **Notifications** to teachers (student stuck, completed stop, inappropriate content, mystery submission) are application-level events triggered by changes to `task_progress`, `mystery_submission`, and `notepad_entry` — no separate notification table needed for MVP.
 - **Feide login for students** is simulated per the vision document requirements.
-- **Hierarchy**: `classroom → stop → level → question`. A level is the unit of play; completing all questions in a level saves it as done. Medals are earned per stop (all levels in a stop completed).
+- **Hierarchy**: `classroom → stop → task`. A task is the unit of play; task content (including questions/options) is stored as `content_json`. Medals are earned per stop (all tasks in a stop completed).
