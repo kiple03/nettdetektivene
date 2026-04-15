@@ -45,7 +45,7 @@ export const router = createBrowserRouter([
         element: <FeideFake />,
     },
 
-    // Student routes — only accessible by authenticated STUDENT accounts
+    // Student routes — open during development
     {
         path: '/home',
         element: <StudentHomePage />,
