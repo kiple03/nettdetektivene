@@ -32,6 +32,7 @@ import {
 
 export const router = createBrowserRouter([
     // Auth routes (public)
+    // Auth routes (public)
     {
         path: '/',
         element: <StudentLoginPage />,
@@ -45,6 +46,7 @@ export const router = createBrowserRouter([
         element: <FeideFake />,
     },
 
+    // Student routes — open during development
     // Student routes — open during development
     {
         path: '/home',
