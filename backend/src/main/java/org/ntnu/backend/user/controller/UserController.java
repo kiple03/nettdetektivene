@@ -32,6 +32,9 @@ public class UserController {
   @Value("${jwt.refresh-expiration-ms}")
   private long refreshExpiration;
 
+  @Value("${app.cookie.secure:true}")
+  private boolean cookieSecure;
+
   @Operation(summary = "Register a new user", description = "Creates a new user. Returns access "
       + "token and refresh token in HttpOnly cookie.")
   @ApiResponse(responseCode = "200", description = "Registration successful")
@@ -75,9 +78,9 @@ public class UserController {
   @ApiResponse(responseCode = "200", description = "Successful logout")
   @PostMapping("/logout")
   public ResponseEntity<Void> logout() {
-    ResponseCookie cookie = ResponseCookie.from("refreshToken", null)
+    ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
         .httpOnly(true)
-        .secure(true)
+        .secure(cookieSecure)
         .path("/api/auth/refresh")
         .maxAge(0)
         .sameSite("Lax")
@@ -91,7 +94,7 @@ public class UserController {
   private String createRefreshCookie(String refreshToken) {
     return ResponseCookie.from("refreshToken", refreshToken)
         .httpOnly(true)
-        .secure(true)
+        .secure(cookieSecure)
         .sameSite("Lax")
         .path("/api/auth/refresh")
         .maxAge(refreshExpiration / 1000)
