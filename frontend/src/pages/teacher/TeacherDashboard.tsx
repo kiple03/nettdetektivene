@@ -1,5 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import type { ClassroomSummary } from '../../types/classroom';
+import LogoutButton from '../../components/LogoutButton';
 import './TeacherDashboard.css';
 
 export default function TeacherDashboard() {
@@ -9,9 +10,12 @@ export default function TeacherDashboard() {
     <div className="teacher-dashboard">
       <header className="teacher-dashboard__header">
         <h1 className="teacher-dashboard__title">Mine klasser</h1>
-        <Link to="/teacher/notifications" className="teacher-dashboard__bell" aria-label="Varsler">
-          <BellIcon />
-        </Link>
+        <div className="teacher-dashboard__header-actions">
+          <Link to="/teacher/notifications" className="teacher-dashboard__bell" aria-label="Varsler">
+            <BellIcon />
+          </Link>
+          <LogoutButton className="teacher-dashboard__logout" />
+        </div>
       </header>
 
       {summaries.length === 0 && (
