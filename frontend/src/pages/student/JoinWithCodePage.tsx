@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import styles from "./JoinWithCodePage.module.css";
 
 import detectiveImage from "@/assets/images/joinWithCode/detective.png";
@@ -6,10 +6,36 @@ import classroomBackground from "@/assets/images/joinWithCode/bgClassroomCode.pn
 
 export default function JoinWithCodePage() {
     const [code, setCode] = useState("");
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const rawCode = useMemo(() => {
+        return code.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 6);
+    }, [code]);
+
+    const displayCode = useMemo(() => {
+        const padded = rawCode.padEnd(6, "X");
+        return `${padded.slice(0, 3)}-${padded.slice(3, 6)}`;
+    }, [rawCode]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const cleaned = e.target.value
+            .replace(/[^a-zA-Z0-9]/g, "")
+            .toUpperCase()
+            .slice(0, 6);
+
+        setCode(cleaned);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Backspace" && rawCode.length > 0) {
+            e.preventDefault();
+            setCode((prev) => prev.slice(0, -1));
+        }
+    };
 
     const handleJoin = () => {
-        console.log("Joining classroom with code:", code);
-        //TODO: endpoints
+        console.log("Joining classroom with code:", rawCode);
+        // TODO: endpoints
     };
 
     return (
@@ -43,14 +69,49 @@ export default function JoinWithCodePage() {
                             Skriv inn kode:
                         </label>
 
-                        <input
-                            id="classroom-code"
-                            type="text"
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
-                            placeholder="F.eks. ABC123"
-                            className={styles.input}
-                        />
+                        <div
+                            className={styles.codeInputWrapper}
+                            onClick={() => inputRef.current?.focus()}
+                        >
+                            <input
+                                ref={inputRef}
+                                id="classroom-code"
+                                type="text"
+                                inputMode="text"
+                                autoComplete="off"
+                                spellCheck={false}
+                                value={rawCode}
+                                onChange={handleChange}
+                                onKeyDown={handleKeyDown}
+                                className={styles.hiddenInput}
+                                aria-label="Skriv inn kode"
+                            />
+
+                            <div className={styles.codeDisplay} aria-hidden="true">
+                                {displayCode.split("").map((char, index) => {
+                                    const isTyped =
+                                        (index < 3 && rawCode[index]) ||
+                                        (index > 3 && rawCode[index - 1]);
+
+                                    const isDash = char === "-";
+
+                                    return (
+                                        <span
+                                            key={`${char}-${index}`}
+                                            className={[
+                                                styles.codeChar,
+                                                isDash ? styles.codeDash : "",
+                                                isTyped ? styles.codeFilled : styles.codePlaceholder,
+                                            ]
+                                                .filter(Boolean)
+                                                .join(" ")}
+                                        >
+                                            {char}
+                                        </span>
+                                    );
+                                })}
+                            </div>
+                        </div>
 
                         <button type="button" onClick={handleJoin} className={styles.button}>
                             Bli med
