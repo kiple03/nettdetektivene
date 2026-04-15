@@ -4,7 +4,7 @@ import LevelOne from "../pages/student/LevelOnePage";
 import StudentLoginPage from "@/pages/auth/StudentLoginPage";
 import TeacherLoginPage from "@/pages/auth/TeacherLoginPage";
 import FeideFake from "@/pages/auth/FeideFake";
-import Homescreen from "@/pages/student/homescreen";
+import StudentHomePage from "@/pages/student/StudentHomePage";
 import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
 import ClassroomDetail from "@/pages/teacher/ClassroomDetail";
@@ -40,7 +40,7 @@ export const router = createBrowserRouter([
     // Student routes
     {
         path: '/home',
-        element: <Homescreen />,
+        element: <StudentHomePage />,
     },
     {
         path: '/map',
@@ -50,7 +50,7 @@ export const router = createBrowserRouter([
         path: '/levelOne',
         element: <LevelOne />,
     },
-    
+
       // Teacher routes
     {
         path: '/teacher',
