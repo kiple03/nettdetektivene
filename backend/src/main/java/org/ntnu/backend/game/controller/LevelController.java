@@ -1,10 +1,10 @@
-package org.ntnu.backend.level.controller;
+package org.ntnu.backend.game.controller;
 
 import jakarta.validation.Valid;
-import org.ntnu.backend.level.dto.LevelResponse;
-import org.ntnu.backend.level.dto.ValidateLevelAnswerRequest;
-import org.ntnu.backend.level.dto.ValidateLevelAnswerResponse;
-import org.ntnu.backend.level.service.LevelService;
+import org.ntnu.backend.game.dto.LevelResponse;
+import org.ntnu.backend.game.dto.ValidateLevelAnswerRequest;
+import org.ntnu.backend.game.dto.ValidateLevelAnswerResponse;
+import org.ntnu.backend.game.service.LevelService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

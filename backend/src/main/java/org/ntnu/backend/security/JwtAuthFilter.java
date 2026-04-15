@@ -76,12 +76,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
       UUID userId = UUID.fromString(claims.get("userId", String.class));
       String role = claims.get("role", String.class);
+      String classroomIdStr = claims.get("classroomId", String.class);
+      UUID classroomId = classroomIdStr != null ? UUID.fromString(classroomIdStr) : null;
+
       List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
       JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
           claims.getSubject(),
           userId,
           role,
+          classroomId,
           authorities
       );
 
