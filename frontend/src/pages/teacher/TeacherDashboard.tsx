@@ -16,12 +16,6 @@ export default function TeacherDashboard() {
           </Link>
           <LogoutButton className="teacher-dashboard__logout" />
         </div>
-        <div className="teacher-dashboard__header-actions">
-          <Link to="/teacher/notifications" className="teacher-dashboard__bell" aria-label="Varsler">
-            <BellIcon />
-          </Link>
-          <LogoutButton className="teacher-dashboard__logout" />
-        </div>
       </header>
 
       {summaries.length === 0 && (

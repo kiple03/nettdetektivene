@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import styles from './LogoutButton.module.css';
 
-function LogoutButton() {
+function LogoutButton({ className }: { className?: string }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -12,7 +12,7 @@ function LogoutButton() {
   };
 
   return (
-    <button type="button" className={styles.logoutButton} onClick={handleClick}>
+    <button type="button" className={[styles.logoutButton, className].filter(Boolean).join(' ')} onClick={handleClick}>
       Logg ut
     </button>
   );
