@@ -34,7 +34,7 @@ public class ClassroomService {
         return toResponse(saved);
     }
 
-    public ClassroomResponse updateClassroom(int id, UpdateClassroomRequest request) {
+    public ClassroomResponse updateClassroom(String id, UpdateClassroomRequest request) {
         Classroom classroom = findClassroom(id);
         if (request.getTitle() != null && !request.getTitle().isBlank()) {
             classroom.setTitle(request.getTitle().trim());
@@ -49,7 +49,7 @@ public class ClassroomService {
         return toResponse(classroomRepository.save(classroom));
     }
 
-    public void deleteClassroom(int id) {
+    public void deleteClassroom(String id) {
         if (!classroomRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Klasserom ikke funnet");
         }
@@ -58,17 +58,12 @@ public class ClassroomService {
 
     // ── Shared operations ─────────────────────────────────────────────────────
 
-    public ClassroomResponse getClassroom(int id) {
+    public ClassroomResponse getClassroom(String id) {
         return toResponse(findClassroom(id));
     }
 
     // ── Student operations ────────────────────────────────────────────────────
 
-    /**
-     * Allows a student to look up a classroom by its join code.
-     * Actual membership/enrollment logic should be added here once
-     * a student–classroom relationship entity exists.
-     */
     public ClassroomResponse joinClassroom(JoinClassroomRequest request) {
         Classroom classroom = classroomRepository.findByJoinCode(request.getJoinCode())
                 .orElseThrow(() -> new ResponseStatusException(
@@ -78,7 +73,7 @@ public class ClassroomService {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    private Classroom findClassroom(int id) {
+    private Classroom findClassroom(String id) {
         return classroomRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Klasserom ikke funnet"));
