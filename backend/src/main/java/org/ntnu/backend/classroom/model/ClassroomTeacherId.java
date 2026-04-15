@@ -19,8 +19,8 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class ClassroomTeacherId implements Serializable {
 
-    @Column(name = "classroom_id", length = 36)
-    private String classroomId;
+    @Column(name = "classroom_id")
+    private UUID classroomId;
 
     @Column(name = "user_id", length = 36)
     private UUID userId;

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "classroom")
-@Getter @Setter @NoArgsConstructor(access = AccessLevel.PROTECTED) @AllArgsConstructor @Builder
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Classroom {
 
     @Id
