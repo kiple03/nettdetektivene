@@ -1,12 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import styles from './LogoutButton.module.css';
 
-interface Props {
-  className?: string;
-  label?: string;
-}
-
-function LogoutButton({ className, label = 'Logg ut' }: Props) {
+function LogoutButton({ className }: { className?: string }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -16,8 +12,8 @@ function LogoutButton({ className, label = 'Logg ut' }: Props) {
   };
 
   return (
-    <button type="button" className={className} onClick={handleClick}>
-      {label}
+    <button type="button" className={[styles.logoutButton, className].filter(Boolean).join(' ')} onClick={handleClick}>
+      Logg ut
     </button>
   );
 }

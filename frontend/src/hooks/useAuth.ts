@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { clearToken, decodeToken, getRole, getToken } from '@/stores/authStore';
+import { clearToken, decodeToken, getToken, isLoggedIn as checkLoggedIn } from '@/stores/authStore';
 import { logout as logoutApi } from '@/api/authApi';
 import type { Role } from '@/types/user';
 
@@ -35,8 +35,9 @@ export function useAuth(): UseAuth {
 
   const payload = decodeToken(token);
   return {
-    isLoggedIn: token !== null,
-    role: payload?.role ?? getRole(),
+    // Rely on the expiry-aware check rather than mere token presence.
+    isLoggedIn: checkLoggedIn(),
+    role: (payload?.role as Role | undefined) ?? null,
     username: payload?.username ?? null,
     logout,
   };

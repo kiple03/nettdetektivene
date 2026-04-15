@@ -2,6 +2,8 @@ import type { Role } from '@/types/user';
 
 const TOKEN_KEY = 'token';
 
+const KNOWN_ROLES: Role[] = ['STUDENT', 'TEACHER'];
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -14,14 +16,10 @@ export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
 }
 
-export function isLoggedIn(): boolean {
-  return getToken() !== null;
-}
-
 interface JwtPayload {
-  userId?: number;
+  userId?: string;
   username?: string;
-  role?: Role;
+  role?: string;
   exp?: number;
 }
 
@@ -33,12 +31,33 @@ export function decodeToken(token: string | null = getToken()): JwtPayload | nul
     const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
     const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
     const json = atob(padded);
-    return JSON.parse(json) as JwtPayload;
+    const raw = JSON.parse(json) as JwtPayload;
+
+    // Normalise role: strip any accidental "ROLE_" prefix left over from
+    // earlier token formats and reject unknown values as a fail-safe.
+    if (raw.role) {
+      const bare = raw.role.replace(/^ROLE_/, '') as Role;
+      raw.role = KNOWN_ROLES.includes(bare) ? bare : undefined;
+    }
+
+    return raw;
   } catch {
     return null;
   }
 }
 
+/** Returns true only when the stored token exists, decodes cleanly, and is not expired. */
+export function isLoggedIn(): boolean {
+  const payload = decodeToken();
+  if (!payload) return false;
+  if (payload.exp !== undefined && payload.exp * 1000 < Date.now()) {
+    clearToken();
+    return false;
+  }
+  return true;
+}
+
 export function getRole(): Role | null {
-  return decodeToken()?.role ?? null;
+  const role = decodeToken()?.role;
+  return role ? (role as Role) : null;
 }

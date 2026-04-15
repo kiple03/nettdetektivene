@@ -18,10 +18,12 @@ import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -73,6 +75,15 @@ public class UserService {
 
     if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
       throw new BadCredentialsException("Invalid credentials");
+    }
+
+    // Reject cross-portal logins: a STUDENT must not authenticate on the teacher
+    // portal and vice-versa. Use a generic 403 so the error leaks no extra info.
+    if (user.getRole() != request.getPortalRole()) {
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN,
+          "This account does not have access to the requested portal"
+      );
     }
 
     return buildLoginResponse(user);

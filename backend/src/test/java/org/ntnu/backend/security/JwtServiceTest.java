@@ -11,11 +11,17 @@ import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 
 class JwtServiceTest {
 
@@ -62,7 +68,7 @@ class JwtServiceTest {
     assertThat(claims.getSubject()).isEqualTo("testuser");
     assertThat(claims.get("userId", String.class))
         .isEqualTo(teacherPrincipal.getUser().getId().toString());
-    assertThat(claims.get("role", String.class)).isEqualTo("ROLE_TEACHER");
+    assertThat(claims.get("role", String.class)).isEqualTo("TEACHER");
   }
 
   @Test
@@ -78,7 +84,7 @@ class JwtServiceTest {
     String token = jwtService.generateToken(studentPrincipal, classroomId);
     Claims claims = jwtService.parseAndValidate(token);
 
-    assertThat(claims.get("role", String.class)).isEqualTo("ROLE_STUDENT");
+    assertThat(claims.get("role", String.class)).isEqualTo("STUDENT");
   }
 
   // ===== PARSING & VALIDATION =====

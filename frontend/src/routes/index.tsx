@@ -11,6 +11,11 @@ import ClassroomDetail from "@/pages/teacher/ClassroomDetail";
 import StudentDetail from "@/pages/teacher/StudentDetail";
 import MysterySubmissions from "@/pages/teacher/MysterySubmissions";
 import Notifications from "@/pages/teacher/Notifications";
+import LeaderboardPage from "@/pages/student/LeaderboardPage.tsx";
+import NotesPage from "@/pages/student/NotesPage";
+import BadgesPage from "@/pages/student/BadgesPage";
+import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
+import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 // Route guard temporarily disabled during game development so we don't
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
 // wrappers below and uncommenting this import.
@@ -27,7 +32,8 @@ import {
 } from "@/services/teacherService";
 
 export const router = createBrowserRouter([
-    // Auth routes
+    // Auth routes (public)
+    // Auth routes (public)
     {
         path: '/',
         element: <StudentLoginPage />,
@@ -41,12 +47,15 @@ export const router = createBrowserRouter([
         element: <FeideFake />,
     },
 
-    // Student routes
-    // NOTE: <RequireAuth role="STUDENT"> wrappers removed during game dev.
-    // Re-add them (and the import above) once game flows don't need the pages to be open.
+    // Student routes — open during development
+    // Student routes — open during development
     {
         path: '/home',
         element: <StudentHomePage />,
+    },
+    {
+        path: '/join-with-code',
+        element: <JoinWithCodePage />,
     },
     {
         path: '/map',
@@ -55,6 +64,22 @@ export const router = createBrowserRouter([
     {
         path: '/levelOne',
         element: <LevelOne />,
+    },
+    {
+        path: '/leaderboard',
+        element: <LeaderboardPage />,
+    },
+    {
+        path: '/notes',
+        element: <NotesPage />,
+    },
+    {
+        path: '/badges',
+        element: <BadgesPage />,
+    },
+    {
+        path: '/weekly-mystery',
+        element: <WeeklyMysteryPage />,
     },
 
 

@@ -5,22 +5,113 @@
     background-image: url("../../assets/images/static_map_bg.svg");
     background-size: cover;
     background-position: center;
+    overflow: hidden;
+}
+
+.header {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 20;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.header p {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.startButton {
+    margin-top: 6px;
+    z-index: 20;
+}
+
+.levelGrid {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .hotspot {
     position: absolute;
-    width: 20vw;
-    height: 20vw;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
     cursor: pointer;
-    display: flex;
+    display: inline-flex;
+    width: fit-content;
+    height: fit-content;
 }
 
 .hotspot:hover {
-    transform: scale(1.1);
+    transform: scale(1.03);
     transition: 0.2s ease;
 }
 
+.iconWrapper {
+    position: relative;
+    display: inline-block;
+    width: fit-content;
+    height: fit-content;
+}
+
 .icon {
-    width: 100%;
-    height: 100%;
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 260px;
+    max-height: 260px;
+    object-fit: contain;
+}
+
+.lockedIcon {
+    filter: grayscale(100%) brightness(0.82);
+    opacity: 0.9;
+}
+
+.lockBadge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 2px solid rgba(107, 114, 128, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.lockSvg {
+    width: 22px;
+    height: 22px;
+    color: #6b7280;
+}
+
+.dialogActions {
+    margin-top: 18px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.backButtonWrapper {
+    position: absolute;
+    left: 24px;
+    bottom: 24px;
+    z-index: 20;
 }

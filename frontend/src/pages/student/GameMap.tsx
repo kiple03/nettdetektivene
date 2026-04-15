@@ -1,4 +1,4 @@
-import BackButton from "@/components/BackButton";
+import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 
 function GameMap(){
     

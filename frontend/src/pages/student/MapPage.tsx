@@ -1,20 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./MapPage.module.css"
-import BackButton from "../../components/BackButton";
-import styles from './MapPage.module.css';
-import datasenteret from '../../assets/images/datasenteret.svg';
-import detektivkontoret from '../../assets/images/detektivkontoret.svg';
-import fotografen from '../../assets/images/fotografen.svg';
-import markedsplassen from '../../assets/images/markedsplassen.svg';
-import moteplassen from '../../assets/images/møteplassen.svg';
-import nyhetskvartalet from '../../assets/images/nyhetskvartalet.svg';
-import passordbanken from '../../assets/images/passordbanken.svg';
-import postkontoret from '../../assets/images/postkontoret.svg';
-
-
-
-
+import "./MapPage.module.css";
+import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import styles from "./MapPage.module.css";
+import datasenteret from "@/assets/images/datasenteret.svg";
+import detektivkontoret from "@/assets/images/detektivkontoret.svg";
+import fotografen from "@/assets/images/fotografen.svg";
+import markedsplassen from "@/assets/images/markedsplassen.svg";
+import moteplassen from "@/assets/images/møteplassen.svg";
+import nyhetskvartalet from "@/assets/images/nyhetskvartalet.svg";
+import passordbanken from "@/assets/images/passordbanken.svg";
+import postkontoret from "@/assets/images/postkontoret.svg";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
+import { Button } from "@/components/ui/buttons/Button.tsx";
+import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
 
 interface Level {
     step: string;
@@ -23,105 +27,155 @@ interface Level {
     x: string;
     y: string;
     icon: string;
+    unlocked: boolean;
 }
 
 const levels: Level[] = [
-  {
-    step: "1",
-    title: "Nivå 1",
-    route: "/levelOne",
-    x: "5%",
-    y: "40%",
-    icon: nyhetskvartalet
-  },
-  {
-    step: "2",
-    title: "Nivå 2",
-    route: "/levelTwo",
-    x: "25%",
-    y: "20%",
-    icon: fotografen
-  },
-  {
-    step: "3",
-    title: "Nivå 3",
-    route: "/levelThree",
-    x: "30%",
-    y: "55%",
-    icon: postkontoret
-  },
-  {
-    step: "4",
-    title: "Nivå 4",
-    route: "/levelFour",
-    x: "50%",
-    y: "30%",
-    icon: passordbanken
-  },
-  {
-    step: "5",
-    title: "Nivå 5",
-    route: "/levelFive",
-    x: "60%",
-    y: "-5%",
-    icon: markedsplassen
-  },
-  {
-    step: "6",
-    title: "Nivå 6",
-    route: "/levelSix",
-    x: "70%",
-    y: "65%",
-    icon: moteplassen
-  },
-  {
-    step: "7",
-    title: "Nivå 7",
-    route: "/levelFinal",
-    x: "80%",
-    y: "30%",
-    icon: datasenteret
-  },
-]
+    {
+        step: "1",
+        title: "Nyhetskvartalet",
+        route: "/levelOne",
+        x: "8%",
+        y: "46%",
+        icon: nyhetskvartalet,
+        unlocked: true,
+    },
+    {
+        step: "2",
+        title: "Fotografen",
+        route: "/levelTwo",
+        x: "27%",
+        y: "28%",
+        icon: fotografen,
+        unlocked: false,
+    },
+    {
+        step: "3",
+        title: "Postkontoret",
+        route: "/levelThree",
+        x: "34%",
+        y: "63%",
+        icon: postkontoret,
+        unlocked: false,
+    },
+    {
+        step: "4",
+        title: "Passordbanken",
+        route: "/levelFour",
+        x: "53%",
+        y: "33%",
+        icon: passordbanken,
+        unlocked: false,
+    },
+    {
+        step: "5",
+        title: "Markedsplassen",
+        route: "/levelFive",
+        x: "61%",
+        y: "11%",
+        icon: markedsplassen,
+        unlocked: false,
+    },
+    {
+        step: "6",
+        title: "Den sosiale møteplassen",
+        route: "/levelSix",
+        x: "72%",
+        y: "78%",
+        icon: moteplassen,
+        unlocked: false,
+    },
+    {
+        step: "7",
+        title: "Datasenteret",
+        route: "/levelFinal",
+        x: "84%",
+        y: "39%",
+        icon: datasenteret,
+        unlocked: false,
+    },
+];
 
 export default function MapPage() {
-    const [selectedLevel, setSelectedLevel] = useState<string>("");
+    const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
+    const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const navigate = useNavigate();
 
-    const selectedLevelData = levels.find((level) => level.step === selectedLevel);
+    const handleLevelClick = (level: Level) => {
+        if (level.unlocked) {
+            // Navigate directly when the user clicks the unlocked icon
+            navigate(level.route);
+            return;
+        }
+
+        setLockedLevelTitle(level.title);
+        setLockedDialogOpen(true);
+    };
 
     return (
         <div className={styles.container}>
-          <h1>Velg nivå</h1>
-          <p>Velge neste nivå</p>
+            <div className={styles.header}>
+                <h1>Velg nivå</h1>
+                <p>Velge neste nivå</p>
+            </div>
 
-          <div
-              className={styles.hotspot}
-              style={{top: "-5%", left: "0%"}}
-          >
-            <img src={detektivkontoret} alt="Start" className={styles.icon}/>
-          </div>
-
-          <div className="level-grid">
-            {levels.map((level) => (
-                <div
-                    key={level.step}
+            <div className={styles.levelGrid}>
+                <BackButton
                     className={styles.hotspot}
-                    style={{top: level.y, left: level.x}}
-                    onClick={() => setSelectedLevel(level.step)}
+                    style={{ top: "6%", left: "1.5%" }}
+                    ariaLabel="Gå tilbake"
                 >
-                  <img src={level.icon} alt={level.title} className={styles.icon}/>
-                </div>
-            ))}
-          </div>
+                    <div className={styles.iconWrapper}>
+                        <img
+                            src={detektivkontoret}
+                            alt="Tilbake til Detektivkontoret"
+                            className={styles.icon}
+                        />
+                    </div>
+                </BackButton>
 
-          <button
-              onClick={() => selectedLevelData && navigate(selectedLevelData.route)}
-              disabled={!selectedLevel}
-          >Start
-          </button>
+                {levels.map((level) => (
+                    <button
+                        key={level.step}
+                        type="button"
+                        className={styles.hotspot}
+                        style={{ top: level.y, left: level.x }}
+                        onClick={() => handleLevelClick(level)}
+                        aria-label={level.title}
+                    >
+                        <div className={styles.iconWrapper}>
+                            <img
+                                src={level.icon}
+                                alt={level.title}
+                                className={`${styles.icon} ${!level.unlocked ? styles.lockedIcon : ""}`}
+                            />
 
-          <BackButton/>
+                            {!level.unlocked && <LockBadge />}
+                        </div>
+                    </button>
+                ))}
+            </div>
+
+            <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogTitle>Nivå låst 🔒</AlertDialogTitle>
+
+                    <AlertDialogDescription>
+                        {lockedLevelTitle} er ikke åpnet ennå. Du må fullføre de tidligere nivåene først.
+                    </AlertDialogDescription>
+
+                    <div className={styles.dialogActions}>
+                        <Button
+                            variant="fun"
+                            type="button"
+                            onClick={() => setLockedDialogOpen(false)}
+                        >
+                            Lukk
+                        </Button>
+                    </div>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
+
 }
