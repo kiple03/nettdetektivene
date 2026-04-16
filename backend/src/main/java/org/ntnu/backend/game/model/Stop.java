@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,9 +20,6 @@ public class Stop {
     private int id;
 
     private String name;
-
-    @Column(name = "classroom_id")
-    private UUID classroomId;
 
     @Column(name = "display_order")
     private Integer displayOrder;

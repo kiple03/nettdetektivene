@@ -205,9 +205,8 @@ public class TeacherClassroomService {
     }
 
     @Transactional(readOnly = true)
-    public List<StopResponse> listStops(UUID classroomId, JwtAuthenticatedPrincipal principal) {
-        classroomAuthorizationService.verifyAccess(principal, classroomId);
-        return stopRepository.findByClassroomIdOrderByDisplayOrderAsc(classroomId)
+    public List<StopResponse> listStops() {
+        return stopRepository.findAllByOrderByDisplayOrderAsc()
             .stream()
             .map(stop -> StopResponse.builder()
                 .id(stop.getId())
