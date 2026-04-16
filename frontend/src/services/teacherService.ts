@@ -86,17 +86,8 @@ export async function getClassroom(classroomId: string): Promise<ClassroomDetail
 }
 
 export async function createClassroom(title: string, description: string | null): Promise<ClassroomDetail> {
-  const joinCode = title.replace(/\s+/g, '').toUpperCase().slice(0, 6) + Math.floor(Math.random() * 100);
-  const newId = Math.max(...MOCK_CLASSROOMS.map((c) => c.id)) + 1;
-  const classroom = { id: newId, title, description, join_code: joinCode, created_at: new Date().toISOString() };
-  MOCK_CLASSROOMS.push(classroom);
-  return {
-    id: String(newId),
-    title,
-    description,
-    joinCode,
-    createdAt: classroom.created_at,
-  };
+  const res = await apiClient.post<RawClassroomDetail>('/teacher/classrooms', { title, description });
+  return mapClassroomDetail(res.data);
 }
 
 export async function getStudentProgress(classroomId: string): Promise<StudentSummary[]> {
