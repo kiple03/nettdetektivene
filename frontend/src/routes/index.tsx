@@ -32,6 +32,7 @@ import {
     getClassroom,
     getStops,
 } from "@/services/teacherService";
+import AvatarDevPage from "@/pages/student/AvatarDevPage";
 
 export const router = createBrowserRouter([
     // Auth routes (public)
@@ -143,5 +144,9 @@ export const router = createBrowserRouter([
             ]);
             return { notifications, classrooms: summaries };
         },
+    },
+    {
+        path: "/avatar",
+        element: <AvatarDevPage />
     },
 ]);

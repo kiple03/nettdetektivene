@@ -28,7 +28,7 @@ public class UserAvatarService {
                                         .map(inventoryItem -> EquippedItemDto.builder()
                                             .id(inventoryItem.getAvatarItem().getId())
                                             .name(inventoryItem.getAvatarItem().getName())
-                                            .imageUrl("/assets/avatar-parts/" + inventoryItem.getAvatarItem().getName() + ".png")
+                                            .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".png")
                                             .build())
                                         .toList();
         return UserProfileResponse.builder()

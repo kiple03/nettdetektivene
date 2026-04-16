@@ -9,7 +9,6 @@ export function Header(){
     
     return (
         <div>
-            <img src={userProfile?.avatar} alt="Avatar picture" />
             <LayeredAvatar items={userProfile?.equippedItems || []} size={48}/>
             <span>{userProfile?.username}</span>
         </div>
