@@ -41,7 +41,7 @@ export default function Notifications() {
 
   const filtered = classroomFilter === 'all'
     ? notifications
-    : notifications.filter(n => n.classroom_id === classroomFilter);
+    : notifications.filter(n => String(n.classroom_id) === classroomFilter);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -93,7 +93,7 @@ export default function Notifications() {
       ) : (
         <ul className="notifs__list">
           {filtered.map(n => {
-            const classroom = classrooms.find(c => c.id === n.classroom_id);
+            const classroom = classrooms.find(c => c.id === String(n.classroom_id));
             return (
               <li key={n.id} className={`notifs__item${n.read ? ' notifs__item--read' : ''}`}>
                 <span className="notifs__icon" aria-hidden="true">{TYPE_ICONS[n.type]}</span>
