@@ -33,7 +33,7 @@ public class GameMapper {
     return new StopOverviewResponse(
         stop.getId(),
         stop.getName(),
-        locked,
+        locked
     );
   }
 
