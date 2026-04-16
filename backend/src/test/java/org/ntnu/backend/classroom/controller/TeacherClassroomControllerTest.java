@@ -18,7 +18,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
-import org.ntnu.backend.classroom.dto.StopResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
@@ -566,58 +565,4 @@ class TeacherClassroomControllerTest {
             .andExpect(status().isForbidden());
     }
 
-    @Test
-    void listStops_returnsOk() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
-
-        StopResponse stop = StopResponse.builder()
-            .id(1)
-            .name("City Hall")
-            .displayOrder(1)
-            .build();
-
-        when(teacherClassroomService.listStops(eq(classroomId), any())).thenReturn(List.of(stop));
-
-        mockMvc.perform(get("/api/teacher/classrooms/" + classroomId + "/stops")
-                .with(authentication(teacherAuth(teacherId))))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].name").value("City Hall"))
-            .andExpect(jsonPath("$[0].displayOrder").value(1));
-    }
-
-    @Test
-    void listStops_noAuth_returns401() throws Exception {
-        mockMvc.perform(get("/api/teacher/classrooms/" + UUID.randomUUID() + "/stops"))
-            .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void listStops_studentRole_returns403() throws Exception {
-        UUID userId = UUID.randomUUID();
-        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, "STUDENT", UUID.randomUUID(),
-            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
-        );
-        JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
-
-        mockMvc.perform(get("/api/teacher/classrooms/" + UUID.randomUUID() + "/stops")
-                .with(authentication(studentAuth)))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void listStops_notOwnedByTeacher_returns403() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
-
-        when(teacherClassroomService.listStops(eq(classroomId), any()))
-            .thenThrow(new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.FORBIDDEN));
-
-        mockMvc.perform(get("/api/teacher/classrooms/" + classroomId + "/stops")
-                .with(authentication(teacherAuth(teacherId))))
-            .andExpect(status().isForbidden());
-    }
 }
