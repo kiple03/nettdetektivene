@@ -1,39 +1,55 @@
 package org.ntnu.backend.classroom.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
+import org.ntnu.backend.security.JwtService;
+import org.ntnu.backend.security.JwtAuthenticationToken;
+import org.ntnu.backend.config.SecurityConfig;
+import org.ntnu.backend.security.JwtAuthenticationEntryPoint;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(TeacherClassroomController.class)
+@Import({SecurityConfig.class, JwtAuthenticationEntryPoint.class})
 class TeacherClassroomControllerTest {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
     private TeacherClassroomService teacherClassroomService;
 
-    @InjectMocks
-    private TeacherClassroomController teacherClassroomController;
+    @MockitoBean
+    private JwtService jwtService;
 
-    @Test
-    void listClassrooms_delegatesToService() {
-        UUID teacherId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
 
+    private JwtAuthenticationToken teacherAuth(UUID userId) {
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "teacher1", teacherId, "TEACHER", null,
+            "teacher1", userId, "TEACHER", null,
             List.of(new SimpleGrantedAuthority("ROLE_TEACHER"))
         );
+        return new JwtAuthenticationToken(principal, principal.getAuthorities());
+    }
+
+    @Test
+    void listClassrooms_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
 
         ClassroomSummaryResponse summary = ClassroomSummaryResponse.builder()
             .id(classroomId.toString())
@@ -46,26 +62,31 @@ class TeacherClassroomControllerTest {
 
         when(teacherClassroomService.listClassrooms(teacherId)).thenReturn(List.of(summary));
 
-        List<ClassroomSummaryResponse> result = teacherClassroomController.listClassrooms(principal);
-
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getId()).isEqualTo(classroomId.toString());
-        assertThat(result.get(0).getTitle()).isEqualTo("Math 101");
-        assertThat(result.get(0).getStudentCount()).isEqualTo(5);
+        mockMvc.perform(get("/api/teacher/classrooms")
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id").value(classroomId.toString()))
+            .andExpect(jsonPath("$[0].title").value("Math 101"))
+            .andExpect(jsonPath("$[0].studentCount").value(5));
     }
 
     @Test
-    void listClassrooms_noClassrooms_returnsEmptyList() {
-        UUID teacherId = UUID.randomUUID();
+    void listClassrooms_noAuth_returns401() throws Exception {
+        mockMvc.perform(get("/api/teacher/classrooms"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void listClassrooms_studentRole_returns403() throws Exception {
+        UUID userId = UUID.randomUUID();
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "teacher1", teacherId, "TEACHER", null,
-            List.of(new SimpleGrantedAuthority("ROLE_TEACHER"))
+            "student1", userId, "STUDENT", UUID.randomUUID(),
+            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
         );
+        JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
 
-        when(teacherClassroomService.listClassrooms(teacherId)).thenReturn(List.of());
-
-        List<ClassroomSummaryResponse> result = teacherClassroomController.listClassrooms(principal);
-
-        assertThat(result).isEmpty();
+        mockMvc.perform(get("/api/teacher/classrooms")
+                .with(authentication(studentAuth)))
+            .andExpect(status().isForbidden());
     }
 }
