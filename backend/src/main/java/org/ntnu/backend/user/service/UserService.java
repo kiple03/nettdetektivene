@@ -44,9 +44,6 @@ public class UserService {
     if (userRepository.existsByEmail(request.getEmail())) {
       throw new UserAlreadyExistsException("email", request.getEmail());
     }
-    if (userRepository.existsByUsername(request.getUsername())) {
-      throw new UserAlreadyExistsException("username", request.getUsername());
-    }
 
     String encodedPassword = passwordEncoder.encode(request.getPassword());
     User user = userMapper.toUser(request, encodedPassword);
@@ -70,7 +67,7 @@ public class UserService {
   }
 
   public LoginResponse login(@Valid LoginRequest request) {
-    User user = userRepository.findByUsername(request.getUsername())
+    User user = userRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
 
     if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
