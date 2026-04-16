@@ -65,8 +65,8 @@ export default function MyClassroomsPage() {
 
                             return (
                                 <Link
-                                    key={classroom.id}
-                                    to={`/teacher/classroom/${classroom.id}`}
+                                    key={summary.id}
+                                    to={`/teacher/classroom/${summary.id}`}
                                     className="classroom-card"
                                     style={{ '--card-accent': accentColor } as React.CSSProperties}
                                 >

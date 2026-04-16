@@ -16,6 +16,9 @@ import BadgesPage from "@/pages/student/BadgesPage";
 import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
 import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 import CodePage from "@/pages/teacher/CodePage";
+import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage";
+import AvatarDevPage from "@/pages/student/AvatarDevPage";
+
 // Route guard temporarily disabled during game development so we don't
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
 // wrappers below and uncommenting this import.
@@ -30,11 +33,8 @@ import {
     getClassroom,
     getStops,
 } from "@/services/teacherService";
-import AvatarDevPage from "@/pages/student/AvatarDevPage";
 
 export const router = createBrowserRouter([
-    // Auth routes (public)
-    // Auth routes (public)
     {
         path: '/',
         element: <StudentLoginPage />,
@@ -48,8 +48,6 @@ export const router = createBrowserRouter([
         element: <FeideFake />,
     },
 
-    // Student routes — open during development
-    // Student routes — open during development
     {
         path: '/home',
         element: <StudentHomePage />,
@@ -83,15 +81,6 @@ export const router = createBrowserRouter([
         element: <WeeklyMysteryPage />,
     },
 
-    //TEST for spill
-    {
-        path: '/game',
-        element: <TestPage />
-    },
-
-
-      // Teacher routes
-      // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
     {
         path: '/teacher',
         element: <MyClassroomsPage />,
@@ -101,6 +90,14 @@ export const router = createBrowserRouter([
         path: '/teacher/classroom/new',
         element: <CreateClassroom />,
         action: createClassroomAction,
+    },
+    {
+        path: '/teacher/classroom/:id/code',
+        element: <CodePage />,
+        loader: async ({ params }) => {
+            const id = Number(params.id);
+            return await getClassroom(id);
+        },
     },
     {
         path: '/teacher/classroom/:id',
@@ -113,14 +110,6 @@ export const router = createBrowserRouter([
                 getStops(id),
             ]);
             return { classroom, students, stops };
-        },
-    },
-    {
-        path: '/teacher/classroom/:id/code',
-        element: <CodePage />,
-        loader: async ({ params }) => {
-            const id = Number(params.id);
-            return await getClassroom(id);
         },
     },
     {
@@ -153,6 +142,6 @@ export const router = createBrowserRouter([
     },
     {
         path: "/avatar",
-        element: <AvatarDevPage />
+        element: <AvatarDevPage />,
     },
 ]);
