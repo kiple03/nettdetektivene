@@ -9,6 +9,7 @@ import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
+import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
@@ -20,6 +21,7 @@ import org.ntnu.backend.game.repository.LevelCompletionRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
+import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,7 @@ public class TeacherClassroomService {
     private final EnrollmentRepository enrollmentRepository;
     private final LevelCompletionRepository levelCompletionRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
+    private final UserRepository userRepository;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -124,5 +127,39 @@ public class TeacherClassroomService {
                 .featured(ms.isFeatured())
                 .build())
             .toList();
+    }
+
+    @Transactional
+    public MysterySubmissionResponse reviewMysterySubmission(
+            UUID classroomId,
+            UUID submissionId,
+            ReviewMysteryRequest request,
+            JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        var submission = mysterySubmissionRepository.findById(submissionId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (!submission.getEnrollment().getClassroom().getId().equals(classroomId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        var teacher = userRepository.findById(principal.getUserId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
+        if (request.getStatus() != null) {
+            submission.setStatus(request.getStatus());
+            submission.setReviewedByTeacher(teacher);
+            submission.setReviewedAt(java.time.Instant.now());
+        }
+        if (request.getFeatured() != null) {
+            submission.setFeatured(request.getFeatured());
+        }
+        var saved = mysterySubmissionRepository.save(submission);
+        return MysterySubmissionResponse.builder()
+            .id(saved.getId())
+            .studentUsername(saved.getEnrollment().getUser().getUsername())
+            .content(saved.getContent())
+            .imageUrl(saved.getImageUrl())
+            .submittedAt(saved.getSubmittedAt())
+            .status(saved.getStatus())
+            .featured(saved.isFeatured())
+            .build();
     }
 }

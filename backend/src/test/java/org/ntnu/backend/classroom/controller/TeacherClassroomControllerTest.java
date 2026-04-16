@@ -447,4 +447,121 @@ class TeacherClassroomControllerTest {
                 .content("{\"title\":\"Updated Title\"}"))
             .andExpect(status().isForbidden());
     }
+
+    @Test
+    void reviewMystery_approveSubmission_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID submissionId = UUID.randomUUID();
+        Instant submittedAt = Instant.parse("2025-03-01T10:00:00Z");
+
+        MysterySubmissionResponse response = MysterySubmissionResponse.builder()
+            .id(submissionId)
+            .studentUsername("alice")
+            .content("My mystery answer")
+            .imageUrl(null)
+            .submittedAt(submittedAt)
+            .status(MysteryStatusEnum.APPROVED)
+            .featured(false)
+            .build();
+
+        when(teacherClassroomService.reviewMysterySubmission(eq(classroomId), eq(submissionId), any(), any()))
+            .thenReturn(response);
+
+        mockMvc.perform(patch("/api/teacher/classrooms/" + classroomId + "/mystery/" + submissionId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"APPROVED\"}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(submissionId.toString()))
+            .andExpect(jsonPath("$.status").value("APPROVED"))
+            .andExpect(jsonPath("$.featured").value(false));
+    }
+
+    @Test
+    void reviewMystery_featureSubmission_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID submissionId = UUID.randomUUID();
+        Instant submittedAt = Instant.parse("2025-03-01T10:00:00Z");
+
+        MysterySubmissionResponse response = MysterySubmissionResponse.builder()
+            .id(submissionId)
+            .studentUsername("alice")
+            .content("My mystery answer")
+            .imageUrl(null)
+            .submittedAt(submittedAt)
+            .status(MysteryStatusEnum.PENDING)
+            .featured(true)
+            .build();
+
+        when(teacherClassroomService.reviewMysterySubmission(eq(classroomId), eq(submissionId), any(), any()))
+            .thenReturn(response);
+
+        mockMvc.perform(patch("/api/teacher/classrooms/" + classroomId + "/mystery/" + submissionId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"featured\":true}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.featured").value(true))
+            .andExpect(jsonPath("$.status").value("PENDING"));
+    }
+
+    @Test
+    void reviewMystery_noAuth_returns401() throws Exception {
+        mockMvc.perform(patch("/api/teacher/classrooms/" + UUID.randomUUID() + "/mystery/" + UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"APPROVED\"}"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void reviewMystery_studentRole_returns403() throws Exception {
+        UUID userId = UUID.randomUUID();
+        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
+            "student1", userId, "STUDENT", UUID.randomUUID(),
+            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
+        );
+        JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
+
+        mockMvc.perform(patch("/api/teacher/classrooms/" + UUID.randomUUID() + "/mystery/" + UUID.randomUUID())
+                .with(authentication(studentAuth))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"APPROVED\"}"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void reviewMystery_notFound_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID submissionId = UUID.randomUUID();
+
+        when(teacherClassroomService.reviewMysterySubmission(eq(classroomId), eq(submissionId), any(), any()))
+            .thenThrow(new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.NOT_FOUND));
+
+        mockMvc.perform(patch("/api/teacher/classrooms/" + classroomId + "/mystery/" + submissionId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"APPROVED\"}"))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void reviewMystery_notOwnedByTeacher_returns403() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID submissionId = UUID.randomUUID();
+
+        when(teacherClassroomService.reviewMysterySubmission(eq(classroomId), eq(submissionId), any(), any()))
+            .thenThrow(new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.FORBIDDEN));
+
+        mockMvc.perform(patch("/api/teacher/classrooms/" + classroomId + "/mystery/" + submissionId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"APPROVED\"}"))
+            .andExpect(status().isForbidden());
+    }
 }

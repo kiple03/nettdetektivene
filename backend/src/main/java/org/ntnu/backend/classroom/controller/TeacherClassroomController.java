@@ -8,6 +8,7 @@ import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
+import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
@@ -79,6 +80,16 @@ public class TeacherClassroomController {
             @PathVariable UUID id,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherClassroomService.listMysterySubmissions(id, principal);
+    }
+
+    @PatchMapping("/{id}/mystery/{submissionId}")
+    @PreAuthorize("hasRole('TEACHER')")
+    public MysterySubmissionResponse reviewMysterySubmission(
+            @PathVariable UUID id,
+            @PathVariable UUID submissionId,
+            @RequestBody ReviewMysteryRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.reviewMysterySubmission(id, submissionId, request, principal);
     }
 
     @PostMapping
