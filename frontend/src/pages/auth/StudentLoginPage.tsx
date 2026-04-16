@@ -55,7 +55,7 @@ function StudentLoginPage() {
       const res = await register({ username: regUsername, email: regEmail, password: regPassword, role: 'STUDENT' });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
-      navigate('/home');
+      navigate('/join-with-code');
     } catch (err) {
       const axiosErr = err as AxiosError<ApiErrorBody>;
       if (axiosErr.response?.status === 409) {

@@ -219,6 +219,15 @@
     transform: translateY(-50%) scaleX(-1);
 }
 
+/* ERROR MESSAGE */
+.error {
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #c0392b;
+    text-align: center;
+}
+
 /* BUTTON */
 .button {
     align-self: center;
@@ -257,6 +266,16 @@
 
 .button:active {
     transform: translateY(0);
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow:
+            0 14px 24px rgba(0, 0, 0, 0.12),
+            0 5px 10px rgba(0, 0, 0, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 /* TABLET */
