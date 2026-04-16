@@ -12,6 +12,8 @@ import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
+import org.ntnu.backend.game.model.enums.LevelType;
+import org.ntnu.backend.game.service.OptionParser;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class GameMapper {
-
+  private final OptionParser optionParser;
 
   /**
    * Maps a Stop entity to its overview response, including per-student state.
@@ -54,7 +56,10 @@ public class GameMapper {
    * of all answer-carrying fields before being included.
    */
   public QuestionResponse toQuestionResponse(Question question) {
-    List<OptionResponse> optionResponses = question.getOptions().stream()
+    LevelType type = question.getLevel().getLevelType();
+    List<Option> options = optionParser.parse(question.getOptionContent(), type);
+
+    List<OptionResponse> optionResponses = options.stream()
         .map(this::toOptionResponse)
         .toList();
 
