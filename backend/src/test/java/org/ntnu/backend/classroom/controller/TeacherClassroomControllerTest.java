@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
+import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
@@ -307,6 +310,62 @@ class TeacherClassroomControllerTest {
         mockMvc.perform(get("/api/teacher/classrooms/" + classroomId + "/students")
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getStudentDetail_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+        Instant completedAt = Instant.parse("2025-03-01T10:00:00Z");
+
+        StudentDetailResponse detail = StudentDetailResponse.builder()
+            .username("alice")
+            .completions(List.of(LevelCompletionEntry.builder().levelId(42).completedAt(completedAt).build()))
+            .build();
+
+        when(teacherClassroomService.getStudentDetail(eq(classroomId), eq(studentId), any())).thenReturn(detail);
+
+        mockMvc.perform(get("/api/teacher/classrooms/" + classroomId + "/students/" + studentId)
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.username").value("alice"))
+            .andExpect(jsonPath("$.completions[0].levelId").value(42));
+    }
+
+    @Test
+    void getStudentDetail_noAuth_returns401() throws Exception {
+        mockMvc.perform(get("/api/teacher/classrooms/" + UUID.randomUUID() + "/students/" + UUID.randomUUID()))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getStudentDetail_studentRole_returns403() throws Exception {
+        UUID userId = UUID.randomUUID();
+        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
+            "student1", userId, "STUDENT", UUID.randomUUID(),
+            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
+        );
+        JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
+
+        mockMvc.perform(get("/api/teacher/classrooms/" + UUID.randomUUID() + "/students/" + UUID.randomUUID())
+                .with(authentication(studentAuth)))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getStudentDetail_notEnrolled_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+
+        when(teacherClassroomService.getStudentDetail(eq(classroomId), eq(studentId), any()))
+            .thenThrow(new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.NOT_FOUND));
+
+        mockMvc.perform(get("/api/teacher/classrooms/" + classroomId + "/students/" + studentId)
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isNotFound());
     }
 
     @Test

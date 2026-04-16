@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
+import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.model.Classroom;
@@ -70,6 +72,25 @@ public class TeacherClassroomService {
                     .build();
             })
             .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public StudentDetailResponse getStudentDetail(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        var enrollment = enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        var completions = levelCompletionRepository.findByEnrollmentId(enrollment.getId())
+            .stream()
+            .map(lc -> LevelCompletionEntry.builder()
+                .levelId(lc.getLevel().getId())
+                .completedAt(lc.getCompletedAt())
+                .build())
+            .toList();
+        return StudentDetailResponse.builder()
+            .username(enrollment.getUser().getUsername())
+            .completions(completions)
+            .build();
     }
 
     public ClassroomResponse getClassroom(UUID classroomId, JwtAuthenticatedPrincipal principal) {
