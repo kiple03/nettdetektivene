@@ -1,14 +1,14 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
-import type { Classroom, MysterySubmission, MysterySubmissionWithStudent } from '@/types/classroom.ts';
+import type { ClassroomDetail, MysterySubmissionResponse } from '@/types/classroom.ts';
 import './MysterySubmissions.css';
 
 type LoaderData = {
-  classroom: Classroom | null;
-  submissions: MysterySubmissionWithStudent[];
+  classroom: ClassroomDetail | null;
+  submissions: MysterySubmissionResponse[];
 };
 
-type Filter = 'all' | MysterySubmission['status'];
+type Filter = 'all' | MysterySubmissionResponse['status'];
 
 const FILTER_LABELS: Record<Filter, string> = {
   all: 'Alle',
@@ -17,7 +17,7 @@ const FILTER_LABELS: Record<Filter, string> = {
   rejected: 'Avvist',
 };
 
-const STATUS_LABELS: Record<MysterySubmission['status'], string> = {
+const STATUS_LABELS: Record<MysterySubmissionResponse['status'], string> = {
   pending: 'Venter',
   approved: 'Godkjent',
   rejected: 'Avvist',
@@ -30,21 +30,21 @@ export default function MysterySubmissions() {
 
   const classroomId = classroom?.id;
 
-  function approve(id: number) {
+  function approve(id: string) {
     setSubmissions(prev =>
-      prev.map(s => s.id === id ? { ...s, status: 'approved', reviewed_at: new Date().toISOString(), reviewed_by_teacher_id: 1 } : s)
+      prev.map(s => s.id === id ? { ...s, status: 'approved' as const, reviewedAt: new Date().toISOString() } : s)
     );
   }
 
-  function reject(id: number) {
+  function reject(id: string) {
     setSubmissions(prev =>
-      prev.map(s => s.id === id ? { ...s, status: 'rejected', reviewed_at: new Date().toISOString(), reviewed_by_teacher_id: 1, is_featured: false } : s)
+      prev.map(s => s.id === id ? { ...s, status: 'rejected' as const, reviewedAt: new Date().toISOString(), featured: false } : s)
     );
   }
 
-  function toggleFeatured(id: number) {
+  function toggleFeatured(id: string) {
     setSubmissions(prev =>
-      prev.map(s => s.id === id ? { ...s, is_featured: !s.is_featured } : s)
+      prev.map(s => s.id === id ? { ...s, featured: !s.featured } : s)
     );
   }
 
@@ -97,12 +97,12 @@ export default function MysterySubmissions() {
           {filtered.map(sub => (
             <li key={sub.id} className="mystery__card">
               <div className="mystery__card-header">
-                <span className="mystery__student">{sub.student_username}</span>
+                <span className="mystery__student">{sub.studentUsername}</span>
                 <span className={`mystery__status mystery__status--${sub.status}`}>
                   {STATUS_LABELS[sub.status]}
                 </span>
-                <time className="mystery__date" dateTime={sub.submitted_at}>
-                  {new Date(sub.submitted_at).toLocaleDateString('nb-NO')}
+                <time className="mystery__date" dateTime={sub.submittedAt}>
+                  {new Date(sub.submittedAt).toLocaleDateString('nb-NO')}
                 </time>
               </div>
 
@@ -110,8 +110,8 @@ export default function MysterySubmissions() {
                 <p className="mystery__content">{sub.content}</p>
               )}
 
-              {sub.image_url && (
-                <img className="mystery__image" src={sub.image_url} alt="Innlevering" />
+              {sub.imageUrl && (
+                <img className="mystery__image" src={sub.imageUrl} alt="Innlevering" />
               )}
 
               <div className="mystery__actions">
@@ -127,10 +127,10 @@ export default function MysterySubmissions() {
                 )}
                 {sub.status === 'approved' && (
                   <button
-                    className={`mystery__btn mystery__btn--feature${sub.is_featured ? ' mystery__btn--featured' : ''}`}
+                    className={`mystery__btn mystery__btn--feature${sub.featured ? ' mystery__btn--featured' : ''}`}
                     onClick={() => toggleFeatured(sub.id)}
                   >
-                    {sub.is_featured ? '★ Fremhevet' : '☆ Fremhev'}
+                    {sub.featured ? '★ Fremhevet' : '☆ Fremhev'}
                   </button>
                 )}
               </div>
