@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
-import type { ClassroomSummary } from '@/types/classroom.ts';
+import type { ClassroomSummaryApi } from '@/types/classroom.ts';
 import LogoutButton from '@/components/LogoutButton';
 import './MyClassroomsPage.css';
 
@@ -14,7 +14,7 @@ const CARD_ACCENT_COLORS = [
 ];
 
 export default function MyClassroomsPage() {
-    const summaries = (useLoaderData() as ClassroomSummary[]) ?? [];
+    const summaries = (useLoaderData() as ClassroomSummaryApi[]) ?? [];
 
     return (
         <div className="teacher-dashboard">
@@ -60,7 +60,7 @@ export default function MyClassroomsPage() {
                             <span className="classroom-card__new-label">Opprett ny klasse</span>
                         </Link>
 
-                        {summaries.map(({ classroom, student_count, total_score }, index) => {
+                        {summaries.map((summary, index) => {
                             const accentColor = CARD_ACCENT_COLORS[index % CARD_ACCENT_COLORS.length];
 
                             return (
@@ -74,20 +74,20 @@ export default function MyClassroomsPage() {
                                     <div className="classroom-card__color-bar" />
 
                                     <div className="classroom-card__top">
-                                        <h2 className="classroom-card__title">{classroom.title}</h2>
-                                        <span className="classroom-card__join-code">{classroom.join_code}</span>
+                                        <h2 className="classroom-card__title">{summary.title}</h2>
+                                        <span className="classroom-card__join-code">{summary.joinCode}</span>
                                     </div>
 
                                     <div className="classroom-card__stats">
                                         <div className="classroom-card__stat">
-                                            <span className="classroom-card__stat-value">{student_count}</span>
+                                            <span className="classroom-card__stat-value">{summary.studentCount}</span>
                                             <span className="classroom-card__stat-label">elever</span>
                                         </div>
 
                                         <div className="classroom-card__stat-divider" />
 
                                         <div className="classroom-card__stat">
-                                            <span className="classroom-card__stat-value">{total_score}</span>
+                                            <span className="classroom-card__stat-value">?</span>
                                             <span className="classroom-card__stat-label">medaljer</span>
                                         </div>
                                     </div>

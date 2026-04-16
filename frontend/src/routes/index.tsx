@@ -30,7 +30,7 @@ import {
     getClassroom,
     getStops,
 } from "@/services/teacherService";
-import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";
+import AvatarDevPage from "@/pages/student/AvatarDevPage";
 
 export const router = createBrowserRouter([
     // Auth routes (public)
@@ -83,6 +83,11 @@ export const router = createBrowserRouter([
         element: <WeeklyMysteryPage />,
     },
 
+    //TEST for spill
+    {
+        path: '/game',
+        element: <TestPage />
+    },
 
 
       // Teacher routes
@@ -143,7 +148,11 @@ export const router = createBrowserRouter([
                 getNotifications(),
                 getClassroomSummaries(),
             ]);
-            return { notifications, classrooms: summaries.map(s => s.classroom) };
+            return { notifications, classrooms: summaries };
         },
+    },
+    {
+        path: "/avatar",
+        element: <AvatarDevPage />
     },
 ]);

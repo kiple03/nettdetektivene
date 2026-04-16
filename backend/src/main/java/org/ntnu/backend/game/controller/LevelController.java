@@ -6,7 +6,7 @@ package org.ntnu.backend.game.controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/levels")
+@RequestMapping("/levels")
 public class LevelController {
 
 //    private final LevelService levelService;
