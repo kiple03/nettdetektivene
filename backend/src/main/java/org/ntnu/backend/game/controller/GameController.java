@@ -1,8 +1,13 @@
 package org.ntnu.backend.game.controller;
 
 
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.game.dto.LevelResponse;
+import org.ntnu.backend.game.dto.StopOverviewResponse;
+import org.ntnu.backend.game.dto.SubmitAnswerRequest;
+import org.ntnu.backend.game.dto.SubmitAnswerResponse;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.GameService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -37,15 +42,6 @@ public class GameController {
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
     authService.verifyAccess(principal, classroomId);
     return gameService.getLevel(classroomId, levelId, principal.getUserId());
-  }
-
-  @GetMapping("/levels/{levelId}")
-  public TaskDetailResponse getTask(
-      @PathVariable UUID classroomId,
-      @PathVariable UUID levelId,
-      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    authService.verifyAccess(principal, classroomId);
-    return gameService.getTask(classroomId, levelId, principal.getUserId());
   }
 
   @PostMapping("/questions/{questionId}/submit")

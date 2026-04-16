@@ -20,7 +20,7 @@ public class QuestionService {
     this.questionRepository = questionRepository;
   }
 
-  public QuestionDto getQuestionById(int id) {
+  public QuestionResponse getQuestionById(int id) {
     Question question = questionRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Question not found"));
 
@@ -39,7 +39,7 @@ public class QuestionService {
       case TUTORIAL -> null;
     };
 
-    return new QuestionDto(
+    return new QuestionResponse(
         question.getId(),
         question.getQuestionText(),
         (List<Option>) optionDtos
