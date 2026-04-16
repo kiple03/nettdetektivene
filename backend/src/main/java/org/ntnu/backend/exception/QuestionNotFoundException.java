@@ -4,7 +4,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 
 public class QuestionNotFoundException extends ApiException {
-  public QuestionNotFoundException(UUID id) {
+  public QuestionNotFoundException(int id) {
     super(HttpStatus.NOT_FOUND, "Question not found: " + id);
   }
 }
