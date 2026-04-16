@@ -1,5 +1,13 @@
 // Mirrors DB schema exactly — swap mock data for real API calls in teacherService.ts
 
+// Matches the backend ClassroomResponse DTO (camelCase from Spring)
+export interface ClassroomResponse {
+  id: string;
+  title: string;
+  description: string | null;
+  joinCode: string;
+}
+
 export interface Classroom {
   id: number;
   title: string;

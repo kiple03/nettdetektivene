@@ -20,6 +20,7 @@ interface JwtPayload {
   userId?: string;
   username?: string;
   role?: string;
+  classroomId?: string;
   exp?: number;
 }
 
@@ -60,4 +61,8 @@ export function isLoggedIn(): boolean {
 export function getRole(): Role | null {
   const role = decodeToken()?.role;
   return role ? (role as Role) : null;
+}
+
+export function getClassroomId(): string | null {
+  return decodeToken()?.classroomId ?? null;
 }
