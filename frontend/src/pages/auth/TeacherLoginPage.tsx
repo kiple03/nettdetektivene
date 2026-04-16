@@ -11,14 +11,12 @@ import {
   validateEmail,
   validatePassword,
   validatePasswordConfirm,
-  validateUsername,
 } from '@/utils/validators';
 import './TeacherLoginPage.css';
 
 function TeacherLoginPage() {
   const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
-  const [regUsername, setRegUsername] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirm, setRegConfirm] = useState('');
@@ -27,7 +25,6 @@ function TeacherLoginPage() {
 
   const validateFields = () => {
     const nextErrors: AuthFieldErrors = {
-      username: validateUsername(regUsername),
       email: validateEmail(regEmail),
       password: validatePassword(regPassword),
       confirm: validatePasswordConfirm(regPassword, regConfirm),
@@ -51,7 +48,7 @@ function TeacherLoginPage() {
     }
 
     try {
-      const res = await register({ username: regUsername, email: regEmail, password: regPassword, role: 'TEACHER' });
+      const res = await register({ email: regEmail, password: regPassword, role: 'TEACHER' });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
       navigate('/teacher');
@@ -59,9 +56,7 @@ function TeacherLoginPage() {
       const axiosErr = err as AxiosError<ApiErrorBody>;
       if (axiosErr.response?.status === 409) {
         const field = axiosErr.response.data?.field;
-        if (field === 'username') {
-          setRegFieldErrors((current) => ({ ...current, username: 'Brukernavnet er allerede i bruk.' }));
-        } else if (field === 'email') {
+        if (field === 'email') {
           setRegFieldErrors((current) => ({ ...current, email: 'E-posten er allerede i bruk.' }));
         } else {
           setRegError('Brukeren finnes allerede.');
@@ -110,14 +105,9 @@ function TeacherLoginPage() {
           onSubmit={handleRegister}
           error={regError}
           fieldErrors={regFieldErrors}
-          username={regUsername}
           email={regEmail}
           password={regPassword}
           confirm={regConfirm}
-          onUsernameChange={(value) => {
-            setRegUsername(value);
-            if (regFieldErrors.username) setRegFieldErrors((current) => ({ ...current, username: '' }));
-          }}
           onEmailChange={(value) => {
             setRegEmail(value);
             if (regFieldErrors.email) setRegFieldErrors((current) => ({ ...current, email: '' }));
@@ -135,9 +125,6 @@ function TeacherLoginPage() {
           onConfirmChange={(value) => {
             setRegConfirm(value);
             if (regFieldErrors.confirm) setRegFieldErrors((current) => ({ ...current, confirm: '' }));
-          }}
-          onUsernameBlur={() => {
-            setRegFieldErrors((current) => ({ ...current, username: validateUsername(regUsername) }));
           }}
           onEmailBlur={() => {
             setRegFieldErrors((current) => ({ ...current, email: validateEmail(regEmail) }));

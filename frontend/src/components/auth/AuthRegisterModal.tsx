@@ -11,15 +11,12 @@ interface AuthRegisterModalProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   error: string;
   fieldErrors: AuthFieldErrors;
-  username: string;
   email: string;
   password: string;
   confirm: string;
-  onUsernameChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onConfirmChange: (value: string) => void;
-  onUsernameBlur: () => void;
   onEmailBlur: () => void;
   onPasswordBlur: () => void;
   onConfirmBlur: () => void;
@@ -34,15 +31,12 @@ function AuthRegisterModal({
   onSubmit,
   error,
   fieldErrors,
-  username,
   email,
   password,
   confirm,
-  onUsernameChange,
   onEmailChange,
   onPasswordChange,
   onConfirmChange,
-  onUsernameBlur,
   onEmailBlur,
   onPasswordBlur,
   onConfirmBlur,
@@ -61,21 +55,6 @@ function AuthRegisterModal({
 
         <form className="register-modal__form" onSubmit={onSubmit}>
           {error && <p className="register-modal__error">{error}</p>}
-
-          <div className="register-modal__field">
-            <label htmlFor="reg-username">Brukernavn</label>
-            <input
-              className={fieldErrors.username ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
-              id="reg-username"
-              type="text"
-              placeholder="Velg et brukernavn"
-              value={username}
-              onChange={(event) => onUsernameChange(event.target.value)}
-              onBlur={onUsernameBlur}
-              autoComplete="username"
-            />
-            {fieldErrors.username && <p className="register-modal__field-error">{fieldErrors.username}</p>}
-          </div>
 
           <div className="register-modal__field">
             <label htmlFor="reg-email">E-post</label>
