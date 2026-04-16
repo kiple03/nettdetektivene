@@ -56,7 +56,7 @@ class TeacherStopsControllerTest {
 
         when(teacherClassroomService.listStops()).thenReturn(List.of(stop));
 
-        mockMvc.perform(get("/api/teacher/stops")
+        mockMvc.perform(get("/teacher/stops")
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].id").value(1))
@@ -66,7 +66,7 @@ class TeacherStopsControllerTest {
 
     @Test
     void listStops_noAuth_returns401() throws Exception {
-        mockMvc.perform(get("/api/teacher/stops"))
+        mockMvc.perform(get("/teacher/stops"))
             .andExpect(status().isUnauthorized());
     }
 
@@ -79,7 +79,7 @@ class TeacherStopsControllerTest {
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
 
-        mockMvc.perform(get("/api/teacher/stops")
+        mockMvc.perform(get("/teacher/stops")
                 .with(authentication(studentAuth)))
             .andExpect(status().isForbidden());
     }

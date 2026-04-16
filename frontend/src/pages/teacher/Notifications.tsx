@@ -1,11 +1,11 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
-import type { Classroom, Notification } from '@/types/classroom.ts';
+import type { ClassroomSummaryApi, Notification } from '@/types/classroom.ts';
 import './Notifications.css';
 
 type LoaderData = {
   notifications: Notification[];
-  classrooms: Classroom[];
+  classrooms: ClassroomSummaryApi[];
 };
 
 type NotificationType = Notification['type'];
@@ -27,7 +27,7 @@ const TYPE_ICONS: Record<NotificationType, string> = {
 export default function Notifications() {
   const { notifications: initial, classrooms } = useLoaderData() as LoaderData;
   const [notifications, setNotifications] = useState(initial);
-  const [classroomFilter, setClassroomFilter] = useState<number | 'all'>('all');
+  const [classroomFilter, setClassroomFilter] = useState<string | 'all'>('all');
 
   function markRead(id: number) {
     setNotifications(prev =>
