@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class StudentProgressResponse {
+    private String userId;
     private String username;
     private long levelsCompleted;
     private long medalsEarned;

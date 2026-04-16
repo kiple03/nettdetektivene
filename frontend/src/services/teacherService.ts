@@ -28,6 +28,13 @@ import axios from 'axios';
 
 // --- Raw response types (internal, not exported) ---
 
+interface RawStudentProgress {
+  userId: string;
+  username: string;
+  levelsCompleted: number;
+  medalsEarned: number;
+}
+
 interface RawClassroomSummary {
   id: string;
   title: string;
@@ -46,6 +53,15 @@ interface RawClassroomDetail {
 }
 
 // --- Mappers ---
+
+function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
+  return {
+    userId: raw.userId,
+    username: raw.username,
+    levelsCompleted: raw.levelsCompleted,
+    medalsEarned: raw.medalsEarned,
+  };
+}
 
 function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
   return {
@@ -91,20 +107,8 @@ export async function createClassroom(title: string, description: string | null)
 }
 
 export async function getStudentProgress(classroomId: string): Promise<StudentSummary[]> {
-  const enrollments = MOCK_ENROLLMENTS.filter((e) => String(e.classroom_id) === classroomId && e.left_at === null);
-  return enrollments.flatMap((enrollment) => {
-    const user = MOCK_STUDENTS.find((s) => s.id === enrollment.user_id);
-    if (!user) return [];
-    const medals = MOCK_MEDALS.filter((m) => m.enrollment_id === enrollment.id);
-    const stopIds = new Set(MOCK_STOPS.filter((s) => String(s.classroom_id) === classroomId).map((s) => s.id));
-    const classroomMedals = medals.filter((m) => stopIds.has(m.stop_id));
-    return [{
-      userId: String(user.id),
-      username: user.username,
-      medalsEarned: classroomMedals.length,
-      levelsCompleted: classroomMedals.length,
-    }];
-  });
+  const res = await apiClient.get<RawStudentProgress[]>(`/teacher/classrooms/${classroomId}/students`);
+  return res.data.map(mapStudentProgress);
 }
 
 export async function getStudentDetail(classroomId: string, studentId: string): Promise<StudentDetail | null> {
