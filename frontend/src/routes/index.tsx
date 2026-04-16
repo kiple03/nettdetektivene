@@ -87,7 +87,7 @@ export const router = createBrowserRouter([
       // Teacher routes
       // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
     {
-        path: '/homelaerer',
+        path: '/teacher',
         element: <MyClassroomsPage />,
         loader: () => getClassroomSummaries(),
     },

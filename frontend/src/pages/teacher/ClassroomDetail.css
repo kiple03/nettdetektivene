@@ -1,112 +1,166 @@
-.classroom-detail {
-  width: 100%;
-  padding: 32px 40px;
-  box-sizing: border-box;
-  text-align: left;
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+  background:
+          radial-gradient(circle at top, rgba(104, 58, 179, 0.25), transparent 32%),
+          linear-gradient(180deg, #24104a 0%, #2a0c59 32%, #230049 100%);
 }
 
+.classroom-detail {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px 32px 40px;
+  text-align: left;
+  color: #fff;
+  background:
+          radial-gradient(circle at top, rgba(104, 58, 179, 0.25), transparent 32%),
+          linear-gradient(180deg, #24104a 0%, #2a0c59 32%, #230049 100%);
+}
+
+/* ── Header ─────────────────────────────────────────────── */
 .classroom-detail__header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 32px;
+  gap: 14px;
+  margin: 0 auto 28px;
+  max-width: 1440px;
 }
 
 .classroom-detail__back {
-  font-size: 14px;
-  color: var(--text);
-  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   width: fit-content;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f4efff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+          transform 0.16s ease,
+          background 0.16s ease,
+          border-color 0.16s ease,
+          color 0.16s ease;
+  box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          0 8px 18px rgba(0, 0, 0, 0.16);
 }
 
 .classroom-detail__back:hover {
-  color: var(--accent);
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 .classroom-detail__title {
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--text-h);
   margin: 0;
-  letter-spacing: -0.5px;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #f7f2ff;
 }
 
-/* Sections */
+/* ── Sections / panels ──────────────────────────────────── */
 .classroom-detail__section {
-  background: var(--teacher-card-bg);
-  border: 1px solid var(--teacher-card-border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+  max-width: 1440px;
+  margin: 0 auto 22px;
+  padding: 28px 30px;
+  background: linear-gradient(180deg, rgba(24, 16, 54, 0.98), rgba(28, 19, 61, 0.96));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 24px;
+  box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.04),
+          0 20px 38px rgba(8, 4, 26, 0.24);
 }
 
 .classroom-detail__section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-h);
-  margin: 0 0 16px;
+  margin: 0 0 22px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
 }
 
 .classroom-detail__count {
-  font-weight: 400;
-  color: var(--text);
+  font-weight: 500;
+  color: rgba(205, 213, 255, 0.78);
 }
 
-/* Info */
+/* ── Info ───────────────────────────────────────────────── */
 .classroom-detail__info {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
 }
 
 .classroom-detail__info-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 18px;
 }
 
 .classroom-detail__info-label {
-  font-size: 13px;
-  color: var(--text);
-  width: 120px;
+  width: 140px;
   flex-shrink: 0;
+  font-size: 14px;
+  color: rgba(205, 213, 255, 0.78);
 }
 
 .classroom-detail__join-code {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  background: var(--accent-bg);
-  color: var(--accent);
-  border: 1px solid var(--accent-border);
-  border-radius: 4px;
-  padding: 3px 8px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: rgba(157, 92, 255, 0.12);
+  border: 1px solid rgba(176, 118, 255, 0.35);
+  color: #cc9cff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  width: fit-content;
 }
 
 .classroom-detail__info-value {
-  font-size: 14px;
-  color: var(--text-h);
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
 }
 
 .classroom-detail__edit-btn {
   width: fit-content;
-  padding: 6px 16px;
-  background: transparent;
-  border: 1px solid var(--teacher-card-border);
-  border-radius: 6px;
-  font-size: 13px;
-  color: var(--text);
+  margin-top: 6px;
+  padding: 0 18px;
+  min-height: 40px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(236, 238, 255, 0.92);
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+          transform 0.16s ease,
+          background 0.16s ease,
+          border-color 0.16s ease;
 }
 
 .classroom-detail__edit-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
-/* Edit form */
+/* ── Edit form ──────────────────────────────────────────── */
 .classroom-detail__edit-form {
   display: flex;
   flex-direction: column;
@@ -116,67 +170,90 @@
 .classroom-detail__label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   font-size: 14px;
-  color: var(--text-h);
+  color: #f1edff;
+  font-weight: 600;
 }
 
 .classroom-detail__input,
 .classroom-detail__textarea {
-  padding: 8px 12px;
-  border: 1px solid var(--teacher-card-border);
-  border-radius: 8px;
-  background: var(--bg);
-  color: var(--text-h);
+  padding: 11px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
   font-size: 15px;
-  font-family: var(--sans);
-  transition: border-color 0.15s;
+  font-family: inherit;
+  transition:
+          border-color 0.15s ease,
+          background 0.15s ease,
+          box-shadow 0.15s ease;
+}
+
+.classroom-detail__input::placeholder,
+.classroom-detail__textarea::placeholder {
+  color: rgba(220, 225, 255, 0.45);
 }
 
 .classroom-detail__input:focus,
 .classroom-detail__textarea:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: rgba(124, 134, 255, 0.7);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(92, 76, 241, 0.16);
 }
 
 .classroom-detail__edit-actions {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .classroom-detail__save-btn {
-  padding: 8px 20px;
-  background: var(--accent);
+  padding: 0 20px;
+  min-height: 42px;
+  background: linear-gradient(180deg, #5c4cf1 0%, #4c3fe0 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: #fff;
   cursor: pointer;
-  transition: opacity 0.15s;
+  box-shadow: 0 12px 24px rgba(55, 37, 124, 0.2);
+  transition:
+          transform 0.16s ease,
+          opacity 0.16s ease;
 }
 
 .classroom-detail__save-btn:hover {
-  opacity: 0.88;
+  transform: translateY(-1px);
+  opacity: 0.96;
 }
 
 .classroom-detail__cancel-btn {
-  padding: 8px 20px;
-  background: transparent;
-  border: 1px solid var(--teacher-card-border);
-  border-radius: 8px;
+  padding: 0 20px;
+  min-height: 42px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   font-size: 14px;
-  color: var(--text);
+  font-weight: 700;
+  color: rgba(236, 238, 255, 0.92);
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition:
+          transform 0.16s ease,
+          background 0.16s ease,
+          border-color 0.16s ease;
 }
 
 .classroom-detail__cancel-btn:hover {
-  border-color: var(--danger);
-  color: var(--danger);
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
-/* Students table */
+/* ── Students table ─────────────────────────────────────── */
 .classroom-detail__table {
   width: 100%;
   border-collapse: collapse;
@@ -185,12 +262,12 @@
 .classroom-detail__th {
   text-align: left;
   font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 0 12px 10px 0;
-  border-bottom: 1px solid var(--teacher-card-border);
+  color: rgba(188, 198, 235, 0.82);
+  padding: 0 12px 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .classroom-detail__th--num {
@@ -198,15 +275,19 @@
   padding-right: 0;
 }
 
+.classroom-detail__tr {
+  transition: background 0.14s ease;
+}
+
 .classroom-detail__tr:hover {
-  background: var(--accent-bg);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .classroom-detail__td {
-  padding: 12px 12px 12px 0;
-  font-size: 14px;
-  color: var(--text-h);
-  border-bottom: 1px solid var(--teacher-card-border);
+  padding: 18px 12px 18px 0;
+  font-size: 15px;
+  color: #f4f1ff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .classroom-detail__td--num {
@@ -220,31 +301,108 @@
 }
 
 .classroom-detail__student-link {
-  color: var(--accent);
+  color: #cb9cff;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .classroom-detail__student-link:hover {
-  text-decoration: underline;
+  color: #ddb4ff;
+  text-decoration: none;
 }
 
-/* Mystery link */
+/* ── Mystery link ───────────────────────────────────────── */
 .classroom-detail__mystery-link {
-  display: inline-block;
-  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #c98cff;
   text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .classroom-detail__mystery-link:hover {
-  text-decoration: underline;
+  color: #ddb4ff;
+  text-decoration: none;
 }
 
-/* Empty state */
+/* ── Empty state ────────────────────────────────────────── */
 .classroom-detail__empty {
-  color: var(--text);
-  font-size: 14px;
   margin: 0;
+  color: rgba(205, 213, 255, 0.78);
+  font-size: 14px;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .classroom-detail {
+    padding: 20px 18px 30px;
+  }
+
+  .classroom-detail__title {
+    font-size: 38px;
+  }
+
+  .classroom-detail__section {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  .classroom-detail__info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .classroom-detail__info-label {
+    width: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .classroom-detail__title {
+    font-size: 30px;
+  }
+
+  .classroom-detail__section {
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  .classroom-detail__table,
+  .classroom-detail__table tbody,
+  .classroom-detail__table tr,
+  .classroom-detail__table td {
+    display: block;
+    width: 100%;
+  }
+
+  .classroom-detail__table thead {
+    display: none;
+  }
+
+  .classroom-detail__tr {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .classroom-detail__td {
+    padding: 6px 0;
+    border: none;
+    text-align: left !important;
+  }
+
+  .classroom-detail__tr:last-child {
+    border-bottom: none;
+  }
+
+  .classroom-detail__edit-actions {
+    flex-direction: column;
+  }
+
+  .classroom-detail__save-btn,
+  .classroom-detail__cancel-btn {
+    width: 100%;
+  }
 }

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
 import type { ClassroomSummary } from '@/types/classroom.ts';
 import LogoutButton from '@/components/LogoutButton';
@@ -22,7 +23,9 @@ export default function MyClassroomsPage() {
                     <span className="teacher-dashboard__logo-icon">🔍</span>
                     <span className="teacher-dashboard__logo-text">Nettdetektivene</span>
                 </div>
+
                 <h1 className="teacher-dashboard__title">Mine klasserom</h1>
+
                 <div className="teacher-dashboard__header-actions">
                     <Link to="/teacher/notifications" className="teacher-dashboard__bell" aria-label="Varsler">
                         <BellIcon />
@@ -33,9 +36,9 @@ export default function MyClassroomsPage() {
 
             <div className="teacher-dashboard__board-wrap">
                 <div className="teacher-dashboard__toolbar">
-          <span className="teacher-dashboard__count-label">
-            {summaries.length} klasserom
-          </span>
+                    <span className="teacher-dashboard__count-label">
+                        {summaries.length} klasserom
+                    </span>
                 </div>
 
                 <div className="teacher-corkboard">
@@ -55,25 +58,31 @@ export default function MyClassroomsPage() {
 
                         {summaries.map(({ classroom, student_count, total_score }, index) => {
                             const accentColor = CARD_ACCENT_COLORS[index % CARD_ACCENT_COLORS.length];
+                            const classroomId = classroom.id;
+
                             return (
                                 <Link
-                                    key={classroom.id}
-                                    to={`/teacher/classroom/${classroom.id}`}
+                                    key={classroomId}
+                                    to={`/teacher/classroom/${classroomId}`}
                                     className="classroom-card"
                                     style={{ '--card-accent': accentColor } as React.CSSProperties}
                                 >
                                     <div className="classroom-card__tape" />
                                     <div className="classroom-card__color-bar" />
+
                                     <div className="classroom-card__top">
                                         <h2 className="classroom-card__title">{classroom.title}</h2>
                                         <span className="classroom-card__join-code">{classroom.join_code}</span>
                                     </div>
+
                                     <div className="classroom-card__stats">
                                         <div className="classroom-card__stat">
                                             <span className="classroom-card__stat-value">{student_count}</span>
                                             <span className="classroom-card__stat-label">elever</span>
                                         </div>
+
                                         <div className="classroom-card__stat-divider" />
+
                                         <div className="classroom-card__stat">
                                             <span className="classroom-card__stat-value">{total_score}</span>
                                             <span className="classroom-card__stat-label">medaljer</span>
