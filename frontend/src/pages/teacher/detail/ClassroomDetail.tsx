@@ -1,6 +1,8 @@
+import { Fragment, useMemo, useState } from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
-import { useMemo, useState } from 'react';
 import type { Classroom, StudentProgress, Stop } from '@/types/classroom.ts';
+import { Button } from '@/components/ui/buttons/Button';
+import { Card } from '@/components/ui/cards/Cards';
 import './ClassroomDetail.css';
 
 type LoaderData = {
@@ -88,7 +90,7 @@ export default function ClassroomDetail() {
                 <h1 className="classroom-detail__title">{classroom.title}</h1>
             </header>
 
-            <section className="classroom-detail__section">
+            <Card variant="unstyled" className="classroom-detail__section">
                 <h2 className="classroom-detail__section-title">Klasseinformasjon</h2>
 
                 {!editMode ? (
@@ -105,13 +107,13 @@ export default function ClassroomDetail() {
                             </div>
                         )}
 
-                        <button
-                            type="button"
+                        <Button
+                            variant="unstyled"
                             className="classroom-detail__edit-btn"
                             onClick={() => setEditMode(true)}
                         >
                             Rediger
-                        </button>
+                        </Button>
                     </div>
                 ) : (
                     <div className="classroom-detail__edit-form">
@@ -139,18 +141,26 @@ export default function ClassroomDetail() {
                         </label>
 
                         <div className="classroom-detail__edit-actions">
-                            <button type="button" className="classroom-detail__save-btn" onClick={handleSave}>
+                            <Button
+                                variant="unstyled"
+                                className="classroom-detail__save-btn"
+                                onClick={handleSave}
+                            >
                                 Lagre
-                            </button>
-                            <button type="button" className="classroom-detail__cancel-btn" onClick={handleCancel}>
+                            </Button>
+                            <Button
+                                variant="unstyled"
+                                className="classroom-detail__cancel-btn"
+                                onClick={handleCancel}
+                            >
                                 Avbryt
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 )}
-            </section>
+            </Card>
 
-            <section className="classroom-detail__section">
+            <Card variant="unstyled" className="classroom-detail__section">
                 <h2 className="classroom-detail__section-title">
                     Elever <span className="classroom-detail__count">({students.length})</span>
                 </h2>
@@ -177,9 +187,8 @@ export default function ClassroomDetail() {
                                 const badges = getStudentBadges(student);
 
                                 return (
-                                    <>
+                                    <Fragment key={user.id}>
                                         <tr
-                                            key={user.id}
                                             className={`classroom-detail__tr ${isOpen ? 'classroom-detail__tr--active' : ''}`}
                                             onClick={() => setSelectedStudentId(isOpen ? null : user.id)}
                                             role="button"
@@ -237,39 +246,39 @@ export default function ClassroomDetail() {
 
                                                                 <div className="classroom-detail__student-stats">
                                                                     <div className="classroom-detail__student-stat">
-                                      <span className="classroom-detail__student-stat-label">
-                                        Leaderboard
-                                      </span>
+                                                                            <span className="classroom-detail__student-stat-label">
+                                                                                Leaderboard
+                                                                            </span>
                                                                         <span className="classroom-detail__student-stat-value">
-                                        #{rank}
-                                      </span>
+                                                                                #{rank}
+                                                                            </span>
                                                                     </div>
 
                                                                     <div className="classroom-detail__student-stat">
-                                      <span className="classroom-detail__student-stat-label">
-                                        Medaljer
-                                      </span>
+                                                                            <span className="classroom-detail__student-stat-label">
+                                                                                Medaljer
+                                                                            </span>
                                                                         <span className="classroom-detail__student-stat-value">
-                                        {medals.length}
-                                      </span>
+                                                                                {medals.length}
+                                                                            </span>
                                                                     </div>
 
                                                                     <div className="classroom-detail__student-stat">
-                                      <span className="classroom-detail__student-stat-label">
-                                        Stopp
-                                      </span>
+                                                                            <span className="classroom-detail__student-stat-label">
+                                                                                Stopp
+                                                                            </span>
                                                                         <span className="classroom-detail__student-stat-value">
-                                        {stops_completed}/{totalStops}
-                                      </span>
+                                                                                {stops_completed}/{totalStops}
+                                                                            </span>
                                                                     </div>
 
                                                                     <div className="classroom-detail__student-stat">
-                                      <span className="classroom-detail__student-stat-label">
-                                        Oppgaver
-                                      </span>
+                                                                            <span className="classroom-detail__student-stat-label">
+                                                                                Oppgaver
+                                                                            </span>
                                                                         <span className="classroom-detail__student-stat-value">
-                                        {tasks_done}
-                                      </span>
+                                                                                {tasks_done}
+                                                                            </span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -281,13 +290,13 @@ export default function ClassroomDetail() {
                                                                     {badges.length > 0 ? (
                                                                         badges.map((badge) => (
                                                                             <span key={badge} className="classroom-detail__badge">
-                                          {badge}
-                                        </span>
+                                                                                    {badge}
+                                                                                </span>
                                                                         ))
                                                                     ) : (
                                                                         <span className="classroom-detail__badge classroom-detail__badge--muted">
-                                        Ingen badges ennå
-                                      </span>
+                                                                                Ingen badges ennå
+                                                                            </span>
                                                                     )}
                                                                 </div>
 
@@ -303,16 +312,16 @@ export default function ClassroomDetail() {
                                                 </td>
                                             </tr>
                                         )}
-                                    </>
+                                    </Fragment>
                                 );
                             })}
                             </tbody>
                         </table>
                     </div>
                 )}
-            </section>
+            </Card>
 
-            <section className="classroom-detail__section">
+            <Card variant="unstyled" className="classroom-detail__section">
                 <h2 className="classroom-detail__section-title">Mystery-innleveringer</h2>
                 <Link
                     to={`/teacher/classroom/${classroom.id}/mystery`}
@@ -320,7 +329,7 @@ export default function ClassroomDetail() {
                 >
                     Se alle innleveringer →
                 </Link>
-            </section>
+            </Card>
         </div>
     );
 }

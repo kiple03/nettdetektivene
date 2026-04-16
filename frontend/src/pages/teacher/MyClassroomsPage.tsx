@@ -27,7 +27,11 @@ export default function MyClassroomsPage() {
                 <h1 className="teacher-dashboard__title">Mine klasserom</h1>
 
                 <div className="teacher-dashboard__header-actions">
-                    <Link to="/teacher/notifications" className="teacher-dashboard__bell" aria-label="Varsler">
+                    <Link
+                        to="/teacher/notifications"
+                        className="teacher-dashboard__bell"
+                        aria-label="Varsler"
+                    >
                         <BellIcon />
                     </Link>
                     <LogoutButton className="teacher-dashboard__logout" />
