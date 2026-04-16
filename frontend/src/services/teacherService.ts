@@ -9,6 +9,7 @@ import type {
   ClassroomDetail,
   StudentSummary,
   StudentDetail,
+  LevelEntry,
   MysterySubmissionResponse,
   NotificationResponse,
   StopSummary,
@@ -20,8 +21,6 @@ import {
   MOCK_STOPS,
   MOCK_ENROLLMENTS,
   MOCK_STUDENTS,
-  MOCK_MEDALS,
-  MOCK_NOTEPAD_ENTRIES,
 } from '../mock/teacherData';
 import apiClient from '../api/client';
 import axios from 'axios';
@@ -52,6 +51,16 @@ interface RawClassroomDetail {
   createdAt: string;
 }
 
+interface RawLevelCompletionEntry {
+  levelId: number;
+  completedAt: string;
+}
+
+interface RawStudentDetail {
+  username: string;
+  completions: RawLevelCompletionEntry[];
+}
+
 // --- Mappers ---
 
 function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
@@ -71,6 +80,18 @@ function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
     joinCode: raw.joinCode,
     createdAt: raw.createdAt,
     studentCount: raw.studentCount,
+  };
+}
+
+function mapLevelEntry(raw: RawLevelCompletionEntry): LevelEntry {
+  return { levelId: raw.levelId, completedAt: raw.completedAt };
+}
+
+function mapStudentDetail(raw: RawStudentDetail, userId: string): StudentDetail {
+  return {
+    userId,
+    username: raw.username,
+    levelCompletions: raw.completions.map(mapLevelEntry),
   };
 }
 
@@ -112,33 +133,15 @@ export async function getStudentProgress(classroomId: string): Promise<StudentSu
 }
 
 export async function getStudentDetail(classroomId: string, studentId: string): Promise<StudentDetail | null> {
-  const enrollment = MOCK_ENROLLMENTS.find(
-    (e) => String(e.user_id) === studentId && String(e.classroom_id) === classroomId
-  );
-  if (!enrollment) return null;
-  const user = MOCK_STUDENTS.find((s) => s.id === enrollment.user_id);
-  if (!user) return null;
-  const stops = MOCK_STOPS.filter((s) => String(s.classroom_id) === classroomId);
-  const medals = MOCK_MEDALS.filter((m) => m.enrollment_id === enrollment.id);
-  const notepadEntries = MOCK_NOTEPAD_ENTRIES.filter((n) => n.enrollment_id === enrollment.id);
-  return {
-    userId: String(user.id),
-    username: user.username,
-    medals: medals.map((m) => {
-      const stop = stops.find((s) => s.id === m.stop_id);
-      return { stopId: String(m.stop_id), stopTitle: stop?.title ?? '', earnedAt: m.earned_at };
-    }),
-    levelCompletions: medals.map((m) => {
-      const stop = stops.find((s) => s.id === m.stop_id);
-      return { stopId: String(m.stop_id), stopTitle: stop?.title ?? '', completedAt: m.earned_at };
-    }),
-    notepadEntries: notepadEntries.map((n) => ({
-      id: String(n.id),
-      type: n.type,
-      content: n.content,
-      createdAt: n.created_at,
-    })),
-  };
+  try {
+    const res = await apiClient.get<RawStudentDetail>(`/teacher/classrooms/${classroomId}/students/${studentId}`);
+    return mapStudentDetail(res.data, studentId);
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err) && err.response?.status === 404) {
+      return null;
+    }
+    throw err;
+  }
 }
 
 export async function getMysterySubmissions(classroomId: string): Promise<MysterySubmissionResponse[]> {

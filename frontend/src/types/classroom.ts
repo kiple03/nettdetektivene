@@ -24,31 +24,15 @@ export interface StudentSummary {
   levelsCompleted: number;
 }
 
-export interface MedalEntry {
-  stopId: string;
-  stopTitle: string;
-  earnedAt: string;
-}
-
 export interface LevelEntry {
-  stopId: string;
-  stopTitle: string;
+  levelId: number;
   completedAt: string;
-}
-
-export interface NotepadEntryItem {
-  id: string;
-  type: 'auto' | 'student';
-  content: string;
-  createdAt: string;
 }
 
 export interface StudentDetail {
   userId: string;
   username: string;
-  medals: MedalEntry[];
   levelCompletions: LevelEntry[];
-  notepadEntries: NotepadEntryItem[];
 }
 
 export interface MysterySubmissionResponse {
