@@ -6,8 +6,8 @@ import TeacherLoginPage from "@/pages/auth/TeacherLoginPage";
 import FeideFake from "@/pages/auth/FeideFake";
 import StudentHomePage from "@/pages/student/StudentHomePage";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
-import ClassroomDetail from "@/pages/teacher/ClassroomDetail";
-import StudentDetail from "@/pages/teacher/StudentDetail";
+import ClassroomDetail from "@/pages/teacher/detail/ClassroomDetail.tsx";
+import StudentDetail from "@/pages/teacher/detail/StudentDetail.tsx";
 import MysterySubmissions from "@/pages/teacher/MysterySubmissions";
 import Notifications from "@/pages/teacher/Notifications";
 import LeaderboardPage from "@/pages/student/LeaderboardPage.tsx";
@@ -15,6 +15,7 @@ import NotesPage from "@/pages/student/NotesPage";
 import BadgesPage from "@/pages/student/BadgesPage";
 import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
 import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
+import CodePage from "@/pages/teacher/CodePage";
 // Route guard temporarily disabled during game development so we don't
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
 // wrappers below and uncommenting this import.
@@ -54,7 +55,7 @@ export const router = createBrowserRouter([
         element: <StudentHomePage />,
     },
     {
-        path: '/join-with-code',
+        path: '/bli-med',
         element: <JoinWithCodePage />,
     },
     {
@@ -107,6 +108,14 @@ export const router = createBrowserRouter([
                 getStops(id),
             ]);
             return { classroom, students, stops };
+        },
+    },
+    {
+        path: '/teacher/classroom/:id/code',
+        element: <CodePage />,
+        loader: async ({ params }) => {
+            const id = Number(params.id);
+            return await getClassroom(id);
         },
     },
     {
