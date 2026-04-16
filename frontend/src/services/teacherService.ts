@@ -15,17 +15,23 @@ import type {
   StopSummary,
 } from '../types/classroom';
 import {
-  MOCK_CLASSROOMS,
-  MOCK_MYSTERY_SUBMISSIONS,
   MOCK_NOTIFICATIONS,
   MOCK_STOPS,
-  MOCK_ENROLLMENTS,
-  MOCK_STUDENTS,
 } from '../mock/teacherData';
 import apiClient from '../api/client';
 import axios from 'axios';
 
 // --- Raw response types (internal, not exported) ---
+
+interface RawMysterySubmission {
+  id: string;
+  studentUsername: string;
+  content: string | null;
+  imageUrl: string | null;
+  submittedAt: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  featured: boolean;
+}
 
 interface RawStudentProgress {
   userId: string;
@@ -95,6 +101,25 @@ function mapStudentDetail(raw: RawStudentDetail, userId: string): StudentDetail 
   };
 }
 
+const STATUS_MAP = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+} as const;
+
+function mapMysterySubmission(raw: RawMysterySubmission): MysterySubmissionResponse {
+  return {
+    id: raw.id,
+    studentUsername: raw.studentUsername,
+    content: raw.content,
+    imageUrl: raw.imageUrl,
+    submittedAt: raw.submittedAt,
+    status: STATUS_MAP[raw.status],
+    featured: raw.featured,
+    reviewedAt: null,
+  };
+}
+
 function mapClassroomDetail(raw: RawClassroomDetail): ClassroomDetail {
   return {
     id: raw.id,
@@ -145,24 +170,32 @@ export async function getStudentDetail(classroomId: string, studentId: string): 
 }
 
 export async function getMysterySubmissions(classroomId: string): Promise<MysterySubmissionResponse[]> {
-  const enrollments = MOCK_ENROLLMENTS.filter((e) => String(e.classroom_id) === classroomId);
-  const enrollmentIds = new Set(enrollments.map((e) => e.id));
-  return MOCK_MYSTERY_SUBMISSIONS
-    .filter((s) => enrollmentIds.has(s.enrollment_id))
-    .map((s) => {
-      const enrollment = enrollments.find((e) => e.id === s.enrollment_id);
-      const student = enrollment ? MOCK_STUDENTS.find((u) => u.id === enrollment.user_id) : undefined;
-      return {
-        id: String(s.id),
-        studentUsername: student?.username ?? 'Ukjent',
-        content: s.content,
-        imageUrl: s.image_url,
-        status: s.status,
-        featured: s.is_featured,
-        submittedAt: s.submitted_at,
-        reviewedAt: s.reviewed_at,
-      };
-    });
+  const res = await apiClient.get<RawMysterySubmission[]>(`/teacher/classrooms/${classroomId}/mystery`);
+  return res.data.map(mapMysterySubmission);
+}
+
+export async function approveMysterySubmission(classroomId: string, submissionId: string): Promise<MysterySubmissionResponse> {
+  const res = await apiClient.patch<RawMysterySubmission>(
+    `/teacher/classrooms/${classroomId}/mystery/${submissionId}`,
+    { status: 'APPROVED', featured: false },
+  );
+  return mapMysterySubmission(res.data);
+}
+
+export async function rejectMysterySubmission(classroomId: string, submissionId: string): Promise<MysterySubmissionResponse> {
+  const res = await apiClient.patch<RawMysterySubmission>(
+    `/teacher/classrooms/${classroomId}/mystery/${submissionId}`,
+    { status: 'REJECTED', featured: false },
+  );
+  return mapMysterySubmission(res.data);
+}
+
+export async function featureMysterySubmission(classroomId: string, submissionId: string, featured: boolean): Promise<MysterySubmissionResponse> {
+  const res = await apiClient.patch<RawMysterySubmission>(
+    `/teacher/classrooms/${classroomId}/mystery/${submissionId}`,
+    { featured },
+  );
+  return mapMysterySubmission(res.data);
 }
 
 export async function getNotifications(): Promise<NotificationResponse[]> {

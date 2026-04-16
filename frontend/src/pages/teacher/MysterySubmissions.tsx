@@ -1,6 +1,11 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
 import type { ClassroomDetail, MysterySubmissionResponse } from '@/types/classroom.ts';
+import {
+  approveMysterySubmission,
+  rejectMysterySubmission,
+  featureMysterySubmission,
+} from '@/services/teacherService';
 import './MysterySubmissions.css';
 
 type LoaderData = {
@@ -30,22 +35,24 @@ export default function MysterySubmissions() {
 
   const classroomId = classroom?.id;
 
-  function approve(id: string) {
-    setSubmissions(prev =>
-      prev.map(s => s.id === id ? { ...s, status: 'approved' as const, reviewedAt: new Date().toISOString() } : s)
-    );
+  async function approve(id: string) {
+    if (!classroomId) return;
+    const updated = await approveMysterySubmission(classroomId, id);
+    setSubmissions(prev => prev.map(s => s.id === id ? updated : s));
   }
 
-  function reject(id: string) {
-    setSubmissions(prev =>
-      prev.map(s => s.id === id ? { ...s, status: 'rejected' as const, reviewedAt: new Date().toISOString(), featured: false } : s)
-    );
+  async function reject(id: string) {
+    if (!classroomId) return;
+    const updated = await rejectMysterySubmission(classroomId, id);
+    setSubmissions(prev => prev.map(s => s.id === id ? updated : s));
   }
 
-  function toggleFeatured(id: string) {
-    setSubmissions(prev =>
-      prev.map(s => s.id === id ? { ...s, featured: !s.featured } : s)
-    );
+  async function toggleFeatured(id: string) {
+    if (!classroomId) return;
+    const current = submissions.find(s => s.id === id);
+    if (!current) return;
+    const updated = await featureMysterySubmission(classroomId, id, !current.featured);
+    setSubmissions(prev => prev.map(s => s.id === id ? updated : s));
   }
 
   const filtered = filter === 'all' ? submissions : submissions.filter(s => s.status === filter);
