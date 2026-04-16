@@ -23,7 +23,14 @@ export interface ApiErrorBody {
   message?: string;
 }
 
+export interface EquippedItem {
+  id: string;
+  name: string;
+  category: string;
+  imageUrl: string;
+}
+
 export interface UserProfile {
   username: string;
-  avatar: string;
+  equippedItems: EquippedItem[];
 }

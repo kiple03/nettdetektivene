@@ -1,16 +1,27 @@
 import clientApi from './client';
-import type { UserProfile } from '@/types/user';
+import type { EquippedItem, UserProfile } from '@/types/user';
 
-// Raw response type from backend (internal, not exported)
+// Raw response types from backend (internal, not exported)
+interface RawEquippedItem {
+  id: string;
+  name: string;
+  category: string;
+  imageUrl: string;
+}
+
 interface RawUserProfile {
   username: string;
-  avatar: string;
+  equippedItems: RawEquippedItem[];
+}
+
+function mapEquippedItem(raw: RawEquippedItem): EquippedItem {
+  return { id: raw.id, name: raw.name, category: raw.category, imageUrl: raw.imageUrl };
 }
 
 function mapUserProfile(raw: RawUserProfile): UserProfile {
   return {
     username: raw.username,
-    avatar: raw.avatar,
+    equippedItems: raw.equippedItems.map(mapEquippedItem),
   };
 }
 
