@@ -14,17 +14,19 @@ type ClassroomData = {
 };
 
 export default function CodePage() {
-    const classroom = useLoaderData() as ClassroomData;
+    const classroom = useLoaderData() as ClassroomData | null | undefined;
 
     const formattedCode = useMemo(() => {
-        const raw = (classroom.joinCode ?? "")
+        const raw = (classroom?.joinCode ?? "")
             .replace(/[^a-zA-Z0-9]/g, "")
             .toUpperCase()
             .slice(0, 6);
 
         if (raw.length <= 3) return raw;
         return `${raw.slice(0, 3)}-${raw.slice(3, 6)}`;
-    }, [classroom.joinCode]);
+    }, [classroom?.joinCode]);
+
+    const classroomTitle = classroom?.title ?? "klasserommet";
 
     return (
         <div
@@ -47,7 +49,7 @@ export default function CodePage() {
 
                 <div className={styles.bottomSection}>
                     <Card variant="unstyled" className={styles.formBox}>
-                        <p className={styles.label}>Koden til {classroom.title}</p>
+                        <p className={styles.label}>Koden til {classroomTitle}</p>
 
                         <div className={styles.codeDisplayWrapper}>
                             <img
@@ -57,28 +59,43 @@ export default function CodePage() {
                                 className={`${styles.innerDetective} ${styles.leftDetective}`}
                             />
 
-                            <div
-                                className={styles.codeDisplay}
-                                aria-label={`Klasseromskode ${formattedCode}`}
-                            >
-                                {formattedCode.split("").map((char, index) => {
-                                    const isDash = char === "-";
+                            {formattedCode ? (
+                                <div
+                                    className={styles.codeDisplay}
+                                    aria-label={`Klasseromskode ${formattedCode}`}
+                                >
+                                    {formattedCode.split("").map((char, index) => {
+                                        const isDash = char === "-";
 
-                                    return (
-                                        <span
-                                            key={`${char}-${index}`}
-                                            className={[
-                                                styles.codeChar,
-                                                isDash ? styles.codeDash : "",
-                                            ]
-                                                .filter(Boolean)
-                                                .join(" ")}
-                                        >
-                      {char}
-                    </span>
-                                    );
-                                })}
-                            </div>
+                                        return (
+                                            <span
+                                                key={`${char}-${index}`}
+                                                className={[
+                                                    styles.codeChar,
+                                                    isDash ? styles.codeDash : "",
+                                                ]
+                                                    .filter(Boolean)
+                                                    .join(" ")}
+                                            >
+                                                {char}
+                                            </span>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div
+                                    className={styles.codeDisplay}
+                                    aria-label="Ingen klasseromskode tilgjengelig"
+                                >
+                                    <span className={styles.codeChar}>-</span>
+                                    <span className={styles.codeChar}>-</span>
+                                    <span className={styles.codeChar}>-</span>
+                                    <span className={styles.codeDash}>-</span>
+                                    <span className={styles.codeChar}>-</span>
+                                    <span className={styles.codeChar}>-</span>
+                                    <span className={styles.codeChar}>-</span>
+                                </div>
+                            )}
 
                             <img
                                 src={detectiveImage}
