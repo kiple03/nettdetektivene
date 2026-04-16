@@ -62,7 +62,7 @@ class TeacherNotificationsControllerTest {
 
         when(teacherClassroomService.getNotifications(teacherId)).thenReturn(List.of(notif));
 
-        mockMvc.perform(get("/api/teacher/notifications")
+        mockMvc.perform(get("/teacher/notifications")
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].type").value("LEVEL_COMPLETED"))
@@ -73,7 +73,7 @@ class TeacherNotificationsControllerTest {
 
     @Test
     void getNotifications_noAuth_returns401() throws Exception {
-        mockMvc.perform(get("/api/teacher/notifications"))
+        mockMvc.perform(get("/teacher/notifications"))
             .andExpect(status().isUnauthorized());
     }
 
@@ -86,7 +86,7 @@ class TeacherNotificationsControllerTest {
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
 
-        mockMvc.perform(get("/api/teacher/notifications")
+        mockMvc.perform(get("/teacher/notifications")
                 .with(authentication(studentAuth)))
             .andExpect(status().isForbidden());
     }
@@ -97,7 +97,7 @@ class TeacherNotificationsControllerTest {
 
         when(teacherClassroomService.getNotifications(teacherId)).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/teacher/notifications")
+        mockMvc.perform(get("/teacher/notifications")
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isArray())
@@ -130,7 +130,7 @@ class TeacherNotificationsControllerTest {
 
         when(teacherClassroomService.getNotifications(teacherId)).thenReturn(notifs);
 
-        mockMvc.perform(get("/api/teacher/notifications")
+        mockMvc.perform(get("/teacher/notifications")
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].type").value("MYSTERY_SUBMISSION"))

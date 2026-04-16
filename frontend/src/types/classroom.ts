@@ -1,5 +1,24 @@
 // Mirrors DB schema exactly — swap mock data for real API calls in teacherService.ts
 
+// Matches GET /api/teacher/classrooms response item
+export interface ClassroomSummaryApi {
+  id: string;
+  title: string;
+  description: string | null;
+  joinCode: string;
+  createdAt: string;
+  studentCount: number;
+}
+
+// Matches POST /api/teacher/classrooms response
+export interface ClassroomDetailApi {
+  id: string;
+  title: string;
+  description: string | null;
+  joinCode: string;
+  createdAt: string;
+}
+
 // Matches the backend ClassroomResponse DTO (camelCase from Spring)
 export interface ClassroomResponse {
   id: string;

@@ -1,12 +1,13 @@
 /**
  * Teacher service — all data access for teacher dashboard goes through here.
- * Currently returns mock data; to switch to real API calls, replace the
- * function bodies (keep the same signatures so loaders don't change).
+ * getClassroomSummaries and createClassroom call the real API.
+ * All other functions still return mock data.
  */
 
 import type {
   AppUser,
-  ClassroomSummary,
+  ClassroomSummaryApi,
+  ClassroomDetailApi,
   MysterySubmissionWithStudent,
   Notification,
   StudentDetail,
@@ -18,15 +19,16 @@ import {
   MOCK_MYSTERY_SUBMISSIONS,
   MOCK_NOTIFICATIONS,
   MOCK_STOPS,
-  buildClassroomSummaries,
   buildStudentDetail,
   buildStudentProgress,
   MOCK_ENROLLMENTS,
   MOCK_STUDENTS,
 } from '../mock/teacherData';
+import apiClient from '../api/client';
 
-export async function getClassroomSummaries(): Promise<ClassroomSummary[]> {
-  return buildClassroomSummaries();
+export async function getClassroomSummaries(): Promise<ClassroomSummaryApi[]> {
+  const res = await apiClient.get<ClassroomSummaryApi[]>('/teacher/classrooms');
+  return res.data;
 }
 
 export async function getStudentProgress(classroom_id: number): Promise<StudentProgress[]> {
@@ -62,19 +64,9 @@ export async function getClassroom(classroom_id: number) {
   return MOCK_CLASSROOMS.find((c) => c.id === classroom_id) ?? null;
 }
 
-export async function createClassroom(title: string, description: string | null) {
-  // Mock: generate a join code and return a fake created classroom
-  const join_code = title.replace(/\s+/g, '').toUpperCase().slice(0, 6) + Math.floor(Math.random() * 100);
-  const newId = Math.max(...MOCK_CLASSROOMS.map((c) => c.id)) + 1;
-  const classroom = {
-    id: newId,
-    title,
-    description,
-    join_code,
-    created_at: new Date().toISOString(),
-  };
-  MOCK_CLASSROOMS.push(classroom);
-  return classroom;
+export async function createClassroom(title: string, description: string | null): Promise<ClassroomDetailApi> {
+  const res = await apiClient.post<ClassroomDetailApi>('/teacher/classrooms', { title, description });
+  return res.data;
 }
 
 export async function getStops(classroom_id: number): Promise<Stop[]> {
