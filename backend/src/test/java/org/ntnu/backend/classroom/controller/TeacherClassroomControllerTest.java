@@ -6,6 +6,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.security.JwtService;
@@ -200,6 +202,70 @@ class TeacherClassroomControllerTest {
 
         mockMvc.perform(get("/api/teacher/classrooms/" + classroomId)
                 .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void updateClassroom_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        ClassroomResponse response = ClassroomResponse.builder()
+            .id(classroomId.toString())
+            .title("Updated Title")
+            .description("Updated desc")
+            .joinCode("ABC123")
+            .build();
+
+        when(teacherClassroomService.updateClassroom(eq(classroomId), any(UpdateClassroomRequest.class), any()))
+            .thenReturn(response);
+
+        mockMvc.perform(patch("/api/teacher/classrooms/" + classroomId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Updated Title\",\"description\":\"Updated desc\"}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(classroomId.toString()))
+            .andExpect(jsonPath("$.title").value("Updated Title"));
+    }
+
+    @Test
+    void updateClassroom_noAuth_returns401() throws Exception {
+        mockMvc.perform(patch("/api/teacher/classrooms/" + UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Updated Title\"}"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updateClassroom_studentRole_returns403() throws Exception {
+        UUID userId = UUID.randomUUID();
+        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
+            "student1", userId, "STUDENT", UUID.randomUUID(),
+            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
+        );
+        JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
+
+        mockMvc.perform(patch("/api/teacher/classrooms/" + UUID.randomUUID())
+                .with(authentication(studentAuth))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Updated Title\"}"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void updateClassroom_notOwnedByTeacher_returns403() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherClassroomService.updateClassroom(eq(classroomId), any(UpdateClassroomRequest.class), any()))
+            .thenThrow(new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.FORBIDDEN));
+
+        mockMvc.perform(patch("/api/teacher/classrooms/" + classroomId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"title\":\"Updated Title\"}"))
             .andExpect(status().isForbidden());
     }
 }

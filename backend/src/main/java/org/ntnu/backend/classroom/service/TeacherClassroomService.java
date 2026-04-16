@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
@@ -42,6 +43,11 @@ public class TeacherClassroomService {
                 .studentCount(((Number) row[5]).longValue())
                 .build())
             .toList();
+    }
+
+    public ClassroomResponse updateClassroom(UUID classroomId, UpdateClassroomRequest request, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        return classroomService.updateClassroom(classroomId, request);
     }
 
     public ClassroomResponse getClassroom(UUID classroomId, JwtAuthenticatedPrincipal principal) {

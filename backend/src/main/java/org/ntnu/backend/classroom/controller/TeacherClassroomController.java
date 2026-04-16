@@ -7,12 +7,14 @@ import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +42,15 @@ public class TeacherClassroomController {
             @PathVariable UUID id,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherClassroomService.getClassroom(id, principal);
+    }
+
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ClassroomResponse updateClassroom(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateClassroomRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.updateClassroom(id, request, principal);
     }
 
     @PostMapping
