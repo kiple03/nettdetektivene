@@ -1,8 +1,9 @@
 package org.ntnu.backend.exception;
 
-public class QuestionLockedException extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-  public QuestionLockedException(String message) {
-    super(message);
+public class QuestionLockedException extends ApiException {
+  public QuestionLockedException() {
+    super(HttpStatus.FORBIDDEN, "You must complete the previous question first");
   }
 }
