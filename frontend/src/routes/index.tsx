@@ -141,7 +141,7 @@ export const router = createBrowserRouter([
                 getNotifications(),
                 getClassroomSummaries(),
             ]);
-            return { notifications, classrooms: summaries.map(s => s.classroom) };
+            return { notifications, classrooms: summaries };
         },
     },
 ]);
