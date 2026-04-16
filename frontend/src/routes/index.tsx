@@ -16,6 +16,8 @@ import NotesPage from "@/pages/student/NotesPage";
 import BadgesPage from "@/pages/student/BadgesPage";
 import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
 import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
+import TestPage from "@/pages/game/TestGamePage.tsx";
+
 // Route guard temporarily disabled during game development so we don't
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
 // wrappers below and uncommenting this import.
@@ -30,6 +32,7 @@ import {
     getClassroom,
     getStops,
 } from "@/services/teacherService";
+import TestGamePage from "@/pages/game/TestGamePage.tsx";
 
 export const router = createBrowserRouter([
     // Auth routes (public)
@@ -82,6 +85,11 @@ export const router = createBrowserRouter([
         element: <WeeklyMysteryPage />,
     },
 
+    //TEST for spill
+    {
+        path: '/game',
+        element: <TestPage />
+    },
 
 
       // Teacher routes
