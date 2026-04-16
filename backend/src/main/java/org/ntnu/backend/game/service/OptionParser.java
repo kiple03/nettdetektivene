@@ -1,9 +1,10 @@
 package org.ntnu.backend.game.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.InvalidOptionFormatException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
@@ -11,9 +12,10 @@ import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class OptionParser {
 
-  private final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper mapper;
 
   public List<Option> parse(String json, LevelType type) {
     try {

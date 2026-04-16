@@ -7,21 +7,15 @@ import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
-import org.ntnu.backend.game.util.QuestionContentStripper;
 import org.springframework.stereotype.Component;
 
 /**
  * Converts game entities into response DTOs.
- *
- * <p>For {@link Question}, the raw {@code optionContent} JSON is passed through
- * {@link QuestionContentStripper} so correct answers and explanations are never
- * leaked to the client.
  */
 @Component
 @RequiredArgsConstructor
 public class GameMapper {
 
-  private final QuestionContentStripper stripper;
 
   /**
    * Maps a Stop entity to its overview response, including per-student state.

@@ -2,7 +2,5 @@ package org.ntnu.backend.game.dto;
 
 public record MultipleChoiceOptionResponse(
     int id,
-    String imageUrl,
-    boolean isCorrect,
-    String explanation
+    String imageUrl
 ) {}
