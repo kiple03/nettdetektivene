@@ -15,13 +15,20 @@ import type {
   StopSummary,
 } from '../types/classroom';
 import {
-  MOCK_NOTIFICATIONS,
   MOCK_STOPS,
 } from '../mock/teacherData';
 import apiClient from '../api/client';
 import axios from 'axios';
 
 // --- Raw response types (internal, not exported) ---
+
+interface RawNotification {
+  type: string;
+  message: string;
+  classroomId: string;
+  studentUsername: string;
+  timestamp: string;
+}
 
 interface RawMysterySubmission {
   id: string;
@@ -120,6 +127,33 @@ function mapMysterySubmission(raw: RawMysterySubmission): MysterySubmissionRespo
   };
 }
 
+const NOTIFICATION_TYPE_MAP: Record<string, NotificationResponse['type']> = {
+  LEVEL_COMPLETED: 'stop_completed',
+  MYSTERY_SUBMISSION: 'mystery_submission',
+};
+
+/** Stable localStorage key for a notification's read state. */
+export function notifLsKey(username: string, timestamp: string): string {
+  return `notif:${username}:${timestamp}`;
+}
+
+function mapNotification(raw: RawNotification): NotificationResponse {
+  const mapped = NOTIFICATION_TYPE_MAP[raw.type];
+  if (!mapped) {
+    console.warn(`[teacherService] Unknown notification type from API: "${raw.type}"`);
+  }
+  const type: NotificationResponse['type'] = mapped ?? 'stop_completed';
+  const read = localStorage.getItem(notifLsKey(raw.studentUsername, raw.timestamp)) === 'true';
+  return {
+    type,
+    message: raw.message,
+    classroomId: raw.classroomId,
+    studentUsername: raw.studentUsername,
+    timestamp: raw.timestamp,
+    read,
+  };
+}
+
 function mapClassroomDetail(raw: RawClassroomDetail): ClassroomDetail {
   return {
     id: raw.id,
@@ -199,14 +233,8 @@ export async function featureMysterySubmission(classroomId: string, submissionId
 }
 
 export async function getNotifications(): Promise<NotificationResponse[]> {
-  return MOCK_NOTIFICATIONS.map((n) => ({
-    type: n.type,
-    message: n.message,
-    classroomId: String(n.classroom_id),
-    studentUsername: n.student_username,
-    timestamp: n.created_at,
-    read: n.read,
-  }));
+  const res = await apiClient.get<RawNotification[]>('/teacher/notifications');
+  return res.data.map(mapNotification);
 }
 
 export async function getStops(classroomId: string): Promise<StopSummary[]> {

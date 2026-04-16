@@ -1,6 +1,7 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
 import type { ClassroomSummary, NotificationResponse } from '@/types/classroom.ts';
+import { notifLsKey } from '@/services/teacherService';
 import './Notifications.css';
 
 type LoaderData = {
@@ -36,12 +37,21 @@ export default function Notifications() {
 
   function markRead(key: string) {
     setNotifications(prev =>
-      prev.map(n => notifKey(n) === key ? { ...n, read: true } : n)
+      prev.map(n => {
+        if (notifKey(n) !== key) return n;
+        localStorage.setItem(notifLsKey(n.studentUsername, n.timestamp), 'true');
+        return { ...n, read: true };
+      })
     );
   }
 
   function markAllRead() {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications(prev =>
+      prev.map(n => {
+        localStorage.setItem(notifLsKey(n.studentUsername, n.timestamp), 'true');
+        return { ...n, read: true };
+      })
+    );
   }
 
   const filtered = classroomFilter === 'all'
