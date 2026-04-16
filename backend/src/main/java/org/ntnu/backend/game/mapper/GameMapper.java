@@ -75,6 +75,7 @@ public class GameMapper {
     return switch (option) {
       case MultipleChoiceOption mc -> new MultipleChoiceOptionResponse(
           mc.getId(),
+          mc.getText(),
           mc.getImageUrl()
       );
     };

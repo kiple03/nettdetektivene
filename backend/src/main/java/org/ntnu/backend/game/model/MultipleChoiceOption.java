@@ -1,5 +1,6 @@
 package org.ntnu.backend.game.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -15,13 +16,16 @@ import lombok.Setter;
 public final class MultipleChoiceOption implements Option {
 
     @NotNull
-    private Integer id;
+    private int id;
 
-    @NotNull
+    @NotBlank
+    private String text;
+
+    @NotBlank
     private String imageUrl;
 
-    @NotNull
-    private Boolean isCorrect;
+    @JsonProperty("isCorrect")
+    private boolean isCorrect;
 
     @NotBlank
     private String explanation;
