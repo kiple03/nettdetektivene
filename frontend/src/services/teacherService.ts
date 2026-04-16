@@ -1,7 +1,7 @@
 /**
  * Teacher service — all data access for teacher dashboard goes through here.
- * Currently returns mapped mock data; tasks 3-9 will replace each function
- * body with real API calls (signatures stay the same).
+ * Each function calls the real API; raw response types and mappers are defined
+ * here (not exported) so backend shape changes only require updates in this file.
  */
 
 import type {
@@ -24,31 +24,65 @@ import {
   MOCK_NOTEPAD_ENTRIES,
 } from '../mock/teacherData';
 import apiClient from '../api/client';
+import axios from 'axios';
+
+// --- Raw response types (internal, not exported) ---
+
+interface RawClassroomSummary {
+  id: string;
+  title: string;
+  description: string | null;
+  joinCode: string;
+  createdAt: string;
+  studentCount: number;
+}
+
+interface RawClassroomDetail {
+  id: string;
+  title: string;
+  description: string | null;
+  joinCode: string;
+  createdAt: string;
+}
+
+// --- Mappers ---
+
+function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
+  return {
+    id: raw.id,
+    title: raw.title,
+    description: raw.description,
+    joinCode: raw.joinCode,
+    createdAt: raw.createdAt,
+    studentCount: raw.studentCount,
+  };
+}
+
+function mapClassroomDetail(raw: RawClassroomDetail): ClassroomDetail {
+  return {
+    id: raw.id,
+    title: raw.title,
+    description: raw.description,
+    joinCode: raw.joinCode,
+    createdAt: raw.createdAt,
+  };
+}
 
 export async function getClassroomSummaries(): Promise<ClassroomSummary[]> {
-  return MOCK_CLASSROOMS.map((c) => {
-    const enrollments = MOCK_ENROLLMENTS.filter((e) => e.classroom_id === c.id && e.left_at === null);
-    return {
-      id: String(c.id),
-      title: c.title,
-      description: c.description,
-      joinCode: c.join_code,
-      createdAt: c.created_at,
-      studentCount: enrollments.length,
-    };
-  });
+  const res = await apiClient.get<RawClassroomSummary[]>('/teacher/classrooms');
+  return res.data.map(mapClassroomSummary);
 }
 
 export async function getClassroom(classroomId: string): Promise<ClassroomDetail | null> {
-  const c = MOCK_CLASSROOMS.find((x) => String(x.id) === classroomId) ?? null;
-  if (!c) return null;
-  return {
-    id: String(c.id),
-    title: c.title,
-    description: c.description,
-    joinCode: c.join_code,
-    createdAt: c.created_at,
-  };
+  try {
+    const res = await apiClient.get<RawClassroomDetail>(`/teacher/classrooms/${classroomId}`);
+    return mapClassroomDetail(res.data);
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err) && err.response?.status === 404) {
+      return null;
+    }
+    throw err;
+  }
 }
 
 export async function createClassroom(title: string, description: string | null): Promise<ClassroomDetail> {
