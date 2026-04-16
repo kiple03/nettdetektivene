@@ -72,12 +72,10 @@ class UserServiceTest {
   void register_success() {
     CreateUserRequest request = new CreateUserRequest();
     request.setEmail("test@test.no");
-    request.setUsername("testuser");
     request.setPassword("password123");
     request.setRole(RoleEnum.TEACHER);
 
     when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(userRepository.existsByUsername(anyString())).thenReturn(false);
     when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
     when(userMapper.toUser(any(), anyString())).thenReturn(testUser);
     when(jwtService.generateToken(any(UserPrincipal.class), any())).thenReturn("access-token");
@@ -98,7 +96,6 @@ class UserServiceTest {
   void register_duplicateEmail_throws409() {
     CreateUserRequest request = new CreateUserRequest();
     request.setEmail("test@test.no");
-    request.setUsername("testuser");
 
     when(userRepository.existsByEmail("test@test.no")).thenReturn(true);
 
@@ -107,30 +104,16 @@ class UserServiceTest {
         .hasMessageContaining("email");
   }
 
-  @Test
-  void register_duplicateUsername_throws409() {
-    CreateUserRequest request = new CreateUserRequest();
-    request.setEmail("test@test.no");
-    request.setUsername("testuser");
-
-    when(userRepository.existsByEmail(anyString())).thenReturn(false);
-    when(userRepository.existsByUsername("testuser")).thenReturn(true);
-
-    assertThatThrownBy(() -> userService.register(request))
-        .isInstanceOf(UserAlreadyExistsException.class)
-        .hasMessageContaining("username");
-  }
-
   // ===== LOGIN =====
 
   @Test
   void login_success() {
     LoginRequest request = new LoginRequest();
-    request.setUsername("testuser");
+    request.setEmail("test@test.no");
     request.setPassword("password123");
     request.setPortalRole(RoleEnum.TEACHER);
 
-    when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+    when(userRepository.findByEmail("test@test.no")).thenReturn(Optional.of(testUser));
     when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
     when(jwtService.generateToken(any(UserPrincipal.class), any())).thenReturn("access-token");
     when(refreshTokenRepository.save(any(RefreshTokenModel.class)))
@@ -144,13 +127,13 @@ class UserServiceTest {
   }
 
   @Test
-  void login_wrongUsername_throws401() {
+  void login_wrongEmail_throws401() {
     LoginRequest request = new LoginRequest();
-    request.setUsername("unknown");
+    request.setEmail("unknown@test.no");
     request.setPassword("password123");
     request.setPortalRole(RoleEnum.TEACHER);
 
-    when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
+    when(userRepository.findByEmail("unknown@test.no")).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> userService.login(request))
         .isInstanceOf(BadCredentialsException.class);
@@ -159,11 +142,11 @@ class UserServiceTest {
   @Test
   void login_wrongPassword_throws401() {
     LoginRequest request = new LoginRequest();
-    request.setUsername("testuser");
+    request.setEmail("test@test.no");
     request.setPassword("wrongpassword");
     request.setPortalRole(RoleEnum.TEACHER);
 
-    when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+    when(userRepository.findByEmail("test@test.no")).thenReturn(Optional.of(testUser));
     when(passwordEncoder.matches("wrongpassword", "encodedPassword")).thenReturn(false);
 
     assertThatThrownBy(() -> userService.login(request))
@@ -233,30 +216,27 @@ class UserServiceTest {
   // ===== REGISTER EDGE CASES =====
 
   @Test
-  void register_emailTakenButUsernameAlsoTaken_throwsEmailFirst() {
+  void register_emailTaken_throws409() {
     CreateUserRequest request = new CreateUserRequest();
     request.setEmail("taken@test.no");
-    request.setUsername("taken");
 
     when(userRepository.existsByEmail("taken@test.no")).thenReturn(true);
 
     assertThatThrownBy(() -> userService.register(request))
         .isInstanceOf(UserAlreadyExistsException.class)
         .hasMessageContaining("email");
-
-    verify(userRepository, never()).existsByUsername(anyString());
   }
 
   // ===== LOGIN EDGE CASES =====
 
   @Test
-  void login_correctUsernameWrongPassword_doesNotLeakUsernameExists() {
+  void login_correctEmailWrongPassword_doesNotLeakEmailExists() {
     LoginRequest request = new LoginRequest();
-    request.setUsername("testuser");
+    request.setEmail("test@test.no");
     request.setPassword("wrong");
     request.setPortalRole(RoleEnum.TEACHER);
 
-    when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+    when(userRepository.findByEmail("test@test.no")).thenReturn(Optional.of(testUser));
     when(passwordEncoder.matches("wrong", "encodedPassword")).thenReturn(false);
 
     assertThatThrownBy(() -> userService.login(request))
@@ -267,11 +247,11 @@ class UserServiceTest {
   @Test
   void login_wrongPortalRole_throws403() {
     LoginRequest request = new LoginRequest();
-    request.setUsername("testuser");
+    request.setEmail("test@test.no");
     request.setPassword("password123");
     request.setPortalRole(RoleEnum.STUDENT); // testUser is TEACHER
 
-    when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+    when(userRepository.findByEmail("test@test.no")).thenReturn(Optional.of(testUser));
     when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
 
     assertThatThrownBy(() -> userService.login(request))
