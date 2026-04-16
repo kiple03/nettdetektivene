@@ -1,6 +1,9 @@
 package org.ntnu.backend.game.mapper;
 
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.game.dto.LevelResponse;
+import org.ntnu.backend.game.dto.QuestionResponse;
+import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
@@ -26,8 +29,8 @@ public class GameMapper {
    * @param stop the stop entity
    * @param locked whether this stop is currently locked for the student
    */
-  public StopOverviewResponse toStopOverviewResponse(Stop stop, boolean locked) {
-    return new StopOverviewResponse(
+  public StopResponse toStopOverviewResponse(Stop stop, boolean locked) {
+    return new StopResponse(
         stop.getId(),
         stop.getName(),
         locked
@@ -56,7 +59,7 @@ public class GameMapper {
         question.getId(),
         question.getLevel().getLevelType(),
         question.getQuestionText(),
-        stripper.strip(question.getOptionContent())
+        question.getOptions()
     );
   }
 }
