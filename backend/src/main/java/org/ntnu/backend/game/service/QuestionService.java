@@ -1,8 +1,9 @@
 package org.ntnu.backend.game.service;
 
 import java.util.List;
-import org.ntnu.backend.game.dto.MultipleChoiceOptionDto;
-import org.ntnu.backend.game.dto.QuestionDto;
+import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.QuestionResponse;
+
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.Question;
@@ -47,8 +48,8 @@ public class QuestionService {
   }
 
 
-  private MultipleChoiceOptionDto toMultipleChoiceDto(MultipleChoiceOption option) {
-    return new MultipleChoiceOptionDto(
+  private MultipleChoiceOptionResponse toMultipleChoiceDto(MultipleChoiceOption option) {
+    return new MultipleChoiceOptionResponse(
         option.getId(),
         option.getImageUrl(),
         option.isCorrect(),

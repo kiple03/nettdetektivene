@@ -8,7 +8,9 @@ import org.ntnu.backend.exception.InvalidOptionFormatException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OptionParser {
 
   private final ObjectMapper mapper = new ObjectMapper();

@@ -1,9 +1,6 @@
 package org.ntnu.backend.game.mapper;
 
 import lombok.RequiredArgsConstructor;
-import org.ntnu.backend.game.dto.LevelResponse;
-import org.ntnu.backend.game.dto.QuestionResponse;
-import org.ntnu.backend.game.dto.StopOverviewResponse;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
