@@ -26,7 +26,7 @@ export default function CreateClassroom() {
   return (
     <div className="create-classroom">
       <header className="create-classroom__header">
-        <Link to="/teacher" className="create-classroom__back" aria-label="Tilbake til dashboard">
+        <Link to="/homelaerer" className="create-classroom__back" aria-label="Tilbake til dashboard">
           ← Tilbake
         </Link>
         <h1 className="create-classroom__title">Opprett ny klasse</h1>
