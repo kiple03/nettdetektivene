@@ -1,6 +1,7 @@
 package org.ntnu.backend.game.service;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 
@@ -12,14 +13,10 @@ import org.ntnu.backend.game.repository.QuestionRepository;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class QuestionService {
 
   private final QuestionRepository questionRepository;
-
-
-  public QuestionService(QuestionRepository questionRepository) {
-    this.questionRepository = questionRepository;
-  }
 
   public QuestionResponse getQuestionById(int id) {
     Question question = questionRepository.findById(id)
@@ -42,6 +39,7 @@ public class QuestionService {
 
     return new QuestionResponse(
         question.getId(),
+        type,
         question.getQuestionText(),
         (List<Option>) optionDtos
     );
@@ -52,7 +50,7 @@ public class QuestionService {
     return new MultipleChoiceOptionResponse(
         option.getId(),
         option.getImageUrl(),
-        option.isCorrect(),
+        option.getIsCorrect(),
         option.getExplanation()
     );
   }

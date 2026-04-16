@@ -4,6 +4,8 @@ package org.ntnu.backend.game.controller;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.game.dto.LevelResponse;
+import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
@@ -19,35 +21,29 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("classrooms/{classroomId}")
+@RequestMapping("/game")
 public class GameController {
   private final GameService gameService;
   private final ClassroomAuthorizationService authService;
 
   @GetMapping("/stops")
-  public List<StopOverviewResponse> getGameStops(@PathVariable UUID classroomId,
-      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    authService.verifyAccess(principal, classroomId);
-    return gameService.getStopsForUser(classroomId, principal.getUserId());
+  public List<StopResponse> getGameStops(@AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+    return gameService.getStopsForUser(principal.getUserId());
 
   }
 
   @GetMapping("/levels/{levelId}")
   public LevelResponse getLevel(
-      @PathVariable UUID classroomId,
-      @PathVariable UUID levelId,
+      @PathVariable int levelId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    authService.verifyAccess(principal, classroomId);
-    return gameService.getLevel(classroomId, levelId, principal.getUserId());
+    return gameService.getLevel(levelId, principal.getUserId());
   }
 
-  @PostMapping("/questions/{questionId}/submit")
-  public SubmitAnswerResponse submitAnswer(
-      @PathVariable UUID classroomId,
-      @PathVariable UUID questionId,
-      @RequestBody SubmitAnswerRequest request,
-      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    authService.verifyAccess(principal, classroomId);
-    return gameService.submitAnswer(classroomId, questionId, request, principal.getUserId());
-  }
+//  @PostMapping("/questions/{questionId}/submit")
+//  public SubmitAnswerResponse submitAnswer(
+//      @PathVariable UUID questionId,
+//      @RequestBody SubmitAnswerRequest request,
+//      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+//    return gameService.submitAnswer(questionId, request, principal.getUserId());
+//  }
 }

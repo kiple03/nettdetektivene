@@ -13,6 +13,8 @@ public record StopResponse(
     @Schema(description = "The name of the stop")
     String name,
 
-    @Schema(description = "The levels in the stop")
-    List<LevelResponse> levels
+//    @Schema(description = "The levels in the stop")
+//    List<LevelResponse> levels
+
+    boolean locked
 ) {}

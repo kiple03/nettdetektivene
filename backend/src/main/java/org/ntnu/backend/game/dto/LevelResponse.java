@@ -17,5 +17,7 @@ public record LevelResponse(
     String description,
 
     @Schema(description = "The structure of the level")
-    LevelType levelType
+    LevelType levelType,
+
+    boolean locked
 ) {}

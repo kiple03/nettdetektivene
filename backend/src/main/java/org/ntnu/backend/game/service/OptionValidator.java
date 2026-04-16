@@ -33,7 +33,7 @@ public class OptionValidator {
   private void validateMultipleChoice(List<Option> options) {
     long correctCount = options.stream()
         .map(o -> (MultipleChoiceOption) o)
-        .filter(MultipleChoiceOption::isCorrect)
+        .filter(MultipleChoiceOption::getIsCorrect)
         .count();
 
     if (correctCount != 1) {

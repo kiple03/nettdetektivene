@@ -24,4 +24,5 @@ public final class MultipleChoiceOption implements Option {
     private Boolean isCorrect;
 
     @NotBlank
-    private String explanation;}
+    private String explanation;
+}
