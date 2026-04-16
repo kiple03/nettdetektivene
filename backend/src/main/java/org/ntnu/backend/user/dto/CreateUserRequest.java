@@ -22,11 +22,6 @@ public class CreateUserRequest {
 
   @NotBlank
   @Size(min = 8, max = 255)
-  @Schema(description = "The username")
-  private String username;
-
-  @NotBlank
-  @Size(min = 8, max = 255)
   @Schema(description = "User's password")
   private String password;
 
