@@ -23,7 +23,7 @@ public class GameController {
   private final ClassroomAuthorizationService authService;
 
   @GetMapping("/stops")
-  public void getGameStops(@PathVariable UUID classroomId,
+  public List<StopOverviewResponse> getGameStops(@PathVariable UUID classroomId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
     authService.verifyAccess(principal, classroomId);
     return gameService.getStopsForUser(classroomId, principal.getUserId());
