@@ -1,4 +1,4 @@
-
+import mapImg from '@/assets/map.png';
 // TODO: Cecilie - fiks riktig layout til lærer senere
 
 export const teacherBoardItems = [
@@ -6,21 +6,30 @@ export const teacherBoardItems = [
     id: 'map',
     label: 'Kart',
     to: '/map',
-    top: '30%',
-    left: '50%'
+    top: '50%',
+    left: '50%',
+    image: mapImg,
+    size: 'large'
   },
   {
     id: 'badges',
     label: 'Medaljer',
-    to: '/map',
-    top: '30%',
-    left: '50%'
+    to: '/badges',
+    top: '50%',
+    left: '65%'
   },
   {
     id: 'leaderBoard',
     label: 'Ledertavle',
-    to: '/map',
-    top: '30%',
-    left: '50%'
-  }
+    to: '/leaderboard',
+    top: '80%',
+    left: '35%'
+  },
+  {
+    id: 'notebook',
+    label: 'Mine klasserom',
+    to: '/mineklasserom',
+    top: '80%',
+    left: '65%'
+  },
 ];

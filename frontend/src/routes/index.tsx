@@ -5,7 +5,6 @@ import StudentLoginPage from "@/pages/auth/StudentLoginPage";
 import TeacherLoginPage from "@/pages/auth/TeacherLoginPage";
 import FeideFake from "@/pages/auth/FeideFake";
 import StudentHomePage from "@/pages/student/StudentHomePage";
-import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
 import ClassroomDetail from "@/pages/teacher/ClassroomDetail";
 import StudentDetail from "@/pages/teacher/StudentDetail";
@@ -30,6 +29,7 @@ import {
     getClassroom,
     getStops,
 } from "@/services/teacherService";
+import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";
 
 export const router = createBrowserRouter([
     // Auth routes (public)
@@ -87,8 +87,8 @@ export const router = createBrowserRouter([
       // Teacher routes
       // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
     {
-        path: '/teacher',
-        element: <TeacherDashboard />,
+        path: '/homelaerer',
+        element: <MyClassroomsPage />,
         loader: () => getClassroomSummaries(),
     },
     {
