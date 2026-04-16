@@ -1,0 +1,19 @@
+/* src/components/BackButton.module.css */
+.backButton {
+    position: absolute;   /* Absolute positioning so it sits in the top left corner */
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    background-color: white;
+    color: black;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.backButton:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.05); /* Slight pop effect */
+}

@@ -1,0 +1,177 @@
+import { useState, type FormEvent } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Plus } from 'lucide-react';
+import { AxiosError } from 'axios';
+import { login } from '@/api/authApi';
+import { decodeToken, setToken } from '@/stores/authStore';
+import type { Role } from '@/types/user';
+import feideGlobe from '../../assets/feide_globe.png';
+import './FeideFake.css';
+
+interface LocationState {
+  portalRole?: Role;
+}
+
+function FeideFake() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  // Portal role is passed as router state by each login page so Feide knows
+  // which portal the user came from and can enforce it server-side.
+  const portalRole: Role = (location.state as LocationState)?.portalRole ?? 'STUDENT';
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError('');
+    setFieldErrors({ username: '', password: '' });
+
+    if (!username || !password) {
+      setFieldErrors({
+        username: username ? '' : 'Brukernavn er påkrevd.',
+        password: password ? '' : 'Passord er påkrevd.',
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await login({ username, password, portalRole });
+      setToken(res.accessToken);
+      window.dispatchEvent(new Event('auth-changed'));
+      const role = decodeToken(res.accessToken)?.role;
+      navigate(role === 'TEACHER' ? '/teacher' : '/home');
+    } catch (err) {
+      const axiosErr = err as AxiosError;
+      if (axiosErr.response?.status === 401) {
+        setFieldErrors({
+          username: 'Feil brukernavn eller passord.',
+          password: 'Feil brukernavn eller passord.',
+        });
+      } else if (axiosErr.response?.status === 403) {
+        const portalLabel = portalRole === 'TEACHER' ? 'lærerportalen' : 'elevportalen';
+        setError(`Denne kontoen har ikke tilgang til ${portalLabel}.`);
+      } else {
+        setError('Innlogging feilet. Prøv igjen.');
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const portalLabel = portalRole === 'TEACHER' ? 'lærer' : 'elev';
+
+  return (
+    <div id="wrapper">
+      <article id="content">
+        <div className="feide-column">
+          {/* ── Flag bar ── */}
+          <div className="feide-flag-bar">
+            <svg className="flag-icon" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg">
+              <rect width="24" height="16" fill="#BA0C2F" />
+              <rect x="6" y="0" width="4" height="16" fill="#fff" />
+              <rect x="0" y="6" width="24" height="4" fill="#fff" />
+              <rect x="7" y="0" width="2" height="16" fill="#00205B" />
+              <rect x="0" y="7" width="24" height="2" fill="#00205B" />
+            </svg>
+          </div>
+
+          {/* ── Card (all white) ── */}
+          <section className="feide-card">
+            <button type="button" className="feide-back-button" onClick={handleBack}>
+              ← Tilbake
+            </button>
+            <p className="feide-role-marker">Innlogging som {portalLabel}</p>
+            <h1>Logg på med Feide</h1>
+
+            <div className="feide-intro-row">
+              <img src={feideGlobe} alt="Feide globe" className="feide-globe" />
+              <p>
+                Du må logge inn via Feide for å få tilgang til
+                Datatektektivene.
+              </p>
+            </div>
+
+            <hr className="feide-separator" />
+
+            <p className="feide-form-heading">Logg inn med brukernavn og passord</p>
+
+            <form className="feide-login-form" onSubmit={handleLogin}>
+              <label htmlFor="username">Brukernavn</label>
+              <input
+                className={fieldErrors.username ? 'feide-input feide-input--error' : 'feide-input'}
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (fieldErrors.username) {
+                    setFieldErrors((current) => ({ ...current, username: '' }));
+                  }
+                }}
+              />
+              {fieldErrors.username && <p className="feide-field-error">{fieldErrors.username}</p>}
+
+              <label htmlFor="password">Passord</label>
+              <input
+                className={fieldErrors.password ? 'feide-input feide-input--error' : 'feide-input'}
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (fieldErrors.password) {
+                    setFieldErrors((current) => ({ ...current, password: '' }));
+                  }
+                }}
+              />
+              {fieldErrors.password && <p className="feide-field-error">{fieldErrors.password}</p>}
+
+              {error && <p className="feide-login-error">{error}</p>}
+
+              <button type="submit" className="feide-login-button" disabled={submitting}>
+                {submitting ? 'Logger inn…' : 'Logg inn'}
+              </button>
+            </form>
+
+            <div className="feide-links-row">
+              <span className="feide-link-text">Finner du ikke din brukerkonto?</span>
+              <span className="btn-secondary">Glem kontoer</span>
+            </div>
+
+            <hr className="feide-separator" />
+
+            <div className="feide-help-row">
+              <span>Trenger du hjelp?</span>
+              <Plus size={20} strokeWidth={1.5} />
+            </div>
+
+            <hr className="feide-separator" />
+
+            <small>
+              <span className="feide-privacy-text">Personvern og informasjonskapsler</span>
+            </small>
+          </section>
+
+          <footer>
+            <p>Feide leveres av Sikt</p>
+          </footer>
+        </div>
+      </article>
+    </div>
+  );
+}
+
+export default FeideFake;

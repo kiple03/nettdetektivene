@@ -1,0 +1,28 @@
+package org.ntnu.backend.classroom.repository;
+
+import java.util.List;
+import java.util.UUID;
+import org.ntnu.backend.classroom.model.ClassroomTeacher;
+import org.ntnu.backend.classroom.model.ClassroomTeacherId;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ClassroomTeacherRepository extends JpaRepository<ClassroomTeacher, ClassroomTeacherId> {
+
+  boolean existsByClassroomIdAndUserId(UUID classroomId, UUID userId);
+
+    @Query("""
+        SELECT ct.classroom.id, ct.classroom.title, ct.classroom.description,
+               ct.classroom.joinCode, ct.classroom.createdAt,
+               COUNT(e.id)
+        FROM ClassroomTeacher ct
+        LEFT JOIN Enrollment e ON e.classroom = ct.classroom AND e.leftAt IS NULL
+        WHERE ct.id.userId = :teacherId
+        GROUP BY ct.classroom.id, ct.classroom.title, ct.classroom.description,
+                 ct.classroom.joinCode, ct.classroom.createdAt
+        """)
+    List<Object[]> findClassroomsWithStudentCountByTeacherId(@Param("teacherId") UUID teacherId);
+}
