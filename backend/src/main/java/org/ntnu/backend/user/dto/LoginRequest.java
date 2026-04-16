@@ -1,6 +1,7 @@
 package org.ntnu.backend.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,20 +10,21 @@ import org.ntnu.backend.user.model.enums.RoleEnum;
 
 
 /**
- * Request DTO for username/password login.
+ * Request DTO for email/password login.
  *
  * <p>{@code portalRole} declares which portal the request originates from (STUDENT or TEACHER).
  * The backend verifies the authenticated user's role matches this intent and rejects the
  * login with 403 if there is a mismatch, preventing cross-portal authentication.
  */
 @Data
-@Schema(description = "Request to log in with username and password")
+@Schema(description = "Request to log in with email and password")
 public class LoginRequest {
 
   @NotBlank
-  @Size(min = 8, max = 255)
-  @Schema(description = "The username")
-  private String username;
+  @Email
+  @Size(max = 255)
+  @Schema(description = "User's email address")
+  private String email;
 
   @NotBlank
   @Size(min = 8, max = 255)

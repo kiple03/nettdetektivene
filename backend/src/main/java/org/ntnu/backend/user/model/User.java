@@ -35,10 +35,10 @@ public class User {
   @Column(nullable = false)
   private RoleEnum role;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = true, unique = true)
   private String username;
 
-  @Column(nullable = true)
+  @Column(nullable = false, unique = true)
   private String email;
 
   @Column(nullable = true)
