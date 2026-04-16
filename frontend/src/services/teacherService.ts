@@ -14,9 +14,6 @@ import type {
   NotificationResponse,
   StopSummary,
 } from '../types/classroom';
-import {
-  MOCK_STOPS,
-} from '../mock/teacherData';
 import apiClient from '../api/client';
 import axios from 'axios';
 
@@ -72,6 +69,13 @@ interface RawLevelCompletionEntry {
 interface RawStudentDetail {
   username: string;
   completions: RawLevelCompletionEntry[];
+}
+
+interface RawStop {
+  id: string;
+  title: string;
+  description: string | null;
+  displayOrder: number;
 }
 
 // --- Mappers ---
@@ -151,6 +155,15 @@ function mapNotification(raw: RawNotification): NotificationResponse {
     studentUsername: raw.studentUsername,
     timestamp: raw.timestamp,
     read,
+  };
+}
+
+function mapStop(raw: RawStop): StopSummary {
+  return {
+    id: raw.id,
+    title: raw.title,
+    description: raw.description,
+    displayOrder: raw.displayOrder,
   };
 }
 
@@ -237,13 +250,7 @@ export async function getNotifications(): Promise<NotificationResponse[]> {
   return res.data.map(mapNotification);
 }
 
-export async function getStops(classroomId: string): Promise<StopSummary[]> {
-  return MOCK_STOPS
-    .filter((s) => String(s.classroom_id) === classroomId)
-    .map((s) => ({
-      id: String(s.id),
-      title: s.title,
-      description: s.description,
-      displayOrder: s.display_order,
-    }));
+export async function getStops(): Promise<StopSummary[]> {
+  const res = await apiClient.get<RawStop[]>('/teacher/stops');
+  return res.data.map(mapStop);
 }

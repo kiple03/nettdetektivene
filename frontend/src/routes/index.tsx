@@ -111,7 +111,7 @@ export const router = createBrowserRouter([
             const [classroom, students, stops] = await Promise.all([
                 getClassroom(id),
                 getStudentProgress(id),
-                getStops(id),
+                getStops(),
             ]);
             return { classroom, students, stops };
         },
