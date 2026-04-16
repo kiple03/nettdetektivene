@@ -6,7 +6,7 @@ import type { Role } from '@/types/user';
 interface UseAuth {
   isLoggedIn: boolean;
   role: Role | null;
-  username: string | null;
+  email: string | null;
   logout: () => Promise<void>;
 }
 
@@ -38,7 +38,7 @@ export function useAuth(): UseAuth {
     // Rely on the expiry-aware check rather than mere token presence.
     isLoggedIn: checkLoggedIn(),
     role: (payload?.role as Role | undefined) ?? null,
-    username: payload?.username ?? null,
+    email: payload?.sub ?? null,
     logout,
   };
 }
