@@ -254,6 +254,10 @@ body,
 }
 
 /* ── Students table ─────────────────────────────────────── */
+.classroom-detail__students-wrap {
+  position: relative;
+}
+
 .classroom-detail__table {
   width: 100%;
   border-collapse: collapse;
@@ -276,39 +280,149 @@ body,
 }
 
 .classroom-detail__tr {
+  cursor: pointer;
   transition: background 0.14s ease;
 }
 
-.classroom-detail__tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+.classroom-detail__tr:hover .classroom-detail__td {
+  background: rgba(255, 255, 255, 0.02);
 }
 
-.classroom-detail__td {
-  padding: 18px 12px 18px 0;
-  font-size: 15px;
-  color: #f4f1ff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+.classroom-detail__tr--active {
+  background: rgba(255, 255, 255, 0.04);
 }
 
-.classroom-detail__td--num {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  padding-right: 0;
-}
-
-.classroom-detail__tr:last-child .classroom-detail__td {
+.classroom-detail__tr--active .classroom-detail__td {
   border-bottom: none;
 }
 
-.classroom-detail__student-link {
-  color: #cb9cff;
-  text-decoration: none;
+.classroom-detail__menu-row {
+  background: transparent;
+}
+
+.classroom-detail__menu-cell {
+  padding: 10px 0 18px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.classroom-detail__student-menu {
+  margin-top: 0;
+  background: linear-gradient(
+          180deg,
+          rgba(42, 24, 92, 0.98) 0%,
+          rgba(34, 20, 76, 0.98) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.04),
+          0 18px 38px rgba(8, 4, 26, 0.22);
+  overflow: hidden;
+}
+
+.classroom-detail__student-menu-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr;
+  gap: 0;
+}
+
+.classroom-detail__student-menu-main {
+  padding: 22px 26px;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.classroom-detail__student-menu-side {
+  padding: 22px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.classroom-detail__student-menu-name {
+  margin: 0;
+  color: #f7f2ff;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.classroom-detail__student-menu-subtitle {
+  margin: 4px 0 0;
+  color: rgba(215, 205, 255, 0.72);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.classroom-detail__student-stat {
+  min-height: 94px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.classroom-detail__student-stat-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(188, 198, 235, 0.82);
+  margin-bottom: 6px;
+}
+
+.classroom-detail__student-stat-value {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.classroom-detail__badges-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(188, 198, 235, 0.82);
+}
+
+.classroom-detail__badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(170, 132, 255, 0.12);
+  border: 1px solid rgba(186, 150, 255, 0.26);
+  color: #cfaeff;
+  font-size: 13px;
   font-weight: 700;
 }
 
-.classroom-detail__student-link:hover {
-  color: #ddb4ff;
+.classroom-detail__badge--muted {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(215, 205, 255, 0.72);
+}
+
+.classroom-detail__continue-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #5c4cf1 0%, #4c3fe0 100%);
+  color: #fff;
   text-decoration: none;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 10px 22px rgba(55, 37, 124, 0.18);
+}
+
+.classroom-detail__continue-btn:hover {
+  opacity: 0.96;
 }
 
 /* ── Mystery link ───────────────────────────────────────── */
@@ -360,6 +474,24 @@ body,
   }
 }
 
+@media (max-width: 760px) {
+  .classroom-detail__student-menu-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .classroom-detail__student-menu-main {
+    border-right: none;
+    border-bottom: 1px solid rgba(120, 93, 49, 0.14);
+  }
+
+  .classroom-detail__student-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+  }
+}
+
 @media (max-width: 640px) {
   .classroom-detail__title {
     font-size: 30px;
@@ -393,8 +525,16 @@ body,
     text-align: left !important;
   }
 
+  .classroom-detail__menu-cell {
+    padding: 8px 0 18px;
+  }
+
   .classroom-detail__tr:last-child {
     border-bottom: none;
+  }
+
+  .classroom-detail__student-stats {
+    grid-template-columns: 1fr;
   }
 
   .classroom-detail__edit-actions {
@@ -402,7 +542,8 @@ body,
   }
 
   .classroom-detail__save-btn,
-  .classroom-detail__cancel-btn {
+  .classroom-detail__cancel-btn,
+  .classroom-detail__continue-btn {
     width: 100%;
   }
 }
