@@ -8,6 +8,7 @@ import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
+import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
@@ -17,6 +18,7 @@ import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.repository.LevelCompletionRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
+import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ public class TeacherClassroomService {
     private final ClassroomAuthorizationService classroomAuthorizationService;
     private final EnrollmentRepository enrollmentRepository;
     private final LevelCompletionRepository levelCompletionRepository;
+    private final MysterySubmissionRepository mysterySubmissionRepository;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -104,5 +107,22 @@ public class TeacherClassroomService {
             .joinCode(classroom.getJoinCode())
             .createdAt(classroom.getCreatedAt())
             .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<MysterySubmissionResponse> listMysterySubmissions(UUID classroomId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        return mysterySubmissionRepository.findByEnrollmentClassroomId(classroomId)
+            .stream()
+            .map(ms -> MysterySubmissionResponse.builder()
+                .id(ms.getId())
+                .studentUsername(ms.getEnrollment().getUser().getUsername())
+                .content(ms.getContent())
+                .imageUrl(ms.getImageUrl())
+                .submittedAt(ms.getSubmittedAt())
+                .status(ms.getStatus())
+                .featured(ms.isFeatured())
+                .build())
+            .toList();
     }
 }

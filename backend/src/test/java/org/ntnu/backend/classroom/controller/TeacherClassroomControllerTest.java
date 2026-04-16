@@ -20,9 +20,11 @@ import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
+import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.mystery.model.enums.MysteryStatusEnum;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.security.JwtService;
@@ -366,6 +368,68 @@ class TeacherClassroomControllerTest {
         mockMvc.perform(get("/api/teacher/classrooms/" + classroomId + "/students/" + studentId)
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void listMysterySubmissions_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID submissionId = UUID.randomUUID();
+        Instant submittedAt = Instant.parse("2025-03-01T10:00:00Z");
+
+        MysterySubmissionResponse submission = MysterySubmissionResponse.builder()
+            .id(submissionId)
+            .studentUsername("alice")
+            .content("My mystery answer")
+            .imageUrl(null)
+            .submittedAt(submittedAt)
+            .status(MysteryStatusEnum.PENDING)
+            .featured(false)
+            .build();
+
+        when(teacherClassroomService.listMysterySubmissions(eq(classroomId), any())).thenReturn(List.of(submission));
+
+        mockMvc.perform(get("/api/teacher/classrooms/" + classroomId + "/mystery")
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id").value(submissionId.toString()))
+            .andExpect(jsonPath("$[0].studentUsername").value("alice"))
+            .andExpect(jsonPath("$[0].status").value("PENDING"))
+            .andExpect(jsonPath("$[0].featured").value(false));
+    }
+
+    @Test
+    void listMysterySubmissions_noAuth_returns401() throws Exception {
+        mockMvc.perform(get("/api/teacher/classrooms/" + UUID.randomUUID() + "/mystery"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void listMysterySubmissions_studentRole_returns403() throws Exception {
+        UUID userId = UUID.randomUUID();
+        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
+            "student1", userId, "STUDENT", UUID.randomUUID(),
+            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
+        );
+        JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
+
+        mockMvc.perform(get("/api/teacher/classrooms/" + UUID.randomUUID() + "/mystery")
+                .with(authentication(studentAuth)))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void listMysterySubmissions_notOwnedByTeacher_returns403() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherClassroomService.listMysterySubmissions(eq(classroomId), any()))
+            .thenThrow(new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.FORBIDDEN));
+
+        mockMvc.perform(get("/api/teacher/classrooms/" + classroomId + "/mystery")
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isForbidden());
     }
 
     @Test
