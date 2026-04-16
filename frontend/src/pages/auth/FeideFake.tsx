@@ -19,9 +19,9 @@ function FeideFake() {
   // which portal the user came from and can enforce it server-side.
   const portalRole: Role = (location.state as LocationState)?.portalRole ?? 'STUDENT';
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fieldErrors, setFieldErrors] = useState({ username: '', password: '' });
+  const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -32,11 +32,11 @@ function FeideFake() {
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
-    setFieldErrors({ username: '', password: '' });
+    setFieldErrors({ email: '', password: '' });
 
-    if (!username || !password) {
+    if (!email || !password) {
       setFieldErrors({
-        username: username ? '' : 'Brukernavn er påkrevd.',
+        email: email ? '' : 'E-post er påkrevd.',
         password: password ? '' : 'Passord er påkrevd.',
       });
       return;
@@ -44,7 +44,7 @@ function FeideFake() {
 
     setSubmitting(true);
     try {
-      const res = await login({ username, password, portalRole });
+      const res = await login({ email, password, portalRole });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
       const role = decodeToken(res.accessToken)?.role;
@@ -53,8 +53,8 @@ function FeideFake() {
       const axiosErr = err as AxiosError;
       if (axiosErr.response?.status === 401) {
         setFieldErrors({
-          username: 'Feil brukernavn eller passord.',
-          password: 'Feil brukernavn eller passord.',
+          email: 'Feil e-post eller passord.',
+          password: 'Feil e-post eller passord.',
         });
       } else if (axiosErr.response?.status === 403) {
         const portalLabel = portalRole === 'TEACHER' ? 'lærerportalen' : 'elevportalen';
@@ -102,25 +102,25 @@ function FeideFake() {
 
             <hr className="feide-separator" />
 
-            <p className="feide-form-heading">Logg inn med brukernavn og passord</p>
+            <p className="feide-form-heading">Logg inn med e-post og passord</p>
 
             <form className="feide-login-form" onSubmit={handleLogin}>
-              <label htmlFor="username">Brukernavn</label>
+              <label htmlFor="email">E-post</label>
               <input
-                className={fieldErrors.username ? 'feide-input feide-input--error' : 'feide-input'}
-                id="username"
-                name="username"
-                type="text"
-                autoComplete="username"
-                value={username}
+                className={fieldErrors.email ? 'feide-input feide-input--error' : 'feide-input'}
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={email}
                 onChange={(e) => {
-                  setUsername(e.target.value);
-                  if (fieldErrors.username) {
-                    setFieldErrors((current) => ({ ...current, username: '' }));
+                  setEmail(e.target.value);
+                  if (fieldErrors.email) {
+                    setFieldErrors((current) => ({ ...current, email: '' }));
                   }
                 }}
               />
-              {fieldErrors.username && <p className="feide-field-error">{fieldErrors.username}</p>}
+              {fieldErrors.email && <p className="feide-field-error">{fieldErrors.email}</p>}
 
               <label htmlFor="password">Passord</label>
               <input
