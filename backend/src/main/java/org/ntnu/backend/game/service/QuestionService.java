@@ -50,6 +50,7 @@ public class QuestionService {
   private MultipleChoiceOptionDto toMultipleChoiceDto(MultipleChoiceOption option) {
     return new MultipleChoiceOptionDto(
         option.getId(),
+        option.getText(),
         option.getImageUrl(),
         option.isCorrect(),
         option.getExplanation()
