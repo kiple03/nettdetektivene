@@ -14,14 +14,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public final class MultipleChoiceOption implements Option {
 
-    @NotBlank
-    private int id;
+    @NotNull
+    private Integer id;
 
     @NotNull
     private String imageUrl;
 
-    private boolean isCorrect;
+    @NotNull
+    private Boolean isCorrect;
 
     @NotBlank
-    private String explanation;
-}
+    private String explanation;}
