@@ -99,7 +99,7 @@ export const router = createBrowserRouter([
         path: '/teacher/classroom/:id/code',
         element: <CodePage />,
         loader: async ({ params }) => {
-            const id = Number(params.id);
+            const id = params.id!;
             return await getClassroom(id);
         },
     },
