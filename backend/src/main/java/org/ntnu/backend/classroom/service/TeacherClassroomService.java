@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
+import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,11 @@ import org.springframework.stereotype.Service;
 public class TeacherClassroomService {
 
     private final ClassroomTeacherRepository classroomTeacherRepository;
+    private final ClassroomService classroomService;
+
+    public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
+        return classroomService.createClassroom(request, teacherId);
+    }
 
     public List<ClassroomSummaryResponse> listClassrooms(UUID teacherId) {
         return classroomTeacherRepository
