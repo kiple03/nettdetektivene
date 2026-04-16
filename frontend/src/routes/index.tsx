@@ -5,7 +5,6 @@ import StudentLoginPage from "@/pages/auth/StudentLoginPage";
 import TeacherLoginPage from "@/pages/auth/TeacherLoginPage";
 import FeideFake from "@/pages/auth/FeideFake";
 import StudentHomePage from "@/pages/student/StudentHomePage";
-import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
 import ClassroomDetail from "@/pages/teacher/ClassroomDetail";
 import StudentDetail from "@/pages/teacher/StudentDetail";
@@ -16,6 +15,9 @@ import NotesPage from "@/pages/student/NotesPage";
 import BadgesPage from "@/pages/student/BadgesPage";
 import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
 import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
+import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";
+import TestPage from "@/pages/game/TestGamePage.tsx";
+
 // Route guard temporarily disabled during game development so we don't
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
 // wrappers below and uncommenting this import.
@@ -82,13 +84,18 @@ export const router = createBrowserRouter([
         element: <WeeklyMysteryPage />,
     },
 
+    //TEST for spill
+    {
+        path: '/game',
+        element: <TestPage />
+    },
 
 
       // Teacher routes
       // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
     {
         path: '/teacher',
-        element: <TeacherDashboard />,
+        element: <MyClassroomsPage />,
         loader: () => getClassroomSummaries(),
     },
     {
