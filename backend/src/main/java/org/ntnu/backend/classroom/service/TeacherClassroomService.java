@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.NotificationResponse;
+import org.ntnu.backend.classroom.dto.StopResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
@@ -20,6 +21,7 @@ import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.repository.LevelCompletionRepository;
+import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -41,6 +43,7 @@ public class TeacherClassroomService {
     private final LevelCompletionRepository levelCompletionRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final UserRepository userRepository;
+    private final StopRepository stopRepository;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -199,5 +202,18 @@ public class TeacherClassroomService {
             .status(saved.getStatus())
             .featured(saved.isFeatured())
             .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<StopResponse> listStops(UUID classroomId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        return stopRepository.findByClassroomIdOrderByDisplayOrderAsc(classroomId)
+            .stream()
+            .map(stop -> StopResponse.builder()
+                .id(stop.getId())
+                .name(stop.getName())
+                .displayOrder(stop.getDisplayOrder())
+                .build())
+            .toList();
     }
 }

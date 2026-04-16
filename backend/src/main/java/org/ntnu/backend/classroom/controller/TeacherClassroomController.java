@@ -6,6 +6,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
+import org.ntnu.backend.classroom.dto.StopResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
@@ -90,6 +91,14 @@ public class TeacherClassroomController {
             @RequestBody ReviewMysteryRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherClassroomService.reviewMysterySubmission(id, submissionId, request, principal);
+    }
+
+    @GetMapping("/{id}/stops")
+    @PreAuthorize("hasRole('TEACHER')")
+    public List<StopResponse> listStops(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.listStops(id, principal);
     }
 
     @PostMapping
