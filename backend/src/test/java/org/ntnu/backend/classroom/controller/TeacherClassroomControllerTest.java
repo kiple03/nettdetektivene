@@ -2,6 +2,7 @@ package org.ntnu.backend.classroom.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -142,6 +143,63 @@ class TeacherClassroomControllerTest {
                 .with(authentication(studentAuth))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"title\":\"Science 101\"}"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getClassroom_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        ClassroomResponse response = ClassroomResponse.builder()
+            .id(classroomId.toString())
+            .title("Math 101")
+            .description("Basic math")
+            .joinCode("ABC123")
+            .createdAt(LocalDateTime.of(2025, 1, 1, 12, 0))
+            .build();
+
+        when(teacherClassroomService.getClassroom(eq(classroomId), any())).thenReturn(response);
+
+        mockMvc.perform(get("/api/teacher/classrooms/" + classroomId)
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(classroomId.toString()))
+            .andExpect(jsonPath("$.title").value("Math 101"))
+            .andExpect(jsonPath("$.joinCode").value("ABC123"));
+    }
+
+    @Test
+    void getClassroom_noAuth_returns401() throws Exception {
+        mockMvc.perform(get("/api/teacher/classrooms/" + UUID.randomUUID()))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getClassroom_studentRole_returns403() throws Exception {
+        UUID userId = UUID.randomUUID();
+        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
+            "student1", userId, "STUDENT", UUID.randomUUID(),
+            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
+        );
+        JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
+
+        mockMvc.perform(get("/api/teacher/classrooms/" + UUID.randomUUID())
+                .with(authentication(studentAuth)))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getClassroom_notOwnedByTeacher_returns403() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherClassroomService.getClassroom(eq(classroomId), any()))
+            .thenThrow(new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.FORBIDDEN));
+
+        mockMvc.perform(get("/api/teacher/classrooms/" + classroomId)
+                .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isForbidden());
     }
 }
