@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -51,6 +52,14 @@ public class TeacherClassroomController {
             @Valid @RequestBody UpdateClassroomRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherClassroomService.updateClassroom(id, request, principal);
+    }
+
+    @GetMapping("/{id}/students")
+    @PreAuthorize("hasRole('TEACHER')")
+    public List<StudentProgressResponse> listStudents(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.listStudents(id, principal);
     }
 
     @PostMapping

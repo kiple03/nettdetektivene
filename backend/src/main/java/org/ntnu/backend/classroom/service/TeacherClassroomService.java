@@ -7,14 +7,18 @@ import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
+import org.ntnu.backend.classroom.repository.EnrollmentRepository;
+import org.ntnu.backend.game.repository.LevelCompletionRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -25,6 +29,8 @@ public class TeacherClassroomService {
     private final ClassroomRepository classroomRepository;
     private final ClassroomService classroomService;
     private final ClassroomAuthorizationService classroomAuthorizationService;
+    private final EnrollmentRepository enrollmentRepository;
+    private final LevelCompletionRepository levelCompletionRepository;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -48,6 +54,22 @@ public class TeacherClassroomService {
     public ClassroomResponse updateClassroom(UUID classroomId, UpdateClassroomRequest request, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
         return classroomService.updateClassroom(classroomId, request);
+    }
+
+    @Transactional(readOnly = true)
+    public List<StudentProgressResponse> listStudents(UUID classroomId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        return enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroomId)
+            .stream()
+            .map(enrollment -> {
+                long count = levelCompletionRepository.countByEnrollmentId(enrollment.getId());
+                return StudentProgressResponse.builder()
+                    .username(enrollment.getUser().getUsername())
+                    .levelsCompleted(count)
+                    .medalsEarned(count)
+                    .build();
+            })
+            .toList();
     }
 
     public ClassroomResponse getClassroom(UUID classroomId, JwtAuthenticatedPrincipal principal) {
