@@ -1,6 +1,6 @@
 package org.ntnu.backend.game.dto;
 
-import org.ntnu.backend.game.model.enums.levelType;
+import org.ntnu.backend.game.model.enums.LevelType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -19,6 +19,6 @@ public record LevelDto(
 
     @Schema(description = "The structure of the level")
     @NotNull
-    levelType levelType
+    LevelType levelType
     //List<Questions> not included to avoid too much info through API
 ) {}
