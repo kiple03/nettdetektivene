@@ -1,15 +1,19 @@
 package org.ntnu.backend.avatar.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.dto.UserProfileResponse;
+import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.model.UserInventoryItem;
+import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class UserAvatarService {
     
     private final UserInventoryItemRepository inventoryRepository;
+    private final AvatarItemRepository avatarItemRepository;
     private final UserRepository userRepository;
 
     public UserProfileResponse getUserProfile(UUID userid){
@@ -28,12 +33,58 @@ public class UserAvatarService {
                                         .map(inventoryItem -> EquippedItemDto.builder()
                                             .id(inventoryItem.getAvatarItem().getId())
                                             .name(inventoryItem.getAvatarItem().getName())
-                                            .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".png")
+                                            .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".svg")
                                             .build())
                                         .toList();
         return UserProfileResponse.builder()
                 .username(user.getUsername())
                 .equippedItems(itemDtos)
                 .build();
+    }
+
+    @Transactional
+    public void updateEquippedItems(UUID userId, List<UUID> itemIdsToEquip){
+        // Get all items in users inventory
+        List<UserInventoryItem> inventory = inventoryRepository.findByUserId(userId);
+
+        for(UserInventoryItem item : inventory){
+            UUID id = item.getAvatarItem().getId();
+            // If item ID found in users list, equip it!
+            boolean shouldBeEquipped = itemIdsToEquip != null && itemIdsToEquip.contains(id);
+            item.setEquipped(shouldBeEquipped);
+        }
+        // save updated inventory to database
+        inventoryRepository.saveAll(inventory);
+    }
+
+    public List<EquippedItemDto> getUserInventory(UUID userId) {
+        List<UserInventoryItem> inventory = inventoryRepository.findByUserId(userId);
+        
+        return inventory.stream()
+            .map(item -> EquippedItemDto.builder()
+                .id(item.getAvatarItem().getId())
+                .name(item.getAvatarItem().getName())
+                .category(item.getAvatarItem().getCategory()) // Make sure EquippedItemDto has a category field!
+                .imageUrl("/assets/" + item.getAvatarItem().getName() + ".svg")
+                .build())
+            .toList();
+    }
+
+    @Transactional
+    public void starterItems(User user){
+        List<AvatarItem> starterItems = avatarItemRepository.findAll().stream()
+            .filter(item -> List.of("cap_blue", "glasses", "necklace", "shirt_red").contains(item.getName()))
+            .toList();
+
+        List<UserInventoryItem> startingInventory = starterItems.stream().map(item -> 
+            UserInventoryItem.builder()
+                .user(user)
+                .avatarItem(item)
+                .unlockedAt(LocalDateTime.now())
+                .isEquipped(true)
+                .build()
+        ).toList();
+
+        inventoryRepository.saveAll(startingInventory);
     }
 }

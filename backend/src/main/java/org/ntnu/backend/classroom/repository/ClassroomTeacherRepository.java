@@ -19,7 +19,10 @@ public interface ClassroomTeacherRepository extends JpaRepository<ClassroomTeach
     @Query("""
         SELECT ct.classroom.id, ct.classroom.title, ct.classroom.description,
                ct.classroom.joinCode, ct.classroom.createdAt,
-               COUNT(e.id)
+               COUNT(DISTINCT e.id),
+               (SELECT COUNT(lc.id) FROM LevelCompletion lc
+                WHERE lc.enrollment.classroom = ct.classroom
+                AND lc.enrollment.leftAt IS NULL)
         FROM ClassroomTeacher ct
         LEFT JOIN Enrollment e ON e.classroom = ct.classroom AND e.leftAt IS NULL
         WHERE ct.id.userId = :teacherId

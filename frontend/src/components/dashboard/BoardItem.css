@@ -37,10 +37,14 @@
 }
 
 .board-item-medium .board-item-img {
+  width: 350px;
+  margin-bottom: 6px;
   pointer-events: none;
 }
 
 .board-item-small .board-item-img {
+  width: 300px;
+  margin-bottom: 6px;
   pointer-events: none;
 }
 
@@ -78,4 +82,13 @@
 
 .board-item-wrapper:hover {
   transform: translate(-50%, -50%) rotate(0deg) scale(1.05);
+}
+
+.profile-avatar-overlay {
+  position: absolute;
+  top: 40%; 
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8); 
+  z-index: 10; 
+  pointer-events: none; 
 }

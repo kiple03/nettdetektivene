@@ -15,4 +15,8 @@ public class ClassroomSummaryResponse {
     private String joinCode;
     private LocalDateTime createdAt;
     private long studentCount;
+
+    private int assignmentCount;
+    private int completedCount;
+    private int progressPercent;
 }

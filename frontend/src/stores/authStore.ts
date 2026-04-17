@@ -18,6 +18,7 @@ export function clearToken(): void {
 
 interface JwtPayload {
   userId?: string;
+  sub?: string;
   username?: string;
   role?: string;
   classroomId?: string;
@@ -33,6 +34,9 @@ export function decodeToken(token: string | null = getToken()): JwtPayload | nul
     const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
     const json = atob(padded);
     const raw = JSON.parse(json) as JwtPayload;
+
+    // JWT subject is the username; expose it as `username` for convenience.
+    if (!raw.username && raw.sub) raw.username = raw.sub;
 
     // Normalise role: strip any accidental "ROLE_" prefix left over from
     // earlier token formats and reject unknown values as a fail-safe.

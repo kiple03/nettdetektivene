@@ -11,7 +11,6 @@ import {
   validateEmail,
   validatePassword,
   validatePasswordConfirm,
-  validateUsername,
 } from '@/utils/validators';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
@@ -19,7 +18,6 @@ import './StudentLoginPage.css';
 function StudentLoginPage() {
   const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
-  const [regUsername, setRegUsername] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirm, setRegConfirm] = useState('');
@@ -28,7 +26,6 @@ function StudentLoginPage() {
 
   const validateFields = () => {
     const nextErrors: AuthFieldErrors = {
-      username: validateUsername(regUsername),
       email: validateEmail(regEmail),
       password: validatePassword(regPassword),
       confirm: validatePasswordConfirm(regPassword, regConfirm),
@@ -52,17 +49,15 @@ function StudentLoginPage() {
     }
 
     try {
-      const res = await register({ username: regUsername, email: regEmail, password: regPassword, role: 'STUDENT' });
+      const res = await register({ email: regEmail, password: regPassword, role: 'STUDENT' });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
-      navigate('/join-with-code');
+      navigate('/bli-med');
     } catch (err) {
       const axiosErr = err as AxiosError<ApiErrorBody>;
       if (axiosErr.response?.status === 409) {
         const field = axiosErr.response.data?.field;
-        if (field === 'username') {
-          setRegFieldErrors((current) => ({ ...current, username: 'Brukernavnet er allerede i bruk.' }));
-        } else if (field === 'email') {
+        if (field === 'email') {
           setRegFieldErrors((current) => ({ ...current, email: 'E-posten er allerede i bruk.' }));
         } else {
           setRegError('Brukeren finnes allerede.');
@@ -113,14 +108,9 @@ function StudentLoginPage() {
             onSubmit={handleRegister}
             error={regError}
             fieldErrors={regFieldErrors}
-            username={regUsername}
             email={regEmail}
             password={regPassword}
             confirm={regConfirm}
-            onUsernameChange={(value) => {
-              setRegUsername(value);
-              if (regFieldErrors.username) setRegFieldErrors((current) => ({ ...current, username: '' }));
-            }}
             onEmailChange={(value) => {
               setRegEmail(value);
               if (regFieldErrors.email) setRegFieldErrors((current) => ({ ...current, email: '' }));
@@ -138,9 +128,6 @@ function StudentLoginPage() {
             onConfirmChange={(value) => {
               setRegConfirm(value);
               if (regFieldErrors.confirm) setRegFieldErrors((current) => ({ ...current, confirm: '' }));
-            }}
-            onUsernameBlur={() => {
-              setRegFieldErrors((current) => ({ ...current, username: validateUsername(regUsername) }));
             }}
             onEmailBlur={() => {
               setRegFieldErrors((current) => ({ ...current, email: validateEmail(regEmail) }));

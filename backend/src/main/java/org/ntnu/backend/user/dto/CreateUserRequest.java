@@ -1,12 +1,13 @@
 package org.ntnu.backend.user.dto;
 
+import org.ntnu.backend.user.model.enums.RoleEnum;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.ntnu.backend.user.model.enums.RoleEnum;
 
 /**
  * Request DTO for creation a new user.
@@ -19,11 +20,6 @@ public class CreateUserRequest {
   @Email
   @Schema(description = "User's email address", example = "john.doe@example.com")
   private String email;
-
-  @NotBlank
-  @Size(min = 8, max = 255)
-  @Schema(description = "The username")
-  private String username;
 
   @NotBlank
   @Size(min = 8, max = 255)

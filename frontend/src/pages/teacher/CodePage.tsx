@@ -1,10 +1,12 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/cards/Cards.tsx";
 import styles from "./CodePage.module.css";
 
 import detectiveImage from "@/assets/images/joinWithCode/detective.png";
 import classroomBackground from "@/assets/images/joinWithCode/bgClassroomCode.png";
+import { Button } from "@/components/ui/buttons/Button";
 
 type ClassroomData = {
     id: string;
@@ -15,6 +17,8 @@ type ClassroomData = {
 
 export default function CodePage() {
     const classroom = useLoaderData() as ClassroomData | null | undefined;
+
+    const navigate = useNavigate();
 
     const formattedCode = useMemo(() => {
         const raw = (classroom?.joinCode ?? "")
@@ -36,10 +40,6 @@ export default function CodePage() {
             <div className={styles.overlay} />
 
             <div className={styles.wrapper}>
-                <Link to={`/teacher/classroom/new`} className={styles.backButton}>
-                    ← Tilbake
-                </Link>
-
                 <Card variant="unstyled" className={styles.topBox}>
                     <p className={styles.topTitle}>Del koden med elevene dine</p>
                     <p className={styles.topText}>
@@ -103,6 +103,14 @@ export default function CodePage() {
                                 aria-hidden="true"
                                 className={`${styles.innerDetective} ${styles.rightDetective}`}
                             />
+                        </div>
+                        <div className={styles.buttonWrapper}>
+                            <Button
+                                className={styles.fortsettButton}
+                                onClick={() => navigate('/teacher')}
+                            >
+                                Fortsett
+                            </Button>
                         </div>
                     </Card>
                 </div>

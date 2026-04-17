@@ -1,13 +1,16 @@
 // Frontend types aligned to backend API DTOs (camelCase, no DB schema types)
 
-export interface ClassroomSummary {
+export type ClassroomSummary = {
   id: string;
   title: string;
-  description: string | null;
+  description: string;
   joinCode: string;
   createdAt: string;
   studentCount: number;
-}
+  assignmentCount: number;
+  completedCount: number;
+  progressPercent: number;
+};
 
 export interface ClassroomDetail {
   id: string;

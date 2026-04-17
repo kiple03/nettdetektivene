@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+
+import org.ntnu.backend.avatar.service.UserAvatarService;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.exception.UserAlreadyExistsException;
 import org.ntnu.backend.security.JwtService;
@@ -35,6 +37,7 @@ public class UserService {
   private final UserMapper userMapper;
   private final RefreshTokenRepository refreshTokenRepository;
   private final EnrollmentRepository enrollmentRepository;
+  private final UserAvatarService userAvatarService;
 
   @Value("${jwt.refresh-expiration-ms}")
   private long refreshExpiration;
@@ -44,13 +47,13 @@ public class UserService {
     if (userRepository.existsByEmail(request.getEmail())) {
       throw new UserAlreadyExistsException("email", request.getEmail());
     }
-    if (userRepository.existsByUsername(request.getUsername())) {
-      throw new UserAlreadyExistsException("username", request.getUsername());
-    }
 
     String encodedPassword = passwordEncoder.encode(request.getPassword());
     User user = userMapper.toUser(request, encodedPassword);
     user = userRepository.save(user);
+
+    //avatar starter for new users
+    userAvatarService.starterItems(user);
 
     return buildLoginResponse(user);
   }
@@ -70,7 +73,7 @@ public class UserService {
   }
 
   public LoginResponse login(@Valid LoginRequest request) {
-    User user = userRepository.findByUsername(request.getUsername())
+    User user = userRepository.findByEmail(request.getEmail())
         .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
 
     if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {

@@ -1,4 +1,4 @@
-export type AuthField = 'username' | 'email' | 'password' | 'confirm';
+export type AuthField = 'email' | 'password' | 'confirm';
 
 export type AuthFieldErrors = Partial<Record<AuthField, string>>;
 

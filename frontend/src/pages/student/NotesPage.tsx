@@ -3,7 +3,7 @@ import styles from "@/pages/student/MapPage.module.css";
 
 function NotesPage() {
     return <div>
-        <h1>Ukens Mysterium</h1>
+        <h1>Notater</h1>
         <p>Kommer snart</p>
         <BackButton
             className={styles.hotspot}
