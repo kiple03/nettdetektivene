@@ -22,16 +22,6 @@ import CodePage from "@/pages/teacher/CodePage.tsx";
 
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
-
-import {
-    getClassroomSummaries,
-    getStudentProgress,
-    getStudentDetail,
-    getMysterySubmissions,
-    getNotifications,
-    getClassroom,
-    getStops,
-} from "@/services/teacherService";
 import ProfilePage from "@/pages/student/ProfilePage.tsx";
 
 export const router = createBrowserRouter([
@@ -96,7 +86,6 @@ export const router = createBrowserRouter([
     {
         path: '/teacher',
         element: <RequireAuth role="TEACHER"><MyClassroomsPage /></RequireAuth>,
-        loader: () => getClassroomSummaries(),
     },
     {
         path: '/teacher/map',
