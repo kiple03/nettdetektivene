@@ -88,7 +88,6 @@ export const router = createBrowserRouter([
     {
         path: '/teacher',
         element: <MyClassroomsPage />,
-        loader: () => getClassroomSummaries(),
     },
     {
         path: '/teacher/classroom/new',
