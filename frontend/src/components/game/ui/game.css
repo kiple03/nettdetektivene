@@ -1,0 +1,102 @@
+/* station - collective background and layout for different game stations */
+.station-container {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+/* gray overlay to add opacity */
+.station-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.45);
+  z-index: 0;
+}
+
+.station-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* station - (name of the station) (bakground picture) */
+.station-news {
+  background-image: url("../../../assets/images/game/news.png");
+}
+
+/* title */
+.station-title {
+  font-family: Rockwell;
+}
+
+/* info header under title */
+.task-header {
+  font-family: Rockwell;
+}
+
+/* the whole photo-task box */
+.photo-task {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
+
+/* beige box behind each option */
+.image-option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: beige;
+  width: 350px;
+  height: 400px;
+  border-radius: 0px;
+  border: 2px solid rgba(0, 0, 0, 0.45);
+  padding: 10px;
+
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* option picture */
+.image-option-card img {
+  width: 300px;
+  border-radius: 0px;
+}
+
+/* button */
+.image-option-card__button {
+  font-family: Rockwell;
+}
+
+/* feedback box when right/wrong */
+.feedback-box {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: beige;
+  width: 740px;
+  font-family: Rockwell;
+}
+
+.feedback-box__correct {
+  border: 5px solid green;
+}
+
+.feedback-box__wrong {
+  border: 5px solid red;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -3,7 +3,7 @@ import StationContainer from "@/components/game/station/StationContainer";
 import type { StationData } from "@/types/station";
 import { fetchStationById } from "@/api/stationApi";
 import StationRenderer from "@/components/game/station/StationRenderer";
-import "@/styles/game.css";
+import "@/components/game/ui/game.css";
 
 
 function TestPage() {

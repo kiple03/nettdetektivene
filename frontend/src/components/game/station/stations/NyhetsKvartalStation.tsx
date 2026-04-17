@@ -16,7 +16,7 @@ function NyhetsKvartalStation({ station }: NyhetsKvartalStationProps) {
   };
 
   return (
-      <div className="nyhetskvartal-station">
+      <div>
         <TaskHeader questionText={station.questionText} />
         <PhotoTask options={station.options} onSelect={handleSelect} />
 
