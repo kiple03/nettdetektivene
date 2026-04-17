@@ -1,5 +1,7 @@
 package org.ntnu.backend.game.service;
 
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,7 +13,8 @@ import org.ntnu.backend.game.model.enums.LevelType;
 
 public class OptionValidatorTest {
 
-  private final OptionValidator validator = new OptionValidator();
+  private final Validator beanValidator = Validation.buildDefaultValidatorFactory().getValidator();
+  private final OptionValidator validator = new OptionValidator(beanValidator);
 
   @Test
   void validateMultipleChoice_validOptions_passes() {

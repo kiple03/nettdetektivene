@@ -50,11 +50,11 @@ public class GameController {
     return questionService.getQuestionById(questionId);
   }
 
-//  @PostMapping("/questions/{questionId}/submit")
-//  public SubmitAnswerResponse submitAnswer(
-//      @PathVariable UUID questionId,
-//      @RequestBody SubmitAnswerRequest request,
-//      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-//    return gameService.submitAnswer(questionId, request, principal.getUserId());
-//  }
+  @PostMapping("/questions/{questionId}/submit")
+  public SubmitAnswerResponse submitAnswer(
+      @PathVariable int questionId,
+      @RequestBody SubmitAnswerRequest request,
+      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+    return questionService.submitAnswer(questionId, request);
+  }
 }

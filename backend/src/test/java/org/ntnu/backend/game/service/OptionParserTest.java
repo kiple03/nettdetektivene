@@ -1,4 +1,6 @@
 package org.ntnu.backend.game.service;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,8 +13,9 @@ import tools.jackson.databind.ObjectMapper;
 
 public class OptionParserTest {
 
-  private final ObjectMapper mapper = new ObjectMapper();
-  private final OptionParser parser = new OptionParser(mapper);
+  private final Validator beanValidator = Validation.buildDefaultValidatorFactory().getValidator();
+  private final OptionValidator optionValidator = new OptionValidator(beanValidator);
+  private final OptionParser parser = new OptionParser(new ObjectMapper(), optionValidator);
 
   @Test
   void parseMultipleChoice_validJson_returnsListOfOptions() {
