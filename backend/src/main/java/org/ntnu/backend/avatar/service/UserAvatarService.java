@@ -1,11 +1,14 @@
 package org.ntnu.backend.avatar.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.dto.UserProfileResponse;
+import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.model.UserInventoryItem;
+import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class UserAvatarService {
     
     private final UserInventoryItemRepository inventoryRepository;
+    private final AvatarItemRepository avatarItemRepository;
     private final UserRepository userRepository;
 
     public UserProfileResponse getUserProfile(UUID userid){
@@ -29,7 +33,7 @@ public class UserAvatarService {
                                         .map(inventoryItem -> EquippedItemDto.builder()
                                             .id(inventoryItem.getAvatarItem().getId())
                                             .name(inventoryItem.getAvatarItem().getName())
-                                            .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".png")
+                                            .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".svg")
                                             .build())
                                         .toList();
         return UserProfileResponse.builder()
@@ -53,7 +57,7 @@ public class UserAvatarService {
         inventoryRepository.saveAll(inventory);
     }
 
-        public List<EquippedItemDto> getUserInventory(UUID userId) {
+    public List<EquippedItemDto> getUserInventory(UUID userId) {
         List<UserInventoryItem> inventory = inventoryRepository.findByUserId(userId);
         
         return inventory.stream()
@@ -64,5 +68,23 @@ public class UserAvatarService {
                 .imageUrl("/assets/" + item.getAvatarItem().getName() + ".svg")
                 .build())
             .toList();
+    }
+
+    @Transactional
+    public void starterItems(User user){
+        List<AvatarItem> starterItems = avatarItemRepository.findAll().stream()
+            .filter(item -> List.of("cap_blue", "glasses", "necklace", "shirt_red").contains(item.getName()))
+            .toList();
+
+        List<UserInventoryItem> startingInventory = starterItems.stream().map(item -> 
+            UserInventoryItem.builder()
+                .user(user)
+                .avatarItem(item)
+                .unlockedAt(LocalDateTime.now())
+                .isEquipped(true)
+                .build()
+        ).toList();
+
+        inventoryRepository.saveAll(startingInventory);
     }
 }

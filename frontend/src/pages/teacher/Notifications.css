@@ -12,17 +12,6 @@
   margin-bottom: 28px;
 }
 
-.notifs__back {
-  font-size: 14px;
-  color: var(--text);
-  text-decoration: none;
-  width: fit-content;
-}
-
-.notifs__back:hover {
-  color: var(--accent);
-}
-
 .notifs__title-row {
   display: flex;
   align-items: center;

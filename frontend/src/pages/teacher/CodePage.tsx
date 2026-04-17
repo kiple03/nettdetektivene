@@ -33,10 +33,6 @@ export default function CodePage() {
             <div className={styles.overlay} />
 
             <div className={styles.wrapper}>
-                <Link to={`/teacher/classroom/new`} className={styles.backButton}>
-                    ← Tilbake
-                </Link>
-
                 <Card variant="unstyled" className={styles.topBox}>
                     <p className={styles.topTitle}>Koden til {classroomTitle}</p>
                     <p className={styles.topText}>

@@ -13,20 +13,45 @@ export function LayeredAvatar({items, size = 64}: LayeredAvatarProps){
     });
     
     return (
-        <div className="relative rounded-full overflow-hidden bg-gray-200" style={{ width: size, height: size }}>
+        <div style={{ 
+            position: 'relative', 
+            width: size, 
+            height: size, 
+            borderRadius: '50%', 
+            overflow: 'hidden', 
+            backgroundColor: '#e5e7eb' 
+        }}>
+            {/* The Base Avatar Layer */}
             <img 
-                src="/assets/avatar-parts/base-model.png"
+                src="/assets/cap_blue.svg" 
                 alt="Base Avatar"
-                className="base avatar"/>
+                style={{
+                    position: 'absolute', 
+                    top: 0, 
+                    left: 0, 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    zIndex: 0
+                }}
+            />
 
+            {/* The Equipped Items */}
             {sortedItems.map((item, index) => (
             <img 
                 key={item.id}
                 src={item.imageUrl}
                 alt={item.name}
-                className="object core"
-                style={{zIndex: index + 1}}
-                />
+                style={{
+                    position: 'absolute', 
+                    top: 0, 
+                    left: 0, 
+                    width: '100%', 
+                    height: '100%', 
+                    objectFit: 'contain',
+                    zIndex: index + 1
+                }}
+            />
             ))}
         </div>
     );
