@@ -5,6 +5,6 @@ import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 
 @Getter
 public class SingleChoiceAnswer extends SubmitAnswerRequest {
-  private String selectedId;
+  private int selectedId;
 }
 

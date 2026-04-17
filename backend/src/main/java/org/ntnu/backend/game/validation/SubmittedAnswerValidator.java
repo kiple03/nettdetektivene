@@ -1,6 +1,8 @@
 package org.ntnu.backend.game.validation;
 
+import java.util.List;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
+import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.model.Question;
 
@@ -24,10 +26,9 @@ public interface SubmittedAnswerValidator {
    * Compares the submitted answer against the correct answer stored in the
    * option content JSON.
    *
-   * @param optionContent the raw JSON string from {@code Question.optionContent}
+   * @param options list of the question options from {@code Question.optionContent}
    * @param submission the student's submission
    * @return the validation result, including feedback for the student
    * @throws IllegalArgumentException if the submission shape doesn't match this level type
    */
-  ValidationResult validate(String optionContent, SubmitAnswerRequest submission);
-}
+  ValidationResult validate(List<Option> options, SubmitAnswerRequest submission);}
