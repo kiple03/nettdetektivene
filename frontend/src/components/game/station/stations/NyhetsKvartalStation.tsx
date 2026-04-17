@@ -27,22 +27,21 @@ function NyhetsKvartalStation({ station }: NyhetsKvartalStationProps) {
   };
 
   return (
-      <div>
+      <div className="nyhetskvartal-station">
         <TaskHeader questionText={station.questionText} />
         <MultipleChoice options={station.options} onSelect={handleSelect} />
 
-        {selectedOption && (
+        {submitResult && (
             <div className="feedback-wrapper">
-              <FeedbackBox isCorrect={selectedOption.isCorrect}
-                           title={selectedOption.feedbackTitle}
-                           text={selectedOption.feedbackText}
+              <FeedbackBox
+                  isCorrect={submitResult.correct}
+                  title={submitResult.correct ? "Riktig!" : "Feil"}
+                  text={submitResult.feedback}
               />
             </div>
+
         )}
-
       </div>
-
-
   );
 }
 
