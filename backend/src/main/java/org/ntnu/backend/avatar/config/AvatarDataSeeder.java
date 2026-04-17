@@ -37,24 +37,5 @@ public class AvatarDataSeeder implements CommandLineRunner{
 
             itemRepository.saveAll(List.of(cap_blue, glasses, necklace, shirt_red));
         }
-
-        userRepository.findByUsername("brukerbruker").ifPresent(user -> {
-            if(inventoryItemRepository.findByUserId(user.getId()).isEmpty()){
-                System.out.println("Giving test user items...");
-
-                List<AvatarItem> allItems = itemRepository.findAll();
-
-                List<UserInventoryItem> startingInventory = allItems.stream().map(item -> 
-                    UserInventoryItem.builder()
-                        .user(user)
-                        .avatarItem(item)
-                        .unlockedAt(LocalDateTime.now())
-                        .isEquipped(true)
-                        .build()
-                ).toList();
-
-                inventoryItemRepository.saveAll(startingInventory);
-            }
-        });
     }
 }
