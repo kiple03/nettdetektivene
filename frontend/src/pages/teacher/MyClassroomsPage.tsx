@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
 import type { ClassroomSummary } from '@/types/classroom.ts';
 import LogoutButton from '@/components/LogoutButton';
+import { decodeToken } from '@/stores/authStore';
 import './MyClassroomsPage.css';
 
 const CARD_ACCENT_COLORS = [
@@ -15,6 +16,7 @@ const CARD_ACCENT_COLORS = [
 
 export default function MyClassroomsPage() {
     const summaries = (useLoaderData() as ClassroomSummary[]) ?? [];
+    const username = decodeToken()?.username ?? null;
 
     return (
         <div className="teacher-dashboard">
@@ -27,6 +29,9 @@ export default function MyClassroomsPage() {
                 <h1 className="teacher-dashboard__title">Mine klasserom</h1>
 
                 <div className="teacher-dashboard__header-actions">
+                    {username && (
+                        <span className="teacher-dashboard__username">{username}</span>
+                    )}
                     <Link
                         to="/teacher/notifications"
                         className="teacher-dashboard__bell"

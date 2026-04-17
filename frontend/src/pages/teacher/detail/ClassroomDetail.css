@@ -54,6 +54,12 @@ body,
   background: rgba(255,255,255,.1);
 }
 
+.classroom-detail__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .classroom-detail__title {
   margin: 0;
   font-family: "Georgia", "Times New Roman", serif;
@@ -61,6 +67,90 @@ body,
   font-weight: 700;
   letter-spacing: -.03em;
   color: #f7f2ff;
+}
+
+.classroom-detail__pencil {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(247, 242, 255, 0.5);
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s, background 0.15s;
+  margin-top: 4px;
+}
+
+.classroom-detail__pencil:hover {
+  color: #f7f2ff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.classroom-detail__title-edit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.classroom-detail__title-input {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  color: #f7f2ff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 4px 12px;
+  outline: none;
+  min-width: 200px;
+  max-width: 100%;
+}
+
+.classroom-detail__title-input:focus {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.classroom-detail__title-save,
+.classroom-detail__title-cancel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+}
+
+.classroom-detail__title-save {
+  background: #4a3bd4;
+  color: #fff;
+}
+
+.classroom-detail__title-save:hover:not(:disabled) {
+  background: #5a4be4;
+}
+
+.classroom-detail__title-cancel {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f7f2ff;
+}
+
+.classroom-detail__title-cancel:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.classroom-detail__title-save:disabled,
+.classroom-detail__title-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.classroom-detail__save-error {
+  font-size: 0.85rem;
+  color: #ff7070;
+  width: 100%;
 }
 
 /* SECTION */
