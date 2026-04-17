@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { Eye, EyeOff, Plus } from 'lucide-react';
 import { AxiosError } from 'axios';
 import { login } from '@/api/authApi';
 import { decodeToken, setToken } from '@/stores/authStore';
@@ -24,6 +24,7 @@ function FeideFake() {
   const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleBack = () => {
     navigate(-1);
@@ -128,20 +129,30 @@ function FeideFake() {
               {fieldErrors.email && <p className="feide-field-error">{fieldErrors.email}</p>}
 
               <label htmlFor="password">Passord</label>
-              <input
-                className={fieldErrors.password ? 'feide-input feide-input--error' : 'feide-input'}
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (fieldErrors.password) {
-                    setFieldErrors((current) => ({ ...current, password: '' }));
-                  }
-                }}
-              />
+              <div className="feide-input-wrapper">
+                <input
+                  className={fieldErrors.password ? 'feide-input feide-input--error' : 'feide-input'}
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (fieldErrors.password) {
+                      setFieldErrors((current) => ({ ...current, password: '' }));
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="feide-toggle-password"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? 'Skjul passord' : 'Vis passord'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {fieldErrors.password && <p className="feide-field-error">{fieldErrors.password}</p>}
 
               {error && <p className="feide-login-error">{error}</p>}
