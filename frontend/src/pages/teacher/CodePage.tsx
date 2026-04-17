@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/cards/Cards.tsx";
@@ -40,10 +40,6 @@ export default function CodePage() {
             <div className={styles.overlay} />
 
             <div className={styles.wrapper}>
-                <Link to={`/teacher/classroom/new`} className={styles.backButton}>
-                    ← Tilbake
-                </Link>
-
                 <Card variant="unstyled" className={styles.topBox}>
                     <p className={styles.topTitle}>Del koden med elevene dine</p>
                     <p className={styles.topText}>

@@ -28,7 +28,6 @@ export default function ClassroomDetailPage() {
     if (!classroom) {
         return (
             <div className="classroom-detail">
-                <Link to="/teacher" className="classroom-detail__back">← Tilbake</Link>
                 <p className="classroom-detail__empty">Klassen ble ikke funnet.</p>
             </div>
         );
@@ -105,8 +104,6 @@ export default function ClassroomDetailPage() {
     return (
         <div className="classroom-detail">
             <header className="classroom-detail__header">
-                <Link to="/teacher" className="classroom-detail__back">← Tilbake</Link>
-
                 {editMode ? (
                     <div className="classroom-detail__title-edit">
                         {saveError && (
@@ -169,6 +166,12 @@ export default function ClassroomDetailPage() {
                     <div className="classroom-detail__info-row">
                         <span className="classroom-detail__info-label">Bli-med-kode</span>
                         <span className="classroom-detail__join-code">{classroom.joinCode}</span>
+                        <Link
+                            to={`/teacher/classroom/${classroom.id}/code`}
+                            className="classroom-detail__code-btn"
+                        >
+                            Vis kode på storskjerm →
+                        </Link>
                     </div>
 
                     {classroom.description && (
