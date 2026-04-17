@@ -15,16 +15,17 @@ export function LayeredAvatar({items, size = 64}: LayeredAvatarProps){
     return (
         <div className="relative rounded-full overflow-hidden bg-gray-200" style={{ width: size, height: size }}>
             <img 
-                src="/assets/avatar-parts/base-model.png"
+                src="/assets/cap_blue.svg"
                 alt="Base Avatar"
-                className="base avatar"/>
+                className="absolute w-full h-full object-contain"
+                style={{zIndex: 0}}/>
 
             {sortedItems.map((item, index) => (
             <img 
                 key={item.id}
                 src={item.imageUrl}
                 alt={item.name}
-                className="object core"
+                className="absolute w-full h-full object-contain"
                 style={{zIndex: index + 1}}
                 />
             ))}

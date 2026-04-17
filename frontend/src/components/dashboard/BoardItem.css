@@ -83,3 +83,12 @@
 .board-item-wrapper:hover {
   transform: translate(-50%, -50%) rotate(0deg) scale(1.05);
 }
+
+.profile-avatar-overlay {
+  position: absolute;
+  top: 18%; 
+  left: 35%;
+  transform: translate(-50%, -50%) scale(0.15); 
+  z-index: 10; 
+  pointer-events: none; 
+}
