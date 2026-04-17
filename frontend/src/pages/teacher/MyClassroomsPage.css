@@ -68,6 +68,12 @@
   gap: 12px;
 }
 
+.teacher-dashboard__username {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
 .teacher-dashboard__bell {
   display: flex;
   align-items: center;
