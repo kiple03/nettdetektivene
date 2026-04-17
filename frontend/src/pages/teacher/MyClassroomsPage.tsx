@@ -27,7 +27,11 @@ export default function MyClassroomsPage() {
                 <h1 className="teacher-dashboard__title">Mine klasserom</h1>
 
                 <div className="teacher-dashboard__header-actions">
-                    <Link to="/teacher/notifications" className="teacher-dashboard__bell" aria-label="Varsler">
+                    <Link
+                        to="/teacher/notifications"
+                        className="teacher-dashboard__bell"
+                        aria-label="Varsler"
+                    >
                         <BellIcon />
                     </Link>
                     <LogoutButton className="teacher-dashboard__logout" />
@@ -56,14 +60,13 @@ export default function MyClassroomsPage() {
                             <span className="classroom-card__new-label">Opprett ny klasse</span>
                         </Link>
 
-                        {summaries.map(({ classroom, student_count, total_score }, index) => {
+                        {summaries.map((summary, index) => {
                             const accentColor = CARD_ACCENT_COLORS[index % CARD_ACCENT_COLORS.length];
-                            const classroomId = classroom.id;
 
                             return (
                                 <Link
-                                    key={classroomId}
-                                    to={`/teacher/classroom/${classroomId}`}
+                                    key={summary.id}
+                                    to={`/teacher/classroom/${summary.id}`}
                                     className="classroom-card"
                                     style={{ '--card-accent': accentColor } as React.CSSProperties}
                                 >
@@ -71,20 +74,20 @@ export default function MyClassroomsPage() {
                                     <div className="classroom-card__color-bar" />
 
                                     <div className="classroom-card__top">
-                                        <h2 className="classroom-card__title">{classroom.title}</h2>
-                                        <span className="classroom-card__join-code">{classroom.join_code}</span>
+                                        <h2 className="classroom-card__title">{summary.title}</h2>
+                                        <span className="classroom-card__join-code">{summary.joinCode}</span>
                                     </div>
 
                                     <div className="classroom-card__stats">
                                         <div className="classroom-card__stat">
-                                            <span className="classroom-card__stat-value">{student_count}</span>
+                                            <span className="classroom-card__stat-value">{summary.studentCount}</span>
                                             <span className="classroom-card__stat-label">elever</span>
                                         </div>
 
                                         <div className="classroom-card__stat-divider" />
 
                                         <div className="classroom-card__stat">
-                                            <span className="classroom-card__stat-value">{total_score}</span>
+                                            <span className="classroom-card__stat-value">?</span>
                                             <span className="classroom-card__stat-label">medaljer</span>
                                         </div>
                                     </div>

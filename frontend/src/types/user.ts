@@ -22,3 +22,15 @@ export interface ApiErrorBody {
   field?: string;
   message?: string;
 }
+
+export interface EquippedItem {
+  id: string;
+  name: string;
+  category: string;
+  imageUrl: string;
+}
+
+export interface UserProfile {
+  username: string;
+  equippedItems: EquippedItem[];
+}
