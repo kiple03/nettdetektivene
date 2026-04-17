@@ -18,6 +18,7 @@ export default function ClassroomDetailPage() {
     const [editMode, setEditMode] = useState(false);
     const [editTitle, setEditTitle] = useState(initial?.title ?? '');
     const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
     const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
 
     if (!classroom) {
@@ -61,10 +62,13 @@ export default function ClassroomDetailPage() {
     async function handleSave() {
         if (!classroom || !editTitle.trim()) return;
         setSaving(true);
+        setSaveError(null);
         try {
             const updated = await updateClassroom(classroom.id, editTitle.trim(), classroom.description);
             setClassroom(updated);
             setEditMode(false);
+        } catch {
+            setSaveError('Kunne ikke lagre. Prøv igjen.');
         } finally {
             setSaving(false);
         }
@@ -73,6 +77,7 @@ export default function ClassroomDetailPage() {
     function handleCancel() {
         if (!classroom) return;
         setEditTitle(classroom.title);
+        setSaveError(null);
         setEditMode(false);
     }
 
@@ -83,6 +88,9 @@ export default function ClassroomDetailPage() {
 
                 {editMode ? (
                     <div className="classroom-detail__title-edit">
+                        {saveError && (
+                            <span className="classroom-detail__save-error">{saveError}</span>
+                        )}
                         <input
                             className="classroom-detail__title-input"
                             type="text"

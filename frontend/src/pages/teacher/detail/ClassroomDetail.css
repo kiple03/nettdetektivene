@@ -147,6 +147,12 @@ body,
   cursor: not-allowed;
 }
 
+.classroom-detail__save-error {
+  font-size: 0.85rem;
+  color: #ff7070;
+  width: 100%;
+}
+
 /* SECTION */
 .classroom-detail__section {
   max-width: 1440px;
