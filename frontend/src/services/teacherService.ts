@@ -51,6 +51,9 @@ interface RawClassroomSummary {
   joinCode: string;
   createdAt: string;
   studentCount: number;
+  assignmentCount: number;
+  completedCount: number;
+  progressPercent: number;
 }
 
 interface RawClassroomDetail {
@@ -93,10 +96,13 @@ function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
   return {
     id: raw.id,
     title: raw.title,
-    description: raw.description,
+    description: raw.description ?? '',
     joinCode: raw.joinCode,
     createdAt: raw.createdAt,
     studentCount: raw.studentCount,
+    assignmentCount: raw.assignmentCount,
+    completedCount: raw.completedCount,
+    progressPercent: raw.progressPercent,
   };
 }
 
