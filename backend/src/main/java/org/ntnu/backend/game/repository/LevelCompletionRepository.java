@@ -13,6 +13,8 @@ public interface LevelCompletionRepository extends JpaRepository<LevelCompletion
 
     long countByEnrollmentId(UUID enrollmentId);
 
+    void deleteByEnrollmentClassroomId(UUID classroomId);
+
     @Query("""
         SELECT lc FROM LevelCompletion lc
         JOIN FETCH lc.level

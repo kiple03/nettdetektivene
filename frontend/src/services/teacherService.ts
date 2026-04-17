@@ -205,6 +205,15 @@ export async function createClassroom(title: string, description: string | null)
   return mapClassroomDetail(res.data);
 }
 
+export async function updateClassroom(classroomId: string, title: string, description: string | null): Promise<ClassroomDetail> {
+  const res = await apiClient.patch<RawClassroomDetail>(`/teacher/classrooms/${classroomId}`, { title, description });
+  return mapClassroomDetail(res.data);
+}
+
+export async function deleteClassroom(classroomId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}`);
+}
+
 export async function getStudentProgress(classroomId: string): Promise<StudentSummary[]> {
   const res = await apiClient.get<RawStudentProgress[]>(`/teacher/classrooms/${classroomId}/students`);
   return res.data.map(mapStudentProgress);

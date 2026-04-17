@@ -1,11 +1,11 @@
-import {type StationData, StationType} from "@/types/station.ts";
-import fakeNewsImage from "@/assets/images/fake_news.png"
-import realNewsImage from "@/assets/images/vg_news.png"
+import {STATION_TYPE, type StationData} from "@/types/station.ts";
+import fakeNewsImage from "@/assets/images/game/fake_news.png"
+import realNewsImage from "@/assets/images/game/vg_news.png"
 
 export const newsMock: StationData = {
   id: 1,
-  type: StationType.NEWS,
-  title: "Nyhetskvartal - den falske forsiden",
+  type: STATION_TYPE.NEWS,
+  title: "Nyhetskvartal - Den falske forsiden",
   questionText: "To avisforsider ligger foran deg. En er ekte, en er laget for å lure deg." +
       " Kan du finne ut hvilken som er falsk?",
   options: [

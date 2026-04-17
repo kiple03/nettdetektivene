@@ -11,6 +11,8 @@ import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.util.JoinCodeGenerator;
+import org.ntnu.backend.game.repository.LevelCompletionRepository;
+import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.ntnu.backend.user.service.UserService;
@@ -30,6 +32,8 @@ public class ClassroomService {
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ClassroomTeacherRepository classroomTeacherRepository;
+    private final LevelCompletionRepository levelCompletionRepository;
+    private final MysterySubmissionRepository mysterySubmissionRepository;
 
     private final ClassroomMapper classroomMapper;
     private final JoinCodeGenerator joinCodeGenerator;
@@ -61,10 +65,15 @@ public class ClassroomService {
         return classroomMapper.toResponse(classroomRepository.save(classroom));
     }
 
+    @Transactional
     public void deleteClassroom(UUID id) {
         if (!classroomRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Klasserom ikke funnet");
         }
+        mysterySubmissionRepository.deleteByEnrollmentClassroomId(id);
+        levelCompletionRepository.deleteByEnrollmentClassroomId(id);
+        enrollmentRepository.deleteByClassroomId(id);
+        classroomTeacherRepository.deleteByClassroomId(id);
         classroomRepository.deleteById(id);
     }
 

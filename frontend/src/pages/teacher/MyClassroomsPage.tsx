@@ -5,6 +5,7 @@ import LogoutButton from '@/components/LogoutButton';
 import { Button } from '@/components/ui/buttons/Button.tsx';
 import { TextInput } from '@/components/ui/textInput/TextInput.tsx';
 import { mockClassroomSummaries } from '@/mock/mockClassroomData.ts';
+import { decodeToken } from '@/stores/authStore';
 import './MyClassroomsPage.css';
 
 const CARD_ACCENT_COLORS = [
@@ -17,22 +18,23 @@ const CARD_ACCENT_COLORS = [
 ];
 
 export default function MyClassroomsPage() {
-    const loaderData = useLoaderData() as ClassroomSummary[] | null;
-    const summaries = loaderData ?? mockClassroomSummaries;
+   const loaderData = useLoaderData() as ClassroomSummary[] | null;
+  const summaries = loaderData ?? mockClassroomSummaries;
+  const username = decodeToken()?.username ?? null;
 
-    const [search, setSearch] = useState('');
-    const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [search, setSearch] = useState('');
+  const [view, setView] = useState<'grid' | 'list'>('grid');
 
-    const filtered = useMemo(() => {
-        const query = search.toLowerCase();
+  const filtered = useMemo(() => {
+      const query = search.toLowerCase();
 
-        return summaries.filter((summary) =>
-            [summary.title, summary.description ?? '', summary.joinCode]
-                .join(' ')
-                .toLowerCase()
-                .includes(query),
-        );
-    }, [summaries, search]);
+      return summaries.filter((summary) =>
+          [summary.title, summary.description ?? '', summary.joinCode]
+              .join(' ')
+              .toLowerCase()
+              .includes(query),
+      );
+  }, [summaries, search]);
 
     return (
         <div className="teacher-dashboard">
@@ -47,6 +49,9 @@ export default function MyClassroomsPage() {
                 </div>
 
                 <div className="teacher-dashboard__header-actions">
+                    {username && (
+                        <span className="teacher-dashboard__username">{username}</span>
+                    )}
                     <Link
                         to="/teacher/notifications"
                         className="teacher-dashboard__bell"

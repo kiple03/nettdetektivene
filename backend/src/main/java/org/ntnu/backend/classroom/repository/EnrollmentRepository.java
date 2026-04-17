@@ -23,4 +23,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
 
   Optional<Enrollment> findByClassroomIdAndUserIdAndLeftAtIsNull(UUID classroomId, UUID userId);
 
+  void deleteByClassroomId(UUID classroomId);
+
 }

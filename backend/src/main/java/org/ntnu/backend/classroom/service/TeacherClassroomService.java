@@ -69,6 +69,11 @@ public class TeacherClassroomService {
         return classroomService.updateClassroom(classroomId, request);
     }
 
+    public void deleteClassroom(UUID classroomId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        classroomService.deleteClassroom(classroomId);
+    }
+
     @Transactional(readOnly = true)
     public List<StudentProgressResponse> listStudents(UUID classroomId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
