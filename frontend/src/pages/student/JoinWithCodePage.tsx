@@ -1,153 +1,103 @@
-import { useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
-import { joinClassroom } from "@/api/classroomApi";
-import { refreshToken } from "@/api/authApi";
-import styles from "./JoinWithCodePage.module.css";
-
-import detectiveImage from "@/assets/images/joinWithCode/detective.png";
-import classroomBackground from "@/assets/images/joinWithCode/bgClassroomCode.png";
+import { Fragment, useRef, useState } from 'react';
+import styles from './JoinWithCodePage.module.css';
 
 export default function JoinWithCodePage() {
-    const navigate = useNavigate();
-    const [code, setCode] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [code, setCode] = useState('');
+    const [isFocused, setIsFocused] = useState(false);
+
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const rawCode = useMemo(() => {
-        return code.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 6);
-    }, [code]);
+    const maxLength = 6;
+    const activeIndex = Math.min(code.length, maxLength - 1);
 
-    const displayCode = useMemo(() => {
-        const padded = rawCode.padEnd(6, "X");
-        return `${padded.slice(0, 3)}-${padded.slice(3, 6)}`;
-    }, [rawCode]);
+    const chars = Array.from({ length: maxLength }, (_, index) => code[index] ?? '');
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const cleaned = e.target.value
-            .replace(/[^a-zA-Z0-9]/g, "")
-            .toUpperCase()
-            .slice(0, 6);
+    function focusInput() {
+        inputRef.current?.focus();
+    }
 
-        setCode(cleaned);
-    };
+    function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const raw = e.target.value.replace(/\D/g, '').slice(0, maxLength);
+        setCode(raw);
+    }
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Backspace" && rawCode.length > 0) {
-            e.preventDefault();
-            setCode((prev) => prev.slice(0, -1));
-        }
-    };
-
-    const handleJoin = async () => {
-        if (rawCode.length < 6) return;
-        setLoading(true);
-        setError("");
-        try {
-            await joinClassroom(rawCode);
-            await refreshToken();
-            navigate("/home");
-        } catch (err) {
-            const status = (err as AxiosError).response?.status;
-            if (status === 404) setError("Ugyldig kode. Prøv igjen.");
-            else if (status === 409) setError("Du er allerede med i et klasserom.");
-            else setError("Noe gikk galt. Prøv igjen.");
-        } finally {
-            setLoading(false);
-        }
-    };
+    function handleSubmit() {
+        console.log('Join classroom with code:', code);
+    }
 
     return (
-        <div
-            className={styles.page}
-            style={{ backgroundImage: `url(${classroomBackground})` }}
-        >
+        <div className={styles.page}>
             <div className={styles.overlay} />
 
             <div className={styles.wrapper}>
                 <div className={styles.topBox}>
-                    <p className={styles.topTitle}>
-                        Er du klar for å spore opp datatyven?
-                    </p>
+                    <h1 className={styles.topTitle}>Nettdetektivene</h1>
                     <p className={styles.topText}>
-                        Du trenger bare skrive inn koden til klasserommet for å bli med i jakten!!
+                        Skriv inn koden læreren ga deg for å bli med i klassen.
                     </p>
                 </div>
 
                 <div className={styles.bottomSection}>
                     <div className={styles.formBox}>
-                        <label htmlFor="classroom-code" className={styles.label}>
-                            Skriv inn kode:
-                        </label>
+                        <label className={styles.label}>Skriv inn kode</label>
 
                         <div
                             className={styles.codeInputWrapper}
-                            onClick={() => inputRef.current?.focus()}
+                            onClick={focusInput}
                         >
-                            <img
-                                src={detectiveImage}
-                                alt=""
-                                aria-hidden="true"
-                                className={`${styles.innerDetective} ${styles.leftDetective}`}
-                            />
-
                             <input
                                 ref={inputRef}
-                                id="classroom-code"
-                                type="text"
-                                inputMode="text"
-                                autoComplete="off"
-                                spellCheck={false}
-                                value={rawCode}
-                                onChange={handleChange}
-                                onKeyDown={handleKeyDown}
                                 className={styles.hiddenInput}
-                                aria-label="Skriv inn kode"
+                                type="text"
+                                inputMode="numeric"
+                                autoComplete="one-time-code"
+                                maxLength={6}
+                                value={code}
+                                onChange={handleChange}
+                                onFocus={() => setIsFocused(true)}
+                                onBlur={() => setIsFocused(false)}
                             />
 
-                            <div className={styles.codeDisplay} aria-hidden="true">
-                                {displayCode.split("").map((char, index) => {
-                                    const isTyped =
-                                        (index < 3 && Boolean(rawCode[index])) ||
-                                        (index > 3 && Boolean(rawCode[index - 1]));
-
-                                    const isDash = char === "-";
+                            <div className={styles.codeDisplay}>
+                                {chars.map((char, index) => {
+                                    const showCaret =
+                                        isFocused &&
+                                        index === activeIndex &&
+                                        !char;
 
                                     return (
-                                        <span
-                                            key={`${char}-${index}`}
-                                            className={[
-                                                styles.codeChar,
-                                                isDash ? styles.codeDash : "",
-                                                isTyped ? styles.codeFilled : styles.codePlaceholder,
-                                            ]
-                                                .filter(Boolean)
-                                                .join(" ")}
-                                        >
-                                            {char}
-                                        </span>
+                                        <Fragment key={index}>
+                                            {index === 3 && (
+                                                <span className={styles.codeDash}>-</span>
+                                            )}
+
+                                            <span
+                                                className={`${styles.codeChar} ${
+                                                    char
+                                                        ? styles.codeFilled
+                                                        : styles.codePlaceholder
+                                                }`}
+                                            >
+                        {char ? (
+                            char
+                        ) : showCaret ? (
+                            <span className={styles.caret} />
+                        ) : (
+                            'X'
+                        )}
+                      </span>
+                                        </Fragment>
                                     );
                                 })}
                             </div>
-
-                            <img
-                                src={detectiveImage}
-                                alt=""
-                                aria-hidden="true"
-                                className={`${styles.innerDetective} ${styles.rightDetective}`}
-                            />
                         </div>
 
-                        {error && <p className={styles.error}>{error}</p>}
-
                         <button
-                            type="button"
-                            onClick={handleJoin}
                             className={styles.button}
-                            disabled={loading || rawCode.length < 6}
+                            onClick={handleSubmit}
+                            disabled={code.length !== 6}
                         >
-                            {loading ? "Kobler til..." : "Bli med"}
+                            Bli med i klasse
                         </button>
                     </div>
                 </div>

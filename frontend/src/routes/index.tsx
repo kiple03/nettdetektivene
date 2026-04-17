@@ -99,11 +99,14 @@ export const router = createBrowserRouter([
     {
         path: '/teacher',
         element: <MyClassroomsPage />,
-        loader: () => getClassroomSummaries(),
     },
     {
         path: '/teacher/map',
         element: <MapPage />,
+    },
+    {
+        path: '/teacher/mystery-submissions',
+        element: <MysterySubmissions />,
     },
     {
         path: '/teacher/classroom/new',

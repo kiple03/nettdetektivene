@@ -238,8 +238,8 @@ export default function MyClassroomsPage() {
                     <Link to="/teacher/leaderboard" className="bottom-nav-chip">
                         Ledertavle
                     </Link>
-                    <Link to="/teacher/medals" className="bottom-nav-chip">
-                        Medaljer
+                    <Link to="/teacher/mystery-submission" className="bottom-nav-chip">
+                        Mystery submission
                     </Link>
                 </div>
             </nav>
