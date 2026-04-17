@@ -18,7 +18,7 @@ import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 import CodePage from "@/pages/teacher/CodePage";
 import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage";
 import AvatarDevPage from "@/pages/student/AvatarDevPage";
-import GamePage from "@/pages/game/GamePage.tsx";
+import GamePage from "@/pages/game/GamePage";
 
 // Route guard temporarily disabled during game development so we don't
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
