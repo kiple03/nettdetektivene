@@ -77,6 +77,7 @@ public class TeacherClassroomService {
             .map(enrollment -> {
                 long count = levelCompletionRepository.countByEnrollmentId(enrollment.getId());
                 return StudentProgressResponse.builder()
+                    .userId(enrollment.getUser().getId().toString())
                     .username(enrollment.getUser().getUsername())
                     .levelsCompleted(count)
                     .medalsEarned(count)

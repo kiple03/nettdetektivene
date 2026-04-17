@@ -264,7 +264,9 @@ class TeacherClassroomControllerTest {
         UUID teacherId = UUID.randomUUID();
         UUID classroomId = UUID.randomUUID();
 
+        UUID studentId = UUID.randomUUID();
         StudentProgressResponse student = StudentProgressResponse.builder()
+            .userId(studentId.toString())
             .username("alice")
             .levelsCompleted(3)
             .medalsEarned(3)
@@ -275,6 +277,7 @@ class TeacherClassroomControllerTest {
         mockMvc.perform(get("/teacher/classrooms/" + classroomId + "/students")
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].userId").value(studentId.toString()))
             .andExpect(jsonPath("$[0].username").value("alice"))
             .andExpect(jsonPath("$[0].levelsCompleted").value(3))
             .andExpect(jsonPath("$[0].medalsEarned").value(3));

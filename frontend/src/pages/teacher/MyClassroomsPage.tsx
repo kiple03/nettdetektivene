@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
-import type { ClassroomSummaryApi } from '@/types/classroom.ts';
+import type { ClassroomSummary } from '@/types/classroom.ts';
 import LogoutButton from '@/components/LogoutButton';
 import './MyClassroomsPage.css';
 
@@ -14,7 +14,7 @@ const CARD_ACCENT_COLORS = [
 ];
 
 export default function MyClassroomsPage() {
-    const summaries = (useLoaderData() as ClassroomSummaryApi[]) ?? [];
+    const summaries = (useLoaderData() as ClassroomSummary[]) ?? [];
 
     return (
         <div className="teacher-dashboard">

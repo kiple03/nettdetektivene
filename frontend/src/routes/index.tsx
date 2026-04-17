@@ -35,6 +35,7 @@ import {
 } from "@/services/teacherService";
 
 export const router = createBrowserRouter([
+    // Auth routes (public)
     {
         path: '/',
         element: <StudentLoginPage />,
@@ -48,6 +49,7 @@ export const router = createBrowserRouter([
         element: <FeideFake />,
     },
 
+    // Student routes — open during development
     {
         path: '/home',
         element: <StudentHomePage />,
@@ -81,6 +83,8 @@ export const router = createBrowserRouter([
         element: <WeeklyMysteryPage />,
     },
 
+    // Teacher routes
+    // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
     {
         path: '/teacher',
         element: <MyClassroomsPage />,
@@ -95,7 +99,7 @@ export const router = createBrowserRouter([
         path: '/teacher/classroom/:id/code',
         element: <CodePage />,
         loader: async ({ params }) => {
-            const id = Number(params.id);
+            const id = params.id!;
             return await getClassroom(id);
         },
     },
@@ -103,11 +107,11 @@ export const router = createBrowserRouter([
         path: '/teacher/classroom/:id',
         element: <ClassroomDetail />,
         loader: async ({ params }) => {
-            const id = Number(params.id);
+            const id = params.id!;
             const [classroom, students, stops] = await Promise.all([
                 getClassroom(id),
                 getStudentProgress(id),
-                getStops(id),
+                getStops(),
             ]);
             return { classroom, students, stops };
         },
@@ -115,13 +119,13 @@ export const router = createBrowserRouter([
     {
         path: '/teacher/classroom/:id/student/:studentId',
         element: <StudentDetail />,
-        loader: async ({ params }) => getStudentDetail(Number(params.id), Number(params.studentId)),
+        loader: async ({ params }) => getStudentDetail(params.id!, params.studentId!),
     },
     {
         path: '/teacher/classroom/:id/mystery',
         element: <MysterySubmissions />,
         loader: async ({ params }) => {
-            const id = Number(params.id);
+            const id = params.id!;
             const [classroom, submissions] = await Promise.all([
                 getClassroom(id),
                 getMysterySubmissions(id),

@@ -1,7 +1,26 @@
 import apiClient from '@/api/client';
-import type { ClassroomResponse } from '@/types/classroom';
+import type { ClassroomDetail } from '@/types/classroom';
 
-export async function joinClassroom(joinCode: string): Promise<ClassroomResponse> {
-  const res = await apiClient.post<ClassroomResponse>('/classrooms/join', { joinCode });
-  return res.data;
+// Raw response type from backend (internal, not exported)
+interface RawClassroomResponse {
+  id: string;
+  title: string;
+  description: string | null;
+  joinCode: string;
+  createdAt: string;
+}
+
+function mapClassroomDetail(raw: RawClassroomResponse): ClassroomDetail {
+  return {
+    id: raw.id,
+    title: raw.title,
+    description: raw.description,
+    joinCode: raw.joinCode,
+    createdAt: raw.createdAt,
+  };
+}
+
+export async function joinClassroom(joinCode: string): Promise<ClassroomDetail> {
+  const res = await apiClient.post<RawClassroomResponse>('/classrooms/join', { joinCode });
+  return mapClassroomDetail(res.data);
 }

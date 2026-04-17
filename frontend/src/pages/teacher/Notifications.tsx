@@ -1,14 +1,15 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
-import type { ClassroomSummaryApi, Notification } from '@/types/classroom.ts';
+import type { ClassroomSummary, NotificationResponse } from '@/types/classroom.ts';
+import { notifLsKey } from '@/services/teacherService';
 import './Notifications.css';
 
 type LoaderData = {
-  notifications: Notification[];
-  classrooms: ClassroomSummaryApi[];
+  notifications: NotificationResponse[];
+  classrooms: ClassroomSummary[];
 };
 
-type NotificationType = Notification['type'];
+type NotificationType = NotificationResponse['type'];
 
 const TYPE_LABELS: Record<NotificationType, string> = {
   stop_completed: 'Stopp fullført',
@@ -24,24 +25,38 @@ const TYPE_ICONS: Record<NotificationType, string> = {
   inappropriate_name: '🚫',
 };
 
+// Unique key for a notification used both as React key and for read-state tracking
+function notifKey(n: NotificationResponse): string {
+  return `${n.studentUsername}-${n.timestamp}`;
+}
+
 export default function Notifications() {
   const { notifications: initial, classrooms } = useLoaderData() as LoaderData;
   const [notifications, setNotifications] = useState(initial);
   const [classroomFilter, setClassroomFilter] = useState<string | 'all'>('all');
 
-  function markRead(id: number) {
+  function markRead(key: string) {
     setNotifications(prev =>
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
+      prev.map(n => {
+        if (notifKey(n) !== key) return n;
+        localStorage.setItem(notifLsKey(n.studentUsername, n.timestamp), 'true');
+        return { ...n, read: true };
+      })
     );
   }
 
   function markAllRead() {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications(prev =>
+      prev.map(n => {
+        localStorage.setItem(notifLsKey(n.studentUsername, n.timestamp), 'true');
+        return { ...n, read: true };
+      })
+    );
   }
 
   const filtered = classroomFilter === 'all'
     ? notifications
-    : notifications.filter(n => String(n.classroom_id) === classroomFilter);
+    : notifications.filter(n => n.classroomId === classroomFilter);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -93,9 +108,10 @@ export default function Notifications() {
       ) : (
         <ul className="notifs__list">
           {filtered.map(n => {
-            const classroom = classrooms.find(c => c.id === String(n.classroom_id));
+            const key = notifKey(n);
+            const classroom = classrooms.find(c => c.id === n.classroomId);
             return (
-              <li key={n.id} className={`notifs__item${n.read ? ' notifs__item--read' : ''}`}>
+              <li key={key} className={`notifs__item${n.read ? ' notifs__item--read' : ''}`}>
                 <span className="notifs__icon" aria-hidden="true">{TYPE_ICONS[n.type]}</span>
                 <div className="notifs__body">
                   <div className="notifs__meta">
@@ -103,14 +119,14 @@ export default function Notifications() {
                     {classroom && (
                       <span className="notifs__classroom">{classroom.title}</span>
                     )}
-                    <time className="notifs__date" dateTime={n.created_at}>
-                      {new Date(n.created_at).toLocaleDateString('nb-NO')}
+                    <time className="notifs__date" dateTime={n.timestamp}>
+                      {new Date(n.timestamp).toLocaleDateString('nb-NO')}
                     </time>
                   </div>
                   <p className="notifs__message">{n.message}</p>
                 </div>
                 {!n.read && (
-                  <button className="notifs__read-btn" onClick={() => markRead(n.id)}>
+                  <button className="notifs__read-btn" onClick={() => markRead(key)}>
                     Merk lest
                   </button>
                 )}
