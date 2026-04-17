@@ -33,7 +33,7 @@ public class UserAvatarService {
                                         .map(inventoryItem -> EquippedItemDto.builder()
                                             .id(inventoryItem.getAvatarItem().getId())
                                             .name(inventoryItem.getAvatarItem().getName())
-                                            .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".png")
+                                            .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".svg")
                                             .build())
                                         .toList();
         return UserProfileResponse.builder()
