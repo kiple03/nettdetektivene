@@ -16,7 +16,9 @@ import BadgesPage from "@/pages/student/BadgesPage";
 import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
 import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";
-import TestPage from "@/pages/game/TestGamePage.tsx";
+import AvatarDevPage from "@/pages/student/AvatarDevPage";
+import GamePage from "@/pages/game/GamePage.tsx";
+import CodePage from "@/pages/teacher/CodePage.tsx";
 
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
@@ -108,51 +110,22 @@ export const router = createBrowserRouter([
     {
         path: '/teacher/classroom/:id/code',
         element: <CodePage />,
-        loader: async ({ params }) => {
-            const id = params.id!;
-            return await getClassroom(id);
-        },
     },
     {
         path: '/teacher/classroom/:id',
         element: <RequireAuth role="TEACHER"><ClassroomDetail /></RequireAuth>,
-        loader: async ({ params }) => {
-            const id = params.id!;
-            const [classroom, students, stops] = await Promise.all([
-                getClassroom(id),
-                getStudentProgress(id),
-                getStops(),
-            ]);
-            return { classroom, students, stops };
-        },
     },
     {
         path: '/teacher/classroom/:id/student/:studentId',
         element: <RequireAuth role="TEACHER"><StudentDetail /></RequireAuth>,
-        loader: async ({ params }) => getStudentDetail(Number(params.id), Number(params.studentId)),
     },
     {
         path: '/teacher/classroom/:id/mystery',
         element: <RequireAuth role="TEACHER"><MysterySubmissions /></RequireAuth>,
-        loader: async ({ params }) => {
-            const id = params.id!;
-            const [classroom, submissions] = await Promise.all([
-                getClassroom(id),
-                getMysterySubmissions(id),
-            ]);
-            return { classroom, submissions };
-        },
     },
     {
         path: '/teacher/notifications',
         element: <RequireAuth role="TEACHER"><Notifications /></RequireAuth>,
-        loader: async () => {
-            const [notifications, summaries] = await Promise.all([
-                getNotifications(),
-                getClassroomSummaries(),
-            ]);
-            return { notifications, classrooms: summaries };
-        },
     },
     {
         path: "/avatar",
