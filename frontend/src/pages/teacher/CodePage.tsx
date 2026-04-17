@@ -1,10 +1,10 @@
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
-import { useMemo } from "react";
-import { Card } from "@/components/ui/cards/Cards.tsx";
+import {Link, useLoaderData, useNavigate} from "react-router-dom";
+import {useMemo} from "react";
+import {Card} from "@/components/ui/cards/Cards.tsx";
 import styles from "./CodePage.module.css";
 
 import detectiveImage from "@/assets/images/joinWithCode/detective.png";
-import { Button } from "@/components/ui/buttons/Button";
+import {Button} from "@/components/ui/buttons/Button";
 
 type ClassroomData = {
     id: string;

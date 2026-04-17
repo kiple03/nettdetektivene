@@ -1,11 +1,11 @@
-import { createBrowserRouter } from "react-router-dom";
+import {createBrowserRouter} from "react-router-dom";
 import MapPage from "../pages/student/MapPage";
 import LevelOne from "../pages/student/LevelOnePage";
 import StudentLoginPage from "@/pages/auth/StudentLoginPage";
 import TeacherLoginPage from "@/pages/auth/TeacherLoginPage";
 import FeideFake from "@/pages/auth/FeideFake";
 import StudentHomePage from "@/pages/student/StudentHomePage";
-import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
+import CreateClassroom, {createClassroomAction} from "@/pages/teacher/CreateClassroom";
 import ClassroomDetail from "@/pages/teacher/detail/ClassroomDetail.tsx";
 import StudentDetail from "@/pages/teacher/detail/StudentDetail.tsx";
 import MysterySubmissions from "@/pages/teacher/MysterySubmissions";
@@ -24,15 +24,14 @@ import GamePage from "@/pages/game/GamePage.tsx";
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
 // wrappers below and uncommenting this import.
 // import RequireAuth from "@/routes/RequireAuth";
-
 import {
+    getClassroom,
     getClassroomSummaries,
-    getStudentProgress,
-    getStudentDetail,
     getMysterySubmissions,
     getNotifications,
-    getClassroom,
     getStops,
+    getStudentDetail,
+    getStudentProgress,
 } from "@/services/teacherService";
 import ProfilePage from "@/pages/student/ProfilePage.tsx";
 
