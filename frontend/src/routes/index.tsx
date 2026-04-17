@@ -132,6 +132,7 @@ export const router = createBrowserRouter([
             ]);
             return { classroom, students, stops };
         },
+
     },
     {
         path: '/teacher/classroom/:id/student/:studentId',
