@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import TeacherLayout from "@/components/layout/TeacherLayout";
 import MapPage from "../pages/student/MapPage";
 import LevelOne from "../pages/student/LevelOnePage";
 import StudentLoginPage from "@/pages/auth/StudentLoginPage";
@@ -23,6 +24,15 @@ import CodePage from "@/pages/teacher/CodePage.tsx";
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
 import ProfilePage from "@/pages/student/ProfilePage.tsx";
+import {
+    getClassroomSummaries,
+    getClassroom,
+    getStudentProgress,
+    getStops,
+    getStudentDetail,
+    getMysterySubmissions,
+    getNotifications,
+} from "@/services/teacherService";
 
 export const router = createBrowserRouter([
     // Auth routes (public)

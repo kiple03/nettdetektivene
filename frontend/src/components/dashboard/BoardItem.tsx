@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
 import type { DashboardItem } from "@/types/dashboard.ts";
 import './BoardItem.css';
+import {Header as UserProfileHeader} from "@/components/user/userProfile";
 
 type BoardItemProps = DashboardItem;
 
-function BoardItem( {label, to, top, left, image, size} :BoardItemProps) {
+function BoardItem( {id, label, to, top, left, image, size} :BoardItemProps) {
   return (
       <Link to={to}
             className={`board-item-wrapper board-item-${size}`}
@@ -13,6 +14,14 @@ function BoardItem( {label, to, top, left, image, size} :BoardItemProps) {
         {image && (
             <img src={image} alt={label} className="board-item-img" />
         )}
+
+        {/* avatar profile picture */}
+        {id === 'profile' && (
+          <div className="profile-avatar-overlay">
+            <UserProfileHeader />
+          </div>
+        )}
+        
         <div className="board-item">
           {label}
         </div>
