@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 import styles from "@/pages/student/MapPage.module.css";
 import { getGameQuestionById } from "@/api/gameApi.ts";
 import {mapQuestionToStationData} from "@/utils/gameMapper.ts";
