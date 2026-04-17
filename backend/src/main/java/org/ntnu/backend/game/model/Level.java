@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
-import org.ntnu.backend.game.model.enums.levelType;
+import org.ntnu.backend.game.model.enums.LevelType;
 
 @Entity
 @Table(name = "levels")
@@ -23,5 +23,7 @@ public class  Level {
     private Stop stop;
 
     @Enumerated(EnumType.STRING)
-    private levelType levelType;
+
+    private LevelType levelType;
+
 }

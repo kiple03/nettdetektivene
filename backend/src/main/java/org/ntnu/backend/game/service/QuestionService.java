@@ -1,45 +1,47 @@
 package org.ntnu.backend.game.service;
 
 import java.util.List;
-import org.ntnu.backend.game.dto.OptionDto;
-import org.ntnu.backend.game.dto.QuestionDto;
+import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.exception.QuestionNotFoundException;
+import org.ntnu.backend.game.dto.QuestionResponse;
+
+import org.ntnu.backend.game.dto.SubmitAnswerRequest;
+import org.ntnu.backend.game.dto.SubmitAnswerResponse;
+import org.ntnu.backend.game.mapper.GameMapper;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.Question;
+import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.repository.QuestionRepository;
+import org.ntnu.backend.game.validation.SubmittedAnswerValidator;
+import org.ntnu.backend.game.validation.ValidationResult;
 import org.springframework.stereotype.Service;
+import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
 
 @Service
+@RequiredArgsConstructor
 public class QuestionService {
 
   private final QuestionRepository questionRepository;
+  private final GameMapper gameMapper;
+  private final OptionParser optionParser;
+  private final SubmittedAnswerValidatorRegistry validatorRegistry;
 
-
-  public QuestionService(QuestionRepository questionRepository) {
-    this.questionRepository = questionRepository;
-  }
-
-  public QuestionDto getQuestionById(int id) {
+  public QuestionResponse getQuestionById(int id) {
     Question question = questionRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Question not found"));
-
-    List<OptionDto> optionDtos = question.getOptions().stream()
-        .map(this::toOptionDto)
-        .toList();
-
-    return new QuestionDto(
-        question.getId(),
-        question.getQuestionText(),
-        optionDtos
-    );
+        .orElseThrow(() -> new QuestionNotFoundException(id));
+    return gameMapper.toQuestionResponse(question);
   }
 
-  private OptionDto toOptionDto(Option option) {
-    return new OptionDto(
-        option.getId(),
-        option.getText(),
-        option.getImageUrl(),
-        option.isCorrect(),
-        option.getExplanation()
-    );
+  public SubmitAnswerResponse submitAnswer(int questionId, SubmitAnswerRequest request) {
+    Question question = questionRepository.findById(questionId)
+        .orElseThrow(() -> new QuestionNotFoundException(questionId));
+
+    LevelType type = question.getLevel().getLevelType();
+    List<Option> options = optionParser.parse(question.getOptionContent(), type);
+
+    SubmittedAnswerValidator validator = validatorRegistry.forType(type);
+    ValidationResult result = validator.validate(options, request);
+
+    return new SubmitAnswerResponse(result.correct(), result.feedback());
   }
 }

@@ -1,4 +1,4 @@
-package org.ntnu.backend.level.model;
+package org.ntnu.backend.game.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ntnu.backend.classroom.model.Enrollment;
-import org.ntnu.backend.game.model.Level;
 
 @Entity
 @Table(

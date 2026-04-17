@@ -1,18 +1,10 @@
 package org.ntnu.backend.game.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+/**
+ * Sealed interface for options.
+ * The root of the tagged union for options. Include all options that are permitted.
+ */
+public sealed interface Option
+permits MultipleChoiceOption {
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class Option {
-    private int id;
-    private String text;
-    private String imageUrl;
-    private boolean isCorrect;
-    private String explanation;
 }
