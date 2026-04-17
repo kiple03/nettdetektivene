@@ -50,7 +50,7 @@ export default function MyClassroomsPage() {
 
                 <div className="teacher-dashboard__header-actions">
                     {email && (
-                        <span className="teacher-dashboard__username">{email}</span>
+                        <span className="teacher-dashboard__username">Logget inn som {email}</span>
                     )}
                     <Link
                         to="/teacher/notifications"
