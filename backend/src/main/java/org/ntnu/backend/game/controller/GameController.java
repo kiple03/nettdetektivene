@@ -2,13 +2,14 @@ package org.ntnu.backend.game.controller;
 
 
 import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.dto.LevelResponse;
+import org.ntnu.backend.game.dto.OptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
+import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.GameService;
 import org.ntnu.backend.game.service.QuestionService;
@@ -21,20 +22,39 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Student-facing game endpoints. Provides the read and submit flow:
+ * fetch stops for the map, then gets the levels to the stop, and then the user can
+ * view a question, and submit an answer for feedback.
+ *
+ * <p>All endpoints require authentication. Stops and levels are global
+ * no classroom scoping. Questions are both global and classroom specific (not implemented)..
+ *
+ * @see GameService
+ * @see QuestionService
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/game")
 public class GameController {
   private final GameService gameService;
   private final QuestionService questionService;
-  private final ClassroomAuthorizationService authService;
 
+  /**
+   * Returns all stops for the game map, ordered by display position.
+   * Each stop includes its lock state for the current student.
+   */
   @GetMapping("/stops")
   public List<StopResponse> getGameStops(@AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
     return gameService.getStopsForUser(principal.getUserId());
 
   }
 
+  /**
+   * Returns a single level's metadata including title, description,
+   * level type, and lock state. Used for the guidance screen shown
+   * before the student starts answering questions.
+   */
   @GetMapping("/levels/{levelId}")
   public LevelResponse getLevel(
       @PathVariable int levelId,
@@ -42,6 +62,12 @@ public class GameController {
     return gameService.getLevel(levelId, principal.getUserId());
   }
 
+
+  /**
+   * Returns a single question with its options. Answer data (correct
+   * flags and explanations) is excluded from the response by the
+   * sealed {@link OptionResponse} hierarchy.
+   */
   @GetMapping("/questions/{questionId}")
   public QuestionResponse getQuestion(
       @PathVariable int questionId,
@@ -50,6 +76,17 @@ public class GameController {
     return questionService.getQuestionById(questionId);
   }
 
+
+  /**
+   * Validates a student's submitted answer and returns feedback.
+   *
+   * <p>The request body is polymorphic, tagged by {@code shape}
+   * to match the question's type. For example, a
+   * {@link LevelType#MULTIPLE_CHOICE} question expects:
+   * {@code {"shape": "SINGLE", "selectedId": int}}
+   *
+   * @return whether the answer is correct, with an explanation
+   */
   @PostMapping("/questions/{questionId}/submit")
   public SubmitAnswerResponse submitAnswer(
       @PathVariable int questionId,
