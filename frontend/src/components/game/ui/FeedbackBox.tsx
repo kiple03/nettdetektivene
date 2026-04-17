@@ -1,7 +1,7 @@
 type FeedbackBoxProps = {
   isCorrect: boolean;
-  title: String;
-  text: String;
+  title: string;
+  text: string;
 };
 
 function FeedbackBox({ isCorrect, title, text }: FeedbackBoxProps) {

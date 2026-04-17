@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import styles from "@/pages/student/MapPage.module.css";
 import { getGameQuestionById } from "@/api/gameApi.ts";
 import {mapQuestionToStationData} from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
 import StationRenderer from "@/components/game/station/StationRenderer.tsx";
 import type {StationData} from "@/types/station"
-import "@/styles/game.css"
+import "@/components/game/ui/game.css"
 
 function TestPage() {
   const [station, setStation] = useState<StationData | null>(null);
@@ -28,10 +30,17 @@ function TestPage() {
     return <div>Laster...</div>;
   }
 
-  return (
-      <StationContainer title={station.title} type={station.type}>
-        <StationRenderer station={station} />
-      </StationContainer>
+  return (<div>
+        <StationContainer title={station.title} type={station.type}>
+          <StationRenderer station={station} />
+        </StationContainer>
+
+        <BackButton
+            className={styles.hotspot}
+            style={{ top: "6%", left: "1.5%" }}
+            ariaLabel="Gå tilbake"
+        />
+  </div>
   );
 }
 

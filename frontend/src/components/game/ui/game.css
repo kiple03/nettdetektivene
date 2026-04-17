@@ -1,0 +1,143 @@
+/* station - collective background and layout for different game stations */
+.station-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: Rockwell;
+}
+
+/* gray overlay to add opacity */
+.station-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(255, 255, 255, 0.45);
+  z-index: 0;
+}
+
+.station-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* station - (name of the station) (bakground picture) */
+.station-news {
+  background-image: url("@/assets/images/game/news.png");
+}
+
+/* title */
+/* info header under title */
+.station-title, .task-header {
+  background: beige;
+  padding: 0.5rem;
+}
+
+/* the whole photo-task box */
+.photo-task {
+  display: flex;
+  gap: 2rem;
+  margin: 2rem;
+  justify-content: center;
+  align-items: center;
+}
+
+/* beige box behind each option */
+.image-option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  background-color: beige;
+  width: 40vw;
+  height: 50vh;
+  border-radius: 0px;
+  border: 2px solid rgba(0, 0, 0, 0.45);
+  padding: 10px;
+
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* option picture */
+.image-option-card img {
+  width: auto;
+  min-height: 0;
+  flex: 1;
+}
+
+.image-option-card__button {
+  width: 90%;
+  position: relative;
+  display: inline-block;
+  margin: 15px;
+  padding: 15px 30px;
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: red;
+  background: transparent;
+  cursor: pointer;
+  transition: ease-out 0.5s;
+  border: 2px solid red;
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 0 red;
+}
+
+.image-option-card__button:hover {
+  color: white;
+  box-shadow: inset 0 -100px 0 0 red;
+}
+
+.image-option-card__button:active {
+  transform: scale(0.9);
+}
+
+/* wrapper to center feedback*/
+.feedback-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+/* feedback box when right/wrong */
+.feedback-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: beige;
+  width: 740px;
+}
+
+.feedback-box__correct {
+  border: 5px solid green;
+}
+
+.feedback-box__wrong {
+  border: 5px solid red;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .photo-task {
+    flex-direction: column;
+  }
+
+  .image-option-card {
+    width: 80vh;
+  }
+}

@@ -32,11 +32,14 @@ function NyhetsKvartalStation({ station }: NyhetsKvartalStationProps) {
         <MultipleChoice options={station.options} onSelect={handleSelect} />
 
         {submitResult && (
-            <FeedbackBox
-                isCorrect={submitResult.correct}
-                title={submitResult.correct ? "Riktig!" : "Feil"}
-                text={submitResult.feedback}
-            />
+            <div className="feedback-wrapper">
+              <FeedbackBox
+                  isCorrect={submitResult.correct}
+                  title={submitResult.correct ? "Riktig!" : "Feil"}
+                  text={submitResult.feedback}
+              />
+            </div>
+
         )}
       </div>
   );
