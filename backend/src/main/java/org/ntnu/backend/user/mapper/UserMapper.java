@@ -15,7 +15,6 @@ public class UserMapper {
 
   public User toUser(CreateUserRequest request, String encodedPassword) {
     return User.builder()
-        .username(request.getUsername())
         .email(request.getEmail())
         .passwordHash(encodedPassword)
         .role(request.getRole())

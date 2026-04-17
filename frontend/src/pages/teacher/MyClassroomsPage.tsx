@@ -20,7 +20,7 @@ const CARD_ACCENT_COLORS = [
 export default function MyClassroomsPage() {
    const loaderData = useLoaderData() as ClassroomSummary[] | null;
   const summaries = loaderData ?? mockClassroomSummaries;
-  const username = decodeToken()?.username ?? null;
+  const email = decodeToken()?.sub ?? null;
 
   const [search, setSearch] = useState('');
   const [view, setView] = useState<'grid' | 'list'>('grid');
@@ -49,8 +49,8 @@ export default function MyClassroomsPage() {
                 </div>
 
                 <div className="teacher-dashboard__header-actions">
-                    {username && (
-                        <span className="teacher-dashboard__username">{username}</span>
+                    {email && (
+                        <span className="teacher-dashboard__username">{email}</span>
                     )}
                     <Link
                         to="/teacher/notifications"
