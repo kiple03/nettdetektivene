@@ -9,7 +9,7 @@ export function Header(){
     
     return (
         <div>
-            <LayeredAvatar items={userProfile?.equippedItems || []} size={48}/>
+            <LayeredAvatar items={userProfile?.equippedItems || []} size={120}/>
             <span>{userProfile?.username}</span>
         </div>
     );

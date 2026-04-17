@@ -1,11 +1,3 @@
-export type ImageOption = {
-  id: string;
-  imageUrl: string;
-  isCorrect: boolean;
-  feedbackTitle: string;
-  feedbackText: string;
-};
-
 export const STATION_TYPE = {
   NEWS: "NEWS",
   PHOTO: "PHOTO",
@@ -14,15 +6,25 @@ export const STATION_TYPE = {
   PASSWORD: "PASSWORD",
 } as const;
 
-// TODO: update this when backend response is ready
 export type StationType =
     (typeof STATION_TYPE)[keyof typeof STATION_TYPE];
 
-export type StationData = {
+export type StationOption = {
   id: number;
+  label: string;
+  imageUrl?: string;
+};
+
+export type StationData = {
+  questionId: number;
   type: StationType;
   title: string;
   questionText: string;
-  options: ImageOption[];
+  options: StationOption[];
+};
+
+export type SubmitAnswerResult = {
+  correct: boolean;
+  feedback: string;
 };
 

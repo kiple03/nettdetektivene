@@ -1,5 +1,6 @@
 package org.ntnu.backend.game.service;
 
+import org.ntnu.backend.exception.OptionValidationException;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -12,6 +13,20 @@ import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
+/**
+ * Deserializes question option JSON into typed {@link Option} subclasses
+ * based on the question's {@link LevelType}.
+ *
+ * <p>After parsing, the resulting options are validated by
+ * {@link OptionValidator} to catch malformed data early, both
+ * field-level constraints and business rules are checked.
+ *
+ * <p>Adding support for a new level type requires a new case in the
+ * switch and a corresponding {@link Option} subclass (which is sealed).
+ *
+ * @see OptionValidator
+ * @see Option
+ */
 @Component
 @RequiredArgsConstructor
 public class OptionParser {
@@ -19,6 +34,16 @@ public class OptionParser {
   private final ObjectMapper mapper;
   private final OptionValidator validator;
 
+  /**
+   * Parses the JSON string into a list of typed options and validates them.
+   *
+   * @param json the raw JSON from {@code Question.optionContent}
+   * @param type the level type, determines which concrete class to deserialize into
+   *
+   * @return validated list of typed options
+   * @throws InvalidOptionFormatException if the JSON cannot be parsed
+   * @throws OptionValidationException if parsed options fail validation
+   */
   public List<Option> parse(String json, LevelType type) {
     List<Option> options;
     try {
