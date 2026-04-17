@@ -1,9 +1,9 @@
 import { Fragment, useMemo, useState } from 'react';
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import type { ClassroomDetail, StudentSummary, StopSummary } from '@/types/classroom.ts';
 import { Button } from '@/components/ui/buttons/Button';
 import { Card } from '@/components/ui/cards/Cards';
-import { updateClassroom } from '@/services/teacherService';
+import { updateClassroom, deleteClassroom } from '@/services/teacherService';
 import './ClassroomDetail.css';
 
 type LoaderData = {
@@ -20,6 +20,10 @@ export default function ClassroomDetailPage() {
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
     const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     if (!classroom) {
         return (
@@ -85,6 +89,19 @@ export default function ClassroomDetailPage() {
         setEditMode(false);
     }
 
+    async function handleDelete() {
+        if (!classroom) return;
+        setDeleting(true);
+        setDeleteError(null);
+        try {
+            await deleteClassroom(classroom.id);
+            navigate('/teacher');
+        } catch {
+            setDeleteError('Kunne ikke slette. Prøv igjen.');
+            setDeleting(false);
+        }
+    }
+
     return (
         <div className="classroom-detail">
             <header className="classroom-detail__header">
@@ -133,6 +150,13 @@ export default function ClassroomDetailPage() {
                             onClick={() => { setEditTitle(classroom.title); setEditMode(true); }}
                         >
                             <PencilIcon />
+                        </button>
+                        <button
+                            className="classroom-detail__trash"
+                            aria-label="Slett klasse"
+                            onClick={() => setShowDeleteModal(true)}
+                        >
+                            <TrashIcon />
                         </button>
                     </div>
                 )}
@@ -312,7 +336,57 @@ export default function ClassroomDetailPage() {
                     Se alle innleveringer →
                 </Link>
             </Card>
+
+            {showDeleteModal && (
+                <div className="classroom-detail__modal-backdrop" onClick={() => !deleting && setShowDeleteModal(false)}>
+                    <div className="classroom-detail__modal" onClick={(e) => e.stopPropagation()}>
+                        <h2 className="classroom-detail__modal-title">Slett klasse?</h2>
+                        <p className="classroom-detail__modal-body">
+                            Dette vil slette <strong>{classroom.title}</strong> og melde ut alle elever. Handlingen kan ikke angres.
+                        </p>
+                        {deleteError && (
+                            <p className="classroom-detail__modal-error">{deleteError}</p>
+                        )}
+                        <div className="classroom-detail__modal-actions">
+                            <button
+                                className="classroom-detail__modal-cancel"
+                                onClick={() => setShowDeleteModal(false)}
+                                disabled={deleting}
+                            >
+                                Avbryt
+                            </button>
+                            <button
+                                className="classroom-detail__modal-confirm"
+                                onClick={handleDelete}
+                                disabled={deleting}
+                            >
+                                {deleting ? 'Sletter…' : 'Slett klasse'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
+    );
+}
+
+function TrashIcon() {
+    return (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+                d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <path
+                d="M10 11v6M14 11v6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+            />
+        </svg>
     );
 }
 

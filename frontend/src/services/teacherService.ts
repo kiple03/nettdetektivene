@@ -204,6 +204,10 @@ export async function updateClassroom(classroomId: string, title: string, descri
   return mapClassroomDetail(res.data);
 }
 
+export async function deleteClassroom(classroomId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}`);
+}
+
 export async function getStudentProgress(classroomId: string): Promise<StudentSummary[]> {
   const res = await apiClient.get<RawStudentProgress[]>(`/teacher/classrooms/${classroomId}/students`);
   return res.data.map(mapStudentProgress);
