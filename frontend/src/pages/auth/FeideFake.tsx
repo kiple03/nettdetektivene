@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { Eye, EyeOff, Plus } from 'lucide-react';
 import { AxiosError } from 'axios';
 import { login } from '@/api/authApi';
 import { decodeToken, setToken } from '@/stores/authStore';
@@ -19,11 +19,12 @@ function FeideFake() {
   // which portal the user came from and can enforce it server-side.
   const portalRole: Role = (location.state as LocationState)?.portalRole ?? 'STUDENT';
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fieldErrors, setFieldErrors] = useState({ username: '', password: '' });
+  const [fieldErrors, setFieldErrors] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleBack = () => {
     navigate(-1);
@@ -32,11 +33,11 @@ function FeideFake() {
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
-    setFieldErrors({ username: '', password: '' });
+    setFieldErrors({ email: '', password: '' });
 
-    if (!username || !password) {
+    if (!email || !password) {
       setFieldErrors({
-        username: username ? '' : 'Brukernavn er påkrevd.',
+        email: email ? '' : 'E-post er påkrevd.',
         password: password ? '' : 'Passord er påkrevd.',
       });
       return;
@@ -44,17 +45,22 @@ function FeideFake() {
 
     setSubmitting(true);
     try {
-      const res = await login({ username, password, portalRole });
+      const res = await login({ email, password, portalRole });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
-      const role = decodeToken(res.accessToken)?.role;
-      navigate(role === 'TEACHER' ? '/teacher' : '/home');
+      const payload = decodeToken(res.accessToken);
+      const role = payload?.role;
+      if (role === 'TEACHER') {
+        navigate('/teacher');
+      } else {
+        navigate(payload?.classroomId ? '/home' : '/join-with-code');
+      }
     } catch (err) {
       const axiosErr = err as AxiosError;
       if (axiosErr.response?.status === 401) {
         setFieldErrors({
-          username: 'Feil brukernavn eller passord.',
-          password: 'Feil brukernavn eller passord.',
+          email: 'Feil e-post eller passord.',
+          password: 'Feil e-post eller passord.',
         });
       } else if (axiosErr.response?.status === 403) {
         const portalLabel = portalRole === 'TEACHER' ? 'lærerportalen' : 'elevportalen';
@@ -102,41 +108,51 @@ function FeideFake() {
 
             <hr className="feide-separator" />
 
-            <p className="feide-form-heading">Logg inn med brukernavn og passord</p>
+            <p className="feide-form-heading">Logg inn med e-post og passord</p>
 
             <form className="feide-login-form" onSubmit={handleLogin}>
-              <label htmlFor="username">Brukernavn</label>
+              <label htmlFor="email">E-post</label>
               <input
-                className={fieldErrors.username ? 'feide-input feide-input--error' : 'feide-input'}
-                id="username"
-                name="username"
-                type="text"
-                autoComplete="username"
-                value={username}
+                className={fieldErrors.email ? 'feide-input feide-input--error' : 'feide-input'}
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                value={email}
                 onChange={(e) => {
-                  setUsername(e.target.value);
-                  if (fieldErrors.username) {
-                    setFieldErrors((current) => ({ ...current, username: '' }));
+                  setEmail(e.target.value);
+                  if (fieldErrors.email) {
+                    setFieldErrors((current) => ({ ...current, email: '' }));
                   }
                 }}
               />
-              {fieldErrors.username && <p className="feide-field-error">{fieldErrors.username}</p>}
+              {fieldErrors.email && <p className="feide-field-error">{fieldErrors.email}</p>}
 
               <label htmlFor="password">Passord</label>
-              <input
-                className={fieldErrors.password ? 'feide-input feide-input--error' : 'feide-input'}
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (fieldErrors.password) {
-                    setFieldErrors((current) => ({ ...current, password: '' }));
-                  }
-                }}
-              />
+              <div className="feide-input-wrapper">
+                <input
+                  className={fieldErrors.password ? 'feide-input feide-input--error' : 'feide-input'}
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (fieldErrors.password) {
+                      setFieldErrors((current) => ({ ...current, password: '' }));
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="feide-toggle-password"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? 'Skjul passord' : 'Vis passord'}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               {fieldErrors.password && <p className="feide-field-error">{fieldErrors.password}</p>}
 
               {error && <p className="feide-login-error">{error}</p>}

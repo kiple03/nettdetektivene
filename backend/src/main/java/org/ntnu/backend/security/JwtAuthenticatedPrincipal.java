@@ -25,7 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 @AllArgsConstructor
 public class JwtAuthenticatedPrincipal {
 
-  private final String username;
+  private final String email;
   private final UUID userId;
   private final String role;
   private final UUID classroomId;

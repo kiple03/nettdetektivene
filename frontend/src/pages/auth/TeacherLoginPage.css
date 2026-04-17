@@ -406,6 +406,32 @@
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
+.register-modal__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.register-modal__input-wrapper .register-modal__input {
+  padding-right: 40px;
+}
+
+.register-modal__toggle-password {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #8b6340;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.register-modal__toggle-password:hover {
+  color: #5a3a1e;
+}
+
 .register-modal__input::placeholder {
   color: #b8a08a;
 }

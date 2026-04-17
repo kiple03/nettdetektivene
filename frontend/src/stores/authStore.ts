@@ -18,7 +18,7 @@ export function clearToken(): void {
 
 interface JwtPayload {
   userId?: string;
-  username?: string;
+  sub?: string;
   role?: string;
   classroomId?: string;
   exp?: number;
