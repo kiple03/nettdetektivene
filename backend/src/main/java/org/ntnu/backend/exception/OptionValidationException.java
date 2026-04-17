@@ -1,8 +1,10 @@
 package org.ntnu.backend.exception;
 
-public class OptionValidationException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class OptionValidationException extends ApiException {
 
   public OptionValidationException(String message) {
-    super(message);
+    super(HttpStatus.BAD_REQUEST, message);
   }
 }

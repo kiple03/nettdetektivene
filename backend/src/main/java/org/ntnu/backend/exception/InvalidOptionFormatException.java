@@ -1,7 +1,9 @@
 package org.ntnu.backend.exception;
 
-public class InvalidOptionFormatException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class InvalidOptionFormatException extends ApiException {
   public InvalidOptionFormatException(String message) {
-    super(message);
+    super(HttpStatus.BAD_REQUEST, message);
   }
 }
