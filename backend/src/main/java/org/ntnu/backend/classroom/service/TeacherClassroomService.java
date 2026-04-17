@@ -21,6 +21,7 @@ import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.repository.LevelCompletionRepository;
+import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
@@ -41,6 +42,7 @@ public class TeacherClassroomService {
     private final ClassroomAuthorizationService classroomAuthorizationService;
     private final EnrollmentRepository enrollmentRepository;
     private final LevelCompletionRepository levelCompletionRepository;
+    private final LevelRepository levelRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final UserRepository userRepository;
     private final StopRepository stopRepository;
@@ -50,17 +52,27 @@ public class TeacherClassroomService {
     }
 
     public List<ClassroomSummaryResponse> listClassrooms(UUID teacherId) {
+        long assignmentCount = levelRepository.count();
         return classroomTeacherRepository
             .findClassroomsWithStudentCountByTeacherId(teacherId)
             .stream()
-            .map(row -> ClassroomSummaryResponse.builder()
-                .id(row[0].toString())
-                .title((String) row[1])
-                .description((String) row[2])
-                .joinCode((String) row[3])
-                .createdAt((LocalDateTime) row[4])
-                .studentCount(((Number) row[5]).longValue())
-                .build())
+            .map(row -> {
+                long studentCount = ((Number) row[5]).longValue();
+                long completedCount = ((Number) row[6]).longValue();
+                long possible = assignmentCount * studentCount;
+                int progressPercent = possible > 0 ? (int) (completedCount * 100 / possible) : 0;
+                return ClassroomSummaryResponse.builder()
+                    .id(row[0].toString())
+                    .title((String) row[1])
+                    .description((String) row[2])
+                    .joinCode((String) row[3])
+                    .createdAt((LocalDateTime) row[4])
+                    .studentCount(studentCount)
+                    .assignmentCount((int) assignmentCount)
+                    .completedCount((int) completedCount)
+                    .progressPercent(progressPercent)
+                    .build();
+            })
             .toList();
     }
 
