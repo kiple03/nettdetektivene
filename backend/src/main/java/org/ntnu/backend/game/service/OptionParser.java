@@ -1,5 +1,6 @@
 package org.ntnu.backend.game.service;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
@@ -16,26 +17,31 @@ import org.springframework.stereotype.Component;
 public class OptionParser {
 
   private final ObjectMapper mapper;
+  private final OptionValidator validator;
 
   public List<Option> parse(String json, LevelType type) {
+    List<Option> options;
     try {
-      return switch (type) {
+      options = switch (type) {
         case MULTIPLE_CHOICE -> {
           List<MultipleChoiceOption> list =
               mapper.readValue(json, new TypeReference<>() {
               });
           yield new ArrayList<>(list);
         }
-
         case TEXT_QUIZ -> null;
         case PICTURE_QUIZ -> null;
         case MINIGAME -> null;
         case BOSS_BATTLE -> null;
         case TUTORIAL -> null;
       };
-    } catch (Exception e) {
-      throw new InvalidOptionFormatException("Invalid JSON for " + type);
+    } catch (JacksonException e) {
+      throw new InvalidOptionFormatException("Invalid JSON for " + type + ": " + e.getMessage());
     }
+
+    validator.validate(options, type);
+    return options;
   }
+
 }
 

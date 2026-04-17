@@ -6,6 +6,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.util.List;
 import java.util.Set;
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
@@ -13,9 +14,10 @@ import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class OptionValidator {
 
-  private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+  private final Validator validator;
 
   public void validate(List<Option> options, LevelType type) {
     for (Option option : options) {
