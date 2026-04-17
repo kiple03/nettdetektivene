@@ -19,8 +19,8 @@ public class OptionValidatorTest {
   @Test
   void validateMultipleChoice_validOptions_passes() {
     List<Option> options = List.of(
-        new MultipleChoiceOption(1, "A", "", false, "Reason A"),
-        new MultipleChoiceOption(2, "B", "", true, "Reason B")
+        new MultipleChoiceOption(1, "A", "https://example.com/1.jpg", false, "Reason A"),
+        new MultipleChoiceOption(2, "B", "https://example.com/b.jpg", true, "Reason B")
     );
 
     assertDoesNotThrow(() ->
