@@ -9,10 +9,22 @@ interface RawEquippedItem {
   imageUrl: string;
 }
 
+interface RawInventoryItem {
+  id: string;
+  name: string;
+  category: string;
+  imageUrl: string;
+}
 interface RawUserProfile {
   username: string;
   equippedItems: RawEquippedItem[];
 }
+
+
+export const fetchUserInventory = async (): Promise<EquippedItem[]> => {
+  const response = await clientApi.get<RawInventoryItem[]>('/user/inventory');
+  return response.data.map(mapEquippedItem);
+};
 
 function mapEquippedItem(raw: RawEquippedItem): EquippedItem {
   return { id: raw.id, name: raw.name, category: raw.category, imageUrl: raw.imageUrl };

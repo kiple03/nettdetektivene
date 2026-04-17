@@ -1,26 +1,20 @@
 import { useState } from 'react';
 import { LayeredAvatar } from '@/components/user/LayeredAvatar';
-import { useSaveAvatarOutfit, useUserProfile, type EquippedItem } from '@/hooks/useUserProfile';
+import { useSaveAvatarOutfit, useUserInventory, useUserProfile, type EquippedItem } from '@/hooks/useUserProfile';
 import styles from './AvatarDevPage.module.css';
-
-// Create some dummy items for testing
-const MOCK_ITEMS: EquippedItem[] = [
-  { id: '1', name: 'Cool Glasses', category: 'eyes', imageUrl: '/assets/glasses.svg' },
-  { id: '2', name: 'Red Shirt', category: 'base', imageUrl: '/assets/shirt_red.svg' },
-  { id: '3', name: 'Blue Cap', category: 'head', imageUrl: '/assets/cap_blue.svg' },
-  { id: '4', name: 'Gold Necklace', category: 'accessories', imageUrl: '/assets/necklace.svg' },
-];
 
 export default function AvatarDevPage() {
   //Fetch backend user profile
-  const {data: userProfile, isLoading} = useUserProfile();
-  if(isLoading) return <div>Loading wardrobe...</div>;
-  if(!userProfile) return <div>Error loading profile</div>;
+  const {data: userProfile, isLoading: isProfileLoading} = useUserProfile();
+  const {data: inventory, isLoading: isInventoryLoading } = useUserInventory();
+  
+  if(isProfileLoading || isInventoryLoading) return <div>Loading wardrobe...</div>;
+  if(!userProfile || !inventory) return <div>Error loading profile</div>;
 
-  return <ChangingRoom initialItems={userProfile.equippedItems || []}/>;
+  return <ChangingRoom initialItems={userProfile.equippedItems || []} inventory={inventory} />;
 }
 
-function ChangingRoom({initialItems}: {initialItems: EquippedItem[] }) {
+function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], inventory: EquippedItem[] }) {
   const {mutate: saveOutfit, isPending: isSaving} = useSaveAvatarOutfit();
   //Save backend items to local state
   const [equipped, setEquipped] = useState<EquippedItem[]>(initialItems);
@@ -62,7 +56,7 @@ function ChangingRoom({initialItems}: {initialItems: EquippedItem[] }) {
       <div className={styles.wardrobeSection}>
         <h2 className={styles.sectionTitle}>Your Wardrobe</h2>
         <div className={styles.gridContainer}>
-          {MOCK_ITEMS.map((item) => {
+          {inventory.map((item) => {
             const isEquipped = equipped.some((i) => i.id === item.id);
             return (
               <button

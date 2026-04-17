@@ -52,4 +52,17 @@ public class UserAvatarService {
         // save updated inventory to database
         inventoryRepository.saveAll(inventory);
     }
+
+        public List<EquippedItemDto> getUserInventory(UUID userId) {
+        List<UserInventoryItem> inventory = inventoryRepository.findByUserId(userId);
+        
+        return inventory.stream()
+            .map(item -> EquippedItemDto.builder()
+                .id(item.getAvatarItem().getId())
+                .name(item.getAvatarItem().getName())
+                .category(item.getAvatarItem().getCategory()) // Make sure EquippedItemDto has a category field!
+                .imageUrl("/assets/" + item.getAvatarItem().getName() + ".svg")
+                .build())
+            .toList();
+    }
 }
