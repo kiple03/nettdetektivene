@@ -6,13 +6,17 @@ export type ImageOption = {
   feedbackText: string;
 };
 
-export const StationType = {
+export const STATION_TYPE = {
   NEWS: "NEWS",
   PHOTO: "PHOTO",
   QUIZ: "QUIZ",
   SOCIAL: "SOCIAL",
   PASSWORD: "PASSWORD",
 } as const;
+
+// TODO: update this when backend response is ready
+export type StationType =
+    (typeof STATION_TYPE)[keyof typeof STATION_TYPE];
 
 export type StationData = {
   id: number;
@@ -22,4 +26,3 @@ export type StationData = {
   options: ImageOption[];
 };
 
-export type StationType = (typeof StationType)[keyof typeof StationType];

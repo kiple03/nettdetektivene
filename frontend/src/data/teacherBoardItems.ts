@@ -1,5 +1,4 @@
 import mapImg from '@/assets/map.png';
-// TODO: Cecilie - fiks riktig layout til lærer senere
 
 export const teacherBoardItems = [
   {

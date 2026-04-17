@@ -14,6 +14,8 @@ public interface ClassroomTeacherRepository extends JpaRepository<ClassroomTeach
 
   boolean existsByClassroomIdAndUserId(UUID classroomId, UUID userId);
 
+  void deleteByClassroomId(UUID classroomId);
+
     @Query("""
         SELECT ct.classroom.id, ct.classroom.title, ct.classroom.description,
                ct.classroom.joinCode, ct.classroom.createdAt,
