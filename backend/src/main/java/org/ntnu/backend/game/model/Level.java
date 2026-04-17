@@ -23,7 +23,6 @@ public class  Level {
     private Stop stop;
 
     @Enumerated(EnumType.STRING)
-
     private LevelType levelType;
 
 }
