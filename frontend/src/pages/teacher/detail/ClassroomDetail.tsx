@@ -60,7 +60,11 @@ export default function ClassroomDetailPage() {
     }
 
     async function handleSave() {
-        if (!classroom || !editTitle.trim()) return;
+        if (!classroom) return;
+        if (editTitle.trim().length < 2) {
+            setSaveError('Klassenavn må være minst 2 tegn.');
+            return;
+        }
         setSaving(true);
         setSaveError(null);
         try {
