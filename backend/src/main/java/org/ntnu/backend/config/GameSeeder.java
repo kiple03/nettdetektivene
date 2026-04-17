@@ -12,6 +12,7 @@ import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.OptionParser;
+import org.ntnu.backend.game.service.OptionValidator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
@@ -25,7 +26,7 @@ public class GameSeeder implements CommandLineRunner {
   private final StopRepository stopRepository;
   private final LevelRepository levelRepository;
   private final QuestionRepository questionRepository;
-  private final OptionParser optionParser;
+  private final OptionValidator optionValidator;
 
   @Override
   public void run(String... args) {
@@ -134,6 +135,8 @@ public class GameSeeder implements CommandLineRunner {
   }
 
   private void seedQuestion(Level level, String questionText, List<MultipleChoiceOption> options) {
+    optionValidator.validate(List.copyOf(options), level.getLevelType());
+
     Question question = new Question();
     question.setQuestionText(questionText);
     question.setLevel(level);
