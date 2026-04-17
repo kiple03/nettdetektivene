@@ -34,6 +34,7 @@ import {
     getClassroom,
     getStops,
 } from "@/services/teacherService";
+import ProfilePage from "@/pages/student/ProfilePage.tsx";
 
 export const router = createBrowserRouter([
     // Auth routes (public)
@@ -83,6 +84,10 @@ export const router = createBrowserRouter([
         path: '/weekly-mystery',
         element: <WeeklyMysteryPage />,
     },
+    {
+        path: '/profile',
+        element: <ProfilePage />
+    },
     // test path for game - student
     {
         path: '/game',
@@ -95,6 +100,10 @@ export const router = createBrowserRouter([
         path: '/teacher',
         element: <MyClassroomsPage />,
         loader: () => getClassroomSummaries(),
+    },
+    {
+        path: '/teacher/map',
+        element: <MapPage />,
     },
     {
         path: '/teacher/classroom/new',

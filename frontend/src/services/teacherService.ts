@@ -51,6 +51,9 @@ interface RawClassroomSummary {
   joinCode: string;
   createdAt: string;
   studentCount: number;
+  assignmentCount: number;
+  completedCount: number;
+  progressPercent: number;
 }
 
 interface RawClassroomDetail {
@@ -93,10 +96,13 @@ function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
   return {
     id: raw.id,
     title: raw.title,
-    description: raw.description,
+    description: raw.description ?? '',
     joinCode: raw.joinCode,
     createdAt: raw.createdAt,
     studentCount: raw.studentCount,
+    assignmentCount: raw.assignmentCount,
+    completedCount: raw.completedCount,
+    progressPercent: raw.progressPercent,
   };
 }
 
@@ -202,6 +208,10 @@ export async function createClassroom(title: string, description: string | null)
 export async function updateClassroom(classroomId: string, title: string, description: string | null): Promise<ClassroomDetail> {
   const res = await apiClient.patch<RawClassroomDetail>(`/teacher/classrooms/${classroomId}`, { title, description });
   return mapClassroomDetail(res.data);
+}
+
+export async function deleteClassroom(classroomId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}`);
 }
 
 export async function getStudentProgress(classroomId: string): Promise<StudentSummary[]> {

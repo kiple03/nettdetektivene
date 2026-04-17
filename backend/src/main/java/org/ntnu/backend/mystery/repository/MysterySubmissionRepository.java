@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface MysterySubmissionRepository extends JpaRepository<MysterySubmission, UUID> {
 
+    void deleteByEnrollmentClassroomId(UUID classroomId);
+
     @Query("""
         SELECT ms FROM MysterySubmission ms
         JOIN FETCH ms.enrollment e

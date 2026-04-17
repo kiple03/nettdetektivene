@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserInventoryItemRepository extends JpaRepository<UserInventoryItem, UUID> {
     List<UserInventoryItem> findByUserIdAndIsEquippedTrue(UUID userId);
+    List<UserInventoryItem> findByUserId(UUID userid);
 }

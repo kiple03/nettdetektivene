@@ -1,8 +1,11 @@
 package org.ntnu.backend.game.repository;
 
+import java.util.Optional;
+import java.util.UUID;
 import org.ntnu.backend.game.model.Level;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LevelRepository extends JpaRepository<Level, Integer> {}
+public interface LevelRepository extends JpaRepository<Level, Integer> {
+}

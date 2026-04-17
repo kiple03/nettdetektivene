@@ -1,6 +1,7 @@
 package org.ntnu.backend.game.model.enums;
 
-public enum levelType {
+public enum LevelType {
+    MULTIPLE_CHOICE,
     TEXT_QUIZ,
     PICTURE_QUIZ,
     MINIGAME,

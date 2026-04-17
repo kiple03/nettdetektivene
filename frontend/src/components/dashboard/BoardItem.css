@@ -37,10 +37,14 @@
 }
 
 .board-item-medium .board-item-img {
+  width: 350px;
+  margin-bottom: 6px;
   pointer-events: none;
 }
 
 .board-item-small .board-item-img {
+  width: 300px;
+  margin-bottom: 6px;
   pointer-events: none;
 }
 

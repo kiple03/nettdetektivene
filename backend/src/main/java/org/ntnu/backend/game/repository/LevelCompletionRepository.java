@@ -2,7 +2,7 @@ package org.ntnu.backend.game.repository;
 
 import java.util.List;
 import java.util.UUID;
-import org.ntnu.backend.level.model.LevelCompletion;
+import org.ntnu.backend.game.model.LevelCompletion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface LevelCompletionRepository extends JpaRepository<LevelCompletion, UUID> {
 
     long countByEnrollmentId(UUID enrollmentId);
+
+    void deleteByEnrollmentClassroomId(UUID classroomId);
 
     @Query("""
         SELECT lc FROM LevelCompletion lc

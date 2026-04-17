@@ -30,13 +30,4 @@ public class Question {
     @ManyToOne
     @JoinColumn(name = "level_id")
     private Level level;
-
-    @Transient
-    public List<Option> getOptions() {
-        return ContentRead.read(this.optionContent);
-    }
-
-    public void setOptions(List<Option> options) {
-        this.optionContent = ContentWrite.write(options);
-    }
 }

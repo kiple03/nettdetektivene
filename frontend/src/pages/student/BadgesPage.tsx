@@ -4,7 +4,7 @@ import styles from "@/pages/student/MapPage.module.css";
 
 function BadgesPage() {
     return <div>
-        <h1>Ukens Mysterium</h1>
+        <h1>Medaljer</h1>
         <p>Kommer snart</p>
         <BackButton
             className={styles.hotspot}

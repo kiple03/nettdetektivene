@@ -21,7 +21,7 @@ public class CreateUserRequest {
   private String email;
 
   @NotBlank
-  @Size(min = 8, max = 255)
+  @Size(min = 3, max = 255)
   @Schema(description = "The username")
   private String username;
 
