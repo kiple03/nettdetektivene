@@ -314,7 +314,7 @@ export default function ClassroomDetailPage() {
 
 function PencilIcon() {
     return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
                 d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 0 1 2.828 0l.172.172a2 2 0 0 1 0 2.828L12 14H9v-3z"
                 stroke="currentColor"
