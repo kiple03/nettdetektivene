@@ -28,6 +28,7 @@
   left: 40px;
 }
 
+/* TODO: make different sizes of board item! */
 /* different sizes of board items */
 .board-item-large .board-item-img {
   width: 400px;

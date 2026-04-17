@@ -1,5 +1,5 @@
 import NyhetsKvartalStation from "@/components/game/station/stations/NyhetsKvartalStation.tsx";
-import {type StationData, StationType} from "@/types/station.ts";
+import {STATION_TYPE, type StationData,} from "@/types/station.ts";
 
 type StationRendererProps = {
   station: StationData;
@@ -7,7 +7,7 @@ type StationRendererProps = {
 
 function StationRenderer({ station }: StationRendererProps) {
   switch (station.type) {
-    case StationType.NEWS:
+    case STATION_TYPE.NEWS:
       return <NyhetsKvartalStation station={station} />;
     default:
       return <div>Ukjent stasjonstype</div>;

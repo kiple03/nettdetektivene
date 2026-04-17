@@ -16,7 +16,7 @@ import BadgesPage from "@/pages/student/BadgesPage";
 import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
 import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";
-import TestPage from "@/pages/game/TestGamePage.tsx";
+import TestPage from "@/pages/game/GamePage.tsx";
 
 // Route guard temporarily disabled during game development so we don't
 // have to log in on every reload. Re-enable by restoring the <RequireAuth>
@@ -84,7 +84,7 @@ export const router = createBrowserRouter([
         element: <WeeklyMysteryPage />,
     },
 
-    //TEST for spill
+    // test path for game - student
     {
         path: '/game',
         element: <TestPage />

@@ -1,6 +1,4 @@
 
-// TODO: Cecilie - Lage flere størrelser for bilder i hjemskjerm så du slipper å hardkode/duplisere!!!
-
 export type DashboardItem = {
   id: string,
   label: string,
