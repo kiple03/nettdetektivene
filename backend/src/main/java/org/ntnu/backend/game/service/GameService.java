@@ -46,7 +46,7 @@ public class GameService {
    * @return all stops with per-student lock state
    */
   public List<StopResponse> getStopsForUser(UUID userId) {
-    return stopRepository.findAll()
+    return stopRepository.findAllByOrderByDisplayOrderAsc()
         .stream()
         .map(stop -> gameMapper.toStopOverviewResponse(stop, false))
         .toList();

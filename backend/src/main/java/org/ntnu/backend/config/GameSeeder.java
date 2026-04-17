@@ -43,6 +43,7 @@ public class GameSeeder implements CommandLineRunner {
   private void seedNews() {
     Stop stop = new Stop();
     stop.setName("Nyhetskvartalet");
+    stop.setDisplayOrder(1);
     stop = stopRepository.save(stop);
 
     Level level = new Level();
