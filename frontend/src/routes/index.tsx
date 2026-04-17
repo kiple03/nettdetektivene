@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import TeacherLayout from "@/components/layout/TeacherLayout";
 import MapPage from "../pages/student/MapPage";
 import LevelOne from "../pages/student/LevelOnePage";
 import StudentLoginPage from "@/pages/auth/StudentLoginPage";
@@ -82,39 +83,83 @@ export const router = createBrowserRouter([
         element: <GamePage />
     },
 
-    // Teacher routes — require TEACHER role
+    // Teacher routes — all nested under TeacherLayout for shared navbar
+    // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
     {
-        path: '/teacher',
-        element: <RequireAuth role="TEACHER"><MyClassroomsPage /></RequireAuth>,
-    },
-    {
-        path: '/teacher/map',
-        element: <MapPage />,
-    },
-    {
-        path: '/teacher/classroom/new',
-        element: <RequireAuth role="TEACHER"><CreateClassroom /></RequireAuth>,
-        action: createClassroomAction,
-    },
-    {
-        path: '/teacher/classroom/:id/code',
-        element: <CodePage />,
-    },
-    {
-        path: '/teacher/classroom/:id',
-        element: <RequireAuth role="TEACHER"><ClassroomDetail /></RequireAuth>,
-    },
-    {
-        path: '/teacher/classroom/:id/student/:studentId',
-        element: <RequireAuth role="TEACHER"><StudentDetail /></RequireAuth>,
-    },
-    {
-        path: '/teacher/classroom/:id/mystery',
-        element: <RequireAuth role="TEACHER"><MysterySubmissions /></RequireAuth>,
-    },
-    {
-        path: '/teacher/notifications',
-        element: <RequireAuth role="TEACHER"><Notifications /></RequireAuth>,
+        element: <TeacherLayout />,
+        children: [
+            {
+                path: '/teacher',
+                element: <MyClassroomsPage />,
+                loader: () => getClassroomSummaries(),
+            },
+            {
+                path: '/teacher/map',
+                element: <MapPage />,
+            },
+            {
+                path: '/teacher/leaderboard',
+                element: <LeaderboardPage />,
+            },
+            {
+                path: '/teacher/medals',
+                element: <BadgesPage />,
+            },
+            {
+                path: '/teacher/classroom/new',
+                element: <CreateClassroom />,
+                action: createClassroomAction,
+            },
+            {
+                path: '/teacher/classroom/:id/code',
+                element: <CodePage />,
+                loader: async ({ params }) => {
+                    const id = params.id!;
+                    return await getClassroom(id);
+                },
+            },
+            {
+                path: '/teacher/classroom/:id',
+                element: <ClassroomDetail />,
+                loader: async ({ params }) => {
+                    const id = params.id!;
+                    const [classroom, students, stops] = await Promise.all([
+                        getClassroom(id),
+                        getStudentProgress(id),
+                        getStops(),
+                    ]);
+                    return { classroom, students, stops };
+                },
+            },
+            {
+                path: '/teacher/classroom/:id/student/:studentId',
+                element: <StudentDetail />,
+                loader: async ({ params }) => getStudentDetail(params.id!, params.studentId!),
+            },
+            {
+                path: '/teacher/classroom/:id/mystery',
+                element: <MysterySubmissions />,
+                loader: async ({ params }) => {
+                    const id = params.id!;
+                    const [classroom, submissions] = await Promise.all([
+                        getClassroom(id),
+                        getMysterySubmissions(id),
+                    ]);
+                    return { classroom, submissions };
+                },
+            },
+            {
+                path: '/teacher/notifications',
+                element: <Notifications />,
+                loader: async () => {
+                    const [notifications, summaries] = await Promise.all([
+                        getNotifications(),
+                        getClassroomSummaries(),
+                    ]);
+                    return { notifications, classrooms: summaries };
+                },
+            },
+        ],
     },
     {
         path: "/avatar",

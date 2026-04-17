@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
 import type { ClassroomSummary, NotificationResponse } from '@/types/classroom.ts';
 import { notifLsKey } from '@/services/teacherService';
@@ -63,7 +63,6 @@ export default function Notifications() {
   return (
     <div className="notifs">
       <header className="notifs__header">
-        <Link to="/teacher" className="notifs__back">← Mine klasser</Link>
         <div className="notifs__title-row">
           <h1 className="notifs__title">
             Varsler

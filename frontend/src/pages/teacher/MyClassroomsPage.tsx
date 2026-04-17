@@ -1,11 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useLoaderData } from 'react-router-dom';
 import type { ClassroomSummary } from '@/types/classroom.ts';
-import LogoutButton from '@/components/LogoutButton';
 import { Button } from '@/components/ui/buttons/Button.tsx';
 import { TextInput } from '@/components/ui/textInput/TextInput.tsx';
 import { mockClassroomSummaries } from '@/mock/mockClassroomData.ts';
-import { decodeToken } from '@/stores/authStore';
 import './MyClassroomsPage.css';
 
 const CARD_ACCENT_COLORS = [
@@ -18,12 +16,11 @@ const CARD_ACCENT_COLORS = [
 ];
 
 export default function MyClassroomsPage() {
-   const loaderData = useLoaderData() as ClassroomSummary[] | null;
-  const summaries = loaderData ?? mockClassroomSummaries;
-  const email = decodeToken()?.sub ?? null;
+    const loaderData = useLoaderData() as ClassroomSummary[] | null;
+    const summaries = loaderData ?? mockClassroomSummaries;
 
-  const [search, setSearch] = useState('');
-  const [view, setView] = useState<'grid' | 'list'>('grid');
+    const [search, setSearch] = useState('');
+    const [view, setView] = useState<'grid' | 'list'>('grid');
 
   const filtered = useMemo(() => {
       const query = search.toLowerCase();
@@ -38,30 +35,6 @@ export default function MyClassroomsPage() {
 
     return (
         <div className="teacher-dashboard">
-            <header className="teacher-dashboard__header">
-                <div className="teacher-dashboard__header-left">
-                    <LogoutButton className="teacher-dashboard__logout teacher-dashboard__logout--header" />
-                </div>
-
-                <div className="teacher-dashboard__logo">
-                    <span className="teacher-dashboard__logo-icon">🔍</span>
-                    <span className="teacher-dashboard__logo-text">Nettdetektivene</span>
-                </div>
-
-                <div className="teacher-dashboard__header-actions">
-                    {email && (
-                        <span className="teacher-dashboard__username">Logget inn som <strong>{email}</strong></span>
-                    )}
-                    <Link
-                        to="/teacher/notifications"
-                        className="teacher-dashboard__bell"
-                        aria-label="Varsler"
-                    >
-                        <BellIcon />
-                    </Link>
-                </div>
-            </header>
-
             <div className="teacher-dashboard__hero">
                 <h1 className="teacher-dashboard__title">Mine klasserom</h1>
                 <p className="teacher-dashboard__subtitle">
@@ -244,17 +217,6 @@ export default function MyClassroomsPage() {
                 </div>
             </nav>
         </div>
-    );
-}
-
-function BellIcon() {
-    return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-                d="M18 16v-5a6 6 0 0 0-5-5.91V4a1 1 0 0 0-2 0v1.09A6 6 0 0 0 6 11v5l-2 2v1h16v-1l-2-2Zm-6 4a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2Z"
-                fill="currentColor"
-            />
-        </svg>
     );
 }
 
