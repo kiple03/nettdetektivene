@@ -20,7 +20,7 @@ import org.ntnu.backend.user.model.enums.RoleEnum;
 public class LoginRequest {
 
   @NotBlank
-  @Size(min = 8, max = 255)
+  @Size(min = 3, max = 255)
   @Schema(description = "The username")
   private String username;
 
