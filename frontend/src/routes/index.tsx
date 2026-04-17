@@ -18,10 +18,8 @@ import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";
 import TestPage from "@/pages/game/TestGamePage.tsx";
 
-// Route guard temporarily disabled during game development so we don't
-// have to log in on every reload. Re-enable by restoring the <RequireAuth>
-// wrappers below and uncommenting this import.
-// import RequireAuth from "@/routes/RequireAuth";
+import RequireAuth from "@/routes/RequireAuth";
+import RequireClassroom from "@/routes/RequireClassroom";
 
 import {
     getClassroomSummaries,
@@ -36,7 +34,6 @@ import AvatarDevPage from "@/pages/student/AvatarDevPage";
 
 export const router = createBrowserRouter([
     // Auth routes (public)
-    // Auth routes (public)
     {
         path: '/',
         element: <StudentLoginPage />,
@@ -50,39 +47,38 @@ export const router = createBrowserRouter([
         element: <FeideFake />,
     },
 
-    // Student routes — open during development
-    // Student routes — open during development
+    // Student routes — require STUDENT role
     {
         path: '/home',
-        element: <StudentHomePage />,
+        element: <RequireAuth role="STUDENT"><RequireClassroom><StudentHomePage /></RequireClassroom></RequireAuth>,
     },
     {
         path: '/join-with-code',
-        element: <JoinWithCodePage />,
+        element: <RequireAuth role="STUDENT"><JoinWithCodePage /></RequireAuth>,
     },
     {
         path: '/map',
-        element: <MapPage />,
+        element: <RequireAuth role="STUDENT"><RequireClassroom><MapPage /></RequireClassroom></RequireAuth>,
     },
     {
         path: '/levelOne',
-        element: <LevelOne />,
+        element: <RequireAuth role="STUDENT"><RequireClassroom><LevelOne /></RequireClassroom></RequireAuth>,
     },
     {
         path: '/leaderboard',
-        element: <LeaderboardPage />,
+        element: <RequireAuth role="STUDENT"><RequireClassroom><LeaderboardPage /></RequireClassroom></RequireAuth>,
     },
     {
         path: '/notes',
-        element: <NotesPage />,
+        element: <RequireAuth role="STUDENT"><RequireClassroom><NotesPage /></RequireClassroom></RequireAuth>,
     },
     {
         path: '/badges',
-        element: <BadgesPage />,
+        element: <RequireAuth role="STUDENT"><RequireClassroom><BadgesPage /></RequireClassroom></RequireAuth>,
     },
     {
         path: '/weekly-mystery',
-        element: <WeeklyMysteryPage />,
+        element: <RequireAuth role="STUDENT"><RequireClassroom><WeeklyMysteryPage /></RequireClassroom></RequireAuth>,
     },
 
     //TEST for spill
@@ -91,22 +87,20 @@ export const router = createBrowserRouter([
         element: <TestPage />
     },
 
-
-      // Teacher routes
-      // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
+    // Teacher routes — require TEACHER role
     {
         path: '/teacher',
-        element: <MyClassroomsPage />,
+        element: <RequireAuth role="TEACHER"><MyClassroomsPage /></RequireAuth>,
         loader: () => getClassroomSummaries(),
     },
     {
         path: '/teacher/classroom/new',
-        element: <CreateClassroom />,
+        element: <RequireAuth role="TEACHER"><CreateClassroom /></RequireAuth>,
         action: createClassroomAction,
     },
     {
         path: '/teacher/classroom/:id',
-        element: <ClassroomDetail />,
+        element: <RequireAuth role="TEACHER"><ClassroomDetail /></RequireAuth>,
         loader: async ({ params }) => {
             const id = Number(params.id);
             const [classroom, students, stops] = await Promise.all([
@@ -119,12 +113,12 @@ export const router = createBrowserRouter([
     },
     {
         path: '/teacher/classroom/:id/student/:studentId',
-        element: <StudentDetail />,
+        element: <RequireAuth role="TEACHER"><StudentDetail /></RequireAuth>,
         loader: async ({ params }) => getStudentDetail(Number(params.id), Number(params.studentId)),
     },
     {
         path: '/teacher/classroom/:id/mystery',
-        element: <MysterySubmissions />,
+        element: <RequireAuth role="TEACHER"><MysterySubmissions /></RequireAuth>,
         loader: async ({ params }) => {
             const id = Number(params.id);
             const [classroom, submissions] = await Promise.all([
@@ -136,7 +130,7 @@ export const router = createBrowserRouter([
     },
     {
         path: '/teacher/notifications',
-        element: <Notifications />,
+        element: <RequireAuth role="TEACHER"><Notifications /></RequireAuth>,
         loader: async () => {
             const [notifications, summaries] = await Promise.all([
                 getNotifications(),

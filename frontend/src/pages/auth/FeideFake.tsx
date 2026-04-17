@@ -47,8 +47,13 @@ function FeideFake() {
       const res = await login({ email, password, portalRole });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
-      const role = decodeToken(res.accessToken)?.role;
-      navigate(role === 'TEACHER' ? '/teacher' : '/home');
+      const payload = decodeToken(res.accessToken);
+      const role = payload?.role;
+      if (role === 'TEACHER') {
+        navigate('/teacher');
+      } else {
+        navigate(payload?.classroomId ? '/home' : '/join-with-code');
+      }
     } catch (err) {
       const axiosErr = err as AxiosError;
       if (axiosErr.response?.status === 401) {
