@@ -3,6 +3,7 @@ import { Link, useLoaderData } from 'react-router-dom';
 import type { ClassroomDetail, StudentSummary, StopSummary } from '@/types/classroom.ts';
 import { Button } from '@/components/ui/buttons/Button';
 import { Card } from '@/components/ui/cards/Cards';
+import { updateClassroom } from '@/services/teacherService';
 import './ClassroomDetail.css';
 
 type LoaderData = {
@@ -16,7 +17,8 @@ export default function ClassroomDetailPage() {
     const [classroom, setClassroom] = useState(initial);
     const [editMode, setEditMode] = useState(false);
     const [editTitle, setEditTitle] = useState(initial?.title ?? '');
-    const [editDescription, setEditDescription] = useState(initial?.description ?? '');
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
     const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
 
     if (!classroom) {
@@ -57,25 +59,29 @@ export default function ClassroomDetailPage() {
         return badges.slice(0, 3);
     }
 
-    function handleSave() {
-        if (!editTitle.trim()) return;
-
-        setClassroom((prev) => {
-            if (!prev) return prev;
-            return {
-                ...prev,
-                title: editTitle.trim(),
-                description: editDescription.trim() || null,
-            };
-        });
-
-        setEditMode(false);
+    async function handleSave() {
+        if (!classroom) return;
+        if (editTitle.trim().length < 2) {
+            setSaveError('Klassenavn må være minst 2 tegn.');
+            return;
+        }
+        setSaving(true);
+        setSaveError(null);
+        try {
+            const updated = await updateClassroom(classroom.id, editTitle.trim(), classroom.description);
+            setClassroom(updated);
+            setEditMode(false);
+        } catch {
+            setSaveError('Kunne ikke lagre. Prøv igjen.');
+        } finally {
+            setSaving(false);
+        }
     }
 
     function handleCancel() {
         if (!classroom) return;
         setEditTitle(classroom.title);
-        setEditDescription(classroom.description ?? '');
+        setSaveError(null);
         setEditMode(false);
     }
 
@@ -83,77 +89,71 @@ export default function ClassroomDetailPage() {
         <div className="classroom-detail">
             <header className="classroom-detail__header">
                 <Link to="/teacher" className="classroom-detail__back">← Tilbake</Link>
-                <h1 className="classroom-detail__title">{classroom.title}</h1>
+
+                {editMode ? (
+                    <div className="classroom-detail__title-edit">
+                        {saveError && (
+                            <span className="classroom-detail__save-error">{saveError}</span>
+                        )}
+                        <input
+                            className="classroom-detail__title-input"
+                            type="text"
+                            value={editTitle}
+                            onChange={(e) => setEditTitle(e.target.value)}
+                            maxLength={80}
+                            autoFocus
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') handleSave();
+                                if (e.key === 'Escape') handleCancel();
+                            }}
+                        />
+                        <Button
+                            variant="unstyled"
+                            className="classroom-detail__title-save"
+                            onClick={handleSave}
+                            disabled={saving}
+                        >
+                            {saving ? '…' : 'Lagre'}
+                        </Button>
+                        <Button
+                            variant="unstyled"
+                            className="classroom-detail__title-cancel"
+                            onClick={handleCancel}
+                            disabled={saving}
+                        >
+                            Avbryt
+                        </Button>
+                    </div>
+                ) : (
+                    <div className="classroom-detail__title-wrap">
+                        <h1 className="classroom-detail__title">{classroom.title}</h1>
+                        <button
+                            className="classroom-detail__pencil"
+                            aria-label="Rediger klassenavn"
+                            onClick={() => { setEditTitle(classroom.title); setEditMode(true); }}
+                        >
+                            <PencilIcon />
+                        </button>
+                    </div>
+                )}
             </header>
 
             <Card variant="unstyled" className="classroom-detail__section">
                 <h2 className="classroom-detail__section-title">Klasseinformasjon</h2>
 
-                {!editMode ? (
-                    <div className="classroom-detail__info">
+                <div className="classroom-detail__info">
+                    <div className="classroom-detail__info-row">
+                        <span className="classroom-detail__info-label">Bli-med-kode</span>
+                        <span className="classroom-detail__join-code">{classroom.joinCode}</span>
+                    </div>
+
+                    {classroom.description && (
                         <div className="classroom-detail__info-row">
-                            <span className="classroom-detail__info-label">Bli-med-kode</span>
-                            <span className="classroom-detail__join-code">{classroom.joinCode}</span>
+                            <span className="classroom-detail__info-label">Beskrivelse</span>
+                            <span className="classroom-detail__info-value">{classroom.description}</span>
                         </div>
-
-                        {classroom.description && (
-                            <div className="classroom-detail__info-row">
-                                <span className="classroom-detail__info-label">Beskrivelse</span>
-                                <span className="classroom-detail__info-value">{classroom.description}</span>
-                            </div>
-                        )}
-
-                        <Button
-                            variant="unstyled"
-                            className="classroom-detail__edit-btn"
-                            onClick={() => setEditMode(true)}
-                        >
-                            Rediger
-                        </Button>
-                    </div>
-                ) : (
-                    <div className="classroom-detail__edit-form">
-                        <label className="classroom-detail__label">
-                            Klassenavn
-                            <input
-                                className="classroom-detail__input"
-                                type="text"
-                                value={editTitle}
-                                onChange={(e) => setEditTitle(e.target.value)}
-                                maxLength={80}
-                                autoFocus
-                            />
-                        </label>
-
-                        <label className="classroom-detail__label">
-                            Beskrivelse
-                            <textarea
-                                className="classroom-detail__textarea"
-                                value={editDescription}
-                                onChange={(e) => setEditDescription(e.target.value)}
-                                maxLength={300}
-                                rows={3}
-                            />
-                        </label>
-
-                        <div className="classroom-detail__edit-actions">
-                            <Button
-                                variant="unstyled"
-                                className="classroom-detail__save-btn"
-                                onClick={handleSave}
-                            >
-                                Lagre
-                            </Button>
-                            <Button
-                                variant="unstyled"
-                                className="classroom-detail__cancel-btn"
-                                onClick={handleCancel}
-                            >
-                                Avbryt
-                            </Button>
-                        </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </Card>
 
             <Card variant="unstyled" className="classroom-detail__section">
@@ -313,5 +313,20 @@ export default function ClassroomDetailPage() {
                 </Link>
             </Card>
         </div>
+    );
+}
+
+function PencilIcon() {
+    return (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+                d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 0 1 2.828 0l.172.172a2 2 0 0 1 0 2.828L12 14H9v-3z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+            <path d="M5 20h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        </svg>
     );
 }

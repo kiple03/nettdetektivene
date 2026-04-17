@@ -1,8 +1,19 @@
+html,
+body,
+#root {
+  background: #24104a;
+}
+
 .create-classroom {
+  min-height: 100vh;
   width: 100%;
   padding: 32px 40px;
   box-sizing: border-box;
   text-align: left;
+  color: #fff;
+  background:
+    radial-gradient(circle at top, rgba(104, 58, 179, 0.25), transparent 32%),
+    linear-gradient(180deg, #24104a 0%, #2a0c59 32%, #230049 100%);
 }
 
 .create-classroom__header {
@@ -12,20 +23,20 @@
 .create-classroom__back {
   display: inline-block;
   font-size: 14px;
-  color: var(--text);
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
   margin-bottom: 12px;
   transition: color 0.15s;
 }
 
 .create-classroom__back:hover {
-  color: var(--accent);
+  color: #fff;
 }
 
 .create-classroom__title {
   font-size: 28px;
   font-weight: 600;
-  color: var(--text-h);
+  color: #fff;
   margin: 0;
   letter-spacing: -0.5px;
 }
@@ -41,7 +52,7 @@
   display: block;
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-h);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .create-classroom__input,
@@ -52,7 +63,7 @@
 
 .create-classroom__optional {
   font-weight: 400;
-  color: var(--text);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .create-classroom__input,
@@ -61,14 +72,19 @@
   padding: 10px 12px;
   font-size: 15px;
   font-family: var(--sans);
-  color: var(--text-h);
-  background: var(--teacher-card-bg);
-  border: 1px solid var(--teacher-card-border);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 8px;
   outline: none;
   box-sizing: border-box;
   transition: border-color 0.15s, box-shadow 0.15s;
   resize: vertical;
+}
+
+.create-classroom__input::placeholder,
+.create-classroom__textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .create-classroom__input:focus,
