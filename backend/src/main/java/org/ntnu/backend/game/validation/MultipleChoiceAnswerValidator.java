@@ -20,10 +20,12 @@ public class MultipleChoiceAnswerValidator implements SubmittedAnswerValidator {
    * Checks if the {@link SubmitAnswerRequest} is of correct for {@link LevelType#MULTIPLE_CHOICE}
    *
    * <p>It should be a instance of {@link SingleChoiceAnswer}, and only have one correct answer</p>
-   * @param options list of the question options from {@code Question.optionContent}
-   * @param submission the student's submission
-   * @return
-   * @throws IllegalArgumentException if the submission was not a {@link SingleChoiceAnswer}
+   *
+   * @param options the question's parsed options including correct flags
+   * @param submission must be a {@link SingleChoiceAnswer}
+   * @return correct/incorrect with the option's explanation
+   * @throws IllegalArgumentException if submission is not a {@link SingleChoiceAnswer}
+   *                                  or the selected option ID does not exist
    */
   @Override
   public ValidationResult validate(List<Option> options, SubmitAnswerRequest submission) {

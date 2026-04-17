@@ -5,11 +5,32 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
-import org.ntnu.backend.filehandling.ContentRead;
-import org.ntnu.backend.filehandling.ContentWrite;
+import org.ntnu.backend.game.dto.OptionResponse;
+import org.ntnu.backend.game.mapper.GameMapper;
+import org.ntnu.backend.game.model.enums.LevelType;
+import org.ntnu.backend.game.service.OptionParser;
 
 
+/**
+ * A question within a {@link Level}. The question text is displayed to the
+ * student, and the options are stored as a JSON blob in {@code optionContent}.
+ *
+ * <p>The JSON shape of {@code optionContent} depends on the parent level's
+ * {@link LevelType}. Deserialization into typed {@link Option} subclasses is handled by
+ * {@link OptionParser}.
+ *
+ * <p>Example {@code optionContent} for {@code MULTIPLE_CHOICE}:
+ * <pre>{@code
+ * [
+ *   {"id": 1, "text": "...", "imageUrl": "...", "isCorrect": false, "explanation": "..."},
+ *   {"id": 2, "text": "...", "imageUrl": "...", "isCorrect": true, "explanation": "..."}
+ * ]
+ * }</pre>
+ *
+ * @see Level
+ * @see Option
+ * @see OptionParser
+ */
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,10 +45,17 @@ public class Question {
     @Column(nullable = false)
     private String questionText;
 
+    /**
+     * JSON blob storing the options for this question. The shape varies
+     * by {@link LevelType} and is parsed at runtime by {@link OptionParser}.
+     * Contains answer data (correct flags, explanations) that must not
+     * be sent to the client, the mapper {@link GameMapper} handles this via the sealed
+     * {@link OptionResponse} hierarchy.
+     */
     @Column(columnDefinition = "JSON", nullable = false)
     private String optionContent;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "level_id")
     private Level level;
 }
