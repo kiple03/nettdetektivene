@@ -97,6 +97,10 @@ export const router = createBrowserRouter([
         loader: () => getClassroomSummaries(),
     },
     {
+        path: '/teacher/map',
+        element: <MapPage />,
+    },
+    {
         path: '/teacher/classroom/new',
         element: <CreateClassroom />,
         action: createClassroomAction,

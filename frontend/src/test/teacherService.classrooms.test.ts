@@ -17,6 +17,9 @@ const RAW_SUMMARY = {
   joinCode: 'ABC123',
   createdAt: '2025-01-01T10:00:00',
   studentCount: 3,
+  assignmentCount: 8,
+  completedCount: 5,
+  progressPercent: 63,
 };
 
 const RAW_DETAIL = {
@@ -46,20 +49,34 @@ describe('getClassroomSummaries', () => {
         joinCode: 'ABC123',
         createdAt: '2025-01-01T10:00:00',
         studentCount: 3,
+        assignmentCount: 8,
+        completedCount: 5,
+        progressPercent: 63,
       },
     ]);
   });
 
   it('returns empty array when no classrooms', async () => {
     mockedGet.mockResolvedValueOnce({ data: [] });
+
     const result = await getClassroomSummaries();
+
     expect(result).toEqual([]);
   });
 
-  it('maps null description correctly', async () => {
-    mockedGet.mockResolvedValueOnce({ data: [{ ...RAW_SUMMARY, description: null }] });
+  it('maps null description to empty string', async () => {
+    mockedGet.mockResolvedValueOnce({
+      data: [
+        {
+          ...RAW_SUMMARY,
+          description: null,
+        },
+      ],
+    });
+
     const result = await getClassroomSummaries();
-    expect(result[0].description).toBeNull();
+
+    expect(result[0].description).toBe('');
   });
 });
 
@@ -81,17 +98,23 @@ describe('getClassroom', () => {
 
   it('returns null on 404', async () => {
     mockedGet.mockRejectedValueOnce({ isAxiosError: true, response: { status: 404 } });
+
     const result = await getClassroom('not-found');
+
     expect(result).toBeNull();
   });
 
   it('rethrows non-404 errors', async () => {
     mockedGet.mockRejectedValueOnce({ isAxiosError: true, response: { status: 500 } });
-    await expect(getClassroom('uuid-1')).rejects.toMatchObject({ response: { status: 500 } });
+
+    await expect(getClassroom('uuid-1')).rejects.toMatchObject({
+      response: { status: 500 },
+    });
   });
 
   it('rethrows network errors (no response object)', async () => {
     mockedGet.mockRejectedValueOnce(new Error('Network Error'));
+
     await expect(getClassroom('uuid-1')).rejects.toThrow('Network Error');
   });
 });
