@@ -505,15 +505,8 @@
   color: #7a5c30;
 }
 
-/* Status badge */
 .classroom-card__badge {
-  font-family: sans-serif;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 20px;
+  display: none;
 }
 
 .badge--active {

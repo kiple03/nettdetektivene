@@ -90,6 +90,10 @@ export const router = createBrowserRouter([
         element: <MyClassroomsPage />,
     },
     {
+        path: '/teacher/map',
+        element: <MapPage />,
+    },
+    {
         path: '/teacher/classroom/new',
         element: <CreateClassroom />,
         action: createClassroomAction,

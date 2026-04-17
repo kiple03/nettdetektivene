@@ -202,7 +202,7 @@ export default function MyClassroomsPage() {
                 <span className="bottom-nav-chip bottom-nav-chip--active">Mine klasserom</span>
                 <Link to="/teacher/map" className="bottom-nav-chip">Kart</Link>
                 <Link to="/teacher/leaderboard" className="bottom-nav-chip">Ledertavle</Link>
-                <Link to="/teacher/medals" className="bottom-nav-chip">Medaljer</Link>
+                <Link to="/teacher/mystery-submission" className="bottom-nav-chip">Mystery submission</Link>
             </nav>
         </div>
     );
