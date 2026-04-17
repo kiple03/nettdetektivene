@@ -4,6 +4,8 @@ import type { StationData } from "@/types/station";
 import { fetchStationById } from "@/api/stationApi";
 import StationRenderer from "@/components/game/station/StationRenderer";
 import "@/components/game/ui/game.css";
+import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import styles from "@/pages/student/MapPage.module.css";
 
 
 function TestPage() {
@@ -22,10 +24,17 @@ function TestPage() {
     return <div>Laster...</div>
   }
 
-  return (
-      <StationContainer title={station.title} type={station.type}>
-        <StationRenderer station={station} />
-      </StationContainer>
+  return (<div>
+        <StationContainer title={station.title} type={station.type}>
+          <StationRenderer station={station} />
+        </StationContainer>
+
+        <BackButton
+            className={styles.hotspot}
+            style={{ top: "6%", left: "1.5%" }}
+            ariaLabel="Gå tilbake"
+        />
+  </div>
   );
 }
 

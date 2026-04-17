@@ -21,12 +21,17 @@ function NyhetsKvartalStation({ station }: NyhetsKvartalStationProps) {
         <PhotoTask options={station.options} onSelect={handleSelect} />
 
         {selectedOption && (
-            <FeedbackBox isCorrect={selectedOption.isCorrect}
-                         title={selectedOption.feedbackTitle}
-                         text={selectedOption.feedbackText}
-            />
+            <div className="feedback-wrapper">
+              <FeedbackBox isCorrect={selectedOption.isCorrect}
+                           title={selectedOption.feedbackTitle}
+                           text={selectedOption.feedbackText}
+              />
+            </div>
         )}
+
       </div>
+
+
   );
 }
 
