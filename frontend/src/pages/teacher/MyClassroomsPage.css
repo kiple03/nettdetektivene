@@ -75,21 +75,43 @@
 
 /* Logout inherits Button styles; override to match nav style */
 .teacher-dashboard__logout {
-  padding: 8px 16px !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  color: rgba(255, 255, 255, 0.75) !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  border-radius: 10px !important;
+  min-width: 118px !important;
+  height: 46px !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0 22px !important;
+
+  font-family: sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+
+  border-radius: 30px !important;
+
+  color: rgba(255, 255, 255, 0.92) !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+
+  box-sizing: border-box !important;
   cursor: pointer;
-  transition: background 0.15s !important;
+  transition: background 0.15s, color 0.15s;
 }
 
 .teacher-dashboard__logout:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
   color: #fff !important;
   transform: none !important;
+}
+
+.teacher-dashboard__logout-wrap {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /* ── Hero ───────────────────────────────────────────────────── */
@@ -572,11 +594,19 @@
 
 /* ── Bottom nav ─────────────────────────────────────────────── */
 .teacher-dashboard__bottom-nav {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 20px 24px 32px;
+  min-height: 90px;
+  padding: 24px 24px 32px;
+}
+
+.teacher-dashboard__bottom-nav-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -612,31 +642,83 @@ a.bottom-nav-chip:hover {
 }
 
 /* ── Responsive ─────────────────────────────────────────────── */
-@media (max-width: 800px) {
-  .teacher-dashboard__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 520px) {
-  .teacher-dashboard__grid {
-    grid-template-columns: 1fr;
+@media (min-width: 900px) and (min-height: 700px) {
+  .teacher-dashboard {
+    overflow: hidden;
   }
 
-  .teacher-corkboard {
-    padding: 40px 16px 28px;
+  .teacher-dashboard__header {
+    padding: 8px 24px;
+  }
+
+  .teacher-dashboard__hero {
+    padding: 18px 24px 4px;
+  }
+
+  .teacher-dashboard__title {
+    font-size: 30px;
+    margin-bottom: 4px;
+  }
+
+  .teacher-dashboard__subtitle {
+    font-size: 13px;
   }
 
   .teacher-dashboard__toolbar-wrap {
-    flex-direction: column;
-    align-items: stretch;
+    padding-top: 14px;
+    gap: 10px;
   }
 
-  .teacher-dashboard__new-link {
-    width: 100%;
+  .teacher-dashboard__search-input {
+    padding: 10px 16px !important;
+    font-size: 14px !important;
   }
 
   .teacher-dashboard__new-btn {
-    width: 100%;
+    padding: 10px 18px !important;
+    font-size: 14px !important;
+  }
+
+  .teacher-dashboard__board-wrap {
+    padding: 16px 20px 10px;
+  }
+
+  .teacher-corkboard {
+    max-width: 920px;
+    padding: 30px 22px 22px;
+  }
+
+  .teacher-corkboard__header {
+    margin-bottom: 14px;
+  }
+
+  .teacher-dashboard__grid {
+    gap: 16px;
+  }
+
+  .classroom-card,
+  .classroom-card--new {
+    min-height: 170px;
+  }
+
+  .teacher-dashboard__bottom-nav {
+    min-height: 64px;
+    padding: 10px 24px 14px;
+  }
+
+  .teacher-dashboard__logout-wrap {
+    left: 24px;
+  }
+}
+
+/* For shorter laptop screens */
+@media (min-width: 900px) and (max-height: 760px) {
+  .teacher-dashboard {
+    transform: scale(0.92);
+    transform-origin: top center;
+    width: 108.7%;
+    margin-left: -4.35%;
+    height: 108vh;
+    overflow: hidden;
   }
 }
