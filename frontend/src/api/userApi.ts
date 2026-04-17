@@ -29,3 +29,8 @@ export const fetchUserProfile = async (): Promise<UserProfile> => {
     const response = await clientApi.get<RawUserProfile>('/user/profile');
     return mapUserProfile(response.data);
 };
+
+export const saveAvatarOutfit = async (itemIds: string[]) => {
+  const response = await clientApi.put('/user/avatar/equip', {itemIds});
+  return response.data;
+}
