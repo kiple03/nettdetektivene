@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/classrooms")
+@RequestMapping("/classrooms")
 public class ClassroomController {
 
     private final ClassroomService classroomService;
@@ -26,8 +26,10 @@ public class ClassroomController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('TEACHER')")
-    public ClassroomResponse createClassroom(@Valid @RequestBody CreateClassroomRequest request) {
-        return classroomService.createClassroom(request);
+    public ClassroomResponse createClassroom(
+            @Valid @RequestBody CreateClassroomRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return classroomService.createClassroom(request, principal.getUserId());
     }
 
     @PatchMapping("/{id}")

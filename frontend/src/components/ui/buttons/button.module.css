@@ -35,3 +35,13 @@
     color: #243b53;
     box-shadow: 0 8px 16px rgba(59, 130, 246, 0.14);
 }
+
+.unstyled {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: inherit;
+}

@@ -4,8 +4,11 @@ import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.*;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
 import org.ntnu.backend.classroom.model.Classroom;
+import org.ntnu.backend.classroom.model.ClassroomTeacher;
+import org.ntnu.backend.classroom.model.ClassroomTeacherId;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
+import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.util.JoinCodeGenerator;
 import org.ntnu.backend.user.model.User;
@@ -13,6 +16,7 @@ import org.ntnu.backend.user.repository.UserRepository;
 import org.ntnu.backend.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
@@ -25,14 +29,29 @@ public class ClassroomService {
     private final ClassroomRepository classroomRepository;
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final ClassroomTeacherRepository classroomTeacherRepository;
 
     private final ClassroomMapper classroomMapper;
     private final JoinCodeGenerator joinCodeGenerator;
 
-    public ClassroomResponse createClassroom(CreateClassroomRequest request) {
+    @Transactional
+    public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
+        User teacher = userRepository.findById(teacherId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bruker ikke funnet"));
+
         String code = joinCodeGenerator.generateUniqueCode();
         Classroom classroom = classroomMapper.toEntity(request, code);
-        return classroomMapper.toResponse(classroomRepository.save(classroom));
+        Classroom saved = classroomRepository.save(classroom);
+
+        ClassroomTeacher classroomTeacher = ClassroomTeacher.builder()
+            .id(new ClassroomTeacherId(saved.getId(), teacherId))
+            .classroom(saved)
+            .user(teacher)
+            .isOwner(true)
+            .build();
+        classroomTeacherRepository.save(classroomTeacher);
+
+        return classroomMapper.toResponse(saved);
     }
 
 

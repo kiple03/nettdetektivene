@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StopRepository extends JpaRepository<Stop, Integer> {
-} 
+
+    List<Stop> findAllByOrderByDisplayOrderAsc();
+}

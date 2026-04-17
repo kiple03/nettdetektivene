@@ -1,0 +1,18 @@
+package org.ntnu.backend.classroom.dto;
+
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
+@AllArgsConstructor
+public class ClassroomSummaryResponse {
+    private String id;
+    private String title;
+    private String description;
+    private String joinCode;
+    private LocalDateTime createdAt;
+    private long studentCount;
+}

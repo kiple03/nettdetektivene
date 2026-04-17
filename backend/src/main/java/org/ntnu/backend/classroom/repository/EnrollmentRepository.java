@@ -19,4 +19,8 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
 
   long countByClassroomIdAndLeftAtIsNull(UUID classroomId);
 
+  List<Enrollment> findByClassroomIdAndLeftAtIsNull(UUID classroomId);
+
+  Optional<Enrollment> findByClassroomIdAndUserIdAndLeftAtIsNull(UUID classroomId, UUID userId);
+
 }

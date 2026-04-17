@@ -3,13 +3,14 @@ import styles from "./button.module.css";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
-    variant?: "default" | "destructive" | "fun";
+    variant?: "default" | "destructive" | "fun" | "unstyled";
 }
 
 export function Button({
                            children,
                            variant = "default",
                            className = "",
+                           type = "button",
                            ...props
                        }: ButtonProps) {
     const variantClass =
@@ -17,10 +18,13 @@ export function Button({
             ? styles.destructive
             : variant === "fun"
                 ? styles.fun
-                : styles.default;
+                : variant === "unstyled"
+                    ? styles.unstyled
+                    : styles.default;
 
     return (
         <button
+            type={type}
             className={`${styles.button} ${variantClass} ${className}`.trim()}
             {...props}
         >

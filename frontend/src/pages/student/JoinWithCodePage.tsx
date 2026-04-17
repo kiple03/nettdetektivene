@@ -1,11 +1,18 @@
 import { useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
+import { joinClassroom } from "@/api/classroomApi";
+import { refreshToken } from "@/api/authApi";
 import styles from "./JoinWithCodePage.module.css";
 
 import detectiveImage from "@/assets/images/joinWithCode/detective.png";
 import classroomBackground from "@/assets/images/joinWithCode/bgClassroomCode.png";
 
 export default function JoinWithCodePage() {
+    const navigate = useNavigate();
     const [code, setCode] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
 
     const rawCode = useMemo(() => {
@@ -33,9 +40,22 @@ export default function JoinWithCodePage() {
         }
     };
 
-    const handleJoin = () => {
-        console.log("Joining classroom with code:", rawCode);
-        // TODO: endpoints
+    const handleJoin = async () => {
+        if (rawCode.length < 6) return;
+        setLoading(true);
+        setError("");
+        try {
+            await joinClassroom(rawCode);
+            await refreshToken();
+            navigate("/home");
+        } catch (err) {
+            const status = (err as AxiosError).response?.status;
+            if (status === 404) setError("Ugyldig kode. Prøv igjen.");
+            else if (status === 409) setError("Du er allerede med i et klasserom.");
+            else setError("Noe gikk galt. Prøv igjen.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -119,8 +139,15 @@ export default function JoinWithCodePage() {
                             />
                         </div>
 
-                        <button type="button" onClick={handleJoin} className={styles.button}>
-                            Bli med
+                        {error && <p className={styles.error}>{error}</p>}
+
+                        <button
+                            type="button"
+                            onClick={handleJoin}
+                            className={styles.button}
+                            disabled={loading || rawCode.length < 6}
+                        >
+                            {loading ? "Kobler til..." : "Bli med"}
                         </button>
                     </div>
                 </div>

@@ -1,14 +1,16 @@
 package org.ntnu.backend.avatar.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,18 +25,17 @@ import org.ntnu.backend.user.model.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserAvatarUnlock {
+public class UserInventoryItem {
 
-    @EmbeddedId
-    private UserAvatarUnlockId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId("userId")
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId("avatarItemId")
     @JoinColumn(name = "avatar_item_id", nullable = false)
     private AvatarItem avatarItem;
 
