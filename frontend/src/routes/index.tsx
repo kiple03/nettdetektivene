@@ -151,6 +151,7 @@ export const router = createBrowserRouter([
             return { classroom, submissions };
         },
     },
+
     {
         path: '/teacher/notifications',
         element: <Notifications />,
