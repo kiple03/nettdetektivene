@@ -5,9 +5,9 @@ name: CI – Frontend & Backend
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev", "main" ]
   pull_request:
-    branches: [ "dev" ]
+    branches: [ "dev", "main" ]
 
 jobs:
   detect-changes:
@@ -80,4 +80,4 @@ jobs:
           distribution: "temurin"
           cache: maven
       - name: Build with maven
-        run: ./mvnw --batch-mode package -DskipTests
+        run: ./mvnw --batch-mode verify
