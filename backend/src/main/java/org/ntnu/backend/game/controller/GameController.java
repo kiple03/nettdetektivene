@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  * view a question, and submit an answer for feedback.
  *
  * <p>All endpoints require authentication. Stops and levels are global
- * no classroom scoping. Questions are both global and classroom specific (not implemented)..
+ * no classroom scoping. Questions are both global and classroom specific (not implemented).
  *
  * @see GameService
  * @see QuestionService
