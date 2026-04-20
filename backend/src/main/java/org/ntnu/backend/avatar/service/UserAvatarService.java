@@ -97,7 +97,7 @@ public class UserAvatarService {
     @Transactional
     public void starterItems(User user){
         List<AvatarItem> starterItems = avatarItemRepository.findAll().stream()
-            .filter(item -> List.of("magnifying_glass", "face_1", "detective_hat", "detective_suit").contains(item.getName()))
+            .filter(item -> List.of("detective_hat", "detective_suit", "face_1", "face_2", "face_3", "magnifying_glass", "police_hat", "police_uniform", "sheriff_hat", "sheriff_star", "sheriff_suit", "stop_sign").contains(item.getName()))
             .toList();
 
         List<UserInventoryItem> startingInventory = starterItems.stream().map(item -> 
