@@ -116,15 +116,15 @@ export default function MapPage() {
         if (!node) return;
 
         const compute = () => {
-            const svgRect = node.getBoundingClientRect();
+            const containerRect = node.parentElement!.getBoundingClientRect();
             const result: Partial<Record<AnchorId, HotspotPos>> = {};
             for (const id of ANCHOR_IDS) {
                 const el = node.getElementById(id);
                 if (el) {
                     const rect = el.getBoundingClientRect();
                     result[id] = {
-                        top: `${((rect.top + rect.height / 2 - svgRect.top) / svgRect.height) * 100}%`,
-                        left: `${((rect.left + rect.width / 2 - svgRect.left) / svgRect.width) * 100}%`,
+                        top: `${rect.top + rect.height / 2 - containerRect.top}px`,
+                        left: `${rect.left + rect.width / 2 - containerRect.left}px`,
                     };
                 }
             }
