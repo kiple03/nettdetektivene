@@ -13,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Model class for a individual avatar item. It stores its unlocked condition and category it belongs to.
+ */
 @Entity
 @Table(name = "avatar_item")
 @Getter

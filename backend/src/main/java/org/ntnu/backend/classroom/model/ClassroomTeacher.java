@@ -15,6 +15,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ntnu.backend.user.model.User;
 
+/**
+ * Join Table for database queries. Makes a many-many relationship between
+ * teacher and classroom and noting which teacher is owner, allowing for many
+ * co-teacher. 
+ */
 @Entity
 @Table(name = "classroom_teacher")
 @Getter
