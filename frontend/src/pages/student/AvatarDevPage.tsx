@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useState } from 'react';
 import { LayeredAvatar } from '@/components/user/LayeredAvatar';
 import {
   useSaveAvatarOutfit,
@@ -31,13 +31,9 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   const {mutate: saveOutfit, isPending: isSaving} = useSaveAvatarOutfit();
   //Save backend items to local state
   const [equipped, setEquipped] = useState<EquippedItem[]>(initialItems);
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    if (userProfile?.username) {
-      setUsername(userProfile.username.replace("Detektiv ", ""));
-    }
-  }, [userProfile]);
+  const [username, setUsername] = useState(
+    userProfile?.username?.replace("Detektiv ", "") || ""
+  );
 
   const toggleItem = (item: EquippedItem) => {
     setEquipped((prev) => {
@@ -53,7 +49,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   const handleSave = () => {
     const itemIds = equipped.map(item => item.id);
 
-    updateUserProfile("${username}");
+    updateUserProfile(`Detektiv ${username}`);
     saveOutfit(itemIds);
 
     navigate('/home');
