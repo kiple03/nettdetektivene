@@ -21,17 +21,29 @@ import lombok.Data;
 @Schema(description = "Request to log in with email and password")
 public class LoginRequest {
 
+  /**
+   * The user's e-mail address, used as the primary login identifier.
+   * Must be a valid e-mail format and no longer than 255 characters.
+   */
   @NotBlank
   @Email
   @Size(max = 255)
   @Schema(description = "User's email address")
   private String email;
 
+  /**
+   * The user's plain-text password. Must be between 8 and 255 characters.
+   * Never stored or logged — matched against the persisted BCrypt hash server-side.
+   */
   @NotBlank
   @Size(min = 8, max = 255)
   @Schema(description = "User's password")
   private String password;
 
+  /**
+   * The portal this login request originates from. Must exactly match the role stored
+   * on the account; a mismatch results in a {@code 403 Forbidden} response.
+   */
   @NotNull(message = "portalRole is required")
   @Schema(description = "Portal the login originates from — must match the user's actual role",
       example = "STUDENT")
