@@ -87,4 +87,11 @@ public class QuestionService {
 
     return new SubmitAnswerResponse(result.correct(), result.feedback());
   }
+
+  public List<QuestionResponse> getQuestionsForLevel(int levelId) {
+    return questionRepository.findByLevelIdOrderByIdAsc(levelId)
+        .stream()
+        .map(gameMapper::toQuestionResponse)
+        .toList();
+  }
 }
