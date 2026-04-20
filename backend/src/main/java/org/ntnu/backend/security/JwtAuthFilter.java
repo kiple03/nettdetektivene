@@ -99,4 +99,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     } catch (JwtException ignored) {}
   }
 
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) {
+    return "OPTIONS".equalsIgnoreCase(request.getMethod());
+  }
 }
