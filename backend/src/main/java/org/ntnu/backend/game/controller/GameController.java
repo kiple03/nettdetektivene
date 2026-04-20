@@ -50,6 +50,20 @@ public class GameController {
 
   }
 
+  @GetMapping("/stops/{stopId}/levels")
+  public List<LevelResponse> getLevelsForStop(
+      @PathVariable int stopId,
+      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+    return gameService.getLevelsForStop(stopId, principal.getUserId());
+  }
+
+  @GetMapping("/levels/{levelId}/questions")
+  public List<QuestionResponse> getQuestionsForLevel(
+      @PathVariable int levelId,
+      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+    return questionService.getQuestionsForLevel(levelId);
+  }
+
   /**
    * Returns a single level's metadata including title, description,
    * level type, and lock state. Used for the guidance screen shown
