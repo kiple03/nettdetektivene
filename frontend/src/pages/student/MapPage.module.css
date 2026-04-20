@@ -2,10 +2,15 @@
     position: relative;
     width: 100%;
     height: 100vh;
-    background-image: url("../../assets/images/map/static_map_bg.svg");
-    background-size: cover;
-    background-position: center;
     overflow: hidden;
+}
+
+.mapBg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
 }
 
 .header {
@@ -37,9 +42,9 @@
 }
 
 .levelGrid {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
 }
 
 .hotspot {

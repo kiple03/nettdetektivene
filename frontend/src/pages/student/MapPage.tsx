@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MapPage.module.css";
 import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 import styles from "./MapPage.module.css";
+import MapBg from "@/assets/images/map/static_map_bg.svg?react";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
 import detektivkontoret from "@/assets/images/map/detektivkontoret.svg";
 import fotografen from "@/assets/images/map/fotografen.svg";
@@ -24,8 +25,6 @@ interface Level {
     step: string;
     title: string;
     route: string;
-    x: string;
-    y: string;
     icon: string;
     unlocked: boolean;
 }
@@ -44,8 +43,6 @@ const levels: Level[] = [
         step: "2",
         title: "Fotografen",
         route: "/levelTwo",
-        x: "27%",
-        y: "28%",
         icon: fotografen,
         unlocked: false,
     },
@@ -53,8 +50,6 @@ const levels: Level[] = [
         step: "3",
         title: "Postkontoret",
         route: "/levelThree",
-        x: "34%",
-        y: "63%",
         icon: postkontoret,
         unlocked: false,
     },
@@ -62,8 +57,6 @@ const levels: Level[] = [
         step: "4",
         title: "Passordbanken",
         route: "/levelFour",
-        x: "53%",
-        y: "33%",
         icon: passordbanken,
         unlocked: false,
     },
@@ -71,8 +64,6 @@ const levels: Level[] = [
         step: "5",
         title: "Markedsplassen",
         route: "/levelFive",
-        x: "61%",
-        y: "11%",
         icon: markedsplassen,
         unlocked: false,
     },
@@ -80,8 +71,6 @@ const levels: Level[] = [
         step: "6",
         title: "Den sosiale møteplassen",
         route: "/levelSix",
-        x: "72%",
-        y: "78%",
         icon: moteplassen,
         unlocked: false,
     },
@@ -89,8 +78,6 @@ const levels: Level[] = [
         step: "7",
         title: "Datasenteret",
         route: "/levelFinal",
-        x: "84%",
-        y: "39%",
         icon: datasenteret,
         unlocked: false,
     },
@@ -100,10 +87,10 @@ export default function MapPage() {
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const navigate = useNavigate();
+    const svgRef = useRef<SVGSVGElement>(null);
 
     const handleLevelClick = (level: Level) => {
         if (level.unlocked) {
-            // Navigate directly when the user clicks the unlocked icon
             navigate(level.route);
             return;
         }
@@ -118,6 +105,8 @@ export default function MapPage() {
                 <h1>Velg nivå</h1>
                 <p>Velge neste nivå</p>
             </div>
+
+            <MapBg ref={svgRef} className={styles.mapBg} />
 
             <div className={styles.levelGrid}>
                 <BackButton
@@ -139,7 +128,6 @@ export default function MapPage() {
                         key={level.step}
                         type="button"
                         className={styles.hotspot}
-                        style={{ top: level.y, left: level.x }}
                         onClick={() => handleLevelClick(level)}
                         aria-label={level.title}
                     >
@@ -177,5 +165,4 @@ export default function MapPage() {
             </AlertDialog>
         </div>
     );
-
 }
