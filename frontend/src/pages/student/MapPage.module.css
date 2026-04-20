@@ -36,11 +36,6 @@
     font-size: 1.2rem;
 }
 
-.startButton {
-    margin-top: 6px;
-    z-index: 20;
-}
-
 .levelGrid {
     position: absolute;
     inset: 0;
@@ -59,9 +54,8 @@
     height: fit-content;
 }
 
-.hotspot:hover {
+.hotspot:hover .iconWrapper {
     transform: scale(1.03);
-    transition: 0.2s ease;
 }
 
 .iconWrapper {
@@ -69,6 +63,7 @@
     display: inline-block;
     width: fit-content;
     height: fit-content;
+    transition: transform 0.2s ease;
 }
 
 .icon {
@@ -85,40 +80,10 @@
     opacity: 0.9;
 }
 
-.lockBadge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 42px;
-    height: 42px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.96);
-    border: 2px solid rgba(107, 114, 128, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
-    z-index: 2;
-    pointer-events: none;
-}
-
-.lockSvg {
-    width: 22px;
-    height: 22px;
-    color: #6b7280;
-}
-
 .dialogActions {
     margin-top: 18px;
     display: flex;
     justify-content: flex-end;
-}
-
-.backButtonWrapper {
-    position: absolute;
-    left: 24px;
-    bottom: 24px;
-    z-index: 20;
 }
 
 @media (orientation: portrait) {
