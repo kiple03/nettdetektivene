@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { DashboardItem } from "@/types/dashboard.ts";
 import './BoardItem.css';
-import {Header as UserProfileHeader} from "@/components/user/userProfile";
+import {Header as UserProfileHeader} from "@/components/dashboard/BoardProfile";
 
 type BoardItemProps = DashboardItem;
 

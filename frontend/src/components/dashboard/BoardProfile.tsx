@@ -1,5 +1,5 @@
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { LayeredAvatar } from "./LayeredAvatar";
+import { LayeredAvatar } from "../user/LayeredAvatar";
 
 export function Header(){
     const {data: userProfile, isLoading, isError} = useUserProfile();
