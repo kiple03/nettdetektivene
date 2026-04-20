@@ -1,12 +1,15 @@
-import type {StationType} from "@/types/station.ts";
+import type {StationType, SubmitAnswerResult} from "@/types/station.ts";
+import FeedbackBox from "@/components/game/ui/FeedbackBox.tsx";
 
 type Props = {
   title: string;
   type: StationType;
   children: React.ReactNode;
+  submitResult: SubmitAnswerResult | null;
+  onNext: () => void;
 };
 
-function StationContainer({ title, type, children }: Props) {
+function StationContainer({ title, type, children, submitResult, onNext }: Props) {
   return (
       // toLowerCase for css-styling for the specific station
       <div className={`station-container station-${type.toLowerCase()}`}>
@@ -15,6 +18,20 @@ function StationContainer({ title, type, children }: Props) {
         <div className="station-content">
           {children}
         </div>
+
+        {submitResult && (
+            <div className="feedback-wrapper">
+              <FeedbackBox
+                  isCorrect={submitResult.correct}
+                  title={submitResult.correct ? "Riktig!" : "Feil"}
+                  text={submitResult.feedback}
+              />
+
+              <button className="nextButton" onClick={onNext}>
+                Neste
+              </button>
+            </div>
+        )}
       </div>
   );
 }

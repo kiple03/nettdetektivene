@@ -27,8 +27,9 @@ export interface GameLevel {
   locked: boolean;
 }
 
-export interface SumbitSingleChoiceAnswerRequest {
-  shape: string;
+export interface SubmitSingleChoiceAnswerRequest {
+  shape: "SINGLE";
+  selectedId: number;
 }
 
 export interface SubmitAnswerResponse {
@@ -54,7 +55,7 @@ export const getGameLevelById = async (
 };
 
 export const submitSingleChoiceAnswer = async (
-    questionId: number, body: SumbitSingleChoiceAnswerRequest): Promise<SubmitAnswerResponse> => {
+    questionId: number, body: SubmitSingleChoiceAnswerRequest): Promise<SubmitAnswerResponse> => {
   const respone =
       await client.post(`/game/questions/${questionId}/submit`,body);
   return respone.data;

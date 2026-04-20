@@ -5,16 +5,22 @@ import { getGameQuestionById } from "@/api/gameApi.ts";
 import {mapQuestionToStationData} from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
 import StationRenderer from "@/components/game/station/StationRenderer.tsx";
-import type {StationData} from "@/types/station"
+import type {StationData, SubmitAnswerResult} from "@/types/station"
 import "@/components/game/ui/game.css"
 
 function TestPage() {
   const [station, setStation] = useState<StationData | null>(null);
+  const [submitResult, setSubmitResult] = useState<SubmitAnswerResult | null>(null);
+
+  const handleNext = () => {
+    alert("Neste spm kommer snart!")
+    setSubmitResult(null);
+  }
 
   useEffect(() => {
     async function loadQuestion() {
       try {
-        const question = await getGameQuestionById(3);
+        const question = await getGameQuestionById(5);
         const mappedStation = mapQuestionToStationData(question)
         console.log("mapped station: ", mappedStation)
         setStation(mappedStation);
@@ -31,8 +37,17 @@ function TestPage() {
   }
 
   return (<div>
-        <StationContainer title={station.title} type={station.type}>
-          <StationRenderer station={station} />
+        <StationContainer
+            title={station.title}
+            type={station.type}
+            submitResult={submitResult}
+            onNext={handleNext}
+        >
+          <StationRenderer
+              station={station}
+              onAnswer={setSubmitResult}
+              disabled={!!submitResult}
+          />
         </StationContainer>
 
         <BackButton
