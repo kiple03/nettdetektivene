@@ -25,12 +25,12 @@ public class AvatarDataSeeder implements CommandLineRunner{
         if(itemRepository.count() == 0){
             System.out.println("Empty avatar table. Seeding with items...");
 
-            AvatarItem cap_blue = AvatarItem.builder().name("cap_blue").category("head").build();
-            AvatarItem glasses = AvatarItem.builder().name("glasses").category("head").build();
-            AvatarItem necklace = AvatarItem.builder().name("necklace").category("head").build();
-            AvatarItem shirt_red = AvatarItem.builder().name("shirt_red").category("body").build();
+            AvatarItem magnifying_glass = AvatarItem.builder().name("magnifying_glass").category("accessories").build();
+            AvatarItem face_1 = AvatarItem.builder().name("face_1").category("face").build();
+            AvatarItem detective_hat = AvatarItem.builder().name("detective_hat").category("head").build();
+            AvatarItem detective_suit = AvatarItem.builder().name("detective_suit").category("body").build();
 
-            itemRepository.saveAll(List.of(cap_blue, glasses, necklace, shirt_red));
+            itemRepository.saveAll(List.of(magnifying_glass, face_1, detective_hat, detective_suit));
         }
     }
 }
