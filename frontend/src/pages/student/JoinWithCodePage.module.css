@@ -1,16 +1,59 @@
 .page {
     position: relative;
     min-height: 100vh;
+    background:
+            radial-gradient(circle at top right, rgba(251, 191, 36, 0.14), transparent 28%),
+            radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.12), transparent 24%),
+            linear-gradient(180deg, #2a1035 0%, #3a112d 45%, #2a0b26 100%);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page::before,
+.page::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.12;
+    pointer-events: none;
+    animation: floatGlow 7s ease-in-out infinite;
+}
+
+.page::before {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, #fbbf24, transparent 70%);
+    top: -80px;
+    right: -60px;
+}
+
+.page::after {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, #38bdf8, transparent 70%);
+    bottom: -60px;
+    left: -40px;
+    animation-delay: 3s;
+}
+
+@keyframes floatGlow {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-28px) scale(1.05);
+    }
 }
 
 .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(255, 255, 255, 0.30);
+    background: rgba(0, 0, 0, 0.10);
     backdrop-filter: blur(2px);
 }
 
@@ -19,56 +62,127 @@
     z-index: 1;
     width: 100%;
     min-height: 100vh;
-    padding: 36px 40px 56px;
+    padding: 36px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 /* TOP CARD */
 .topBox {
-    width: 640px;
-    max-width: 90%;
-    margin: 0 auto 46px;
-    padding: 30px 28px;
+    width: 100%;
+    max-width: 540px;
+    margin: 0 auto 26px;
+    padding: 20px;
     text-align: center;
-
-    background: linear-gradient(
-            145deg,
-            rgba(238, 238, 238, 0.96),
-            rgba(208, 208, 208, 0.92)
-    );
-
-    border: 1px solid rgba(255, 255, 255, 0.42);
-    border-radius: 20px;
-
+    border-radius: 8px;
+    position: relative;
+    background:
+            radial-gradient(circle at 15% 25%, rgba(90, 50, 20, 0.12) 1px, transparent 1px),
+            radial-gradient(circle at 75% 60%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
+            radial-gradient(circle at 40% 80%, rgba(160, 110, 60, 0.08) 1.5px, transparent 1.5px),
+            radial-gradient(circle at 85% 15%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
+            radial-gradient(ellipse at 20% 50%, rgba(139, 90, 43, 0.10) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 30%, rgba(160, 100, 40, 0.08) 0%, transparent 45%),
+            radial-gradient(ellipse at 50% 90%, rgba(120, 70, 30, 0.07) 0%, transparent 40%),
+            repeating-conic-gradient(
+                    rgba(139, 90, 43, 0.07) 0% 25%,
+                    transparent 0% 50%
+            ) 0 0 / 12px 12px,
+            repeating-conic-gradient(
+                    rgba(100, 60, 25, 0.05) 0% 25%,
+                    transparent 0% 50%
+            ) 6px 6px / 18px 18px,
+            linear-gradient(
+                    145deg,
+                    #c4956a 0%,
+                    #b8865a 15%,
+                    #c9986d 30%,
+                    #b07a4a 50%,
+                    #c4916a 65%,
+                    #ba8858 80%,
+                    #c09060 100%
+            );
+    border: 12px solid #6b3e1f;
     box-shadow:
-            0 24px 48px rgba(0, 0, 0, 0.14),
-            0 10px 22px rgba(0, 0, 0, 0.07),
-            inset 0 1px 0 rgba(255, 255, 255, 0.72),
-            inset 0 -2px 8px rgba(0, 0, 0, 0.03);
+            0 20px 60px rgba(0, 0, 0, 0.45),
+            inset 0 2px 10px rgba(0, 0, 0, 0.15),
+            4px 4px 0 #5a3218;
+}
+
+.topBox::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 22px;
+    background: radial-gradient(circle at 35% 35%, #ef4444, #b91c1c);
+    border-radius: 50%;
+    box-shadow:
+            0 2px 6px rgba(0, 0, 0, 0.35),
+            inset 0 -2px 3px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.topBox > * {
+    position: relative;
+    z-index: 1;
+}
+
+.topBox::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 2px;
+    background:
+            radial-gradient(circle at 10% 20%, rgba(160, 130, 90, 0.10) 1px, transparent 1px),
+            radial-gradient(circle at 55% 10%, rgba(140, 110, 70, 0.08) 1.5px, transparent 1.5px),
+            radial-gradient(circle at 80% 45%, rgba(160, 130, 90, 0.09) 1px, transparent 1px),
+            radial-gradient(circle at 30% 75%, rgba(140, 110, 70, 0.07) 2px, transparent 2px),
+            radial-gradient(circle at 90% 85%, rgba(160, 130, 90, 0.08) 1px, transparent 1px),
+            radial-gradient(ellipse at 15% 60%, rgba(180, 150, 100, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 75% 25%, rgba(170, 140, 90, 0.07) 0%, transparent 45%),
+            radial-gradient(ellipse at 50% 90%, rgba(180, 150, 100, 0.06) 0%, transparent 40%),
+            linear-gradient(170deg, #fdf6e3 0%, #f5ecda 40%, #faf0de 70%, #f3e8d0 100%);
+    box-shadow:
+            2px 3px 8px rgba(0, 0, 0, 0.15),
+            inset 0 0 40px rgba(139, 90, 43, 0.06);
+    z-index: 0;
 }
 
 .topTitle {
-    margin: 0 0 16px;
+    position: relative;
+    margin: 12px 0 10px;
     font-size: 2rem;
-    font-weight: 600;
+    font-weight: 800;
     line-height: 1.2;
-    color: #111111;
+    color: #3b1a0a;
     text-align: center;
+    font-family: 'Georgia', serif;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .topText {
-    margin: 0;
-    font-size: 1.1rem;
+    position: relative;
+    margin: 0 auto;
+    max-width: 380px;
+    font-size: 1rem;
     line-height: 1.5;
-    color: #111111;
+    color: #6b4c30;
     text-align: center;
+    font-weight: 600;
+    font-style: italic;
 }
 
 /* MAIN SECTION */
 .bottomSection {
     position: relative;
-    width: 860px;
-    max-width: 100%;
-    min-height: 460px;
+    width: 100%;
+    max-width: 540px;
+    min-height: auto;
     margin: 0 auto;
     display: flex;
     justify-content: center;
@@ -79,48 +193,103 @@
 .formBox {
     position: relative;
     z-index: 2;
-    width: 720px;
-    max-width: 100%;
-    min-height: 340px;
-    padding: 70px 60px 50px;
-
-    background: linear-gradient(
-            145deg,
-            rgba(226, 226, 226, 0.96),
-            rgba(196, 196, 196, 0.93)
-    );
-
-    border: 1px solid rgba(255, 255, 255, 0.38);
-    border-radius: 24px;
-
+    width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    background:
+            radial-gradient(circle at 15% 25%, rgba(90, 50, 20, 0.12) 1px, transparent 1px),
+            radial-gradient(circle at 75% 60%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
+            radial-gradient(circle at 40% 80%, rgba(160, 110, 60, 0.08) 1.5px, transparent 1.5px),
+            radial-gradient(circle at 85% 15%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
+            radial-gradient(ellipse at 20% 50%, rgba(139, 90, 43, 0.10) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 30%, rgba(160, 100, 40, 0.08) 0%, transparent 45%),
+            radial-gradient(ellipse at 50% 90%, rgba(120, 70, 30, 0.07) 0%, transparent 40%),
+            repeating-conic-gradient(
+                    rgba(139, 90, 43, 0.07) 0% 25%,
+                    transparent 0% 50%
+            ) 0 0 / 12px 12px,
+            repeating-conic-gradient(
+                    rgba(100, 60, 25, 0.05) 0% 25%,
+                    transparent 0% 50%
+            ) 6px 6px / 18px 18px,
+            linear-gradient(
+                    145deg,
+                    #c4956a 0%,
+                    #b8865a 15%,
+                    #c9986d 30%,
+                    #b07a4a 50%,
+                    #c4916a 65%,
+                    #ba8858 80%,
+                    #c09060 100%
+            );
+    border: 12px solid #6b3e1f;
     box-shadow:
-            0 30px 60px rgba(0, 0, 0, 0.16),
-            0 12px 26px rgba(0, 0, 0, 0.08),
-            inset 0 1px 0 rgba(255, 255, 255, 0.74),
-            inset 0 -4px 10px rgba(0, 0, 0, 0.03);
+            0 20px 60px rgba(0, 0, 0, 0.45),
+            inset 0 2px 10px rgba(0, 0, 0, 0.15),
+            4px 4px 0 #5a3218;
+}
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.formBox::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 22px;
+    background: radial-gradient(circle at 35% 35%, #ef4444, #b91c1c);
+    border-radius: 50%;
+    box-shadow:
+            0 2px 6px rgba(0, 0, 0, 0.35),
+            inset 0 -2px 3px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.formBox > * {
+    position: relative;
+    z-index: 1;
+}
+
+.formBox::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border-radius: 2px;
+    background:
+            radial-gradient(circle at 10% 20%, rgba(160, 130, 90, 0.10) 1px, transparent 1px),
+            radial-gradient(circle at 55% 10%, rgba(140, 110, 70, 0.08) 1.5px, transparent 1.5px),
+            radial-gradient(circle at 80% 45%, rgba(160, 130, 90, 0.09) 1px, transparent 1px),
+            radial-gradient(circle at 30% 75%, rgba(140, 110, 70, 0.07) 2px, transparent 2px),
+            radial-gradient(circle at 90% 85%, rgba(160, 130, 90, 0.08) 1px, transparent 1px),
+            radial-gradient(ellipse at 15% 60%, rgba(180, 150, 100, 0.08) 0%, transparent 50%),
+            radial-gradient(ellipse at 75% 25%, rgba(170, 140, 90, 0.07) 0%, transparent 45%),
+            radial-gradient(ellipse at 50% 90%, rgba(180, 150, 100, 0.06) 0%, transparent 40%),
+            linear-gradient(170deg, #fdf6e3 0%, #f5ecda 40%, #faf0de 70%, #f3e8d0 100%);
+    box-shadow:
+            2px 3px 8px rgba(0, 0, 0, 0.15),
+            inset 0 0 40px rgba(139, 90, 43, 0.06);
+    z-index: 0;
 }
 
 .label {
     display: block;
     width: 100%;
-    margin: 0 0 22px;
-    font-size: 2rem;
-    font-weight: 500;
+    margin: 14px 0 22px;
+    font-size: 2.1rem;
+    font-weight: 800;
     line-height: 1.2;
-    color: #111111;
+    color: #3b1a0a;
     text-align: center;
+    font-family: 'Georgia', serif;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 /* CODE INPUT */
 .codeInputWrapper {
     position: relative;
-    width: 520px;
-    max-width: 100%;
-    margin-bottom: 28px;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto 26px;
     cursor: text;
 }
 
@@ -128,7 +297,7 @@
     position: absolute;
     inset: 0;
     width: 100%;
-    height: 86px;
+    height: 78px;
     opacity: 0;
     border: none;
     outline: none;
@@ -138,71 +307,63 @@
 
 .codeDisplay {
     width: 100%;
-    min-height: 86px;
-    padding: 0 88px;
-
+    min-height: 78px;
+    padding: 0 60px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-
-    background: linear-gradient(
-            180deg,
-            rgba(255, 249, 249, 0.98),
-            rgba(242, 234, 234, 0.98)
-    );
-
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 18px;
-
+    gap: 10px;
+    background: rgba(107, 62, 31, 0.08);
+    border: 2.5px dashed #8b6340;
+    border-radius: 6px;
     box-shadow:
-            0 16px 28px rgba(0, 0, 0, 0.10),
-            0 6px 12px rgba(0, 0, 0, 0.05),
-            inset 0 2px 4px rgba(255, 255, 255, 0.75),
-            inset 0 -2px 5px rgba(0, 0, 0, 0.03);
-
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+            inset 0 1px 0 rgba(255, 255, 255, 0.45),
+            0 4px 10px rgba(107, 62, 31, 0.12);
+    transition: all 0.25s ease;
 }
 
 .codeInputWrapper:hover .codeDisplay,
 .codeInputWrapper:focus-within .codeDisplay {
+    background: rgba(107, 62, 31, 0.12);
+    border-color: #6b3e1f;
     transform: translateY(-2px);
     box-shadow:
-            0 22px 34px rgba(0, 0, 0, 0.13),
-            0 8px 16px rgba(0, 0, 0, 0.06),
-            inset 0 2px 4px rgba(255, 255, 255, 0.8);
+            0 8px 24px rgba(107, 62, 31, 0.22),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .codeChar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 22px;
-    font-size: 1.8rem;
-    font-weight: 600;
+    min-width: 18px;
+    font-size: 1.6rem;
+    font-weight: 700;
     line-height: 1;
     user-select: none;
+    text-transform: uppercase;
 }
 
 .codeFilled {
-    color: #111111;
+    color: #3b1a0a;
 }
 
 .codePlaceholder {
-    color: #8d8d8d;
+    color: #b29a84;
 }
 
 .codeDash {
-    min-width: 18px;
-    margin: 0 8px;
-    color: #8d8d8d;
+    min-width: 12px;
+    margin: 0 2px;
+    color: #8b6340;
+    font-weight: 700;
 }
 
 /* DETECTIVES */
 .innerDetective {
     position: absolute;
     top: 50%;
-    width: 62px;
+    width: 42px;
     height: auto;
     transform: translateY(-50%);
     pointer-events: none;
@@ -211,121 +372,118 @@
 }
 
 .leftDetective {
-    left: 12px;
+    left: 10px;
 }
 
 .rightDetective {
-    right: 12px;
+    right: 10px;
     transform: translateY(-50%) scaleX(-1);
+}
+
+.codeChar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 32px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+    user-select: none;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.caret {
+    width: 2px;
+    height: 28px;
+    background: #3b1a0a;
+    border-radius: 2px;
+    animation: blinkCaret 1s steps(1) infinite;
+}
+
+@keyframes blinkCaret {
+    0%, 50% {
+        opacity: 1;
+    }
+    50.01%, 100% {
+        opacity: 0;
+    }
 }
 
 /* ERROR MESSAGE */
 .error {
-    margin: 0 0 8px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #c0392b;
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #dc2626;
     text-align: center;
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.18);
+    border-radius: 6px;
+    padding: 10px 12px;
 }
 
 /* BUTTON */
 .button {
-    align-self: center;
-    margin-top: 10px;
-
-    border: 1px solid rgba(255, 255, 255, 0.42);
-    border-radius: 14px;
-
-    background: linear-gradient(
-            180deg,
-            #fff7f7,
-            #efe5e5
-    );
-
-    color: #111111;
-    padding: 14px 34px;
-    font-size: 1rem;
-    font-weight: 600;
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    margin: 8px auto 0;
+    padding: 16px 24px;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #fdf6e3;
+    background: linear-gradient(135deg, #5a3218 0%, #6b3e1f 40%, #7a4a28 100%);
+    border: 2px solid #4a2810;
+    border-radius: 6px;
     cursor: pointer;
-
+    transition: all 0.25s ease;
     box-shadow:
-            0 14px 24px rgba(0, 0, 0, 0.12),
-            0 5px 10px rgba(0, 0, 0, 0.05),
-            inset 0 1px 0 rgba(255, 255, 255, 0.72);
-
-    transition: all 0.18s ease;
+            0 3px 10px rgba(74, 40, 16, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .button:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow:
-            0 18px 30px rgba(0, 0, 0, 0.15),
-            0 8px 14px rgba(0, 0, 0, 0.07),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    background: linear-gradient(135deg, #4a2810 0%, #5a3218 40%, #6b3e1f 100%);
+    transform: translateY(-3px) rotate(0.3deg);
+    box-shadow: 0 8px 25px rgba(74, 40, 16, 0.45);
 }
 
 .button:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
 }
 
 .button:disabled {
-    opacity: 0.5;
+    opacity: 0.55;
     cursor: not-allowed;
     transform: none;
     box-shadow:
-            0 14px 24px rgba(0, 0, 0, 0.12),
-            0 5px 10px rgba(0, 0, 0, 0.05),
-            inset 0 1px 0 rgba(255, 255, 255, 0.72);
+            0 3px 10px rgba(74, 40, 16, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-/* TABLET */
-@media (max-width: 1000px) {
-    .wrapper {
-        padding: 28px 24px 40px;
-    }
-
-    .bottomSection {
-        width: 760px;
-        min-height: 420px;
-    }
-
-    .formBox {
-        width: 620px;
-        padding: 56px 40px 40px;
-    }
-
-    .codeInputWrapper {
-        width: 470px;
-    }
-
-    .codeDisplay {
-        min-height: 78px;
-        padding: 0 76px;
-    }
-
-    .hiddenInput {
-        height: 78px;
-    }
-
-    .innerDetective {
-        width: 54px;
-    }
-
-    .codeChar {
-        font-size: 1.55rem;
-    }
-}
-
-/* MOBILE */
 @media (max-width: 760px) {
     .wrapper {
         padding: 20px 16px 28px;
     }
 
     .topBox {
-        max-width: 100%;
-        margin-bottom: 24px;
-        padding: 24px 18px;
+        margin-bottom: 20px;
+        padding: 16px;
+        border-width: 8px;
+    }
+
+    .formBox {
+        padding: 16px;
+        border-width: 8px;
+    }
+
+    .topBox::before,
+    .formBox::before {
+        inset: 8px;
     }
 
     .topTitle {
@@ -333,25 +491,16 @@
     }
 
     .topText {
-        font-size: 1rem;
-    }
-
-    .bottomSection {
-        min-height: unset;
-    }
-
-    .formBox {
-        width: 100%;
-        min-height: unset;
-        padding: 28px 20px 24px;
+        font-size: 0.95rem;
     }
 
     .label {
-        font-size: 1.6rem;
+        font-size: 1.7rem;
+        margin-top: 10px;
     }
 
     .codeInputWrapper {
-        width: 100%;
+        max-width: 100%;
     }
 
     .hiddenInput {
@@ -360,29 +509,34 @@
 
     .codeDisplay {
         min-height: 68px;
-        gap: 8px;
-        padding: 0 58px;
+        padding: 0 50px;
+        gap: 6px;
     }
 
     .innerDetective {
-        width: 42px;
+        width: 34px;
     }
 
     .leftDetective {
-        left: 10px;
+        left: 8px;
     }
 
     .rightDetective {
-        right: 10px;
+        right: 8px;
     }
 
     .codeChar {
-        min-width: 16px;
-        font-size: 1.2rem;
+        min-width: 14px;
+        font-size: 1.15rem;
     }
 
     .codeDash {
-        min-width: 12px;
-        margin: 0 4px;
+        min-width: 10px;
+    }
+
+    .button {
+        max-width: 100%;
+        font-size: 0.95rem;
+        padding: 14px 18px;
     }
 }
