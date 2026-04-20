@@ -113,14 +113,14 @@ public class TeacherClassroomController {
         return teacherClassroomService.createClassroom(request, principal.getUserId());
     }
 
-    @GetMapping
+    @GetMapping("/notifications")
     @PreAuthorize("hasRole('TEACHER')")
     public List<NotificationResponse> getNotifications(
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherClassroomService.getNotifications(principal.getUserId());
     }
 
-    @GetMapping
+    @GetMapping("/stops")
     @PreAuthorize("hasRole('TEACHER')")
     public List<StopResponse> listStops() {
         return teacherClassroomService.listStops();
