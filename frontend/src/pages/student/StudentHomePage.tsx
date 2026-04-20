@@ -12,6 +12,9 @@ function StudentHomePage(){
           <HomeBoard items={studentBoardItems} />
           <LogoutButton/>
         </section>
+        <button className="help-button">
+          ?
+        </button>
       </>
   );
 }
