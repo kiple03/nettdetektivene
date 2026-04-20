@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
+import org.ntnu.backend.avatar.dto.UpdateUserProfileRequest;
 import org.ntnu.backend.avatar.dto.UserProfileResponse;
 import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.model.UserInventoryItem;
@@ -111,4 +112,17 @@ public class UserAvatarService {
 
         inventoryRepository.saveAll(startingInventory);
     }
+
+    public UserProfileResponse updateUserProfile(UUID userId, UpdateUserProfileRequest request) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (request.username() != null && !request.username().isBlank()) {
+            user.setUsername(request.username());
+        }
+
+        userRepository.save(user);
+        return getUserProfile(userId);
+    }
+
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.dto.UpdateEquippedItemsRequest;
+import org.ntnu.backend.avatar.dto.UpdateUserProfileRequest;
 import org.ntnu.backend.avatar.dto.UserProfileResponse;
 import org.ntnu.backend.avatar.service.UserAvatarService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -58,4 +59,13 @@ public class AvatarController {
         userAvatarService.updateEquippedItems(principal.getUserId(), request.getItemIds());
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/user/profile")
+    public ResponseEntity<UserProfileResponse> updateUserProfile(
+        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal,
+        @RequestBody UpdateUserProfileRequest request) {
+        UserProfileResponse updated = userAvatarService.updateUserProfile(principal.getUserId(), request);
+        return ResponseEntity.ok(updated);
+    }
+
 }
