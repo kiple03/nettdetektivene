@@ -7,6 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Utility component responsible for generating secure, readable, and unique 
+ * join codes for classrooms.
+ */
 @Component
 @AllArgsConstructor
 public class JoinCodeGenerator {
@@ -18,6 +22,13 @@ public class JoinCodeGenerator {
   private final ClassroomRepository classroomRepository;
   private final SecureRandom random = new SecureRandom();
 
+  /**
+   * Generates a unique, 6-character alphanumeric join code.
+   * Cross-references the database to ensure the generated code is not currently in use.
+   *
+   * @return A unique 6-character string.
+   * @throws ResponseStatusException if a unique code cannot be generated after the maximum number of attempts.
+   */
   public String generateUniqueCode() {
     for (int i = 0; i < MAX_ATTEMPTS; i++) {
       StringBuilder sb = new StringBuilder(LENGTH);

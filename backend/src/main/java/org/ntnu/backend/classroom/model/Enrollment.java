@@ -19,6 +19,10 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.ntnu.backend.user.model.User;
 
+/**
+ * Join Table of many-many relationship between students and classroom.
+ * It links students id with classrooms id.
+ */
 @Entity
 @Table(name = "enrollment")
 @Getter

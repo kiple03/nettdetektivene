@@ -11,13 +11,17 @@ import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.repository.StopRepository;
-import org.ntnu.backend.game.service.OptionParser;
 import org.ntnu.backend.game.service.OptionValidator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
+/**
+ * Component executed on application startup to seed the database with initial game data.
+ * It ensures that necessary entities like stops, levels, and questions exist when the 
+ * application runs for the first time or on an empty database.
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -28,6 +32,13 @@ public class GameSeeder implements CommandLineRunner {
   private final QuestionRepository questionRepository;
   private final OptionValidator optionValidator;
 
+  /**
+   * Executes automatically when the Spring Boot application starts.
+   * Checks if the database is already seeded by verifying if any Stops exist.
+   * If the database is empty, it triggers the initial seeding process.
+   *
+   * @param args Command line arguments passed to the application.
+   */
   @Override
   public void run(String... args) {
     if (stopRepository.count() > 0) {
@@ -40,6 +51,11 @@ public class GameSeeder implements CommandLineRunner {
     log.info("Seeding complete");
   }
 
+  /**
+   * Seeds the "Nyhetskvartalet" (News Quarter) stop into the game.
+   * Creates a dedicated level for identifying fake news and populates it
+   * with a set of pre-defined multiple-choice questions.
+   */
   private void seedNews() {
     Stop stop = new Stop();
     stop.setName("Nyhetskvartalet");
@@ -135,6 +151,13 @@ public class GameSeeder implements CommandLineRunner {
     );
   }
 
+  /**
+   * Helper method to validate, create, and save a specific question linked to a level.
+   *
+   * @param level        The game level to which this question belongs.
+   * @param questionText The actual text prompt of the question.
+   * @param options      The list of possible choices for this multiple-choice question.
+   */
   private void seedQuestion(Level level, String questionText, List<MultipleChoiceOption> options) {
     optionValidator.validate(List.copyOf(options), level.getLevelType());
 
@@ -145,6 +168,13 @@ public class GameSeeder implements CommandLineRunner {
     questionRepository.save(question);
   }
 
+  /**
+   * Serializes a list of multiple-choice options into a JSON string to be stored in the database.
+   *
+   * @param options The list of options to be converted to JSON.
+   * @return A JSON string representing the provided options.
+   * @throws IllegalStateException If the JSON serialization process fails.
+   */
   private String writeOptions(List<MultipleChoiceOption> options) {
     try {
       return new ObjectMapper()

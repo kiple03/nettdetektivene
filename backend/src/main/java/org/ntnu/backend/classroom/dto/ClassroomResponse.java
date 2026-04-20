@@ -1,10 +1,12 @@
 package org.ntnu.backend.classroom.dto;
 
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * Data Transfer Object for classroom respone.
+ */
 @Getter
 @Builder
 public class ClassroomResponse {

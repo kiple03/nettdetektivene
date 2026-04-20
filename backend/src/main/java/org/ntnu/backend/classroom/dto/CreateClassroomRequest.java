@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Data Transfer Object for creation of a classroom. 
+ */
 @Data
 public class CreateClassroomRequest {
 

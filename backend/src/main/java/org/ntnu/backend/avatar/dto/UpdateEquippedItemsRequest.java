@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object for an update on specific items. It structures
+ * data from frontend to backend.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

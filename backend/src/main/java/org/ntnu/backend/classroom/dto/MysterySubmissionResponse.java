@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Value;
 import org.ntnu.backend.mystery.model.enums.MysteryStatusEnum;
 
+/**
+ * Data Transfer Object for submission of mystery puzzle. 
+ */
 @Value
 @Builder
 public class MysterySubmissionResponse {
