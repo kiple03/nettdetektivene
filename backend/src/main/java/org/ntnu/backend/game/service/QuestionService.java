@@ -12,6 +12,7 @@ import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.repository.QuestionRepository;
+import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidator;
 import org.ntnu.backend.game.validation.ValidationResult;
 import org.springframework.stereotype.Service;

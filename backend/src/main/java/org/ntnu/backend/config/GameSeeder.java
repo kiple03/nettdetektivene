@@ -11,7 +11,7 @@ import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.repository.StopRepository;
-import org.ntnu.backend.game.service.OptionValidator;
+import org.ntnu.backend.game.util.OptionValidator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;

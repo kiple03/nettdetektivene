@@ -9,6 +9,8 @@ import org.ntnu.backend.exception.InvalidOptionFormatException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
+import org.ntnu.backend.game.util.OptionParser;
+import org.ntnu.backend.game.util.OptionValidator;
 import tools.jackson.databind.ObjectMapper;
 
 public class OptionParserTest {

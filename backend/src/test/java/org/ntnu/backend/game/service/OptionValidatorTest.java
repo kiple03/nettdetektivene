@@ -10,6 +10,7 @@ import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
+import org.ntnu.backend.game.util.OptionValidator;
 
 public class OptionValidatorTest {
 
