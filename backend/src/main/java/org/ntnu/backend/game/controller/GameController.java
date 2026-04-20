@@ -50,6 +50,10 @@ public class GameController {
 
   }
 
+  /**
+   * Returns all levels for a given stop, ordered by ID.
+   * Each level includes its lock state for the current student.
+   */
   @GetMapping("/stops/{stopId}/levels")
   public List<LevelResponse> getLevelsForStop(
       @PathVariable int stopId,
@@ -57,6 +61,11 @@ public class GameController {
     return gameService.getLevelsForStop(stopId, principal.getUserId());
   }
 
+  /**
+   * Returns all questions for a given level. Options are included
+   * but answer data (correct flags, explanations) is excluded.
+   * The frontend shows these one at a time and controls the flow locally.
+   */
   @GetMapping("/levels/{levelId}/questions")
   public List<QuestionResponse> getQuestionsForLevel(
       @PathVariable int levelId,
