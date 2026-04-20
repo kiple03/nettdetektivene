@@ -29,8 +29,11 @@ public class AvatarDataSeeder implements CommandLineRunner{
             AvatarItem face_1 = AvatarItem.builder().name("face_1").category("face").build();
             AvatarItem detective_hat = AvatarItem.builder().name("detective_hat").category("head").build();
             AvatarItem detective_suit = AvatarItem.builder().name("detective_suit").category("body").build();
+            AvatarItem skinLight = AvatarItem.builder().name("tone_light").category("skin_tone").build();
+            AvatarItem skinMedium = AvatarItem.builder().name("tone_medium").category("skin_tone").build();
+            AvatarItem skinDark = AvatarItem.builder().name("tone_dark").category("skin_tone").build();
 
-            itemRepository.saveAll(List.of(magnifying_glass, face_1, detective_hat, detective_suit));
+            itemRepository.saveAll(List.of(magnifying_glass, face_1, detective_hat, detective_suit, skinLight, skinMedium, skinDark));
         }
     }
 }

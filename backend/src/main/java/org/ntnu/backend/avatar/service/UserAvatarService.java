@@ -105,7 +105,7 @@ public class UserAvatarService {
                 .user(user)
                 .avatarItem(item)
                 .unlockedAt(LocalDateTime.now())
-                .isEquipped(true)
+                .isEquipped(List.of("detective_hat", "detective_suit", "face_1", "tone_dark").contains(item.getName()))
                 .build()
         ).toList();
 
