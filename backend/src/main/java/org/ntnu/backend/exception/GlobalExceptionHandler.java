@@ -3,9 +3,11 @@ package org.ntnu.backend.exception;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Centralised exception handler for all REST controllers.
@@ -94,6 +96,35 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUserExists(UserAlreadyExistsException ex) {
         return ResponseEntity.status(ex.getStatus())
                 .body(ErrorResponse.of(ex.getMessage(), ex.getField()));
+    }
+
+    /**
+     * Handles {@link ResponseStatusException} thrown by service or controller code,
+     * preserving the status and reason set on the exception. Without this handler
+     * the catch-all below would rewrite every such exception to a generic 500.
+     *
+     * @param ex the exception carrying its intended HTTP status
+     * @return a response with the exception's status and reason
+     */
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatus(ResponseStatusException ex) {
+        String message = ex.getReason() != null ? ex.getReason() : ex.getStatusCode().toString();
+        return ResponseEntity.status(ex.getStatusCode()).body(ErrorResponse.of(message));
+    }
+
+    /**
+     * Handles Spring Security's {@link AccessDeniedException} (and its subclass
+     * {@code AuthorizationDeniedException} thrown by {@code @PreAuthorize}) so that
+     * authorization failures surface as {@code 403} rather than being swallowed by
+     * the catch-all handler below.
+     *
+     * @param ex the access-denied exception
+     * @return {@code 403 Forbidden} with a generic message
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ErrorResponse.of("Access denied"));
     }
 
     /**
