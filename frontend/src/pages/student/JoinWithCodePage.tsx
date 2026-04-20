@@ -47,7 +47,7 @@ export default function JoinWithCodePage() {
         try {
             await joinClassroom(rawCode);
             await refreshToken();
-            navigate("/home");
+            navigate("/avatar");
         } catch (err) {
             const status = (err as AxiosError).response?.status;
             if (status === 404) setError("Ugyldig kode. Prøv igjen.");

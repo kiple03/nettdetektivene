@@ -46,3 +46,8 @@ export const saveAvatarOutfit = async (itemIds: string[]) => {
   const response = await clientApi.put('/user/avatar/equip', {itemIds});
   return response.data;
 }
+
+export const updateUserProfile = async (username: string) => {
+  const response = await clientApi.put('/user/profile', { username });
+  return response.data;
+};
