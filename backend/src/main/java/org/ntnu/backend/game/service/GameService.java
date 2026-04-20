@@ -65,4 +65,11 @@ public class GameService {
         .map(level -> gameMapper.toLevelResponse(level, false))
         .orElseThrow(() -> new LevelNotFoundException(levelId));
   }
+
+  public List<LevelResponse> getLevelsForStop(int stopId, UUID userId) {
+    return levelRepository.findByStopIdOrderByIdAsc(stopId)
+        .stream()
+        .map(level -> gameMapper.toLevelResponse(level, false))
+        .toList();
+  }
 }
