@@ -34,7 +34,7 @@ const levels: Level[] = [
     {
         step: "1",
         title: "Nyhetskvartalet",
-        route: "/levelOne",
+        route: "/game",
         x: "8%",
         y: "46%",
         icon: nyhetskvartalet,
