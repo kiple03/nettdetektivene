@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./MapPage.module.css";
 import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
@@ -83,11 +82,25 @@ const levels: Level[] = [
     },
 ];
 
+const ANCHOR_IDS = [
+    "level-back",
+    "level-1",
+    "level-2",
+    "level-3",
+    "level-4",
+    "level-5",
+    "level-6",
+    "level-7",
+] as const;
+
+type AnchorId = (typeof ANCHOR_IDS)[number];
+type HotspotPos = { top: string; left: string };
+
 export default function MapPage() {
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
+    const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
     const navigate = useNavigate();
-    const svgRef = useRef<SVGSVGElement>(null);
 
     const handleLevelClick = (level: Level) => {
         if (level.unlocked) {
@@ -98,6 +111,31 @@ export default function MapPage() {
         setLockedLevelTitle(level.title);
         setLockedDialogOpen(true);
     };
+
+    const svgRef = useCallback((node: SVGSVGElement | null): void | (() => void) => {
+        if (!node) return;
+
+        const compute = () => {
+            const svgRect = node.getBoundingClientRect();
+            const result: Partial<Record<AnchorId, HotspotPos>> = {};
+            for (const id of ANCHOR_IDS) {
+                const el = node.getElementById(id);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    result[id] = {
+                        top: `${((rect.top + rect.height / 2 - svgRect.top) / svgRect.height) * 100}%`,
+                        left: `${((rect.left + rect.width / 2 - svgRect.left) / svgRect.width) * 100}%`,
+                    };
+                }
+            }
+            setAnchorPos(result);
+        };
+
+        compute();
+        const observer = new ResizeObserver(compute);
+        observer.observe(node);
+        return () => observer.disconnect();
+    }, []);
 
     return (
         <div className={styles.container}>
@@ -111,7 +149,15 @@ export default function MapPage() {
             <div className={styles.levelGrid}>
                 <BackButton
                     className={styles.hotspot}
-                    style={{ top: "6%", left: "1.5%" }}
+                    style={
+                        anchorPos["level-back"]
+                            ? {
+                                  top: anchorPos["level-back"].top,
+                                  left: anchorPos["level-back"].left,
+                                  transform: "translate(-50%, -50%)",
+                              }
+                            : { display: "none" }
+                    }
                     ariaLabel="Gå tilbake"
                 >
                     <div className={styles.iconWrapper}>
@@ -123,25 +169,37 @@ export default function MapPage() {
                     </div>
                 </BackButton>
 
-                {levels.map((level) => (
-                    <button
-                        key={level.step}
-                        type="button"
-                        className={styles.hotspot}
-                        onClick={() => handleLevelClick(level)}
-                        aria-label={level.title}
-                    >
-                        <div className={styles.iconWrapper}>
-                            <img
-                                src={level.icon}
-                                alt={level.title}
-                                className={`${styles.icon} ${!level.unlocked ? styles.lockedIcon : ""}`}
-                            />
+                {levels.map((level) => {
+                    const pos = anchorPos[`level-${level.step}` as AnchorId];
+                    return (
+                        <button
+                            key={level.step}
+                            type="button"
+                            className={styles.hotspot}
+                            style={
+                                pos
+                                    ? {
+                                          top: pos.top,
+                                          left: pos.left,
+                                          transform: "translate(-50%, -50%)",
+                                      }
+                                    : { display: "none" }
+                            }
+                            onClick={() => handleLevelClick(level)}
+                            aria-label={level.title}
+                        >
+                            <div className={styles.iconWrapper}>
+                                <img
+                                    src={level.icon}
+                                    alt={level.title}
+                                    className={`${styles.icon} ${!level.unlocked ? styles.lockedIcon : ""}`}
+                                />
 
-                            {!level.unlocked && <LockBadge />}
-                        </div>
-                    </button>
-                ))}
+                                {!level.unlocked && <LockBadge />}
+                            </div>
+                        </button>
+                    );
+                })}
             </div>
 
             <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
