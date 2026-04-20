@@ -7,6 +7,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Model class of a classroom.
+ */
 @Entity
 @Table(name = "classroom")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder

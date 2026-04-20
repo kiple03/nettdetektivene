@@ -3,6 +3,9 @@ package org.ntnu.backend.classroom.dto;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Data Transfer Object for updating a classroom.
+ */
 @Data
 public class UpdateClassroomRequest {
 

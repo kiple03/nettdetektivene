@@ -5,7 +5,10 @@ import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.CommandLineRunner;
-//
+/**
+ * Config class. It seeds the database with starter items for 
+ * avatars. 
+ */
 @Component
 public class AvatarDataSeeder implements CommandLineRunner{
     private final AvatarItemRepository itemRepository;
@@ -14,6 +17,9 @@ public class AvatarDataSeeder implements CommandLineRunner{
         this.itemRepository = itemRepository;
     } 
 
+    /**
+     * Method that runs automatically with spring boot upon startup. 
+     */
     @Override
     public void run(String... args) throws Exception{
         if(itemRepository.count() == 0){

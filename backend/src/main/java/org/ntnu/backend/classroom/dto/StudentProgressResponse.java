@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/** Data Transfer Object for student progress */
 @Getter
 @Builder
 @AllArgsConstructor

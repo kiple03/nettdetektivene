@@ -32,6 +32,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Service class handling teacher-specific views, dashboards, and authorization
+ * for managing a classroom. It delegates core operations to ClassroomService.
+ */
 @Service
 @AllArgsConstructor
 public class TeacherClassroomService {
@@ -51,6 +55,13 @@ public class TeacherClassroomService {
         return classroomService.createClassroom(request, teacherId);
     }
 
+    /**
+     * Lists all classrooms owned by a specific teacher, calculating overall
+     * student progress percentage and assignment completion statistics.
+     *
+     * @param teacherId the UUID of the teacher
+     * @return a list of classroom summaries with calculated statistics
+     */
     public List<ClassroomSummaryResponse> listClassrooms(UUID teacherId) {
         long assignmentCount = levelRepository.count();
         return classroomTeacherRepository
@@ -76,16 +87,38 @@ public class TeacherClassroomService {
             .toList();
     }
 
+    /**
+     * Verifies teacher ownership, then updates the classroom details.
+     *
+     * @param classroomId the classroom to update
+     * @param request the update data
+     * @param principal the authenticated teacher context
+     * @return the updated classroom details
+     */
     public ClassroomResponse updateClassroom(UUID classroomId, UpdateClassroomRequest request, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
         return classroomService.updateClassroom(classroomId, request);
     }
 
+    /**
+     * Verifies teacher ownership, then completely deletes the classroom.
+     *
+     * @param classroomId the classroom to delete
+     * @param principal the authenticated teacher context
+     */
     public void deleteClassroom(UUID classroomId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
         classroomService.deleteClassroom(classroomId);
     }
 
+    /**
+     * Retrieves all active students in a specific classroom along with a count
+     * of their completed levels/medals.
+     *
+     * @param classroomId the classroom to query
+     * @param principal the authenticated teacher context
+     * @return a list of student progress statistics
+     */
     @Transactional(readOnly = true)
     public List<StudentProgressResponse> listStudents(UUID classroomId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
@@ -103,6 +136,16 @@ public class TeacherClassroomService {
             .toList();
     }
 
+    
+    /**
+     * Fetches detailed data for a specific student in a classroom, including
+     * exactly which levels they have completed and when.
+     *
+     * @param classroomId the classroom ID
+     * @param studentId the user ID of the student
+     * @param principal the authenticated teacher context
+     * @return an object detailing the student's level completions
+     */
     @Transactional(readOnly = true)
     public StudentDetailResponse getStudentDetail(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
@@ -122,6 +165,13 @@ public class TeacherClassroomService {
             .build();
     }
 
+    /**
+     * Verifies teacher access and retrieves basic metadata for a specific classroom.
+     *
+     * @param classroomId the classroom ID
+     * @param principal the authenticated teacher context
+     * @return the basic details of the classroom
+     */
     public ClassroomResponse getClassroom(UUID classroomId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
         Classroom classroom = classroomRepository.findById(classroomId)
@@ -135,6 +185,13 @@ public class TeacherClassroomService {
             .build();
     }
 
+    /**
+     * Retrieves a list of all mystery assignment submissions for a specific classroom.
+     *
+     * @param classroomId the classroom ID
+     * @param principal the authenticated teacher context
+     * @return a list containing the status and content of all mystery submissions
+     */
     @Transactional(readOnly = true)
     public List<MysterySubmissionResponse> listMysterySubmissions(UUID classroomId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
@@ -152,6 +209,13 @@ public class TeacherClassroomService {
             .toList();
     }
 
+    /**
+     * Gathers a chronological list of recent student events (like level completions
+     * or mystery submissions) across all classrooms owned by the teacher.
+     *
+     * @param teacherId the UUID of the teacher
+     * @return a combined, time-sorted list of activity notifications
+     */
     @Transactional(readOnly = true)
     public List<NotificationResponse> getNotifications(UUID teacherId) {
         List<NotificationResponse> notifications = new ArrayList<>();
@@ -188,6 +252,16 @@ public class TeacherClassroomService {
         return notifications;
     }
 
+    /**
+     * Verifies access and applies a teacher's review (grading or featuring) to a
+     * student's mystery submission.
+     *
+     * @param classroomId the classroom ID
+     * @param submissionId the specific submission being reviewed
+     * @param request containing the new status and featured flag
+     * @param principal the authenticated teacher context
+     * @return the updated submission data
+     */
     @Transactional
     public MysterySubmissionResponse reviewMysterySubmission(
             UUID classroomId,
@@ -222,6 +296,11 @@ public class TeacherClassroomService {
             .build();
     }
 
+    /**
+     * Retrieves the ordered list of all checkpoints ("stops") defined in the game map.
+     *
+     * @return an ordered list of StopResponses
+     */
     @Transactional(readOnly = true)
     public List<StopResponse> listStops() {
         return stopRepository.findAllByOrderByDisplayOrderAsc()

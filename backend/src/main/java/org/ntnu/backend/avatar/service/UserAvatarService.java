@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Service class for the logic of avatars. It actively talks to the database using the 
+ * repositories, and formats database data for frontend. 
+ */
 @Service
 @RequiredArgsConstructor
 public class UserAvatarService {
@@ -25,6 +29,11 @@ public class UserAvatarService {
     private final AvatarItemRepository avatarItemRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Service-method that gets the user by id, and retrieves only the items the user has equipped.
+     * @param userid the users id
+     * @return a user profile response that contains user name and avatar items. 
+     */
     public UserProfileResponse getUserProfile(UUID userid){
         User user = userRepository.findById(userid).orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -37,12 +46,18 @@ public class UserAvatarService {
                                             .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".svg")
                                             .build())
                                         .toList();
+        
         return UserProfileResponse.builder()
-                .username(user.getUsername())
-                .equippedItems(itemDtos)
-                .build();
+            .username(user.getUsername())
+            .equippedItems(itemDtos)
+            .build();
     }
 
+    /**
+     * Service-method that updates the chosen item to the user. 
+     * @param userId user identification.
+     * @param itemIdsToEquip item identification.
+     */
     @Transactional
     public void updateEquippedItems(UUID userId, List<UUID> itemIdsToEquip){
         // Get all items in users inventory
@@ -58,6 +73,11 @@ public class UserAvatarService {
         inventoryRepository.saveAll(inventory);
     }
 
+    /**
+     * Service-method that gets the whole users inventory, regardless of it being equipped or not.
+     * @param userId user identification.
+     * @return a list of all the avatar items accociated with the user.
+     */
     public List<EquippedItemDto> getUserInventory(UUID userId) {
         List<UserInventoryItem> inventory = inventoryRepository.findByUserId(userId);
         
@@ -71,6 +91,10 @@ public class UserAvatarService {
             .toList();
     }
 
+    /**
+     * Assigns starter items for a new user. This comes from the Avatar data Seeder in config-folder.
+     * @param user the user instance. 
+     */
     @Transactional
     public void starterItems(User user){
         List<AvatarItem> starterItems = avatarItemRepository.findAll().stream()

@@ -7,6 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data transfer object for user profile get-request. It structuers
+ * only the neccessary data for the frontend to recieve. 
+ */
 @Data
 @Builder
 @NoArgsConstructor

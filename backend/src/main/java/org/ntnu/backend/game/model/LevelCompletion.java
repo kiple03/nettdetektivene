@@ -21,6 +21,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * JPA entity recording that a student has completed a game level, mapped to the
+ * {@code level_completion} table.
+ *
+ * <p>The combination of {@link #enrollment} and {@link #level} is enforced as unique
+ * at the database level, ensuring a student cannot receive credit for the same level
+ * more than once within a given classroom enrollment.
+ */
 @Entity
 @Table(
     name = "level_completion",
@@ -33,18 +41,28 @@ import lombok.Setter;
 @Builder
 public class LevelCompletion {
 
+    /** Primary key, generated as a random UUID by the database. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /**
+     * The classroom enrollment this completion belongs to. Loaded lazily —
+     * use repository {@code JOIN FETCH} queries when the enrollment is needed.
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "enrollment_id", nullable = false)
     private Enrollment enrollment;
 
+    /**
+     * The level that was completed. Loaded lazily —
+     * use repository {@code JOIN FETCH} queries when the level is needed.
+     */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "level_id", nullable = false)
     private Level level;
 
+    /** Timestamp at which the student completed the level. Set by the service layer before persisting. */
     @Column(name = "completed_at", nullable = false)
     private Instant completedAt;
 }

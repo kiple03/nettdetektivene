@@ -96,10 +96,9 @@ export const router = createBrowserRouter([
         element: <GamePage />
     },
 
-    // Teacher routes — all nested under TeacherLayout for shared navbar
-    // NOTE: <RequireAuth role="TEACHER"> wrappers removed during dev (see above).
+    // Teacher routes — require TEACHER role
     {
-        element: <TeacherLayout />,
+        element: <RequireAuth role="TEACHER"><TeacherLayout /></RequireAuth>,
         children: [
             {
                 path: '/teacher',

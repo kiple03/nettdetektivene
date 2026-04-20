@@ -15,9 +15,22 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Service for uploading and retrieving images via Amazon S3.
+ *
+ * <p>Uploaded images are stored in the S3 bucket configured by {@code s3.bucket} under
+ * the {@code images/} prefix with a UUID-based key, ensuring no filename collisions.
+ * Metadata (original filename, content type, size, upload time) is persisted in the
+ * database via {@link ImageRepository} so images can be looked up by ID without
+ * querying S3 directly.
+ *
+ * <p>Only JPEG, PNG, and WEBP files up to {@value MAX_FILE_SIZE} MB are accepted.
+ * The S3 bucket is created automatically on first use if it does not already exist.
+ */
 @Service
 public class ImageService {
 
+    /** MIME types accepted for upload. */
     private static final Set<String> ALLOWED_TYPES = Set.of(
             "image/jpeg",
             "image/png",
@@ -29,14 +42,34 @@ public class ImageService {
     private final S3Client s3Client;
     private final ImageRepository imageRepository;
 
+    /** Name of the S3 bucket, injected from the {@code s3.bucket} property. */
     @Value("${s3.bucket}")
     private String bucketName;
 
+    /**
+     * Constructs an {@code ImageService} with the given S3 client and image repository.
+     *
+     * @param s3Client        the AWS S3 client used for bucket and object operations
+     * @param imageRepository the repository used to persist and retrieve image metadata
+     */
     public ImageService(S3Client s3Client, ImageRepository imageRepository) {
         this.s3Client = s3Client;
         this.imageRepository = imageRepository;
     }
 
+    /**
+     * Validates, uploads, and records an image file.
+     *
+     * <p>The file is validated for type and size, then stored in S3 under a
+     * randomly generated key of the form {@code images/<uuid><extension>}.
+     * A corresponding {@link ImageEntity} with metadata is saved to the database
+     * and returned.
+     *
+     * @param file the multipart image file to upload
+     * @return the persisted {@link ImageEntity} containing the S3 key and metadata
+     * @throws IOException      if reading the file bytes fails
+     * @throws RuntimeException if the file is empty, an unsupported type, or exceeds 5 MB
+     */
     public ImageEntity uploadImage(MultipartFile file) throws IOException {
         validateImage(file);
         ensureBucketExists();
@@ -65,6 +98,16 @@ public class ImageService {
         return imageRepository.save(image);
     }
 
+    /**
+     * Streams the raw image bytes from S3 for the given image ID.
+     *
+     * <p>The caller is responsible for closing the returned {@link ResponseInputStream}
+     * after use to release the underlying HTTP connection.
+     *
+     * @param imageId the database ID of the image to retrieve
+     * @return a streaming response containing the image bytes and S3 response metadata
+     * @throws RuntimeException if no image with the given ID exists in the database
+     */
     public ResponseInputStream<GetObjectResponse> getImage(Long imageId) {
         ImageEntity image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("Image not found"));
@@ -77,11 +120,24 @@ public class ImageService {
         return s3Client.getObject(getObjectRequest);
     }
 
+    /**
+     * Returns the database metadata for the given image without fetching its content from S3.
+     *
+     * @param imageId the database ID of the image
+     * @return the {@link ImageEntity} containing filename, content type, size, and upload time
+     * @throws RuntimeException if no image with the given ID exists
+     */
     public ImageEntity getImageMetadata(Long imageId) {
         return imageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("Image not found"));
     }
 
+    /**
+     * Validates that the file is non-empty, of an accepted MIME type, and within the size limit.
+     *
+     * @param file the file to validate
+     * @throws RuntimeException if any validation check fails
+     */
     private void validateImage(MultipartFile file) {
         if (file.isEmpty()) {
             throw new RuntimeException("Image file is empty");
@@ -96,6 +152,13 @@ public class ImageService {
         }
     }
 
+    /**
+     * Ensures the configured S3 bucket exists, creating it if necessary.
+     *
+     * <p>Bucket existence is checked via a {@code HeadBucket} request. Any exception
+     * (typically {@code NoSuchBucketException}) is treated as absence and triggers
+     * a {@code CreateBucket} request.
+     */
     private void ensureBucketExists() {
         try {
             s3Client.headBucket(HeadBucketRequest.builder().bucket(bucketName).build());
@@ -104,6 +167,13 @@ public class ImageService {
         }
     }
 
+    /**
+     * Extracts the file extension from a filename, including the leading dot.
+     * Falls back to {@code ".jpg"} if the filename is {@code null} or has no extension.
+     *
+     * @param filename the original filename (it may be {@code null})
+     * @return the extension string, e.g. {@code ".png"}, or {@code ".jpg"} as a fallback
+     */
     private String getFileExtension(String filename) {
         if (filename == null || !filename.contains(".")) {
             return ".jpg";

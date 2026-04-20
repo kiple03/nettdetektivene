@@ -7,6 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object for equipped items. It packages and transports the wished and 
+ * spesific data between backend to frontend.
+ */
 @Data
 @Builder
 @NoArgsConstructor

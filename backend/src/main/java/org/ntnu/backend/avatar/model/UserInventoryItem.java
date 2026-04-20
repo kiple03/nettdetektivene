@@ -18,6 +18,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ntnu.backend.user.model.User;
 
+/**
+ * Model class designed for database-queuries. Is associates a user with
+ * the item they own and have access to, and wheither or not they have it equipped.
+ */
 @Entity
 @Table(name = "user_avatar_unlock")
 @Getter

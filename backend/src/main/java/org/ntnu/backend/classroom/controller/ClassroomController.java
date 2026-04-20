@@ -11,6 +11,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
+/**
+ * REST controller for classroom. It's responsible for fetching a classroom and joining one via a code.
+ */
 @RestController
 @RequestMapping("/classrooms")
 public class ClassroomController {
@@ -21,35 +24,13 @@ public class ClassroomController {
         this.classroomService = classroomService;
     }
 
-    // ── Teacher-only endpoints ────────────────────────────────────────────────
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('TEACHER')")
-    public ClassroomResponse createClassroom(
-            @Valid @RequestBody CreateClassroomRequest request,
-            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-        return classroomService.createClassroom(request, principal.getUserId());
-    }
-
-    @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('TEACHER')")
-    public ClassroomResponse updateClassroom(
-            @PathVariable UUID id,
-            @Valid @RequestBody UpdateClassroomRequest request
-    ) {
-        return classroomService.updateClassroom(id, request);
-    }
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('TEACHER')")
-    public void deleteClassroom(@PathVariable UUID id) {
-        classroomService.deleteClassroom(id);
-    }
-
     // ── Shared endpoints (teacher + student) ─────────────────────────────────
 
+    /**
+     * Controller endpoint GET-request that gets a specific classroom. Any role can use this.
+     * @param id the id of the classroom
+     * @return a classroom response.
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
     public ClassroomResponse getClassroom(@PathVariable UUID id) {
@@ -58,6 +39,12 @@ public class ClassroomController {
 
     // ── Student join endpoint ─────────────────────────────────────────────────
 
+    /**
+     * Controller endpoint POST-request that checkes if a code is valid for a classroom.
+     * @param request JSON payload  
+     * @param principal authenticated user.
+     * @return classroom response 
+     */
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('STUDENT')")
