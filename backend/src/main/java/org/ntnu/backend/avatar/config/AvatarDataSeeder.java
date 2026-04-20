@@ -22,7 +22,7 @@ public class AvatarDataSeeder implements CommandLineRunner{
      */
     @Override
     public void run(String... args) throws Exception{
-        //if(itemRepository.count() == 0){
+        if(itemRepository.count() == 0){
             System.out.println("Empty avatar table. Seeding with items...");
 
             AvatarItem detective_hat = AvatarItem.builder().name("detective_hat").category("head").build();
@@ -42,6 +42,6 @@ public class AvatarDataSeeder implements CommandLineRunner{
             AvatarItem skinDark = AvatarItem.builder().name("tone_dark").category("skin_tone").build();
 
             itemRepository.saveAll(List.of(magnifying_glass, face_1, face_2, face_3, detective_hat, detective_suit, police_hat, police_uniform, sheriff_hat, sheriff_star, sheriff_suit,stop_sign, skinLight, skinMedium, skinDark));
-        //}
+        }
     }
 }
