@@ -26,6 +26,8 @@ interface Level {
     route: string;
     icon: string;
     unlocked: boolean;
+    x?: string;
+    y?: string;
 }
 
 const levels: Level[] = [
