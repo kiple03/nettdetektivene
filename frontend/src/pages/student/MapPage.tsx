@@ -1,7 +1,7 @@
 import { type CSSProperties, useCallback, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import type { EquippedItem } from "@/types/user";
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
 import { CarWithAvatar } from "@/components/map/CarWithAvatar";
@@ -118,35 +118,45 @@ type ScrollState = { canLeft: boolean; canRight: boolean; canUp: boolean; canDow
 export default function MapPage() {
     const { data: profile } = useUserProfile();
     const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
+    const navigate = useNavigate();
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
     const [scrollState, setScrollState] = useState<ScrollState>({ canLeft: false, canRight: false, canUp: false, canDown: false });
-    // -1 means "before the path starts" → 0% offset, so the first click always animates.
-    const [currentStopIndex, setCurrentStopIndex] = useState(-1);
+    const [currentPathOffset, setCurrentPathOffset] = useState("5%");
     const [animating, setAnimating] = useState(false);
     const [carOffsetPath, setCarOffsetPath] = useState<string | null>(null);
     const [pendingStop, setPendingStop] = useState<Level | null>(null);
     const svgNode = useRef<SVGSVGElement | null>(null);
     const containerNode = useRef<HTMLDivElement | null>(null);
 
-    const handleLevelClick = (level: Level, index: number) => {
-        if (!level.unlocked) {
-            setLockedLevelTitle(level.title);
-            setLockedDialogOpen(true);
-            return;
-        }
+    const animateTo = (offset: string, onDone: () => void) => {
         if (animating) return;
         setAnimating(true);
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-                setCurrentStopIndex(index);
+                setCurrentPathOffset(offset);
                 setTimeout(() => {
                     setAnimating(false);
-                    setPendingStop(level);
+                    onDone();
                 }, 1200);
             });
         });
+    };
+
+    const handleLevelClick = (level: Level) => {
+        animateTo(level.pathOffset, () => {
+            if (level.unlocked) {
+                setPendingStop(level);
+            } else {
+                setLockedLevelTitle(level.title);
+                setLockedDialogOpen(true);
+            }
+        });
+    };
+
+    const handleBackClick = () => {
+        animateTo("0%", () => navigate("/home"));
     };
 
     const containerRef = useCallback((node: HTMLDivElement | null): void | (() => void) => {
@@ -231,14 +241,15 @@ export default function MapPage() {
                 <div
                     className={`${styles.car} ${animating ? styles.carAnimating : ""}`}
                     style={{
-                        "--car-offset": currentStopIndex >= 0 ? levels[currentStopIndex].pathOffset : "5%",
+                        "--car-offset": currentPathOffset,
                         ...(carOffsetPath ? { offsetPath: `path("${carOffsetPath}")` } : {}),
                     } as CSSProperties}
                 >
                     <CarWithAvatar items={equippedItems} size={140} />
                 </div>
 
-                <BackButton
+                <button
+                    type="button"
                     className={styles.hotspot}
                     style={
                         anchorPos["level-back"]
@@ -249,7 +260,8 @@ export default function MapPage() {
                               }
                             : { display: "none" }
                     }
-                    ariaLabel="Gå tilbake"
+                    onClick={handleBackClick}
+                    aria-label="Tilbake til Detektivkontoret"
                 >
                     <div className={styles.iconWrapper}>
                         <img
@@ -258,9 +270,9 @@ export default function MapPage() {
                             className={styles.icon}
                         />
                     </div>
-                </BackButton>
+                </button>
 
-                {levels.map((level, index) => {
+                {levels.map((level) => {
                     const pos = anchorPos[`level-${level.step}` as AnchorId];
                     return (
                         <button
@@ -276,7 +288,7 @@ export default function MapPage() {
                                       }
                                     : { display: "none" }
                             }
-                            onClick={() => handleLevelClick(level, index)}
+                            onClick={() => handleLevelClick(level)}
                             aria-label={level.title}
                         >
                             <div className={styles.iconWrapper}>
