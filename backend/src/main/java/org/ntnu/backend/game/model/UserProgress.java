@@ -19,7 +19,7 @@ import org.ntnu.backend.user.model.User;
 @Entity
 @Getter
 @Setter
-@Table(name="user_progressions")
+@Table(name="user_progress")
 public class UserProgress {
 
   @Id
@@ -40,4 +40,13 @@ public class UserProgress {
   @Column(nullable = false)
   private boolean gameCompleted;
 
+
+  public static UserProgress createInitial(User student, Stop firstStop) {
+    UserProgress progress = new UserProgress();
+    progress.setUser(student);
+    progress.setCurrentStop(firstStop);
+    progress.setLevelsCompletedInCurrentStop(0);
+    progress.setGameCompleted(false);
+    return progress;
+  }
 }
