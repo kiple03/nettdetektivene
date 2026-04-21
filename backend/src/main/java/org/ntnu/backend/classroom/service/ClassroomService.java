@@ -114,6 +114,11 @@ public class ClassroomService {
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Bruker ikke funnet"));
 
+        if (student.getUsername() == null || student.getUsername().isBlank()) {
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT, "Du må velge et brukernavn før du kan bli med i et klasserom");
+        }
+
         Classroom classroom = classroomRepository.findByJoinCode(request.getJoinCode())
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Ugyldig kode"));
