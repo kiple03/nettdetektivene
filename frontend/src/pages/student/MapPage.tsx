@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 import styles from "./MapPage.module.css";
@@ -101,6 +101,20 @@ export default function MapPage() {
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
     const navigate = useNavigate();
+    const svgNode = useRef<SVGSVGElement | null>(null);
+
+    // DEV: click container to log SVG coordinates for anchor placement
+    const handleDevClick = (e: React.MouseEvent) => {
+        const svg = svgNode.current;
+        if (!svg) return;
+        const ctm = svg.getScreenCTM();
+        if (!ctm) return;
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        const { x, y } = pt.matrixTransform(ctm.inverse());
+        console.log(`cx="${x.toFixed(1)}" cy="${y.toFixed(1)}"`);
+    };
 
     const handleLevelClick = (level: Level) => {
         if (level.unlocked) {
@@ -113,6 +127,7 @@ export default function MapPage() {
     };
 
     const svgRef = useCallback((node: SVGSVGElement | null): void | (() => void) => {
+        svgNode.current = node;
         if (!node) return;
 
         const compute = () => {
@@ -138,13 +153,14 @@ export default function MapPage() {
     }, []);
 
     return (
-        <div className={styles.container}>
+        <div className={styles.container} onClick={handleDevClick}>
+            <div className={styles.mapInner}>
             <div className={styles.header}>
                 <h1>Velg nivå</h1>
                 <p>Velge neste nivå</p>
             </div>
 
-            <MapBg ref={svgRef} className={styles.mapBg} />
+            <MapBg ref={svgRef} className={styles.mapBg} preserveAspectRatio="xMidYMid slice" />
 
             <div className={styles.levelGrid}>
                 <BackButton
@@ -200,6 +216,7 @@ export default function MapPage() {
                         </button>
                     );
                 })}
+            </div>
             </div>
 
             <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
