@@ -215,7 +215,7 @@ export default function ClassroomDetailPage() {
                                         to={`/teacher/classrooms/${classroom.id}/code`}
                                         className="classroom-detail__code-btn"
                                     >
-                                        Vis kode på storskjerm →
+                                        Vis kode på storskjerm
                                     </Link>
                                 </div>
                                 {classroom.description && (
