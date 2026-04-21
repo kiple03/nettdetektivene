@@ -125,6 +125,20 @@
   bottom: 100px;
 }
 
+.car {
+  position: absolute;
+  offset-path: url(#car-path);
+  offset-distance: var(--car-offset, 0%);
+  offset-rotate: auto;
+  offset-anchor: 50% 50%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.carAnimating {
+  transition: offset-distance 1.2s ease-in-out;
+}
+
 .dialogActions {
   margin-top: 18px;
   display: flex;

@@ -1,10 +1,11 @@
-import { useCallback, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import type { EquippedItem } from "@/types/user";
 import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
+import { CarWithAvatar } from "@/components/map/CarWithAvatar";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
 import detektivkontoret from "@/assets/images/map/detektivkontoret.svg";
 import fotografen from "@/assets/images/map/fotografen.svg";
@@ -94,6 +95,8 @@ const levels: Level[] = [
     },
 ];
 
+const initialStopIndex = levels.reduce((last, level, i) => (level.unlocked ? i : last), 0);
+
 const ANCHOR_IDS = [
     "level-back",
     "level-1",
@@ -117,18 +120,27 @@ export default function MapPage() {
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
     const [scrollState, setScrollState] = useState<ScrollState>({ canLeft: false, canRight: false, canUp: false, canDown: false });
+    const [currentStopIndex, setCurrentStopIndex] = useState(initialStopIndex);
+    const [animating, setAnimating] = useState(false);
+    const [pendingRoute, setPendingRoute] = useState<string | null>(null);
     const navigate = useNavigate();
     const svgNode = useRef<SVGSVGElement | null>(null);
     const containerNode = useRef<HTMLDivElement | null>(null);
 
-    const handleLevelClick = (level: Level) => {
-        if (level.unlocked) {
+    const handleLevelClick = (level: Level, index: number) => {
+        if (!level.unlocked) {
+            setLockedLevelTitle(level.title);
+            setLockedDialogOpen(true);
+            return;
+        }
+        if (animating) return;
+        if (index === currentStopIndex) {
             navigate(level.route);
             return;
         }
-
-        setLockedLevelTitle(level.title);
-        setLockedDialogOpen(true);
+        setAnimating(true);
+        setCurrentStopIndex(index);
+        setPendingRoute(level.route);
     };
 
     const containerRef = useCallback((node: HTMLDivElement | null): void | (() => void) => {
@@ -198,6 +210,21 @@ export default function MapPage() {
             <MapBg ref={svgRef} className={styles.mapBg} preserveAspectRatio="xMidYMid slice" />
 
             <div className={styles.levelGrid}>
+                <div
+                    className={`${styles.car} ${animating ? styles.carAnimating : ""}`}
+                    style={{ "--car-offset": levels[currentStopIndex].pathOffset } as CSSProperties}
+                    onTransitionEnd={(e) => {
+                        if (e.propertyName !== "offset-distance") return;
+                        setAnimating(false);
+                        if (pendingRoute) {
+                            navigate(pendingRoute);
+                            setPendingRoute(null);
+                        }
+                    }}
+                >
+                    <CarWithAvatar items={equippedItems} size={80} />
+                </div>
+
                 <BackButton
                     className={styles.hotspot}
                     style={
@@ -220,7 +247,7 @@ export default function MapPage() {
                     </div>
                 </BackButton>
 
-                {levels.map((level) => {
+                {levels.map((level, index) => {
                     const pos = anchorPos[`level-${level.step}` as AnchorId];
                     return (
                         <button
@@ -236,7 +263,7 @@ export default function MapPage() {
                                       }
                                     : { display: "none" }
                             }
-                            onClick={() => handleLevelClick(level)}
+                            onClick={() => handleLevelClick(level, index)}
                             aria-label={level.title}
                         >
                             <div className={styles.iconWrapper}>
