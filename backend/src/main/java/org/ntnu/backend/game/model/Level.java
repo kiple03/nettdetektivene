@@ -37,6 +37,9 @@ public class  Level {
 
     private String description;
 
+    @Column(nullable = false)
+    private int order;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "stop_id", nullable = false)
     private Stop stop;
