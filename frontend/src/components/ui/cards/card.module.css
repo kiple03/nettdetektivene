@@ -1,0 +1,11 @@
+.card {
+    border-radius: 24px;
+    background: white;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.unstyled {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}

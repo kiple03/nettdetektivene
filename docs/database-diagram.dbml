@@ -1,0 +1,133 @@
+// Paste this at dbdiagram.io
+
+Table app_user {
+  id            bigint    [pk, increment]
+  role          varchar   [not null, note: 'student or teacher']
+  username      varchar   [not null]
+  email         varchar   [note: 'teachers only']
+  password_hash varchar   [note: 'teachers only']
+  feide_id      varchar   [note: 'students only']
+  created_at    timestamp [not null]
+}
+
+Table avatar_item {
+  id               bigint  [pk, increment]
+  name             varchar [not null]
+  category         varchar [not null, note: 'e.g. hat, clothing, accessory']
+  unlock_condition varchar
+}
+
+Table user_avatar_unlock {
+  user_id        bigint    [not null]
+  avatar_item_id bigint    [not null]
+  unlocked_at    timestamp [not null]
+  is_equipped    boolean   [not null, default: false]
+
+  indexes {
+    (user_id, avatar_item_id) [pk]
+  }
+}
+
+Table classroom {
+  id          bigint    [pk, increment]
+  title       varchar   [not null]
+  description text
+  join_code   varchar   [not null, unique]
+  created_at  timestamp [not null]
+}
+
+Table classroom_teacher {
+  classroom_id bigint  [not null]
+  user_id      bigint  [not null]
+  is_owner     boolean [not null, default: false]
+
+  indexes {
+    (classroom_id, user_id) [pk]
+  }
+}
+
+Table enrollment {
+  id           bigint    [pk, increment]
+  user_id      bigint    [not null]
+  classroom_id bigint    [not null]
+  enrolled_at  timestamp [not null]
+  left_at      timestamp [note: 'NULL = currently active']
+}
+
+Table stop {
+  id            bigint  [pk, increment]
+  classroom_id  bigint  [not null]
+  title         varchar [not null]
+  description   text
+  display_order int     [not null]
+}
+
+Table task {
+  id            bigint  [pk, increment]
+  stop_id       bigint  [not null]
+  display_order int     [not null]
+  difficulty    tinyint [not null, default: 1]
+  content_json  json    [not null]
+}
+
+Table task_progress {
+  id            bigint    [pk, increment]
+  enrollment_id bigint    [not null]
+  task_id       bigint    [not null]
+  completed_at  timestamp
+  attempts      int       [not null, default: 0]
+
+  indexes {
+    (enrollment_id, task_id) [unique]
+  }
+}
+
+Table medal {
+  id            bigint    [pk, increment]
+  enrollment_id bigint    [not null]
+  stop_id       bigint    [not null]
+  earned_at     timestamp [not null]
+
+  indexes {
+    (enrollment_id, stop_id) [unique]
+  }
+}
+
+Table notepad_entry {
+  id            bigint    [pk, increment]
+  enrollment_id bigint    [not null]
+  stop_id       bigint    [note: 'NULL = not tied to a stop']
+  type          varchar   [not null, note: 'auto or student']
+  content       text      [not null]
+  created_at    timestamp [not null]
+  updated_at    timestamp [not null]
+}
+
+Table mystery_submission {
+  id                     bigint    [pk, increment]
+  enrollment_id          bigint    [not null]
+  content                text
+  image_url              varchar
+  submitted_at           timestamp [not null]
+  status                 varchar   [not null, default: 'pending', note: 'pending, approved, rejected']
+  reviewed_by_teacher_id bigint
+  reviewed_at            timestamp
+  is_featured            boolean   [not null, default: false]
+}
+
+Ref: user_avatar_unlock.user_id > app_user.id
+Ref: user_avatar_unlock.avatar_item_id > avatar_item.id
+Ref: enrollment.user_id > app_user.id
+Ref: enrollment.classroom_id > classroom.id
+Ref: classroom_teacher.classroom_id > classroom.id
+Ref: classroom_teacher.user_id > app_user.id
+Ref: stop.classroom_id > classroom.id
+Ref: task.stop_id > stop.id
+Ref: task_progress.enrollment_id > enrollment.id
+Ref: task_progress.task_id > task.id
+Ref: medal.enrollment_id > enrollment.id
+Ref: medal.stop_id > stop.id
+Ref: notepad_entry.enrollment_id > enrollment.id
+Ref: notepad_entry.stop_id > stop.id
+Ref: mystery_submission.enrollment_id > enrollment.id
+Ref: mystery_submission.reviewed_by_teacher_id > app_user.id

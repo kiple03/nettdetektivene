@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1000 1000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <rect id="Artboard1" x="0" y="0" width="1000" height="1000" style="fill:none;"/>
+    <g id="Artboard11" serif:id="Artboard1">
+        <g id="head-wearables" serif:id="head wearables">
+            <g id="police-hat" serif:id="police hat">
+                <path d="M645.413,28.766L664.795,39.83L683.684,55.397L709.586,78.786L733.658,96.502L739.786,115.813L734.537,140.986L715.097,175.252L702.162,189.249L707.676,217.528L708.66,240.245L755.805,263.198L782.128,277.597L783.062,285.827L762.222,290.878L674.887,292.417L573.605,289.588L511.755,283.069L465.539,274.596L438.741,268.266L393.961,282.16L347.331,299.89L317.33,314.139L302.141,323.134L294.424,307.598L289.946,270.78L274.812,263.784L251.621,252.611L237.348,237.49L231.941,226.9L230.906,211.798L244.63,196.679L276.239,176.348L305.244,156.47L339.381,128.562L360.533,110.667L377.858,105.638L434.66,91.591L489.113,74.822L546.197,54.373L590.289,37.782L626.363,29.407L645.413,28.766Z" style="fill:rgb(34,49,78);stroke:black;stroke-width:4.17px;"/>
+                <path d="M290.068,271.408L311.2,256.365L353.014,236.918L407.142,215.521L493.519,193.497L607.636,176.856L666.173,180.338L704.307,189.06" style="fill:rgb(34,49,78);stroke:black;stroke-width:4.17px;"/>
+                <path d="M710.005,240.189L652.872,235.537L603.232,237.532L553.822,242.485L501.137,252.953L461.381,261.962L438.553,268.861" style="fill:rgb(34,49,78);stroke:black;stroke-width:4.17px;"/>
+                <path d="M610.007,76.697L619.926,79.884L626.988,78.808L637.68,72.609L645.224,78.779L654.439,80.5L663.997,77.318L671.92,89.362L664.187,99.979L666.678,109.51L670.2,121.276L666.53,135.04L661.278,143.498L650.011,152.49L638.967,160.368L622.651,151.082L609.368,140.002L602.257,129.31L601.753,118.595L605.65,105.991L606.886,95.503L600.879,86.625L610.007,76.697Z" style="fill:rgb(246,204,32);stroke:rgb(180,140,16);stroke-width:4.17px;"/>
+            </g>
+        </g>
+        <g id="faces">
+        </g>
+    </g>
+</svg>

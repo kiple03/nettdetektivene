@@ -1,0 +1,16 @@
+import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import styles from "@/pages/student/MapPage.module.css";
+
+function NotesPage() {
+    return <div>
+        <h1>Notater</h1>
+        <p>Kommer snart</p>
+        <BackButton
+            className={styles.hotspot}
+            style={{ top: "6%", left: "1.5%" }}
+            ariaLabel="Gå tilbake"
+        />
+    </div>;
+}
+
+export default NotesPage;

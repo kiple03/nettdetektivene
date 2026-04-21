@@ -1,0 +1,133 @@
+.container {
+    padding: 32px;
+    max-width: 56rem; /* 896px */
+    margin: 80px auto 0 auto;
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.previewSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background-color: #f9fafb;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 24px 0;
+    color: #1f2937;
+}
+
+.avatarWrapper {
+    border-radius: 9999px;
+    margin-bottom: 16px;
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+
+.equippedText {
+    color: #6b7280;
+    font-weight: 500;
+    margin: 0;
+}
+
+.wardrobeSection {
+    flex: 1 1 0%;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+@media (min-width: 768px) {
+    .gridContainer {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .gridContainer {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+.itemButton {
+    padding: 8px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.itemButtonUnequipped {
+    border-color: #e5e7eb;
+}
+
+.itemButtonUnequipped:hover {
+    border-color: #d1d5db;
+    background-color: #f9fafb;
+}
+
+.itemButtonEquipped {
+    border-color: #3b82f6;
+    background-color: rgba(239, 246, 255, 0.5); /* light blue tint */
+}
+
+.imageWrapper {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.itemImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.05));
+}
+
+.itemName {
+    font-weight: 600;
+    font-size: 10px;
+    color: #1f2937;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.itemCategory {
+    font-size: 9px;
+    color: #9ca3af;
+    text-transform: capitalize;
+    margin-bottom: 4px;
+}
+
+.equippedBadge {
+    margin-top: 4px;
+    font-size: 8px;
+    font-weight: 700;
+    color: #2563eb;
+    background-color: #dbeafe;
+    padding: 2px 6px;
+    border-radius: 9999px;
+}

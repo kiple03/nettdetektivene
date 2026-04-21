@@ -1,0 +1,94 @@
+.board-item-wrapper {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #222;
+}
+
+.board-item {
+  position: relative;
+  width: 120px;
+  min-height: 30px;
+  padding: 12px 10px;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.20);
+  text-decoration: none;
+  color: #222;
+  font-size: 18px;
+  font-family: Rockwell;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  top: -50px;
+  left: 40px;
+}
+
+/* TODO: make different sizes of board item! */
+/* different sizes of board items */
+.board-item-large .board-item-img {
+  width: 400px;
+  margin-bottom: 6px;
+  pointer-events: none;
+}
+
+.board-item-medium .board-item-img {
+  width: 350px;
+  margin-bottom: 6px;
+  pointer-events: none;
+}
+
+.board-item-small .board-item-img {
+  width: 300px;
+  margin-bottom: 6px;
+  pointer-events: none;
+}
+
+/* left tape */
+.board-item::before {
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: -15px;
+
+  width: 40px;
+  height: 16px;
+
+  background: rgba(255, 186, 59, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+
+  transform: rotate(-30deg);
+}
+
+/* right tape */
+.board-item::after {
+  content: "";
+  position: absolute;
+  top: 0px;
+  right: -15px;
+
+  width: 40px;
+  height: 16px;
+
+  background: rgba(255, 186, 59, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+
+  transform: rotate(30deg);
+}
+
+.board-item-wrapper:hover {
+  transform: translate(-50%, -50%) rotate(0deg) scale(1.05);
+}
+
+.profile-avatar-overlay {
+  position: absolute;
+  top: 40%; 
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8); 
+  z-index: 10; 
+  pointer-events: none; 
+}

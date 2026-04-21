@@ -1,0 +1,38 @@
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.label {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #111827;
+}
+
+.input {
+    width: 100%;
+    border: 2px solid #d1d5db;
+    border-radius: 16px;
+    padding: 16px 18px;
+    font-size: 1.1rem;
+    background: #fff;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus {
+    border-color: #8ecae6;
+    box-shadow: 0 0 0 4px rgba(142, 202, 230, 0.22);
+}
+
+.input::placeholder {
+    color: #9ca3af;
+}
+
+.helperText {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #6b7280;
+}
