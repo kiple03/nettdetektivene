@@ -20,7 +20,6 @@ import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
-import org.ntnu.backend.game.repository.LevelCompletionRepository;
 import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
