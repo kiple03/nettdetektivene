@@ -1,5 +1,7 @@
 // Frontend types aligned to backend API DTOs (camelCase, no DB schema types)
 
+import type { EquippedItem } from '@/types/user';
+
 export type ClassroomSummary = {
   id: string;
   title: string;
@@ -25,6 +27,7 @@ export interface StudentSummary {
   username: string;
   medalsEarned: number;
   levelsCompleted: number;
+  equippedItems: EquippedItem[];
 }
 
 export interface LevelEntry {
