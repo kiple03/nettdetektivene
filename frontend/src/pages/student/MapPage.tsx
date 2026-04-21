@@ -1,5 +1,4 @@
 import { type CSSProperties, useCallback, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import type { EquippedItem } from "@/types/user";
 import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
@@ -22,6 +21,7 @@ import {
 } from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
+import { StopLevelsModal } from "@/components/map/StopLevelsModal";
 
 interface Level {
     step: string;
@@ -126,7 +126,7 @@ export default function MapPage() {
     const [currentStopIndex, setCurrentStopIndex] = useState(-1);
     const [animating, setAnimating] = useState(false);
     const [carOffsetPath, setCarOffsetPath] = useState<string | null>(null);
-    const navigate = useNavigate();
+    const [pendingStop, setPendingStop] = useState<Level | null>(null);
     const svgNode = useRef<SVGSVGElement | null>(null);
     const containerNode = useRef<HTMLDivElement | null>(null);
 
@@ -138,14 +138,12 @@ export default function MapPage() {
         }
         if (animating) return;
         setAnimating(true);
-        // Apply transition class first, then change offset one frame later so the
-        // browser sees a before/after diff and fires the CSS transition.
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 setCurrentStopIndex(index);
                 setTimeout(() => {
                     setAnimating(false);
-                    navigate(level.route);
+                    setPendingStop(level);
                 }, 1200);
             });
         });
@@ -308,6 +306,11 @@ export default function MapPage() {
             {scrollState.canDown && (
                 <button className={`${styles.scrollBtn} ${styles.scrollBtnDown}`} onClick={(e) => { e.stopPropagation(); scroll("down"); }} aria-label="Scroll down">▼</button>
             )}
+
+            <StopLevelsModal
+                stop={pendingStop}
+                onClose={() => setPendingStop(null)}
+            />
 
             <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
                 <AlertDialogContent>
