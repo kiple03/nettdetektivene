@@ -386,6 +386,36 @@
   color: #2c1a06;
 }
 
+.classroom-detail__copy-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(90, 62, 27, 0.18);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  color: #5a3e1b;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s, border-color 0.15s;
+}
+
+.classroom-detail__copy-btn:hover {
+  background: rgba(0, 0, 0, 0.09);
+  border-color: rgba(90, 62, 27, 0.28);
+  transform: translateY(-1px);
+}
+
+.classroom-detail__copy-btn:active {
+  transform: translateY(1px);
+}
+
+.classroom-detail__copy-btn:focus-visible {
+  outline: 2px solid rgba(90, 62, 27, 0.42);
+  outline-offset: 2px;
+}
+
 .classroom-detail__code-btn {
   margin-left: auto;
   display: inline-flex;
