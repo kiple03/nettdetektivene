@@ -125,6 +125,7 @@ export default function MapPage() {
     const [scrollState, setScrollState] = useState<ScrollState>({ canLeft: false, canRight: false, canUp: false, canDown: false });
     const [currentPathOffset, setCurrentPathOffset] = useState("5%");
     const [animating, setAnimating] = useState(false);
+    const [carReversed, setCarReversed] = useState(false);
     const [carOffsetPath, setCarOffsetPath] = useState<string | null>(null);
     const [pendingStop, setPendingStop] = useState<Level | null>(null);
     const svgNode = useRef<SVGSVGElement | null>(null);
@@ -132,12 +133,14 @@ export default function MapPage() {
 
     const animateTo = (offset: string, onDone: () => void) => {
         if (animating) return;
+        setCarReversed(parseFloat(offset) < parseFloat(currentPathOffset));
         setAnimating(true);
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 setCurrentPathOffset(offset);
                 setTimeout(() => {
                     setAnimating(false);
+                    setCarReversed(false);
                     onDone();
                 }, 1200);
             });
@@ -245,7 +248,9 @@ export default function MapPage() {
                         ...(carOffsetPath ? { offsetPath: `path("${carOffsetPath}")` } : {}),
                     } as CSSProperties}
                 >
-                    <CarWithAvatar items={equippedItems} size={140} />
+                    <div className={carReversed ? styles.carFlipped : undefined}>
+                        <CarWithAvatar items={equippedItems} size={140} />
+                    </div>
                 </div>
 
                 <button

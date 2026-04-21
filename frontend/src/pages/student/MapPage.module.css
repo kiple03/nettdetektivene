@@ -138,6 +138,10 @@
   transition: offset-distance 1.2s ease-in-out;
 }
 
+.carFlipped {
+  transform: scaleX(-1);
+}
+
 .dialogActions {
   margin-top: 18px;
   display: flex;
