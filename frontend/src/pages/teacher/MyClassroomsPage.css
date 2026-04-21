@@ -21,14 +21,14 @@
 .teacher-dashboard__title {
   font-size: 36px;
   font-weight: 700;
-  color: #fff;
+  color: #f2f8ed;
   margin: 0 0 8px;
   letter-spacing: -0.5px;
 }
 
 .teacher-dashboard__subtitle {
   font-size: 15px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(229, 242, 217, 0.68);
   margin: 0;
   font-family: sans-serif;
 }
@@ -58,10 +58,10 @@
 
 /* Override TextInput's .input styles */
 .teacher-dashboard__search-input {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
+  background: rgba(12, 31, 20, 0.26) !important;
+  border: 1.5px solid rgba(229, 242, 217, 0.18) !important;
   border-radius: 12px !important;
-  color: #fff !important;
+  color: #f4f8ef !important;
   padding: 13px 18px !important;
   font-size: 15px !important;
   width: 100% !important;
@@ -69,12 +69,12 @@
 }
 
 .teacher-dashboard__search-input::placeholder {
-  color: rgba(255, 255, 255, 0.45) !important;
+  color: rgba(229, 242, 217, 0.5) !important;
 }
 
 .teacher-dashboard__search-input:focus {
-  border-color: rgba(255, 255, 255, 0.45) !important;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(229, 242, 217, 0.34) !important;
+  box-shadow: 0 0 0 3px rgba(229, 242, 217, 0.08) !important;
 }
 
 .teacher-dashboard__new-link {
@@ -84,8 +84,8 @@
 
 /* Override Button's default styles */
 .teacher-dashboard__new-btn {
-  background: #fff !important;
-  color: #1a0a2e !important;
+  background: #f0ead8 !important;
+  color: #314325 !important;
   border-radius: 12px !important;
   padding: 13px 22px !important;
   font-size: 15px !important;
@@ -96,7 +96,7 @@
 }
 
 .teacher-dashboard__new-btn:hover {
-  background: #f0ebff !important;
+  background: #fbf4e6 !important;
   transform: translateY(-2px) !important;
 }
 
@@ -134,7 +134,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: radial-gradient(circle at 40% 35%, #7c82e0, #3a34a8);
+  background: radial-gradient(circle at 40% 35%, #d9a66e, #8a5a33);
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
   z-index: 10;
 }
@@ -173,8 +173,8 @@
   padding: 6px 12px;
   border: 1px solid rgba(0,0,0,0.12);
   border-radius: 6px;
-  background: rgba(0,0,0,0.06);
-  color: #7a5c30;
+  background: rgba(241, 248, 234, 0.12);
+  color: #4d6a40;
   font-family: sans-serif;
   font-size: 12px;
   font-weight: 700;
@@ -183,17 +183,17 @@
 }
 
 .view-toggle-btn--active {
-  background: rgba(0,0,0,0.13);
-  color: #3d2509;
+  background: rgba(92, 128, 75, 0.14);
+  color: #2f4a28;
 }
 
 .view-toggle-btn:hover {
-  background: rgba(0,0,0,0.1);
+  background: rgba(241, 248, 234, 0.2);
 }
 
 /* ── Grid ───────────────────────────────────────────────────── */
 .teacher-dashboard__empty {
-  color: #7a5c30;
+  color: #e6f1dc;
   font-size: 14px;
   font-family: sans-serif;
   text-align: center;
@@ -306,7 +306,7 @@
 /* Color bar */
 .classroom-card__color-bar {
   height: 5px;
-  background: var(--card-accent, #4a3bd4);
+  background: var(--card-accent, #567b55);
   border-radius: 4px 4px 0 0;
   flex-shrink: 0;
 }
@@ -402,7 +402,7 @@
 
 .classroom-card__progress-fill {
   height: 100%;
-  background: var(--card-accent, #4a3bd4);
+  background: var(--card-accent, #567b55);
   border-radius: 3px;
   transition: width 0.4s ease;
 }
@@ -422,7 +422,7 @@
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: #7a5c30;
+  color: #6b7f5f;
 }
 
 .classroom-card__badge {
@@ -440,8 +440,8 @@
 }
 
 .badge--new {
-  background: rgba(74, 59, 212, 0.12);
-  color: #4a3bd4;
+  background: rgba(86, 123, 85, 0.12);
+  color: #4b6f48;
 }
 
 /* ── "Opprett nytt" card ────────────────────────────────────── */
