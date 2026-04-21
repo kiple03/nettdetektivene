@@ -34,6 +34,7 @@ describe('getStudentProgress', () => {
         username: 'alice',
         levelsCompleted: 3,
         medalsEarned: 3,
+        equippedItems: [],
       },
     ]);
   });
@@ -56,6 +57,7 @@ describe('getStudentProgress', () => {
       username: 'bob',
       levelsCompleted: 1,
       medalsEarned: 1,
+      equippedItems: [],
     });
   });
 
