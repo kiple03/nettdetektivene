@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.ntnu.backend.game.model.Stop;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -18,5 +19,9 @@ public interface StopRepository extends JpaRepository<Stop, Integer> {
     // TODO: use instead of findALl
     List<Stop> findAllByOrderByDisplayOrderAsc();
 
-  Optional<Stop> findFirstByOrderByDisplayOrderAsc();
+  @Query("SELECT s FROM Stop s WHERE s.displayOrder > :displayOrder ORDER BY s.displayOrder ASC LIMIT 1")
+  Optional<Stop> findNextStopAfter(int displayOrder);
+
+  @Query("SELECT s FROM Stop s ORDER BY s.displayOrder ASC LIMIT 1")
+  Optional<Stop> findFirstStop();
 }

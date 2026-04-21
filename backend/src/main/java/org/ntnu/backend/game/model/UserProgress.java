@@ -35,7 +35,7 @@ public class UserProgress {
   private Stop currentStop;
 
   @Column(nullable = false)
-  private int levelsCompletedInCurrentStop;
+  private int currentLevelOrder;
 
   @Column(nullable = false)
   private boolean gameCompleted;
@@ -45,7 +45,7 @@ public class UserProgress {
     UserProgress progress = new UserProgress();
     progress.setUser(student);
     progress.setCurrentStop(firstStop);
-    progress.setLevelsCompletedInCurrentStop(0);
+    progress.setCurrentLevelOrder(1);
     progress.setGameCompleted(false);
     return progress;
   }
