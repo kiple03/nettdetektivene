@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import type { EquippedItem } from "@/types/user";
 import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
@@ -109,6 +111,8 @@ type HotspotPos = { top: string; left: string };
 type ScrollState = { canLeft: boolean; canRight: boolean; canUp: boolean; canDown: boolean };
 
 export default function MapPage() {
+    const { data: profile } = useUserProfile();
+    const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
