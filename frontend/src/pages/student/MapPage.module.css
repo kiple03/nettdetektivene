@@ -127,7 +127,6 @@
 
 .car {
   position: absolute;
-  offset-path: url(#car-path);
   offset-distance: var(--car-offset, 0%);
   offset-rotate: auto;
   offset-anchor: 50% 50%;

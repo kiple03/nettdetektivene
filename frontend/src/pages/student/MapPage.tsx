@@ -91,8 +91,6 @@ const levels: Level[] = [
     },
 ];
 
-const initialStopIndex = levels.reduce((last, level, i) => (level.unlocked ? i : last), 0);
-
 const ANCHOR_IDS = [
     "level-back",
     "level-1",
@@ -116,9 +114,10 @@ export default function MapPage() {
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
     const [scrollState, setScrollState] = useState<ScrollState>({ canLeft: false, canRight: false, canUp: false, canDown: false });
-    const [currentStopIndex, setCurrentStopIndex] = useState(initialStopIndex);
+    // -1 means "before the path starts" → 0% offset, so the first click always animates.
+    const [currentStopIndex, setCurrentStopIndex] = useState(-1);
     const [animating, setAnimating] = useState(false);
-    const [pendingRoute, setPendingRoute] = useState<string | null>(null);
+    const [carOffsetPath, setCarOffsetPath] = useState<string | null>(null);
     const navigate = useNavigate();
     const svgNode = useRef<SVGSVGElement | null>(null);
     const containerNode = useRef<HTMLDivElement | null>(null);
@@ -130,13 +129,18 @@ export default function MapPage() {
             return;
         }
         if (animating) return;
-        if (index === currentStopIndex) {
-            navigate(level.route);
-            return;
-        }
         setAnimating(true);
-        setCurrentStopIndex(index);
-        setPendingRoute(level.route);
+        // Apply transition class first, then change offset one frame later so the
+        // browser sees a before/after diff and fires the CSS transition.
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setCurrentStopIndex(index);
+                setTimeout(() => {
+                    setAnimating(false);
+                    navigate(level.route);
+                }, 1200);
+            });
+        });
     };
 
     const containerRef = useCallback((node: HTMLDivElement | null): void | (() => void) => {
@@ -187,6 +191,18 @@ export default function MapPage() {
                 }
             }
             setAnchorPos(result);
+
+            // Build car path in CSS px: raw d coords × scale(0.135) × (renderedWidth / SVG viewBox width)
+            const svgRect = node.getBoundingClientRect();
+            const carPathEl = node.getElementById("car-path");
+            const rawD = carPathEl?.getAttribute("d");
+            if (rawD) {
+                const scale = 0.135 * svgRect.width / 1440;
+                const scaledD = rawD.replace(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g, (_, x, y) =>
+                    `${(parseFloat(x) * scale).toFixed(1)},${(parseFloat(y) * scale).toFixed(1)}`
+                );
+                setCarOffsetPath(scaledD);
+            }
         };
 
         compute();
@@ -208,17 +224,12 @@ export default function MapPage() {
             <div className={styles.levelGrid}>
                 <div
                     className={`${styles.car} ${animating ? styles.carAnimating : ""}`}
-                    style={{ "--car-offset": levels[currentStopIndex].pathOffset } as CSSProperties}
-                    onTransitionEnd={(e) => {
-                        if (e.propertyName !== "offset-distance") return;
-                        setAnimating(false);
-                        if (pendingRoute) {
-                            navigate(pendingRoute);
-                            setPendingRoute(null);
-                        }
-                    }}
+                    style={{
+                        "--car-offset": currentStopIndex >= 0 ? levels[currentStopIndex].pathOffset : "5%",
+                        ...(carOffsetPath ? { offsetPath: `path("${carOffsetPath}")` } : {}),
+                    } as CSSProperties}
                 >
-                    <CarWithAvatar items={equippedItems} size={100} />
+                    <CarWithAvatar items={equippedItems} size={140} />
                 </div>
 
                 <BackButton
