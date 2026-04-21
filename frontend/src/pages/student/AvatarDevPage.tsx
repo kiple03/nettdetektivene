@@ -30,12 +30,13 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
 
   const { data: userProfile } = useUserProfile();
   const { mutate: updateUserProfile } = useUpdateUserProfile();
-
   const {mutate: saveOutfit, isPending: isSaving} = useSaveAvatarOutfit();
+
   //Save backend items to local state, ensuring a skin tone is always present
   const [equipped, setEquipped] = useState<EquippedItem[]>(() => {
     const hasSkinTone = initialItems.some(i => i.category === 'skin_tone');
     if (hasSkinTone) return initialItems;
+    
     const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
     return defaultTone ? [...initialItems, defaultTone] : initialItems;
   });
@@ -48,7 +49,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   const [skinToneKey, setSkinToneKey] = useState<string>(() => {
   const existing = initialItems.find(i => i.category === 'skin_tone');
   return existing?.name || 'tone_dark';
-});
+  });
   const colors = SKIN_TONES[skinToneKey] || SKIN_TONES['tone_dark'];
 
   const toggleItem = (item: EquippedItem) => {
@@ -57,7 +58,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
       if (isAlreadyEquipped) {
         return prev.filter((i) => i.id !== item.id);
       }
-      return [...prev, item];
+      return [...prev.filter((i) => i.category !== item.category), item];
     });
   };
 
