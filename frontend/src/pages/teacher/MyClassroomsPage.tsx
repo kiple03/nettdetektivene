@@ -7,12 +7,12 @@ import { mockClassroomSummaries } from '@/mock/mockClassroomData.ts';
 import './MyClassroomsPage.css';
 
 const CARD_ACCENT_COLORS = [
-    '#567b55',
-    '#7a8f53',
-    '#8d6a3c',
-    '#5f866f',
-    '#b07c1a',
-    '#6f8a95',
+    '#7b5a3a',
+    '#3f6f8a',
+    '#b5623b',
+    '#8a7335',
+    '#6a4f3b',
+    '#4b7a5b',
 ];
 
 export default function MyClassroomsPage() {

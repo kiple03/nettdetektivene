@@ -21,14 +21,14 @@
 .teacher-dashboard__title {
   font-size: 36px;
   font-weight: 700;
-  color: #f2f8ed;
+  color: rgba(242, 248, 237, 0.9);
   margin: 0 0 8px;
   letter-spacing: -0.5px;
 }
 
 .teacher-dashboard__subtitle {
   font-size: 15px;
-  color: rgba(229, 242, 217, 0.68);
+  color: rgba(229, 242, 217, 0.58);
   margin: 0;
   font-family: sans-serif;
 }
@@ -84,7 +84,7 @@
 
 /* Override Button's default styles */
 .teacher-dashboard__new-btn {
-  background: #f0ead8 !important;
+  background: #e6ddc8 !important;
   color: #314325 !important;
   border-radius: 12px !important;
   padding: 13px 22px !important;
@@ -96,7 +96,7 @@
 }
 
 .teacher-dashboard__new-btn:hover {
-  background: #fbf4e6 !important;
+  background: #f0e7d2 !important;
   transform: translateY(-2px) !important;
 }
 
@@ -306,7 +306,7 @@
 /* Color bar */
 .classroom-card__color-bar {
   height: 5px;
-  background: var(--card-accent, #567b55);
+  background: var(--card-accent, #7b5a3a);
   border-radius: 4px 4px 0 0;
   flex-shrink: 0;
 }
@@ -402,7 +402,7 @@
 
 .classroom-card__progress-fill {
   height: 100%;
-  background: var(--card-accent, #567b55);
+  background: var(--card-accent, #7b5a3a);
   border-radius: 3px;
   transition: width 0.4s ease;
 }
@@ -422,7 +422,7 @@
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: #6b7f5f;
+  color: #7a5c30;
 }
 
 .classroom-card__badge {
@@ -440,8 +440,8 @@
 }
 
 .badge--new {
-  background: rgba(86, 123, 85, 0.12);
-  color: #4b6f48;
+  background: rgba(63, 111, 138, 0.14);
+  color: #2f5f78;
 }
 
 /* ── "Opprett nytt" card ────────────────────────────────────── */
