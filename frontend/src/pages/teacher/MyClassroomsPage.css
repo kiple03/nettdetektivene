@@ -113,7 +113,7 @@
 .teacher-corkboard {
   position: relative;
   width: 100%;
-  max-width: 980px;
+  max-width: 1180px;
   background-color: #c9ad80;
   background-image:
           repeating-linear-gradient(0deg, transparent, transparent 12px, rgba(0,0,0,0.03) 12px, rgba(0,0,0,0.03) 13px),
@@ -123,7 +123,7 @@
   box-shadow:
           inset 0 2px 12px rgba(0, 0, 0, 0.22),
           0 12px 48px rgba(0, 0, 0, 0.5);
-  padding: 44px 28px 36px;
+  padding: 48px 30px 38px;
 }
 
 .teacher-corkboard__pin {
@@ -203,7 +203,7 @@
 .teacher-dashboard__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+  gap: 26px;
 }
 
 /* List view */
@@ -275,7 +275,7 @@
           2px 4px 10px rgba(0,0,0,0.2),
           inset 0 1px 0 rgba(255,255,255,0.55);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  min-height: 200px;
+  min-height: 248px;
   overflow: visible;
 }
 
@@ -313,20 +313,20 @@
 
 /* Card top */
 .classroom-card__top {
-  padding: 14px 14px 4px;
+  padding: 20px 18px 8px;
 }
 
 .classroom-card__title {
-  font-size: 16px !important;
+  font-size: 19px !important;
   font-weight: 700;
   color: #2c1a06;
   margin: 0 0 4px;
-  line-height: 1.25;
+  line-height: 1.3;
 }
 
 .classroom-card__subject {
   font-family: sans-serif;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -337,19 +337,19 @@
 /* Stats row */
 .classroom-card__stats {
   display: flex;
-  gap: 12px;
-  padding: 12px 14px 4px;
+  gap: 18px;
+  padding: 16px 18px 8px;
   margin-top: auto;
 }
 
 .classroom-card__stat {
   display: flex;
   flex-direction: column;
-  min-width: 36px;
+  min-width: 44px;
 }
 
 .classroom-card__stat-value {
-  font-size: 22px;
+  font-size: 27px;
   font-weight: 700;
   color: #2c1a06;
   line-height: 1;
@@ -358,7 +358,7 @@
 
 .classroom-card__stat-label {
   font-family: sans-serif;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -368,7 +368,7 @@
 
 /* Progress */
 .classroom-card__progress-wrap {
-  padding: 6px 14px 10px;
+  padding: 10px 18px 14px;
 }
 
 .classroom-card__progress-header {
@@ -379,7 +379,7 @@
 
 .classroom-card__progress-label {
   font-family: sans-serif;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -388,7 +388,7 @@
 
 .classroom-card__progress-pct {
   font-family: sans-serif;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 800;
   color: #7a5c30;
 }
@@ -412,14 +412,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px 12px;
+  padding: 12px 18px 16px;
   border-top: 1px solid rgba(0,0,0,0.06);
   margin-top: auto;
 }
 
 .classroom-card__join-code {
   font-family: monospace;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.05em;
   color: #7a5c30;
@@ -449,8 +449,8 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  min-height: 200px;
-  padding: 28px 18px;
+  min-height: 248px;
+  padding: 32px 22px;
   background: rgba(255, 255, 255, 0.15);
   border: 2px dashed rgba(122, 78, 42, 0.38);
   box-shadow: none;
@@ -470,11 +470,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: rgba(122, 78, 42, 0.1);
-  font-size: 30px;
+  font-size: 36px;
   font-weight: 300;
   color: #7a4e2a;
   line-height: 1;
@@ -483,7 +483,7 @@
 
 .classroom-card__new-label {
   font-family: sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.03em;
   color: #7a4e2a;
@@ -578,8 +578,8 @@ a.bottom-nav-chip:hover {
   }
 
   .teacher-corkboard {
-    max-width: 920px;
-    padding: 30px 22px 22px;
+    max-width: 1140px;
+    padding: 32px 24px 24px;
   }
 
   .teacher-corkboard__header {
@@ -587,12 +587,28 @@ a.bottom-nav-chip:hover {
   }
 
   .teacher-dashboard__grid {
-    gap: 16px;
+    gap: 18px;
   }
 
   .classroom-card,
   .classroom-card--new {
-    min-height: 170px;
+    min-height: 224px;
+  }
+
+  .classroom-card__top {
+    padding: 19px 18px 8px;
+  }
+
+  .classroom-card__title {
+    font-size: 18px !important;
+  }
+
+  .classroom-card__stat-value {
+    font-size: 25px;
+  }
+
+  .classroom-card__progress-wrap {
+    padding: 9px 18px 13px;
   }
 
   .teacher-dashboard__bottom-nav {
