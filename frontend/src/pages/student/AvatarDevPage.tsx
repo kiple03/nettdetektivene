@@ -158,7 +158,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
         <div className={styles.wardrobeSection}>
           <h2 className={styles.sectionTitle}>Din garderobe</h2>
           <div className={styles.gridContainer}>
-            {inventory.map((item) => {
+            {inventory.filter((item) => item.category !== 'skin_tone').map((item) => {
               const isEquipped = equipped.some((i) => i.id === item.id);
               return (
                   <button
