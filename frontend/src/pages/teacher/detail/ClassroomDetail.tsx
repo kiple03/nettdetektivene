@@ -1,9 +1,9 @@
-import { Fragment, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import type { ClassroomDetail, StudentSummary, StopSummary } from '@/types/classroom.ts';
 import { Button } from '@/components/ui/buttons/Button';
-import { Card } from '@/components/ui/cards/Cards';
-import { updateClassroom, deleteClassroom } from '@/services/teacherService';
+import { updateClassroom, deleteClassroom, removeStudent, updateStudentUsername } from '@/services/teacherService';
+import { LayeredAvatar } from '@/components/user/LayeredAvatar';
 import './ClassroomDetail.css';
 
 type LoaderData = {
@@ -19,10 +19,16 @@ export default function ClassroomDetailPage() {
     const [editTitle, setEditTitle] = useState(initial?.title ?? '');
     const [saving, setSaving] = useState(false);
     const [saveError, setSaveError] = useState<string | null>(null);
-    const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+    const [studentList, setStudentList] = useState<StudentSummary[]>(students);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState<string | null>(null);
+    const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
+    const [editUsernameValue, setEditUsernameValue] = useState('');
+    const [savingUsername, setSavingUsername] = useState(false);
+    const [usernameError, setUsernameError] = useState<string | null>(null);
+    const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+    const [removingId, setRemovingId] = useState<string | null>(null);
     const navigate = useNavigate();
 
     if (!classroom) {
@@ -36,7 +42,7 @@ export default function ClassroomDetailPage() {
     const totalStops = stops.length;
 
     const leaderboard = useMemo(() => {
-        return [...students]
+        return [...studentList]
             .sort((a, b) => {
                 if (b.medalsEarned !== a.medalsEarned) return b.medalsEarned - a.medalsEarned;
                 return b.levelsCompleted - a.levelsCompleted;
@@ -45,21 +51,10 @@ export default function ClassroomDetailPage() {
                 userId: student.userId,
                 rank: index + 1,
             }));
-    }, [students]);
+    }, [studentList]);
 
     function getLeaderboardRank(userId: string) {
-        return leaderboard.find((entry) => entry.userId === userId)?.rank ?? students.length;
-    }
-
-    function getStudentBadges(student: StudentSummary) {
-        const badges: string[] = [];
-
-        if (student.medalsEarned >= 3) badges.push('Medaljemester');
-        if (totalStops > 0 && student.levelsCompleted === totalStops) badges.push('Fullført alle stopp');
-        if (student.medalsEarned > 0) badges.push('På god vei');
-        if (student.medalsEarned === 0 && student.levelsCompleted > 0) badges.push('Ny utfordrer');
-
-        return badges.slice(0, 3);
+        return leaderboard.find((entry) => entry.userId === userId)?.rank ?? studentList.length;
     }
 
     async function handleSave() {
@@ -101,8 +96,49 @@ export default function ClassroomDetailPage() {
         }
     }
 
+    function startEditUsername(student: StudentSummary) {
+        setEditingStudentId(student.userId);
+        setEditUsernameValue(student.username);
+        setUsernameError(null);
+    }
+
+    function cancelEditUsername() {
+        setEditingStudentId(null);
+        setUsernameError(null);
+    }
+
+    async function saveUsername(student: StudentSummary) {
+        if (!classroom) return;
+        const trimmed = editUsernameValue.trim();
+        if (trimmed.length < 3) { setUsernameError('Brukernavn må være minst 3 tegn.'); return; }
+        setSavingUsername(true);
+        setUsernameError(null);
+        try {
+            await updateStudentUsername(classroom.id, student.userId, trimmed);
+            setStudentList(prev => prev.map(s => s.userId === student.userId ? { ...s, username: trimmed } : s));
+            setEditingStudentId(null);
+        } catch {
+            setUsernameError('Brukernavnet er allerede tatt eller ugyldig.');
+        } finally {
+            setSavingUsername(false);
+        }
+    }
+
+    async function handleRemoveStudent(studentId: string) {
+        if (!classroom) return;
+        setRemovingId(studentId);
+        try {
+            await removeStudent(classroom.id, studentId);
+            setStudentList(prev => prev.filter(s => s.userId !== studentId));
+            setConfirmRemoveId(null);
+        } finally {
+            setRemovingId(null);
+        }
+    }
+
     return (
         <div className="classroom-detail">
+            <Link to="/teacher" className="classroom-detail__back">← Tilbake til oversikten</Link>
             <header className="classroom-detail__header">
                 {editMode ? (
                     <div className="classroom-detail__title-edit">
@@ -141,204 +177,186 @@ export default function ClassroomDetailPage() {
                 ) : (
                     <div className="classroom-detail__title-wrap">
                         <h1 className="classroom-detail__title">{classroom.title}</h1>
-                        <button
-                            className="classroom-detail__pencil"
-                            aria-label="Rediger klassenavn"
-                            onClick={() => { setEditTitle(classroom.title); setEditMode(true); }}
-                        >
-                            <PencilIcon />
-                        </button>
-                        <button
-                            className="classroom-detail__trash"
-                            aria-label="Slett klasse"
-                            onClick={() => setShowDeleteModal(true)}
-                        >
-                            <TrashIcon />
-                        </button>
+                        <div className="classroom-detail__title-actions">
+                            <button
+                                className="classroom-detail__pencil"
+                                aria-label="Rediger klassenavn"
+                                onClick={() => { setEditTitle(classroom.title); setEditMode(true); }}
+                            >
+                                <PencilIcon />
+                            </button>
+                            <div className="classroom-detail__title-divider" />
+                            <button
+                                className="classroom-detail__trash"
+                                aria-label="Slett klasse"
+                                onClick={() => setShowDeleteModal(true)}
+                            >
+                                <TrashIcon />
+                            </button>
+                        </div>
                     </div>
                 )}
             </header>
 
-            <Card variant="unstyled" className="classroom-detail__section">
-                <h2 className="classroom-detail__section-title">Klasseinformasjon</h2>
+            <div className="classroom-detail__board-wrap">
+                <div className="classroom-detail__corkboard">
+                    <div className="classroom-detail__corkboard-pin" />
 
-                <div className="classroom-detail__info">
-                    <div className="classroom-detail__info-row">
-                        <span className="classroom-detail__info-label">Bli-med-kode</span>
-                        <span className="classroom-detail__join-code">{classroom.joinCode}</span>
-                        <Link
-                            to={`/teacher/classrooms/${classroom.id}/code`}
-                            className="classroom-detail__code-btn"
-                        >
-                            Vis kode på storskjerm →
-                        </Link>
-                    </div>
-
-                    {classroom.description && (
-                        <div className="classroom-detail__info-row">
-                            <span className="classroom-detail__info-label">Beskrivelse</span>
-                            <span className="classroom-detail__info-value">{classroom.description}</span>
+                    {/* Top row: Klasseinformasjon + Mystery */}
+                    <div className="classroom-detail__top-notes">
+                        <div className="classroom-detail__note">
+                            <div className="classroom-detail__note-tape" />
+                            <h2 className="classroom-detail__section-title">Klasseinformasjon</h2>
+                            <div className="classroom-detail__info">
+                                <div className="classroom-detail__info-row">
+                                    <span className="classroom-detail__info-label">Bli-med-kode</span>
+                                    <span className="classroom-detail__join-code">{classroom.joinCode}</span>
+                                    <Link
+                                        to={`/teacher/classrooms/${classroom.id}/code`}
+                                        className="classroom-detail__code-btn"
+                                    >
+                                        Vis kode på storskjerm →
+                                    </Link>
+                                </div>
+                                {classroom.description && (
+                                    <div className="classroom-detail__info-row">
+                                        <span className="classroom-detail__info-label">Beskrivelse</span>
+                                        <span className="classroom-detail__info-value">{classroom.description}</span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    )}
-                </div>
-            </Card>
 
-            <Card variant="unstyled" className="classroom-detail__section">
-                <h2 className="classroom-detail__section-title">
-                    Elever <span className="classroom-detail__count">({students.length})</span>
-                </h2>
-
-                {students.length === 0 ? (
-                    <p className="classroom-detail__empty">Ingen elever er påmeldt ennå.</p>
-                ) : (
-                    <div className="classroom-detail__students-wrap">
-                        <table className="classroom-detail__table">
-                            <thead>
-                            <tr>
-                                <th className="classroom-detail__th">Navn</th>
-                                <th className="classroom-detail__th classroom-detail__th--num">Stopp</th>
-                                <th className="classroom-detail__th classroom-detail__th--num">Medaljer</th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {students.map((student) => {
-                                const { userId, username, levelsCompleted, medalsEarned } = student;
-                                const isOpen = selectedStudentId === userId;
-                                const rank = getLeaderboardRank(userId);
-                                const badges = getStudentBadges(student);
-
-                                return (
-                                    <Fragment key={userId}>
-                                        <tr
-                                            className={`classroom-detail__tr ${isOpen ? 'classroom-detail__tr--active' : ''}`}
-                                            onClick={() => setSelectedStudentId(isOpen ? null : userId)}
-                                            role="button"
-                                            tabIndex={0}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter' || e.key === ' ') {
-                                                    e.preventDefault();
-                                                    setSelectedStudentId(isOpen ? null : userId);
-                                                }
-                                            }}
-                                        >
-                                            <td className="classroom-detail__td">
-                                                <Link
-                                                    to={`/teacher/classrooms/${classroom.id}/students/${userId}`}
-                                                    className="classroom-detail__student-link"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    {username}
-                                                </Link>
-                                            </td>
-
-                                            <td className="classroom-detail__td classroom-detail__td--num">
-                                                {levelsCompleted}/{totalStops}
-                                            </td>
-
-                                            <td className="classroom-detail__td classroom-detail__td--num">
-                                                {medalsEarned}
-                                            </td>
-                                        </tr>
-
-                                        {isOpen && (
-                                            <tr className="classroom-detail__menu-row">
-                                                <td colSpan={3} className="classroom-detail__menu-cell">
-                                                    <div className="classroom-detail__student-menu">
-                                                        <div className="classroom-detail__student-menu-grid">
-                                                            <div className="classroom-detail__student-menu-main">
-                                                                <div className="classroom-detail__student-menu-top">
-                                                                    <div className="classroom-detail__student-avatar">
-                                                                        {username.slice(0, 2).toUpperCase()}
-                                                                    </div>
-
-                                                                    <div>
-                                                                        <h3 className="classroom-detail__student-menu-name">
-                                                                            {username}
-                                                                        </h3>
-                                                                        <p className="classroom-detail__student-menu-subtitle">
-                                                                            Trykk på navnet for å gå direkte til elevsiden.
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="classroom-detail__student-stats">
-                                                                    <div className="classroom-detail__student-stat">
-                                                                        <span className="classroom-detail__student-stat-label">
-                                                                            Leaderboard
-                                                                        </span>
-                                                                        <span className="classroom-detail__student-stat-value">
-                                                                            #{rank}
-                                                                        </span>
-                                                                    </div>
-
-                                                                    <div className="classroom-detail__student-stat">
-                                                                        <span className="classroom-detail__student-stat-label">
-                                                                            Medaljer
-                                                                        </span>
-                                                                        <span className="classroom-detail__student-stat-value">
-                                                                            {medalsEarned}
-                                                                        </span>
-                                                                    </div>
-
-                                                                    <div className="classroom-detail__student-stat">
-                                                                        <span className="classroom-detail__student-stat-label">
-                                                                            Stopp
-                                                                        </span>
-                                                                        <span className="classroom-detail__student-stat-value">
-                                                                            {levelsCompleted}/{totalStops}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="classroom-detail__student-menu-side">
-                                                                <p className="classroom-detail__badges-title">Badges</p>
-
-                                                                <div className="classroom-detail__badges">
-                                                                    {badges.length > 0 ? (
-                                                                        badges.map((badge) => (
-                                                                            <span key={badge} className="classroom-detail__badge">
-                                                                                {badge}
-                                                                            </span>
-                                                                        ))
-                                                                    ) : (
-                                                                        <span className="classroom-detail__badge classroom-detail__badge--muted">
-                                                                            Ingen badges ennå
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-
-                                                                <Link
-                                                                    to={`/teacher/classrooms/${classroom.id}/students/${userId}`}
-                                                                    className="classroom-detail__continue-btn"
-                                                                >
-                                                                    Fortsett
-                                                                </Link>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </Fragment>
-                                );
-                            })}
-                            </tbody>
-                        </table>
+                        <div className="classroom-detail__note">
+                            <div className="classroom-detail__note-tape" />
+                            <h2 className="classroom-detail__section-title">Mystery-innleveringer</h2>
+                            <Link
+                                to={`/teacher/classrooms/${classroom.id}/mystery-submissions`}
+                                className="classroom-detail__mystery-link"
+                            >
+                                Se alle innleveringer →
+                            </Link>
+                        </div>
                     </div>
-                )}
-            </Card>
 
-            <Card variant="unstyled" className="classroom-detail__section">
-                <h2 className="classroom-detail__section-title">Mystery-innleveringer</h2>
-                <Link
-                    to={`/teacher/classrooms/${classroom.id}/mystery-submissions`}
-                    className="classroom-detail__mystery-link"
-                >
-                    Se alle innleveringer →
-                </Link>
-            </Card>
+                    {/* Elever — full width */}
+                    <div className="classroom-detail__note">
+                        <div className="classroom-detail__note-tape" />
+                        <h2 className="classroom-detail__section-title">
+                            Elever <span className="classroom-detail__count">({studentList.length})</span>
+                        </h2>
+
+                        {studentList.length === 0 ? (
+                            <p className="classroom-detail__empty">Ingen elever er påmeldt ennå.</p>
+                        ) : (
+                            <ul className="classroom-detail__student-list">
+                                {studentList.map((student) => {
+                                    const { userId, username, levelsCompleted, medalsEarned, equippedItems } = student;
+                                    const rank = getLeaderboardRank(userId);
+                                    const isEditing = editingStudentId === userId;
+                                    const isConfirmingRemove = confirmRemoveId === userId;
+
+                                    return (
+                                        <li key={userId} className="classroom-detail__student-row">
+                                            <Link
+                                                to={`/teacher/classrooms/${classroom.id}/students/${userId}`}
+                                                className="classroom-detail__student-avatar-link"
+                                                tabIndex={-1}
+                                            >
+                                                <LayeredAvatar items={equippedItems} size={52} />
+                                            </Link>
+
+                                            <div className="classroom-detail__student-body">
+                                                {isEditing ? (
+                                                    <div className="classroom-detail__username-edit">
+                                                        {usernameError && (
+                                                            <span className="classroom-detail__save-error">{usernameError}</span>
+                                                        )}
+                                                        <input
+                                                            className="classroom-detail__username-input"
+                                                            value={editUsernameValue}
+                                                            onChange={(e) => setEditUsernameValue(e.target.value)}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === 'Enter') saveUsername(student);
+                                                                if (e.key === 'Escape') cancelEditUsername();
+                                                            }}
+                                                            maxLength={20}
+                                                            autoFocus
+                                                        />
+                                                        <button
+                                                            className="classroom-detail__action-btn classroom-detail__action-btn--save"
+                                                            onClick={() => saveUsername(student)}
+                                                            disabled={savingUsername}
+                                                        >
+                                                            {savingUsername ? '…' : 'Lagre'}
+                                                        </button>
+                                                        <button
+                                                            className="classroom-detail__action-btn"
+                                                            onClick={cancelEditUsername}
+                                                            disabled={savingUsername}
+                                                        >
+                                                            Avbryt
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <Link
+                                                        to={`/teacher/classrooms/${classroom.id}/students/${userId}`}
+                                                        className="classroom-detail__student-name"
+                                                    >
+                                                        {username}
+                                                    </Link>
+                                                )}
+                                                <span className="classroom-detail__student-meta">
+                                                    #{rank} · {levelsCompleted}/{totalStops} stopp · {medalsEarned} medaljer
+                                                </span>
+                                            </div>
+
+                                            <div className="classroom-detail__student-actions">
+                                                {isConfirmingRemove ? (
+                                                    <>
+                                                        <span className="classroom-detail__confirm-label">Fjerne?</span>
+                                                        <button
+                                                            className="classroom-detail__action-btn classroom-detail__action-btn--danger"
+                                                            onClick={() => handleRemoveStudent(userId)}
+                                                            disabled={removingId === userId}
+                                                        >
+                                                            {removingId === userId ? '…' : 'Ja'}
+                                                        </button>
+                                                        <button
+                                                            className="classroom-detail__action-btn"
+                                                            onClick={() => setConfirmRemoveId(null)}
+                                                            disabled={removingId === userId}
+                                                        >
+                                                            Nei
+                                                        </button>
+                                                    </>
+                                                ) : !isEditing ? (
+                                                    <>
+                                                        <button
+                                                            className="classroom-detail__icon-btn"
+                                                            aria-label="Rediger brukernavn"
+                                                            onClick={() => startEditUsername(student)}
+                                                        >
+                                                            <PencilIcon />
+                                                        </button>
+                                                        <button
+                                                            className="classroom-detail__icon-btn classroom-detail__icon-btn--danger"
+                                                            aria-label="Fjern elev fra klasserom"
+                                                            onClick={() => setConfirmRemoveId(userId)}
+                                                        >
+                                                            <TrashIcon />
+                                                        </button>
+                                                    </>
+                                                ) : null}
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )}
+                    </div>
+                </div>
+            </div>
 
             {showDeleteModal && (
                 <div className="classroom-detail__modal-backdrop" onClick={() => !deleting && setShowDeleteModal(false)}>

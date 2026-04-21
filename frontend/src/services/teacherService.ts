@@ -37,11 +37,19 @@ interface RawMysterySubmission {
   featured: boolean;
 }
 
+interface RawEquippedItem {
+  id: string;
+  name: string;
+  category: string;
+  imageUrl: string;
+}
+
 interface RawStudentProgress {
   userId: string;
   username: string;
   levelsCompleted: number;
   medalsEarned: number;
+  equippedItems: RawEquippedItem[];
 }
 
 interface RawClassroomSummary {
@@ -89,6 +97,7 @@ function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
     username: raw.username,
     levelsCompleted: raw.levelsCompleted,
     medalsEarned: raw.medalsEarned,
+    equippedItems: raw.equippedItems ?? [],
   };
 }
 
@@ -268,4 +277,12 @@ export async function getNotifications(): Promise<NotificationResponse[]> {
 export async function getStops(): Promise<StopSummary[]> {
   const res = await apiClient.get<RawStop[]>('/teacher/stops');
   return res.data.map(mapStop);
+}
+
+export async function removeStudent(classroomId: string, studentId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}/students/${studentId}`);
+}
+
+export async function updateStudentUsername(classroomId: string, studentId: string, username: string): Promise<void> {
+  await apiClient.patch(`/teacher/classrooms/${classroomId}/students/${studentId}`, { username });
 }
