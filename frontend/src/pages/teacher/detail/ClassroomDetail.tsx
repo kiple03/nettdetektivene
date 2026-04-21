@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import { Check, Copy } from 'lucide-react';
 import type { ClassroomDetail, StudentSummary, StopSummary } from '@/types/classroom.ts';
 import { Button } from '@/components/ui/buttons/Button';
 import { updateClassroom, deleteClassroom, removeStudent, updateStudentUsername } from '@/services/teacherService';
@@ -29,6 +30,7 @@ export default function ClassroomDetailPage() {
     const [usernameError, setUsernameError] = useState<string | null>(null);
     const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
     const [removingId, setRemovingId] = useState<string | null>(null);
+    const [didCopyCode, setDidCopyCode] = useState(false);
     const navigate = useNavigate();
 
     if (!classroom) {
@@ -105,6 +107,18 @@ export default function ClassroomDetailPage() {
     function cancelEditUsername() {
         setEditingStudentId(null);
         setUsernameError(null);
+    }
+
+    async function handleCopyJoinCode() {
+        try {
+            await navigator.clipboard.writeText(classroom.joinCode);
+            setDidCopyCode(true);
+            window.setTimeout(() => {
+                setDidCopyCode(false);
+            }, 1800);
+        } catch {
+            setDidCopyCode(false);
+        }
     }
 
     async function saveUsername(student: StudentSummary) {
@@ -211,6 +225,19 @@ export default function ClassroomDetailPage() {
                                 <div className="classroom-detail__info-row">
                                     <span className="classroom-detail__info-label">Bli-med-kode</span>
                                     <span className="classroom-detail__join-code">{classroom.joinCode}</span>
+                                    <button
+                                        type="button"
+                                        className="classroom-detail__copy-btn"
+                                        onClick={handleCopyJoinCode}
+                                        aria-label="Kopier bli-med-koden"
+                                        title={didCopyCode ? 'Kopiert' : 'Kopier kode'}
+                                    >
+                                        {didCopyCode ? (
+                                            <Check size={16} strokeWidth={2.7} />
+                                        ) : (
+                                            <Copy size={16} strokeWidth={2.4} />
+                                        )}
+                                    </button>
                                     <Link
                                         to={`/teacher/classrooms/${classroom.id}/code`}
                                         className="classroom-detail__code-btn"

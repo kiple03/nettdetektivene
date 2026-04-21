@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import { Check, Copy } from 'lucide-react';
 import type { ClassroomSummary } from '@/types/classroom.ts';
 import { Button } from '@/components/ui/buttons/Button.tsx';
 import { TextInput } from '@/components/ui/textInput/TextInput.tsx';
@@ -18,9 +19,11 @@ const CARD_ACCENT_COLORS = [
 export default function MyClassroomsPage() {
     const loaderData = useLoaderData() as ClassroomSummary[] | null;
     const summaries = loaderData ?? mockClassroomSummaries;
+    const navigate = useNavigate();
 
     const [search, setSearch] = useState('');
     const [view, setView] = useState<'grid' | 'list'>('grid');
+    const [copiedClassroomId, setCopiedClassroomId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
       const query = search.toLowerCase();
@@ -32,6 +35,18 @@ export default function MyClassroomsPage() {
               .includes(query),
       );
   }, [summaries, search]);
+
+    async function handleCopyCode(joinCode: string, classroomId: string) {
+        try {
+            await navigator.clipboard.writeText(joinCode);
+            setCopiedClassroomId(classroomId);
+            window.setTimeout(() => {
+                setCopiedClassroomId((current) => (current === classroomId ? null : current));
+            }, 1800);
+        } catch {
+            setCopiedClassroomId(null);
+        }
+    }
 
     return (
         <div className="teacher-dashboard">
@@ -109,13 +124,22 @@ export default function MyClassroomsPage() {
                         {filtered.map((summary, index) => {
                             const accentColor =
                                 CARD_ACCENT_COLORS[index % CARD_ACCENT_COLORS.length];
+                            const didCopy = copiedClassroomId === summary.id;
 
                             return (
-                                <Link
+                                <div
                                     key={summary.id}
-                                    to={`/teacher/classrooms/${summary.id}`}
                                     className="classroom-card"
                                     style={{ '--card-accent': accentColor } as React.CSSProperties}
+                                    role="link"
+                                    tabIndex={0}
+                                    onClick={() => navigate(`/teacher/classrooms/${summary.id}`)}
+                                    onKeyDown={(event) => {
+                                        if (event.key === 'Enter' || event.key === ' ') {
+                                            event.preventDefault();
+                                            navigate(`/teacher/classrooms/${summary.id}`);
+                                        }
+                                    }}
                                 >
                                     <div className="classroom-card__tape" />
                                     <div className="classroom-card__color-bar" />
@@ -182,8 +206,24 @@ export default function MyClassroomsPage() {
                                         <span className="classroom-card__join-code">
                                             Kode: {summary.joinCode}
                                         </span>
+                                        <button
+                                            type="button"
+                                            className="classroom-card__copy-btn"
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                handleCopyCode(summary.joinCode, summary.id);
+                                            }}
+                                            aria-label={`Kopier koden for ${summary.title}`}
+                                            title={didCopy ? 'Kopiert' : 'Kopier kode'}
+                                        >
+                                            {didCopy ? (
+                                                <Check size={16} strokeWidth={2.7} />
+                                            ) : (
+                                                <Copy size={16} strokeWidth={2.4} />
+                                            )}
+                                        </button>
                                     </div>
-                                </Link>
+                                </div>
                             );
                         })}
 
