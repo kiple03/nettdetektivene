@@ -96,12 +96,16 @@ const ANCHOR_IDS = [
 type AnchorId = (typeof ANCHOR_IDS)[number];
 type HotspotPos = { top: string; left: string };
 
+type ScrollState = { canLeft: boolean; canRight: boolean; canUp: boolean; canDown: boolean };
+
 export default function MapPage() {
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
+    const [scrollState, setScrollState] = useState<ScrollState>({ canLeft: false, canRight: false, canUp: false, canDown: false });
     const navigate = useNavigate();
     const svgNode = useRef<SVGSVGElement | null>(null);
+    const containerNode = useRef<HTMLDivElement | null>(null);
 
     // DEV: click container to log SVG coordinates for anchor placement
     const handleDevClick = (e: React.MouseEvent) => {
@@ -124,6 +128,38 @@ export default function MapPage() {
 
         setLockedLevelTitle(level.title);
         setLockedDialogOpen(true);
+    };
+
+    const containerRef = useCallback((node: HTMLDivElement | null): void | (() => void) => {
+        containerNode.current = node;
+        if (!node) return;
+        const update = () => {
+            setScrollState({
+                canLeft: node.scrollLeft > 1,
+                canRight: node.scrollLeft < node.scrollWidth - node.clientWidth - 1,
+                canUp: node.scrollTop > 1,
+                canDown: node.scrollTop < node.scrollHeight - node.clientHeight - 1,
+            });
+        };
+        update();
+        node.addEventListener("scroll", update);
+        const ro = new ResizeObserver(update);
+        ro.observe(node);
+        return () => {
+            node.removeEventListener("scroll", update);
+            ro.disconnect();
+        };
+    }, []);
+
+    const scroll = (dir: "left" | "right" | "up" | "down") => {
+        const node = containerNode.current;
+        if (!node) return;
+        const amount = 500;
+        node.scrollBy({
+            left: dir === "left" ? -amount : dir === "right" ? amount : 0,
+            top: dir === "up" ? -amount : dir === "down" ? amount : 0,
+            behavior: "smooth",
+        });
     };
 
     const svgRef = useCallback((node: SVGSVGElement | null): void | (() => void) => {
@@ -153,7 +189,7 @@ export default function MapPage() {
     }, []);
 
     return (
-        <div className={styles.container} onClick={handleDevClick}>
+        <div className={styles.container} ref={containerRef} onClick={handleDevClick}>
             <div className={styles.header}>
                 <h1>Velg nivå</h1>
                 <p>Velge neste nivå</p>
@@ -218,6 +254,19 @@ export default function MapPage() {
                 })}
             </div>
             </div>
+
+            {scrollState.canLeft && (
+                <button className={`${styles.scrollBtn} ${styles.scrollBtnLeft}`} onClick={(e) => { e.stopPropagation(); scroll("left"); }} aria-label="Scroll left">◀</button>
+            )}
+            {scrollState.canRight && (
+                <button className={`${styles.scrollBtn} ${styles.scrollBtnRight}`} onClick={(e) => { e.stopPropagation(); scroll("right"); }} aria-label="Scroll right">▶</button>
+            )}
+            {scrollState.canUp && (
+                <button className={`${styles.scrollBtn} ${styles.scrollBtnUp}`} onClick={(e) => { e.stopPropagation(); scroll("up"); }} aria-label="Scroll up">▲</button>
+            )}
+            {scrollState.canDown && (
+                <button className={`${styles.scrollBtn} ${styles.scrollBtnDown}`} onClick={(e) => { e.stopPropagation(); scroll("down"); }} aria-label="Scroll down">▼</button>
+            )}
 
             <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
                 <AlertDialogContent>
