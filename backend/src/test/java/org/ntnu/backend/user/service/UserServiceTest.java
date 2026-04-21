@@ -17,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.ntnu.backend.avatar.service.UserAvatarService;
+import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.exception.UserAlreadyExistsException;
 import org.ntnu.backend.security.JwtService;
 import org.ntnu.backend.security.RefreshTokenModel;
@@ -47,6 +49,10 @@ class UserServiceTest {
   private UserMapper userMapper;
   @Mock
   private RefreshTokenRepository refreshTokenRepository;
+  @Mock
+  private EnrollmentRepository enrollmentRepository;
+  @Mock
+  private UserAvatarService userAvatarService;
 
   @InjectMocks
   private UserService userService;
