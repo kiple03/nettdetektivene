@@ -110,6 +110,7 @@ export default function ClassroomDetailPage() {
     }
 
     async function handleCopyJoinCode() {
+        if (!classroom) return;
         try {
             await navigator.clipboard.writeText(classroom.joinCode);
             setDidCopyCode(true);
