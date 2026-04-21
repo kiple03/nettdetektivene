@@ -167,7 +167,7 @@ export default function ClassroomDetailPage() {
                         <span className="classroom-detail__info-label">Bli-med-kode</span>
                         <span className="classroom-detail__join-code">{classroom.joinCode}</span>
                         <Link
-                            to={`/teacher/classroom/${classroom.id}/code`}
+                            to={`/teacher/classrooms/${classroom.id}/code`}
                             className="classroom-detail__code-btn"
                         >
                             Vis kode på storskjerm →
@@ -224,7 +224,7 @@ export default function ClassroomDetailPage() {
                                         >
                                             <td className="classroom-detail__td">
                                                 <Link
-                                                    to={`/teacher/classroom/${classroom.id}/student/${userId}`}
+                                                    to={`/teacher/classrooms/${classroom.id}/students/${userId}`}
                                                     className="classroom-detail__student-link"
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
@@ -310,7 +310,7 @@ export default function ClassroomDetailPage() {
                                                                 </div>
 
                                                                 <Link
-                                                                    to={`/teacher/classroom/${classroom.id}/student/${userId}`}
+                                                                    to={`/teacher/classrooms/${classroom.id}/students/${userId}`}
                                                                     className="classroom-detail__continue-btn"
                                                                 >
                                                                     Fortsett
@@ -333,7 +333,7 @@ export default function ClassroomDetailPage() {
             <Card variant="unstyled" className="classroom-detail__section">
                 <h2 className="classroom-detail__section-title">Mystery-innleveringer</h2>
                 <Link
-                    to={`/teacher/classroom/${classroom.id}/mystery`}
+                    to={`/teacher/classrooms/${classroom.id}/mystery-submissions`}
                     className="classroom-detail__mystery-link"
                 >
                     Se alle innleveringer →

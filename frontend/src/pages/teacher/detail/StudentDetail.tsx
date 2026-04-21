@@ -6,7 +6,7 @@ import './StudentDetail.css';
 export default function StudentDetail() {
     const data = useLoaderData() as StudentDetailType | null;
     const { id: classroomId } = useParams<{ id: string }>();
-    const backLink = `/teacher/classroom/${classroomId}`;
+    const backLink = `/teacher/classrooms/${classroomId}`;
 
     if (!data) {
         return (
