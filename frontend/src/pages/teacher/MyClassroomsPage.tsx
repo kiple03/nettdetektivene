@@ -54,7 +54,7 @@ export default function MyClassroomsPage() {
                     />
                 </div>
 
-                <Link to="/teacher/classroom/new" className="teacher-dashboard__new-link">
+                <Link to="/teacher/classrooms/new" className="teacher-dashboard__new-link">
                     <Button variant="default" className="teacher-dashboard__new-btn">
                         + Nytt klasserom
                     </Button>
@@ -113,7 +113,7 @@ export default function MyClassroomsPage() {
                             return (
                                 <Link
                                     key={summary.id}
-                                    to={`/teacher/classroom/${summary.id}`}
+                                    to={`/teacher/classrooms/${summary.id}`}
                                     className="classroom-card"
                                     style={{ '--card-accent': accentColor } as React.CSSProperties}
                                 >
@@ -188,7 +188,7 @@ export default function MyClassroomsPage() {
                         })}
 
                         <Link
-                            to="/teacher/classroom/new"
+                            to="/teacher/classrooms/new"
                             className="classroom-card classroom-card--new"
                         >
                             <span className="classroom-card__plus">+</span>
