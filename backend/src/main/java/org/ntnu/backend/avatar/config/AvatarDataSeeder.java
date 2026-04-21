@@ -37,11 +37,12 @@ public class AvatarDataSeeder implements CommandLineRunner{
             AvatarItem sheriff_star = AvatarItem.builder().name("sheriff_star").category("accessories").build();
             AvatarItem sheriff_suit = AvatarItem.builder().name("sheriff_suit").category("body").build();
             AvatarItem stop_sign = AvatarItem.builder().name("stop_sign").category("accessories").build();
-            AvatarItem skinLight = AvatarItem.builder().name("tone_light").category("skin_tone").build();
-            AvatarItem skinMedium = AvatarItem.builder().name("tone_medium").category("skin_tone").build();
-            AvatarItem skinDark = AvatarItem.builder().name("tone_dark").category("skin_tone").build();
+            AvatarItem skin_light = AvatarItem.builder().name("tone_light").category("skin_tone").build();
+            AvatarItem skin_medium = AvatarItem.builder().name("tone_medium").category("skin_tone").build();
+            AvatarItem skin_dark = AvatarItem.builder().name("tone_dark").category("skin_tone").build();
+            AvatarItem skin_wacky = AvatarItem.builder().name("tone_wacky").category("skin_tone").build();
 
-            itemRepository.saveAll(List.of(magnifying_glass, face_1, face_2, face_3, detective_hat, detective_suit, police_hat, police_uniform, sheriff_hat, sheriff_star, sheriff_suit,stop_sign, skinLight, skinMedium, skinDark));
+            itemRepository.saveAll(List.of(magnifying_glass, face_1, face_2, face_3, detective_hat, detective_suit, police_hat, police_uniform, sheriff_hat, sheriff_star, sheriff_suit,stop_sign, skin_light, skin_medium, skin_dark, skin_wacky));
         }
     }
 }

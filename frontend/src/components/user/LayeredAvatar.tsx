@@ -1,5 +1,14 @@
 import type { EquippedItem } from '@/hooks/useUserProfile';
 
+export const SKIN_TONES: Record<string, {base: string, shadowDark: string, shadowLight: string}> = {
+  'tone_light': { base: "#f8c09b", shadowDark: "#da7e61", shadowLight: "#eba482" },
+  'tone_medium': { base: "#d2996d", shadowDark: "#b36b41", shadowLight: "#c38659" },
+  'tone_dark':   { base: "#59381c", shadowDark: "#543010", shadowLight: "#3a1d06" },
+  'tone_wacky':  { base: "#78b159", shadowDark: "#528537", shadowLight: "#679d4a" },
+};
+
+const DEFAULT_TONE = SKIN_TONES['tone_dark'];
+
 interface LayeredAvatarProps{
     items: EquippedItem[];
     size?: number;
@@ -57,28 +66,33 @@ function BaseAvatarSVG(props: React.SVGProps<SVGSVGElement>){
 }
 
 export function LayeredAvatar({
-    items, 
+    items,
     size = 64,
-    skinToneBase = "#59381c",
-    skinToneShadowDark = "#543010",
-    skinToneShadowLight = "#3a1d06"
+    skinToneBase,
+    skinToneShadowDark,
+    skinToneShadowLight
 }: LayeredAvatarProps){
-    const sortedItems = [...items].sort((a,b) => {
-        const order = {'body': 1, 'face': 2, 'head': 3, 'accessories': 4};
-        // @ts-expect-error category string might not exist in order object
-        return (order[a.category] || 99) - (order[b.category] || 99);
-    });
-    
-    const wrapperStyles: React.CSSProperties = { 
-        position: 'relative', 
-        width: size, 
-        height: size, 
-        borderRadius: '50%', 
-        overflow: 'hidden', 
+    const skinToneItem = items.find(i => i.category === 'skin_tone');
+    const detectedTone = (skinToneItem && SKIN_TONES[skinToneItem.name]) || DEFAULT_TONE;
+
+    const sortedItems = [...items]
+        .filter(i => i.category !== 'skin_tone')
+        .sort((a,b) => {
+            const order = {'body': 1, 'face': 2, 'head': 3, 'accessories': 4};
+            // @ts-expect-error category string might not exist in order object
+            return (order[a.category] || 99) - (order[b.category] || 99);
+        });
+
+    const wrapperStyles: React.CSSProperties = {
+        position: 'relative',
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        overflow: 'hidden',
         backgroundColor: '#e5e7eb',
-        "--skin-base": skinToneBase,
-        "--skin-shadow-dark": skinToneShadowDark,
-        "--skin-shadow-light": skinToneShadowLight
+        "--skin-base": skinToneBase ?? detectedTone.base,
+        "--skin-shadow-dark": skinToneShadowDark ?? detectedTone.shadowDark,
+        "--skin-shadow-light": skinToneShadowLight ?? detectedTone.shadowLight
     } as React.CSSProperties;
 
     return (

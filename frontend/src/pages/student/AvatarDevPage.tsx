@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AxiosError } from 'axios';
-import { LayeredAvatar } from '@/components/user/LayeredAvatar';
+import { LayeredAvatar, SKIN_TONES } from '@/components/user/LayeredAvatar';
 import {
   useSaveAvatarOutfit,
   useUserInventory,
@@ -12,13 +12,6 @@ import { refreshToken } from '@/api/authApi';
 import { getClassroomId } from '@/stores/authStore';
 import styles from './AvatarDevPage.module.css';
 import {useNavigate} from "react-router-dom";
-
-const SKIN_TONES: Record<string, {base: string, shadowDark: string, shadowLight: string}> = {
-  'tone_light': { base: "#f8c09b", shadowDark: "#da7e61", shadowLight: "#eba482" },
-  'tone_medium': { base: "#d2996d", shadowDark: "#b36b41", shadowLight: "#c38659" },
-  'tone_dark': { base: "#59381c", shadowDark: "#543010", shadowLight: "#3a1d06" },
-  'tone_wacky': { base: "#78b159", shadowDark: "#528537", shadowLight: "#679d4a" }
-}
 
 export default function AvatarDevPage() {
 
@@ -39,16 +32,24 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   const { mutate: updateUserProfile } = useUpdateUserProfile();
 
   const {mutate: saveOutfit, isPending: isSaving} = useSaveAvatarOutfit();
-  //Save backend items to local state
-  const [equipped, setEquipped] = useState<EquippedItem[]>(initialItems);
+  //Save backend items to local state, ensuring a skin tone is always present
+  const [equipped, setEquipped] = useState<EquippedItem[]>(() => {
+    const hasSkinTone = initialItems.some(i => i.category === 'skin_tone');
+    if (hasSkinTone) return initialItems;
+    const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
+    return defaultTone ? [...initialItems, defaultTone] : initialItems;
+  });
   const [username, setUsername] = useState(
     userProfile?.username?.replace("Detektiv ", "") || ""
   );
   const [usernameError, setUsernameError] = useState('');
 
   //SKIN color
-  const equippedSkinItem = equipped.find(i => i.category === 'skin_tone');
-  const colors = SKIN_TONES[equippedSkinItem?.name || 'tone_dark'] || SKIN_TONES['tone_dark'];
+  const [skinToneKey, setSkinToneKey] = useState<string>(() => {
+  const existing = initialItems.find(i => i.category === 'skin_tone');
+  return existing?.name || 'tone_dark';
+});
+  const colors = SKIN_TONES[skinToneKey] || SKIN_TONES['tone_dark'];
 
   const toggleItem = (item: EquippedItem) => {
     setEquipped((prev) => {
@@ -86,7 +87,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
         }
       },
     });
-  }
+  };
   
   return (
 
@@ -102,16 +103,18 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
             <button
               key={toneName}
               onClick={() => {
-                // Creates a simulated item for the skin tone and replaces the current one
-                const skinItem: EquippedItem = { id: toneName, name: toneName, category: 'skin_tone', imageUrl: '' };
-                setEquipped(prev => [...prev.filter(i => i.category !== 'skin_tone'), skinItem]);
+                setSkinToneKey(toneName);
+                const newToneItem = inventory.find(i => i.name === toneName && i.category === 'skin_tone');
+                if (newToneItem) {
+                  setEquipped(prev => [...prev.filter(i => i.category !== 'skin_tone'), newToneItem]);
+                }
               }}
               style={{
                 width: '32px',
                 height: '32px',
                 borderRadius: '50%',
                 backgroundColor: toneColors.base,
-                border: equippedSkinItem?.name === toneName ? '3px solid #2563eb' : '2px solid transparent',
+                border: skinToneKey === toneName ? '3px solid #2563eb' : '2px solid transparent',
                 cursor: 'pointer',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
               }}
