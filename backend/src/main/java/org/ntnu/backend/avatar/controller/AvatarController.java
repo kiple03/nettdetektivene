@@ -8,6 +8,7 @@ import org.ntnu.backend.avatar.dto.UpdateUserProfileRequest;
 import org.ntnu.backend.avatar.dto.UserProfileResponse;
 import org.ntnu.backend.avatar.service.UserAvatarService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,7 +64,7 @@ public class AvatarController {
     @PutMapping("/user/profile")
     public ResponseEntity<UserProfileResponse> updateUserProfile(
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal,
-        @RequestBody UpdateUserProfileRequest request) {
+        @Valid @RequestBody UpdateUserProfileRequest request) {
         UserProfileResponse updated = userAvatarService.updateUserProfile(principal.getUserId(), request);
         return ResponseEntity.ok(updated);
     }
