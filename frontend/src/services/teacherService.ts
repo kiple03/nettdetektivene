@@ -261,11 +261,11 @@ export async function featureMysterySubmission(classroomId: string, submissionId
 }
 
 export async function getNotifications(): Promise<NotificationResponse[]> {
-  const res = await apiClient.get<RawNotification[]>('/teacher/classrooms/notifications');
+  const res = await apiClient.get<RawNotification[]>('/teacher/notifications');
   return res.data.map(mapNotification);
 }
 
 export async function getStops(): Promise<StopSummary[]> {
-  const res = await apiClient.get<RawStop[]>('/teacher/classrooms/stops');
+  const res = await apiClient.get<RawStop[]>('/teacher/stops');
   return res.data.map(mapStop);
 }
