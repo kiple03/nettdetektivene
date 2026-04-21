@@ -107,19 +107,6 @@ export default function MapPage() {
     const svgNode = useRef<SVGSVGElement | null>(null);
     const containerNode = useRef<HTMLDivElement | null>(null);
 
-    // DEV: click container to log SVG coordinates for anchor placement
-    const handleDevClick = (e: React.MouseEvent) => {
-        const svg = svgNode.current;
-        if (!svg) return;
-        const ctm = svg.getScreenCTM();
-        if (!ctm) return;
-        const pt = svg.createSVGPoint();
-        pt.x = e.clientX;
-        pt.y = e.clientY;
-        const { x, y } = pt.matrixTransform(ctm.inverse());
-        console.log(`cx="${x.toFixed(1)}" cy="${y.toFixed(1)}"`);
-    };
-
     const handleLevelClick = (level: Level) => {
         if (level.unlocked) {
             navigate(level.route);
@@ -134,11 +121,12 @@ export default function MapPage() {
         containerNode.current = node;
         if (!node) return;
         const update = () => {
+            const portrait = window.matchMedia("(orientation: portrait)").matches;
             setScrollState({
-                canLeft: node.scrollLeft > 1,
-                canRight: node.scrollLeft < node.scrollWidth - node.clientWidth - 1,
-                canUp: node.scrollTop > 1,
-                canDown: node.scrollTop < node.scrollHeight - node.clientHeight - 1,
+                canLeft: !portrait && node.scrollLeft > 1,
+                canRight: !portrait && node.scrollLeft < node.scrollWidth - node.clientWidth - 1,
+                canUp: portrait && node.scrollTop > 1,
+                canDown: portrait && node.scrollTop < node.scrollHeight - node.clientHeight - 1,
             });
         };
         update();
@@ -189,7 +177,7 @@ export default function MapPage() {
     }, []);
 
     return (
-        <div className={styles.container} ref={containerRef} onClick={handleDevClick}>
+        <div className={styles.container} ref={containerRef}>
             <div className={styles.header}>
                 <h1>Velg nivå</h1>
                 <p>Velge neste nivå</p>
