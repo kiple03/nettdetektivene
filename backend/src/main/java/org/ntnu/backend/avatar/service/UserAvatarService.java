@@ -13,8 +13,10 @@ import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -113,14 +115,19 @@ public class UserAvatarService {
         inventoryRepository.saveAll(startingInventory);
     }
 
+    @Transactional
     public UserProfileResponse updateUserProfile(UUID userId, UpdateUserProfileRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (request.username() != null && !request.username().isBlank()) {
-            user.setUsername(request.username());
+        String newUsername = request.username().trim();
+
+        if (!newUsername.equals(user.getUsername())
+            && userRepository.existsByUsername(newUsername)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Brukernavnet er allerede tatt");
         }
 
+        user.setUsername(newUsername);
         userRepository.save(user);
         return getUserProfile(userId);
     }
