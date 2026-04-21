@@ -4,27 +4,12 @@ import { LayeredAvatar } from '@/components/user/LayeredAvatar';
 interface CarWithAvatarProps {
     items: EquippedItem[];
     size?: number;
-    skinToneBase?: string;
-    skinToneShadowDark?: string;
-    skinToneShadowLight?: string;
 }
 
-export function CarWithAvatar({
-    items,
-    size = 100,
-    skinToneBase,
-    skinToneShadowDark,
-    skinToneShadowLight,
-}: CarWithAvatarProps) {
+export function CarWithAvatar({ items, size = 100 }: CarWithAvatarProps) {
     return (
         <div style={{ position: 'relative', width: size, height: size }}>
-            <LayeredAvatar
-                items={items}
-                size={size}
-                skinToneBase={skinToneBase}
-                skinToneShadowDark={skinToneShadowDark}
-                skinToneShadowLight={skinToneShadowLight}
-            />
+            <LayeredAvatar items={items} size={size} />
             <img
                 src="/assets/car-for-map-page.png"
                 alt=""
