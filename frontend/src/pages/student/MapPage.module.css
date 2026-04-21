@@ -20,7 +20,7 @@
 }
 
 .header {
-    position: absolute;
+    position: fixed;
     top: 12px;
     left: 50%;
     transform: translateX(-50%);
@@ -96,6 +96,27 @@
     .container {
         overflow-x: hidden;
         overflow-y: auto;
+    }
+
+    .header {
+        position: sticky;
+        top: 0;
+        left: unset;
+        transform: none;
+        width: 100%;
+        text-align: center;
+        background: #e9e9e9;
+        color: #111827;
+        padding: 8px;
+        border-bottom: 1px solid #111827;
+    }
+
+    .header h1 {
+        font-size: 1.4rem;
+    }
+
+    .header p {
+        font-size: 0.85rem;
     }
 
     .mapInner {

@@ -154,12 +154,12 @@ export default function MapPage() {
 
     return (
         <div className={styles.container} onClick={handleDevClick}>
-            <div className={styles.mapInner}>
             <div className={styles.header}>
                 <h1>Velg nivå</h1>
                 <p>Velge neste nivå</p>
             </div>
 
+            <div className={styles.mapInner}>
             <MapBg ref={svgRef} className={styles.mapBg} preserveAspectRatio="xMidYMid slice" />
 
             <div className={styles.levelGrid}>
