@@ -142,12 +142,9 @@ export default function MapPage() {
     const scroll = (dir: "left" | "right" | "up" | "down") => {
         const node = containerNode.current;
         if (!node) return;
-        const amount = 500;
-        node.scrollBy({
-            left: dir === "left" ? -amount : dir === "right" ? amount : 0,
-            top: dir === "up" ? -amount : dir === "down" ? amount : 0,
-            behavior: "smooth",
-        });
+        const left = dir === "left" ? 0 : dir === "right" ? node.scrollWidth - node.clientWidth : node.scrollLeft;
+        const top = dir === "up" ? 0 : dir === "down" ? node.scrollHeight - node.clientHeight : node.scrollTop;
+        node.scrollTo({ left, top, behavior: "smooth" });
     };
 
     const svgRef = useCallback((node: SVGSVGElement | null): void | (() => void) => {
