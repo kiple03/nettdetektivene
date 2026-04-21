@@ -90,9 +90,8 @@ export const router = createBrowserRouter([
         path: "/avatar",
         element: <RequireAuth role="STUDENT"><AvatarDevPage /></RequireAuth>
     },
-    // test path for game - student
     {
-        path: '/game',
+        path: '/game/:levelId',
         element: <RequireAuth role="STUDENT"><RequireClassroom><GamePage /></RequireClassroom></RequireAuth>
     },
 
