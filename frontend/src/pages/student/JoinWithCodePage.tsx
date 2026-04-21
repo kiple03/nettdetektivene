@@ -49,14 +49,17 @@ export default function JoinWithCodePage() {
         try {
             await joinClassroom(rawCode);
             await refreshToken();
-          
-            navigate("/avatar");
+
+            navigate("/home");
 
         } catch (err) {
             const status = (err as AxiosError).response?.status;
 
             if (status === 404) setError('Ugyldig kode. Prøv igjen.');
-            else if (status === 409) setError('Du er allerede med i et klasserom.');
+            else if (status === 409) {
+                const message = ((err as AxiosError).response?.data as { message?: string } | undefined)?.message;
+                setError(message ?? 'Du er allerede med i et klasserom.');
+            }
             else setError('Noe gikk galt. Prøv igjen.');
         } finally {
             setLoading(false);
