@@ -26,6 +26,7 @@ interface Level {
     route: string;
     icon: string;
     unlocked: boolean;
+    pathOffset: string;
     x?: string;
     y?: string;
 }
@@ -39,6 +40,7 @@ const levels: Level[] = [
         y: "46%",
         icon: nyhetskvartalet,
         unlocked: true,
+        pathOffset: "0%",
     },
     {
         step: "2",
@@ -46,6 +48,7 @@ const levels: Level[] = [
         route: "/levelTwo",
         icon: fotografen,
         unlocked: false,
+        pathOffset: "14%",
     },
     {
         step: "3",
@@ -53,6 +56,7 @@ const levels: Level[] = [
         route: "/levelThree",
         icon: postkontoret,
         unlocked: false,
+        pathOffset: "28%",
     },
     {
         step: "4",
@@ -60,6 +64,7 @@ const levels: Level[] = [
         route: "/levelFour",
         icon: passordbanken,
         unlocked: false,
+        pathOffset: "42%",
     },
     {
         step: "5",
@@ -67,6 +72,7 @@ const levels: Level[] = [
         route: "/levelFive",
         icon: markedsplassen,
         unlocked: false,
+        pathOffset: "57%",
     },
     {
         step: "6",
@@ -74,6 +80,7 @@ const levels: Level[] = [
         route: "/levelSix",
         icon: moteplassen,
         unlocked: false,
+        pathOffset: "71%",
     },
     {
         step: "7",
@@ -81,6 +88,7 @@ const levels: Level[] = [
         route: "/levelFinal",
         icon: datasenteret,
         unlocked: false,
+        pathOffset: "100%",
     },
 ];
 
