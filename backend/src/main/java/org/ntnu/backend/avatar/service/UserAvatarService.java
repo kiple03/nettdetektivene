@@ -45,6 +45,7 @@ public class UserAvatarService {
                                         .map(inventoryItem -> EquippedItemDto.builder()
                                             .id(inventoryItem.getAvatarItem().getId())
                                             .name(inventoryItem.getAvatarItem().getName())
+                                            .category(inventoryItem.getAvatarItem().getCategory())
                                             .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".svg")
                                             .build())
                                         .toList();
@@ -100,7 +101,7 @@ public class UserAvatarService {
     @Transactional
     public void starterItems(User user){
         List<AvatarItem> starterItems = avatarItemRepository.findAll().stream()
-            .filter(item -> List.of("detective_hat", "detective_suit", "face_1", "face_2", "face_3", "magnifying_glass", "police_hat", "police_uniform", "sheriff_hat", "sheriff_star", "sheriff_suit", "stop_sign").contains(item.getName()))
+            .filter(item -> List.of("detective_hat", "detective_suit", "face_1", "face_2", "face_3", "magnifying_glass", "police_hat", "police_uniform", "sheriff_hat", "sheriff_star", "sheriff_suit", "stop_sign", "tone_light", "tone_medium", "tone_dark", "tone_wacky").contains(item.getName()))
             .toList();
 
         List<UserInventoryItem> startingInventory = starterItems.stream().map(item -> 
@@ -108,7 +109,7 @@ public class UserAvatarService {
                 .user(user)
                 .avatarItem(item)
                 .unlockedAt(LocalDateTime.now())
-                .isEquipped(List.of("detective_hat", "detective_suit", "face_1", "tone_dark").contains(item.getName()))
+                .isEquipped(List.of("detective_hat", "detective_suit", "face_1", "tone_light").contains(item.getName()))
                 .build()
         ).toList();
 
