@@ -1,20 +1,23 @@
 import { useMemo, useState } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
 import { Check, Copy } from 'lucide-react';
-import type { ClassroomDetail, StudentSummary, StopSummary } from '@/types/classroom.ts';
+import axios from 'axios';
+import type { ClassroomDetail, StudentSummary, StopSummary, CoTeacher } from '@/types/classroom.ts';
 import { Button } from '@/components/ui/buttons/Button';
-import { updateClassroom, deleteClassroom, removeStudent, updateStudentUsername } from '@/services/teacherService';
+import { updateClassroom, deleteClassroom, removeStudent, updateStudentUsername, inviteCoTeacher, removeCoTeacher } from '@/services/teacherService';
 import { LayeredAvatar } from '@/components/user/LayeredAvatar';
+import { decodeToken } from '@/stores/authStore';
 import './ClassroomDetail.css';
 
 type LoaderData = {
     classroom: ClassroomDetail | null;
     students: StudentSummary[];
     stops: StopSummary[];
+    teachers: CoTeacher[];
 };
 
 export default function ClassroomDetailPage() {
-    const { classroom: initial, students, stops } = useLoaderData() as LoaderData;
+    const { classroom: initial, students, stops, teachers: initialTeachers } = useLoaderData() as LoaderData;
     const [classroom, setClassroom] = useState(initial);
     const [editMode, setEditMode] = useState(false);
     const [editTitle, setEditTitle] = useState(initial?.title ?? '');
@@ -31,6 +34,14 @@ export default function ClassroomDetailPage() {
     const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
     const [removingId, setRemovingId] = useState<string | null>(null);
     const [didCopyCode, setDidCopyCode] = useState(false);
+    const [teacherList, setTeacherList] = useState<CoTeacher[]>(initialTeachers);
+    const [inviteEmail, setInviteEmail] = useState('');
+    const [inviting, setInviting] = useState(false);
+    const [inviteError, setInviteError] = useState<string | null>(null);
+    const [confirmRemoveTeacherId, setConfirmRemoveTeacherId] = useState<string | null>(null);
+    const [removingTeacherId, setRemovingTeacherId] = useState<string | null>(null);
+    const currentUserId = decodeToken()?.userId ?? '';
+    const isOwner = teacherList.some(t => t.userId === currentUserId && t.isOwner);
     const navigate = useNavigate();
 
     if (!classroom) {
@@ -151,6 +162,43 @@ export default function ClassroomDetailPage() {
         }
     }
 
+    async function handleInviteTeacher(e: React.FormEvent) {
+        e.preventDefault();
+        if (!classroom) return;
+        const email = inviteEmail.trim();
+        if (!email) return;
+        setInviting(true);
+        setInviteError(null);
+        try {
+            const added = await inviteCoTeacher(classroom.id, email);
+            setTeacherList(prev => [...prev, added]);
+            setInviteEmail('');
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                if (err.response?.status === 404) setInviteError('Ingen lærer med den e-postadressen ble funnet.');
+                else if (err.response?.status === 409) setInviteError('Læreren er allerede lagt til i klassen.');
+                else if (err.response?.status === 400) setInviteError('Den angitte brukeren er ikke registrert som lærer.');
+                else setInviteError('Noe gikk galt. Prøv igjen.');
+            } else {
+                setInviteError('Noe gikk galt. Prøv igjen.');
+            }
+        } finally {
+            setInviting(false);
+        }
+    }
+
+    async function handleRemoveTeacher(teacherId: string) {
+        if (!classroom) return;
+        setRemovingTeacherId(teacherId);
+        try {
+            await removeCoTeacher(classroom.id, teacherId);
+            setTeacherList(prev => prev.filter(t => t.userId !== teacherId));
+            setConfirmRemoveTeacherId(null);
+        } finally {
+            setRemovingTeacherId(null);
+        }
+    }
+
     return (
         <div className="classroom-detail">
             <Link to="/teacher" className="classroom-detail__back">← Tilbake til oversikten</Link>
@@ -264,6 +312,83 @@ export default function ClassroomDetailPage() {
                             >
                                 Se alle innleveringer →
                             </Link>
+                        </div>
+
+                        <div className="classroom-detail__note">
+                            <div className="classroom-detail__note-tape" />
+                            <h2 className="classroom-detail__section-title">
+                                Lærere <span className="classroom-detail__count">({teacherList.length})</span>
+                            </h2>
+                            <ul className="classroom-detail__teacher-list">
+                                {teacherList.map(teacher => {
+                                    const isConfirming = confirmRemoveTeacherId === teacher.userId;
+                                    const showRemove = isOwner
+                                        ? teacher.userId !== currentUserId
+                                        : teacher.userId === currentUserId;
+                                    return (
+                                        <li key={teacher.userId} className="classroom-detail__teacher-row">
+                                            <div className="classroom-detail__teacher-info">
+                                                <span className="classroom-detail__teacher-name">{teacher.username}</span>
+                                                {teacher.isOwner && (
+                                                    <span className="classroom-detail__teacher-badge">Eier</span>
+                                                )}
+                                            </div>
+                                            {showRemove && (
+                                                isConfirming ? (
+                                                    <div className="classroom-detail__student-actions">
+                                                        <span className="classroom-detail__confirm-label">Fjerne?</span>
+                                                        <button
+                                                            className="classroom-detail__action-btn classroom-detail__action-btn--danger"
+                                                            onClick={() => handleRemoveTeacher(teacher.userId)}
+                                                            disabled={removingTeacherId === teacher.userId}
+                                                        >
+                                                            {removingTeacherId === teacher.userId ? '…' : 'Ja'}
+                                                        </button>
+                                                        <button
+                                                            className="classroom-detail__action-btn"
+                                                            onClick={() => setConfirmRemoveTeacherId(null)}
+                                                            disabled={removingTeacherId === teacher.userId}
+                                                        >
+                                                            Nei
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        className="classroom-detail__icon-btn classroom-detail__icon-btn--danger"
+                                                        aria-label="Fjern lærer"
+                                                        onClick={() => setConfirmRemoveTeacherId(teacher.userId)}
+                                                    >
+                                                        <TrashIcon />
+                                                    </button>
+                                                )
+                                            )}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                            {isOwner && (
+                                <form onSubmit={handleInviteTeacher} className="classroom-detail__invite-form">
+                                    {inviteError && (
+                                        <span className="classroom-detail__save-error">{inviteError}</span>
+                                    )}
+                                    <div className="classroom-detail__invite-row">
+                                        <input
+                                            type="email"
+                                            placeholder="E-post til lærer"
+                                            value={inviteEmail}
+                                            onChange={e => setInviteEmail(e.target.value)}
+                                            className="classroom-detail__invite-input"
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={inviting}
+                                            className="classroom-detail__action-btn classroom-detail__action-btn--save"
+                                        >
+                                            {inviting ? '…' : 'Inviter'}
+                                        </button>
+                                    </div>
+                                </form>
+                            )}
                         </div>
                     </div>
 
