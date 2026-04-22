@@ -1,0 +1,275 @@
+.arena {
+    position: relative;
+    width: 100vw;
+    height: 100dvh;
+    overflow: hidden;
+    background: linear-gradient(160deg, #0a0a1a 0%, #0d1b2a 40%, #0a0f1e 100%);
+    display: grid;
+    /* Pokémon-style 2×2 quadrant grid */
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+/* HP bar areas */
+.bossHpArea {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 16px;
+    z-index: 10;
+}
+
+.playerHpArea {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 16px;
+    z-index: 10;
+}
+
+/* Character areas */
+.bossCharArea {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.playerCharArea {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+/* Attack prompt — centered bottom */
+.attackPrompt {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+}
+
+/* Full-screen overlays */
+.cutsceneOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---- Placeholder styles (replaced by real components in tasks 3–8) ---- */
+
+.hpBarPlaceholder {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-width: 160px;
+}
+
+.hpLabel {
+    display: block;
+    font-size: 0.7rem;
+    color: #ccc;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.hpSegments {
+    display: flex;
+    gap: 4px;
+}
+
+.hpSegment {
+    flex: 1;
+    height: 12px;
+    border-radius: 3px;
+    transition: background 0.3s;
+}
+
+.hpFilled {
+    background: #4caf50;
+}
+
+.hpEmpty {
+    background: #333;
+}
+
+.bossCharPlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-size: 5rem;
+}
+
+.bossName {
+    font-size: 0.7rem;
+    color: #aaa;
+}
+
+.playerName {
+    font-size: 0.8rem;
+    color: #ccc;
+    margin-top: 4px;
+}
+
+/* Intro / victory / defeat screens */
+.introCutscene,
+.victoryScreen,
+.defeatScreen {
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 32px;
+    max-width: 480px;
+}
+
+.introText {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.startButton {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 12px;
+    border: none;
+    background: #4a9eff;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.startButton:hover {
+    background: #2a7edf;
+}
+
+/* Stub question modal */
+.questionModal {
+    background: #1a2a3a;
+    border: 2px solid #4a9eff;
+    border-radius: 16px;
+    padding: 32px;
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    min-width: 280px;
+}
+
+.correctBtn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: #2d7a2d;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.correctBtn:hover {
+    background: #3a9a3a;
+}
+
+.wrongBtn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: #7a2d2d;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.wrongBtn:hover {
+    background: #9a3a3a;
+}
+
+.attackButton {
+    padding: 12px 28px;
+    border-radius: 10px;
+    border: none;
+    background: #8b3fd8;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.attackButton:hover {
+    background: #a050f0;
+}
+
+/* Responsive: mobile portrait */
+@media (orientation: portrait) and (max-width: 767px) {
+    .arena {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr 1fr auto;
+    }
+
+    .bossHpArea {
+        grid-column: 1 / 3;
+        grid-row: 1;
+        justify-content: center;
+    }
+
+    .bossCharArea {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .playerCharArea {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .playerHpArea {
+        grid-column: 1 / 3;
+        grid-row: 4;
+        justify-content: center;
+    }
+}

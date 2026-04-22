@@ -19,6 +19,7 @@ import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";
 import AvatarDevPage from "@/pages/student/AvatarDevPage";
 import GamePage from "@/pages/game/GamePage.tsx";
+import BossBattlePage from "@/pages/game/BossBattlePage.tsx";
 import CodePage from "@/pages/teacher/CodePage.tsx";
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
@@ -83,6 +84,10 @@ export const router = createBrowserRouter([
     {
         path: '/game/:levelId',
         element: <RequireAuth role="STUDENT"><RequireClassroom><GamePage /></RequireClassroom></RequireAuth>
+    },
+    {
+        path: '/boss',
+        element: <RequireAuth role="STUDENT"><RequireClassroom><BossBattlePage /></RequireClassroom></RequireAuth>
     },
 
     // Teacher routes — require TEACHER role
