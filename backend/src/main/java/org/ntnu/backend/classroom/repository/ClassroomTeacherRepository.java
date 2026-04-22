@@ -1,5 +1,6 @@
 package org.ntnu.backend.classroom.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -43,4 +44,13 @@ public interface ClassroomTeacherRepository extends JpaRepository<ClassroomTeach
                  ct.classroom.joinCode, ct.classroom.createdAt
         """)
     List<Object[]> findClassroomsWithStudentCountByTeacherId(@Param("teacherId") UUID teacherId);
+
+    @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.classroom WHERE ct.id.userId = :teacherId AND ct.isOwner = false")
+    List<ClassroomTeacher> findNonOwnerEntriesByUserId(@Param("teacherId") UUID teacherId);
+
+    @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.user WHERE ct.id.classroomId = :classroomId AND ct.isOwner = true")
+    Optional<ClassroomTeacher> findOwnerWithUserByClassroomId(@Param("classroomId") UUID classroomId);
+
+    @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.user WHERE ct.id.classroomId IN :classroomIds")
+    List<ClassroomTeacher> findWithUsersByClassroomIdIn(@Param("classroomIds") Collection<UUID> classroomIds);
 }
