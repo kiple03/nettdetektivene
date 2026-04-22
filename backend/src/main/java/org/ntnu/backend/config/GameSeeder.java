@@ -66,6 +66,7 @@ public class GameSeeder implements CommandLineRunner {
     level.setTitle("Ekte eller falskt?");
     level.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
     level.setLevelType(LevelType.MULTIPLE_CHOICE);
+    level.setOrder(1);
     level.setStop(stop);
     level = levelRepository.save(level);
 

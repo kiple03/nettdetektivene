@@ -26,6 +26,7 @@ import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.util.OptionValidator;
 import org.ntnu.backend.game.validation.LevelSubmissionValidator;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
@@ -73,7 +74,7 @@ class GameServiceTest {
     when(stopRepository.findAllByOrderByDisplayOrderAsc())
         .thenReturn(List.of(stop1, stop2));
 
-    List<StopResponse> result = gameService.getStopsForUser(userId);
+    List<StopResponse> result = gameService.getStopsForUser(userId, RoleEnum.STUDENT);
 
     assertThat(result).hasSize(2);
     assertThat(result.get(0).name()).isEqualTo("Nyhetskvartalet");
@@ -89,8 +90,9 @@ class GameServiceTest {
 
     when(stopRepository.findAllByOrderByDisplayOrderAsc())
         .thenReturn(List.of(stop));
+    when(progressService.isStopAccessible(userId, RoleEnum.STUDENT, stop)).thenReturn(true);
 
-    List<StopResponse> result = gameService.getStopsForUser(userId);
+    List<StopResponse> result = gameService.getStopsForUser(userId, RoleEnum.STUDENT);
 
     assertThat(result.get(0).locked()).isFalse();
   }
@@ -100,7 +102,7 @@ class GameServiceTest {
     when(stopRepository.findAllByOrderByDisplayOrderAsc())
         .thenReturn(List.of());
 
-    List<StopResponse> result = gameService.getStopsForUser(userId);
+    List<StopResponse> result = gameService.getStopsForUser(userId, RoleEnum.STUDENT);
 
     assertThat(result).isEmpty();
   }
@@ -120,8 +122,9 @@ class GameServiceTest {
     level.setStop(stop);
 
     when(levelRepository.findById(1)).thenReturn(Optional.of(level));
+    when(progressService.isLevelAccessible(userId, RoleEnum.STUDENT, level)).thenReturn(true);
 
-    LevelResponse result = gameService.getLevel(1, userId);
+    LevelResponse result = gameService.getLevel(1, userId, RoleEnum.STUDENT);
 
     assertThat(result.id()).isEqualTo(1);
     assertThat(result.title()).isEqualTo("Ekte eller falskt?");
@@ -133,7 +136,7 @@ class GameServiceTest {
   void getLevel_notFound_throws() {
     when(levelRepository.findById(99)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> gameService.getLevel(99, userId))
+    assertThatThrownBy(() -> gameService.getLevel(99, userId, RoleEnum.STUDENT))
         .isInstanceOf(LevelNotFoundException.class);
   }
 
@@ -161,7 +164,7 @@ class GameServiceTest {
     when(levelRepository.findByStopIdOrderByIdAsc(1))
         .thenReturn(List.of(level1, level2));
 
-    List<LevelResponse> result = gameService.getLevelsForStop(1, userId);
+    List<LevelResponse> result = gameService.getLevelsForStop(1, userId, RoleEnum.STUDENT);
 
     assertThat(result).hasSize(2);
     assertThat(result.get(0).title()).isEqualTo("Level 1");
@@ -173,7 +176,7 @@ class GameServiceTest {
     when(levelRepository.findByStopIdOrderByIdAsc(99))
         .thenReturn(List.of());
 
-    List<LevelResponse> result = gameService.getLevelsForStop(99, userId);
+    List<LevelResponse> result = gameService.getLevelsForStop(99, userId, RoleEnum.STUDENT);
 
     assertThat(result).isEmpty();
   }

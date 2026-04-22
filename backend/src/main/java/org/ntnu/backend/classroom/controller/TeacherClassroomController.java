@@ -113,12 +113,13 @@ public class TeacherClassroomController {
         return teacherClassroomService.createClassroom(request, principal.getUserId());
     }
 
-    @GetMapping("/notifications")
-    @PreAuthorize("hasRole('TEACHER')")
-    public List<NotificationResponse> getNotifications(
-        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-        return teacherClassroomService.getNotifications(principal.getUserId());
-    }
+    // TODO: rework implementation
+//    @GetMapping("/notifications")
+//    @PreAuthorize("hasRole('TEACHER')")
+//    public List<NotificationResponse> getNotifications(
+//        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+//        return teacherClassroomService.getNotifications(principal.getUserId());
+//    }
 
     @GetMapping("/stops")
     @PreAuthorize("hasRole('TEACHER')")
