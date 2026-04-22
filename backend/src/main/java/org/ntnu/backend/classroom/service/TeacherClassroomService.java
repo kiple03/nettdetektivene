@@ -3,6 +3,7 @@ package org.ntnu.backend.classroom.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
@@ -20,9 +21,11 @@ import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
+import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
+import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.repository.UserRepository;
@@ -48,40 +51,38 @@ public class TeacherClassroomService {
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final UserRepository userRepository;
     private final StopRepository stopRepository;
+    private final ProgressService progressService;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
     }
 
+
     /**
      * Lists all classrooms owned by a specific teacher, calculating overall
-     * student progress percentage and assignment completion statistics.
+     * student progress percentage based on each active student's
+     * {@link ProgressSummaryResponse#totalLevelsCompleted()}.
      *
      * @param teacherId the UUID of the teacher
      * @return a list of classroom summaries with calculated statistics
      */
+    @Transactional(readOnly = true)
     public List<ClassroomSummaryResponse> listClassrooms(UUID teacherId) {
-        long assignmentCount = levelRepository.count();
-        return classroomTeacherRepository
-            .findClassroomsWithStudentCountByTeacherId(teacherId)
-            .stream()
-            .map(row -> {
-                long studentCount = ((Number) row[5]).longValue();
-                long completedCount = ((Number) row[6]).longValue();
-                long possible = assignmentCount * studentCount;
-                int progressPercent = possible > 0 ? (int) (completedCount * 100 / possible) : 0;
-                return ClassroomSummaryResponse.builder()
-                    .id(row[0].toString())
-                    .title((String) row[1])
-                    .description((String) row[2])
-                    .joinCode((String) row[3])
-                    .createdAt((LocalDateTime) row[4])
-                    .studentCount(studentCount)
-                    .assignmentCount((int) assignmentCount)
-                    .completedCount((int) completedCount)
-                    .progressPercent(progressPercent)
-                    .build();
-            })
+        List<Classroom> classrooms = classroomTeacherRepository.findClassroomsByTeacherId(teacherId);
+        int totalLevelsInGame = (int) levelRepository.count();
+
+        List<UUID> allStudentIds = classrooms.stream()
+            .flatMap(c -> enrollmentRepository
+                .findByClassroomIdAndLeftAtIsNull(c.getId()).stream())
+            .map(e -> e.getUser().getId())
+            .toList();
+
+        Map<UUID, ProgressSummaryResponse> progressByStudent =
+            progressService.getProgressForStudents(allStudentIds);
+
+        return classrooms.stream()
+            .map(classroom -> buildClassroomSummary(
+                classroom, progressByStudent, totalLevelsInGame))
             .toList();
     }
 

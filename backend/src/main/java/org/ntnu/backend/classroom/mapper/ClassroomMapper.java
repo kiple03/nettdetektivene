@@ -1,8 +1,13 @@
 package org.ntnu.backend.classroom.mapper;
 
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
+import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.classroom.dto.StudentDetailResponse;
+import org.ntnu.backend.classroom.dto.StudentProgressResponse;
+import org.ntnu.backend.classroom.model.Enrollment;
+import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.springframework.stereotype.Component;
 
@@ -54,5 +59,77 @@ public class ClassroomMapper {
       classroom.setDescription(
           request.getDescription().isBlank() ? null : request.getDescription().trim());
     }
+  }
+
+  /**
+   * Builds a classroom summary with computed progress statistics for the teacher dashboard.
+   *
+   * @param classroom the classroom being summarized
+   * @param studentCount number of active enrollments
+   * @param totalLevelsInGame total levels across all stops (denominator for the percent)
+   * @param completedCount sum of totalLevelsCompleted across all active students
+   * @return the summary DTO with computed progress percentage
+   */
+  public ClassroomSummaryResponse toSummary(
+      Classroom classroom,
+      long studentCount,
+      int totalLevelsInGame,
+      int completedCount) {
+
+    long possible = (long) totalLevelsInGame * studentCount;
+    int progressPercent = possible > 0 ? (int) (completedCount * 100L / possible) : 0;
+
+    return ClassroomSummaryResponse.builder()
+        .id(classroom.getId().toString())
+        .title(classroom.getTitle())
+        .description(classroom.getDescription())
+        .joinCode(classroom.getJoinCode())
+        .createdAt(classroom.getCreatedAt())
+        .studentCount(studentCount)
+        .assignmentCount(totalLevelsInGame)
+        .completedCount(completedCount)
+        .progressPercent(progressPercent)
+        .build();
+  }
+
+  /**
+   * Maps an active enrollment plus the student's progress into a dashboard list row.
+   *
+   * @param enrollment the active enrollment
+   * @param progress   the student's progress summary, or {@code null} if missing
+   */
+  public StudentProgressResponse toStudentProgress(
+      Enrollment enrollment, ProgressSummaryResponse progress) {
+
+    int levelsCompleted = progress != null ? progress.totalLevelsCompleted() : 0;
+    return StudentProgressResponse.builder()
+        .userId(enrollment.getUser().getId().toString())
+        .username(enrollment.getUser().getUsername())
+        .levelsCompleted(levelsCompleted)
+        .medalsEarned(levelsCompleted) // TODO: medals are per-stop; rework needed
+        .build();
+  }
+
+  /**
+   * Maps an active enrollment plus the student's progress into the detailed view.
+   *
+   * @param enrollment the active enrollment
+   * @param progress   the student's progress summary, or {@code null} if missing
+   */
+  public StudentDetailResponse toStudentDetail(
+      Enrollment enrollment, ProgressSummaryResponse progress) {
+
+    StudentDetailResponse.StudentDetailResponseBuilder builder = StudentDetailResponse.builder()
+        .username(enrollment.getUser().getUsername());
+
+    if (progress != null) {
+      builder
+          .currentStopName(progress.currentStopName())
+          .currentLevelOrder(progress.currentLevelOrder())
+          .totalLevelsCompleted(progress.totalLevelsCompleted())
+          .gameCompleted(progress.gameCompleted());
+    }
+
+    return builder.build();
   }
 }

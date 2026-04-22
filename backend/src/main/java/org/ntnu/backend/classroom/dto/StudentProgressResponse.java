@@ -11,6 +11,6 @@ import lombok.Getter;
 public class StudentProgressResponse {
     private String userId;
     private String username;
-    private long levelsCompleted;
+    private int levelsCompleted;
     private long medalsEarned;
 }
