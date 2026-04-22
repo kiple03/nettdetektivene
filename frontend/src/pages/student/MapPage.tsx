@@ -9,6 +9,7 @@ import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
 import { CarWithAvatar } from "@/components/map/CarWithAvatar";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
+import sharkBase from "@/assets/images/boss/shark-base.png";
 import detektivkontoret from "@/assets/images/map/detektivkontoret.svg";
 import fotografen from "@/assets/images/map/fotografen.svg";
 import markedsplassen from "@/assets/images/map/markedsplassen.svg";
@@ -319,13 +320,21 @@ export default function MapPage() {
                             aria-label={stop.title}
                         >
                             <div className={styles.iconWrapper}>
-                                <img
-                                    src={stop.icon}
-                                    alt={stop.title}
-                                    className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.lockedIcon : ""}`}
-                                />
-
-                                {!isUnlocked(stop.title) && <LockBadge />}
+                                {stop.title === "Datasenteret" && !isUnlocked(stop.title) ? (
+                                    <>
+                                        <img src={sharkBase} alt={stop.title} className={`${styles.icon} ${styles.sharkSilhouette}`} />
+                                        <span className={styles.sharkQuestionMark}>?</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <img
+                                            src={stop.icon}
+                                            alt={stop.title}
+                                            className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.lockedIcon : ""}`}
+                                        />
+                                        {!isUnlocked(stop.title) && <LockBadge />}
+                                    </>
+                                )}
                             </div>
                         </button>
                     );
