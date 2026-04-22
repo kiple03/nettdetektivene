@@ -17,7 +17,7 @@ export async function createClassroomAction({
 
   try {
     const classroom = await createClassroom(title, description);
-    return redirect(`/teacher/classroom/${classroom.id}/code`);
+    return redirect(`/teacher/classrooms/${classroom.id}/code`);
   } catch {
     return { error: 'Noe gikk galt. Prøv igjen.' };
   }

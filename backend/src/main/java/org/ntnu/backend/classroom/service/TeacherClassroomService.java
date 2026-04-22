@@ -1,9 +1,12 @@
 package org.ntnu.backend.classroom.service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.ntnu.backend.avatar.dto.EquippedItemDto;
+import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
@@ -13,6 +16,7 @@ import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
@@ -45,6 +49,7 @@ public class TeacherClassroomService {
     private final LevelRepository levelRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final UserRepository userRepository;
+    private final UserInventoryItemRepository userInventoryItemRepository;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -121,14 +126,52 @@ public class TeacherClassroomService {
             .stream()
             .map(enrollment -> {
                 long count = levelCompletionRepository.countByEnrollmentId(enrollment.getId());
+                UUID userId = enrollment.getUser().getId();
+                List<EquippedItemDto> equippedItems = userInventoryItemRepository
+                    .findByUserIdAndIsEquippedTrue(userId)
+                    .stream()
+                    .map(inv -> EquippedItemDto.builder()
+                        .id(inv.getAvatarItem().getId())
+                        .name(inv.getAvatarItem().getName())
+                        .category(inv.getAvatarItem().getCategory())
+                        .imageUrl("/assets/" + inv.getAvatarItem().getName() + ".svg")
+                        .build())
+                    .toList();
                 return StudentProgressResponse.builder()
-                    .userId(enrollment.getUser().getId().toString())
+                    .userId(userId.toString())
                     .username(enrollment.getUser().getUsername())
                     .levelsCompleted(count)
                     .medalsEarned(count)
+                    .equippedItems(equippedItems)
                     .build();
             })
             .toList();
+    }
+
+    @Transactional
+    public void removeStudent(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        var enrollment = enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        enrollment.setLeftAt(Instant.now());
+        enrollmentRepository.save(enrollment);
+    }
+
+    @Transactional
+    public void updateStudentUsername(UUID classroomId, UUID studentId, UpdateStudentUsernameRequest request, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        var user = userRepository.findById(studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        String newUsername = request.username().trim();
+        if (!newUsername.equals(user.getUsername()) && userRepository.existsByUsername(newUsername)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Brukernavnet er allerede tatt");
+        }
+        user.setUsername(newUsername);
+        userRepository.save(user);
     }
 
     

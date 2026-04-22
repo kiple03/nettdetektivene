@@ -76,7 +76,7 @@ export default function MysterySubmissions() {
   return (
     <div className="mystery">
       <header className="mystery__header">
-        <Link to={`/teacher/classroom/${classroomId}`} className="mystery__back">← {classroom.title}</Link>
+        <Link to={`/teacher/classrooms/${classroomId}`} className="mystery__back">← {classroom.title}</Link>
         <h1 className="mystery__title">Mystery-innleveringer</h1>
       </header>
 
