@@ -6,6 +6,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +28,7 @@ public class JwtAuthenticatedPrincipal {
 
   private final String email;
   private final UUID userId;
-  private final String role;
+  private final RoleEnum role;
   private final UUID classroomId;
   private final Collection<? extends GrantedAuthority> authorities;
 
@@ -54,10 +55,10 @@ public class JwtAuthenticatedPrincipal {
     }
 
   public boolean isTeacher() {
-    return "TEACHER".equals(role);
+    return role == RoleEnum.TEACHER;
   }
 
   public boolean isStudent() {
-    return "STUDENT".equals(role);
+    return role == RoleEnum.STUDENT;
   }
 }

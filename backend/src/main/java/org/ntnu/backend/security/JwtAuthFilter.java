@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -81,9 +82,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
       // JWT claim stores the bare role name (e.g. "TEACHER"); Spring Security
       // expects the "ROLE_" prefix on GrantedAuthority, so we add it here.
-      String role = claims.get("role", String.class);
+      String roleClaim = claims.get("role", String.class);
+      RoleEnum role;
+      try {
+        role = RoleEnum.valueOf(roleClaim);
+      } catch (IllegalArgumentException | NullPointerException e) {
+        return; // malformed role claim, auth is rejected
+      }
+
       List<SimpleGrantedAuthority> authorities =
-          List.of(new SimpleGrantedAuthority("ROLE_" + role));
+          List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
 
       JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
           claims.getSubject(),
