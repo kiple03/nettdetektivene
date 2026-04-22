@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
 import { getGameLevelById, getLevelQuestions } from "@/api/gameApi.ts";
+import { studentKeys } from "@/hooks/student/queryKeys";
 import { mapQuestionToStationData } from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
 import StationRenderer from "@/components/game/station/StationRenderer.tsx";
@@ -19,13 +20,13 @@ export default function GamePage() {
     const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
 
     const { data: level, isError: levelError } = useQuery({
-        queryKey: ["level", levelIdNum],
+        queryKey: studentKeys.gameLevel(levelIdNum),
         queryFn: () => getGameLevelById(levelIdNum),
         enabled: validId,
     });
 
     const { data: questions = [], isPending, isError: questionsError } = useQuery({
-        queryKey: ["levelQuestions", levelIdNum],
+        queryKey: studentKeys.levelQuestions(levelIdNum),
         queryFn: () => getLevelQuestions(levelIdNum),
         enabled: validId,
     });

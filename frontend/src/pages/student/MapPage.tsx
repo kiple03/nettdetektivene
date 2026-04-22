@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { getGameStops } from "@/api/gameApi";
+import { studentKeys } from "@/hooks/student/queryKeys";
 import type { EquippedItem } from "@/types/user";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
@@ -111,7 +112,7 @@ type ScrollState = { canLeft: boolean; canRight: boolean; canUp: boolean; canDow
 
 export default function MapPage() {
     const { data: profile } = useUserProfile();
-    const { data: backendStops = [] } = useQuery({ queryKey: ["gameStops"], queryFn: getGameStops });
+    const { data: backendStops = [] } = useQuery({ queryKey: studentKeys.gameStops, queryFn: getGameStops });
     const stopIdByTitle = Object.fromEntries(backendStops.map(s => [s.name, s.id]));
     const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
     const navigate = useNavigate();

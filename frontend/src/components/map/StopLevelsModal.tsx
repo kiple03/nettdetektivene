@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getLevelsForStop } from "@/api/gameApi";
 import { Button } from "@/components/ui/buttons/Button";
 import styles from "./StopLevelsModal.module.css";
+import { studentKeys } from "@/hooks/student/queryKeys";
 
 export interface StopInfo {
     title: string;
@@ -18,7 +19,7 @@ export function StopLevelsModal({ stop, onClose }: StopLevelsModalProps) {
     const navigate = useNavigate();
 
     const { data: levels = [], isPending } = useQuery({
-        queryKey: ["stopLevels", stop?.stopId],
+        queryKey: studentKeys.stopLevels(stop?.stopId ?? null),
         queryFn: () => getLevelsForStop(stop!.stopId!),
         enabled: stop?.stopId != null,
     });
