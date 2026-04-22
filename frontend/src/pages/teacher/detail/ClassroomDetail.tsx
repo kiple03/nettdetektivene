@@ -1,20 +1,12 @@
-import { Link, useLoaderData } from 'react-router-dom';
-import type { ClassroomDetail, StudentSummary, StopSummary, CoTeacher } from '@/types/classroom.ts';
+import { Link, useParams } from 'react-router-dom';
 import { useClassroomDetailPage } from '@/hooks/useClassroomDetailPage';
 import { ClassroomDetailBoard } from '@/components/teacher/classroomDetail/ClassroomDetailBoard';
 import { ClassroomDetailHeader } from '@/components/teacher/classroomDetail/ClassroomDetailHeader';
 import { ClassroomDetailDeleteDialog } from '@/components/teacher/classroomDetail/ClassroomDetailDeleteDialog';
 import './ClassroomDetail.css';
 
-type LoaderData = {
-    classroom: ClassroomDetail | null;
-    students: StudentSummary[];
-    stops: StopSummary[];
-    teachers: CoTeacher[];
-};
-
 export default function ClassroomDetailPage() {
-    const loaderData = useLoaderData() as LoaderData;
+    const { id: classroomId = '' } = useParams<{ id: string }>();
     const {
         classroom,
         editMode,
@@ -54,7 +46,7 @@ export default function ClassroomDetailPage() {
         handleInviteTeacher,
         isOwner,
         getLeaderboardRank,
-    } = useClassroomDetailPage(loaderData);
+    } = useClassroomDetailPage(classroomId);
 
     if (!classroom) {
         return (
