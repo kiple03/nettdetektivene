@@ -1,28 +1,41 @@
 package org.ntnu.backend.classroom.service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.ntnu.backend.avatar.dto.EquippedItemDto;
+import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.StopResponse;
+import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
+import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.Enrollment;
+import org.ntnu.backend.classroom.model.ClassroomTeacher;
+import org.ntnu.backend.classroom.model.ClassroomTeacherId;
+import org.ntnu.backend.game.repository.StopRepository;
+import org.ntnu.backend.user.model.enums.RoleEnum;
+import org.springframework.security.access.AccessDeniedException;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.repository.LevelRepository;
-import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
@@ -52,6 +65,7 @@ public class TeacherClassroomService {
     private final StopRepository stopRepository;
     private final ProgressService progressService;
     private final ClassroomMapper classroomMapper;
+    private final UserInventoryItemRepository userInventoryItemRepository;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -153,7 +167,33 @@ public class TeacherClassroomService {
             .toList();
     }
 
-    
+    @Transactional
+    public void removeStudent(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        var enrollment = enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        enrollment.setLeftAt(Instant.now());
+        enrollmentRepository.save(enrollment);
+    }
+
+    @Transactional
+    public void updateStudentUsername(UUID classroomId, UUID studentId, UpdateStudentUsernameRequest request, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        var user = userRepository.findById(studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        String newUsername = request.username().trim();
+        if (!newUsername.equals(user.getUsername()) && userRepository.existsByUsername(newUsername)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Brukernavnet er allerede tatt");
+        }
+        user.setUsername(newUsername);
+        userRepository.save(user);
+    }
+
+
     /**
      * Fetches detailed data for a specific student in a classroom, including
      * exactly which levels they have completed and when.
@@ -175,6 +215,66 @@ public class TeacherClassroomService {
             progressService.getProgressForStudents(List.of(studentId)).get(studentId);
 
         return classroomMapper.toStudentDetail(enrollment, progress);
+    }
+
+    public List<CoTeacherResponse> listCoTeachers(UUID classroomId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        return classroomTeacherRepository.findWithUsersByClassroomId(classroomId)
+            .stream()
+            .map(ct -> CoTeacherResponse.builder()
+                .userId(ct.getUser().getId().toString())
+                .username(ct.getUser().getUsername())
+                .email(ct.getUser().getEmail())
+                .owner(ct.isOwner())
+                .build())
+            .toList();
+    }
+
+    @Transactional
+    public CoTeacherResponse inviteCoTeacher(UUID classroomId, InviteCoTeacherRequest request, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        if (!classroomTeacherRepository.isOwnerOfClassroom(classroomId, principal.getUserId())) {
+            throw new AccessDeniedException("Bare eier kan invitere lærere");
+        }
+        var invitee = userRepository.findByEmail(request.email())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ingen lærer med den e-posten ble funnet"));
+        if (invitee.getRole() != RoleEnum.TEACHER) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukeren er ikke en lærer");
+        }
+        if (classroomTeacherRepository.existsByClassroomIdAndUserId(classroomId, invitee.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Læreren er allerede lagt til i klassen");
+        }
+        Classroom classroom = classroomRepository.findById(classroomId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        classroomTeacherRepository.save(ClassroomTeacher.builder()
+            .id(new ClassroomTeacherId(classroomId, invitee.getId()))
+            .classroom(classroom)
+            .user(invitee)
+            .isOwner(false)
+            .build());
+        return CoTeacherResponse.builder()
+            .userId(invitee.getId().toString())
+            .username(invitee.getUsername())
+            .email(invitee.getEmail())
+            .owner(false)
+            .build();
+    }
+
+    @Transactional
+    public void removeCoTeacher(UUID classroomId, UUID targetUserId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        UUID requesterId = principal.getUserId();
+        boolean requesterIsOwner = classroomTeacherRepository.isOwnerOfClassroom(classroomId, requesterId);
+        boolean removingSelf = requesterId.equals(targetUserId);
+        if (!requesterIsOwner && !removingSelf) {
+            throw new AccessDeniedException("Bare eier kan fjerne andre lærere");
+        }
+        if (requesterIsOwner && removingSelf) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Eier kan ikke forlate klasserommet");
+        }
+        var ct = classroomTeacherRepository.findOneByClassroomIdAndUserId(classroomId, targetUserId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        classroomTeacherRepository.delete(ct);
     }
 
     /**
@@ -260,20 +360,4 @@ public class TeacherClassroomService {
             .build();
     }
 
-    /**
-     * Retrieves the ordered list of all checkpoints ("stops") defined in the game map.
-     *
-     * @return an ordered list of StopResponses
-     */
-    @Transactional(readOnly = true)
-    public List<StopResponse> listStops() {
-        return stopRepository.findAllByOrderByDisplayOrderAsc()
-            .stream()
-            .map(stop -> StopResponse.builder()
-                .id(stop.getId())
-                .name(stop.getName())
-                .displayOrder(stop.getDisplayOrder())
-                .build())
-            .toList();
-    }
 }

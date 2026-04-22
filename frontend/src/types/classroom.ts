@@ -1,5 +1,7 @@
 // Frontend types aligned to backend API DTOs (camelCase, no DB schema types)
 
+import type { EquippedItem } from '@/types/user';
+
 export type ClassroomSummary = {
   id: string;
   title: string;
@@ -10,6 +12,7 @@ export type ClassroomSummary = {
   assignmentCount: number;
   completedCount: number;
   progressPercent: number;
+  teacherUsernames: string[];
 };
 
 export interface ClassroomDetail {
@@ -25,6 +28,7 @@ export interface StudentSummary {
   username: string;
   medalsEarned: number;
   levelsCompleted: number;
+  equippedItems: EquippedItem[];
 }
 
 export interface LevelEntry {
@@ -50,7 +54,7 @@ export interface MysterySubmissionResponse {
 }
 
 export interface NotificationResponse {
-  type: 'stop_completed' | 'student_stuck' | 'mystery_submission' | 'inappropriate_name';
+  type: 'stop_completed' | 'student_stuck' | 'mystery_submission' | 'inappropriate_name' | 'co_teacher_added';
   message: string;
   classroomId: string;
   studentUsername: string;
@@ -63,4 +67,11 @@ export interface StopSummary {
   title: string;
   description: string | null;
   displayOrder: number;
+}
+
+export interface CoTeacher {
+  userId: string;
+  username: string;
+  email: string;
+  isOwner: boolean;
 }

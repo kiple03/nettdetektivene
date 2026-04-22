@@ -14,6 +14,7 @@ import {
 } from '@/utils/validators';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
+import { useQueryClient } from '@tanstack/react-query';
 
 function StudentLoginPage() {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ function StudentLoginPage() {
     navigate('/auth/feide', { state: { portalRole: 'STUDENT' } });
   };
 
+  const queryClient = useQueryClient(); //for award system
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError('');
@@ -52,6 +54,9 @@ function StudentLoginPage() {
       const res = await register({ email: regEmail, password: regPassword, role: 'STUDENT' });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
+
+      await queryClient.invalidateQueries({queryKey: ['medalions']});
+
       navigate('/avatar');
     } catch (err) {
       const axiosErr = err as AxiosError<ApiErrorBody>;

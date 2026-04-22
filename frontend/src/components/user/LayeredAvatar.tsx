@@ -12,6 +12,7 @@ const DEFAULT_TONE = SKIN_TONES['tone_dark'];
 interface LayeredAvatarProps{
     items: EquippedItem[];
     size?: number;
+    circular?: boolean;
     skinToneBase?: string;
     skinToneShadowDark?: string;
     skinToneShadowLight?: string;
@@ -68,6 +69,7 @@ function BaseAvatarSVG(props: React.SVGProps<SVGSVGElement>){
 export function LayeredAvatar({
     items,
     size = 64,
+    circular = true,
     skinToneBase,
     skinToneShadowDark,
     skinToneShadowLight
@@ -87,9 +89,7 @@ export function LayeredAvatar({
         position: 'relative',
         width: size,
         height: size,
-        borderRadius: '50%',
-        overflow: 'hidden',
-        backgroundColor: '#e5e7eb',
+        ...(circular ? { borderRadius: '50%', overflow: 'hidden' } : {}),
         "--skin-base": skinToneBase ?? detectedTone.base,
         "--skin-shadow-dark": skinToneShadowDark ?? detectedTone.shadowDark,
         "--skin-shadow-light": skinToneShadowLight ?? detectedTone.shadowLight

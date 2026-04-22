@@ -1,6 +1,8 @@
 package org.ntnu.backend.classroom.repository;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
@@ -19,6 +21,25 @@ public interface ClassroomTeacherRepository extends JpaRepository<ClassroomTeach
   boolean existsByClassroomIdAndUserId(UUID classroomId, UUID userId);
 
   void deleteByClassroomId(UUID classroomId);
+
+  @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.user WHERE ct.id.classroomId = :classroomId")
+  List<ClassroomTeacher> findWithUsersByClassroomId(@Param("classroomId") UUID classroomId);
+
+  @Query("SELECT ct FROM ClassroomTeacher ct WHERE ct.id.classroomId = :classroomId AND ct.id.userId = :userId")
+  Optional<ClassroomTeacher> findOneByClassroomIdAndUserId(@Param("classroomId") UUID classroomId, @Param("userId") UUID userId);
+
+  @Query("SELECT CASE WHEN COUNT(ct) > 0 THEN true ELSE false END FROM ClassroomTeacher ct WHERE ct.id.classroomId = :classroomId AND ct.id.userId = :userId AND ct.isOwner = true")
+  boolean isOwnerOfClassroom(@Param("classroomId") UUID classroomId, @Param("userId") UUID userId);
+
+
+    @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.classroom WHERE ct.id.userId = :teacherId AND ct.isOwner = false")
+    List<ClassroomTeacher> findNonOwnerEntriesByUserId(@Param("teacherId") UUID teacherId);
+
+    @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.user WHERE ct.id.classroomId = :classroomId AND ct.isOwner = true")
+    Optional<ClassroomTeacher> findOwnerWithUserByClassroomId(@Param("classroomId") UUID classroomId);
+
+    @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.user WHERE ct.id.classroomId IN :classroomIds")
+    List<ClassroomTeacher> findWithUsersByClassroomIdIn(@Param("classroomIds") Collection<UUID> classroomIds);
 
   @Query("SELECT ct.classroom FROM ClassroomTeacher ct WHERE ct.user.id = :teacherId")
   List<Classroom> findClassroomsByTeacherId(UUID teacherId);

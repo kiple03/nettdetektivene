@@ -12,4 +12,6 @@ public interface LevelRepository extends JpaRepository<Level, Integer> {
   List<Level> findByStopIdOrderByIdAsc(int stopId);
 
   long countByStopId(int id);
+
+  Optional<Level> findByStopIdAndTitle(int stopId, String title);
 }

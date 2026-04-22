@@ -138,8 +138,9 @@ CREATE TABLE level_completion (
 -- One medal per stop per enrollment, earned when all tasks in that stop are completed.
 CREATE TABLE medal (
     id            CHAR(36)  PRIMARY KEY,              -- UUID
-    enrollment_id CHAR(36)  NOT NULL,
-    stop_id       CHAR(36)  NOT NULL,
+    name_         CHAR(36) NOT NULL,
+    user          CHAR(36)  NOT NULL,
+    description_  CHAR(36) NOT NULL,
     earned_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (enrollment_id, stop_id),
     FOREIGN KEY (enrollment_id) REFERENCES enrollment(id) ON DELETE CASCADE,

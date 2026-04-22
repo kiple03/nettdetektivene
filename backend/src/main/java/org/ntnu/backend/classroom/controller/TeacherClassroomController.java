@@ -6,7 +6,9 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
+import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.NotificationResponse;
 import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
@@ -14,6 +16,7 @@ import org.ntnu.backend.classroom.dto.StopResponse;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
@@ -86,6 +89,27 @@ public class TeacherClassroomController {
         return teacherClassroomService.getStudentDetail(id, studentId, principal);
     }
 
+    @DeleteMapping("/{id}/students/{studentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('TEACHER')")
+    public void removeStudent(
+            @PathVariable UUID id,
+            @PathVariable UUID studentId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        teacherClassroomService.removeStudent(id, studentId, principal);
+    }
+
+    @PatchMapping("/{id}/students/{studentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('TEACHER')")
+    public void updateStudentUsername(
+            @PathVariable UUID id,
+            @PathVariable UUID studentId,
+            @Valid @RequestBody UpdateStudentUsernameRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        teacherClassroomService.updateStudentUsername(id, studentId, request, principal);
+    }
+
     @GetMapping("/{id}/mystery")
     @PreAuthorize("hasRole('TEACHER')")
     public List<MysterySubmissionResponse> listMysterySubmissions(
@@ -120,10 +144,31 @@ public class TeacherClassroomController {
 //        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
 //        return teacherClassroomService.getNotifications(principal.getUserId());
 //    }
-
-    @GetMapping("/stops")
+    @GetMapping("/{id}/teachers")
     @PreAuthorize("hasRole('TEACHER')")
-    public List<StopResponse> listStops() {
-        return teacherClassroomService.listStops();
+    public List<CoTeacherResponse> listCoTeachers(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.listCoTeachers(id, principal);
+    }
+
+    @PostMapping("/{id}/teachers")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('TEACHER')")
+    public CoTeacherResponse inviteCoTeacher(
+            @PathVariable UUID id,
+            @Valid @RequestBody InviteCoTeacherRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.inviteCoTeacher(id, request, principal);
+    }
+
+    @DeleteMapping("/{id}/teachers/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('TEACHER')")
+    public void removeCoTeacher(
+            @PathVariable UUID id,
+            @PathVariable UUID userId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        teacherClassroomService.removeCoTeacher(id, userId, principal);
     }
 }

@@ -29,4 +29,8 @@ public interface StopRepository extends JpaRepository<Stop, Integer> {
       "FROM Stop s LEFT JOIN Level l ON l.stop = s " +
       "GROUP BY s.id, s.displayOrder")
   List<StopLevelCount> findAllWithLevelCounts();
+
+    Optional<Stop> findByName(String name);
+
+    List<Stop> findAllByNameOrderByIdAsc(String name);
 }

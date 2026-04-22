@@ -1,7 +1,7 @@
 import MultipleChoice from "@/components/game/tasks/MultipleChoice.tsx";
 import TaskHeader from "@/components/game/ui/TaskHeader.tsx";
 import {submitSingleChoiceAnswer} from "@/api/gameApi.ts";
-import {mapSubmitResponseToSumbitAnswer} from "@/utils/gameMapper.ts";
+import {mapSubmitResponseToSubmitAnswer} from "@/utils/gameMapper.ts";
 import type {StationData, StationOption, SubmitAnswerResult} from "@/types/station.ts";
 
 type NyhetsKvartalStationProps = {
@@ -19,7 +19,7 @@ function NyhetsKvartalStation({ station, onAnswer, disabled = false}: NyhetsKvar
         selectedId: option.id,
       });
 
-      const mappedResult = mapSubmitResponseToSumbitAnswer(response);
+      const mappedResult = mapSubmitResponseToSubmitAnswer(response);
       onAnswer(mappedResult);
     } catch (error: any) {
       console.error("Feil ved innsending", error)

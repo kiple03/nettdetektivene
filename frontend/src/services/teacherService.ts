@@ -13,6 +13,7 @@ import type {
   MysterySubmissionResponse,
   NotificationResponse,
   StopSummary,
+  CoTeacher,
 } from '../types/classroom';
 import apiClient from '../api/client';
 import axios from 'axios';
@@ -37,11 +38,19 @@ interface RawMysterySubmission {
   featured: boolean;
 }
 
+interface RawEquippedItem {
+  id: string;
+  name: string;
+  category: string;
+  imageUrl: string;
+}
+
 interface RawStudentProgress {
   userId: string;
   username: string;
   levelsCompleted: number;
   medalsEarned: number;
+  equippedItems: RawEquippedItem[];
 }
 
 interface RawClassroomSummary {
@@ -54,6 +63,7 @@ interface RawClassroomSummary {
   assignmentCount: number;
   completedCount: number;
   progressPercent: number;
+  teacherUsernames: string[];
 }
 
 interface RawClassroomDetail {
@@ -81,6 +91,13 @@ interface RawStop {
   displayOrder: number;
 }
 
+interface RawCoTeacher {
+  userId: string;
+  username: string;
+  email: string;
+  owner: boolean;
+}
+
 // --- Mappers ---
 
 function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
@@ -89,6 +106,7 @@ function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
     username: raw.username,
     levelsCompleted: raw.levelsCompleted,
     medalsEarned: raw.medalsEarned,
+    equippedItems: raw.equippedItems ?? [],
   };
 }
 
@@ -103,6 +121,7 @@ function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
     assignmentCount: raw.assignmentCount,
     completedCount: raw.completedCount,
     progressPercent: raw.progressPercent,
+    teacherUsernames: raw.teacherUsernames ?? [],
   };
 }
 
@@ -140,6 +159,7 @@ function mapMysterySubmission(raw: RawMysterySubmission): MysterySubmissionRespo
 const NOTIFICATION_TYPE_MAP: Record<string, NotificationResponse['type']> = {
   LEVEL_COMPLETED: 'stop_completed',
   MYSTERY_SUBMISSION: 'mystery_submission',
+  CO_TEACHER_ADDED: 'co_teacher_added',
 };
 
 /** Stable localStorage key for a notification's read state. */
@@ -162,6 +182,10 @@ function mapNotification(raw: RawNotification): NotificationResponse {
     timestamp: raw.timestamp,
     read,
   };
+}
+
+function mapCoTeacher(raw: RawCoTeacher): CoTeacher {
+  return { userId: raw.userId, username: raw.username, email: raw.email, isOwner: raw.owner };
 }
 
 function mapStop(raw: RawStop): StopSummary {
@@ -261,11 +285,33 @@ export async function featureMysterySubmission(classroomId: string, submissionId
 }
 
 export async function getNotifications(): Promise<NotificationResponse[]> {
-  const res = await apiClient.get<RawNotification[]>('/teacher/classrooms/notifications');
+  const res = await apiClient.get<RawNotification[]>('/teacher/notifications');
   return res.data.map(mapNotification);
 }
 
 export async function getStops(): Promise<StopSummary[]> {
-  const res = await apiClient.get<RawStop[]>('/teacher/classrooms/stops');
+  const res = await apiClient.get<RawStop[]>('/teacher/stops');
   return res.data.map(mapStop);
+}
+
+export async function removeStudent(classroomId: string, studentId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}/students/${studentId}`);
+}
+
+export async function updateStudentUsername(classroomId: string, studentId: string, username: string): Promise<void> {
+  await apiClient.patch(`/teacher/classrooms/${classroomId}/students/${studentId}`, { username });
+}
+
+export async function getCoTeachers(classroomId: string): Promise<CoTeacher[]> {
+  const res = await apiClient.get<RawCoTeacher[]>(`/teacher/classrooms/${classroomId}/teachers`);
+  return res.data.map(mapCoTeacher);
+}
+
+export async function inviteCoTeacher(classroomId: string, email: string): Promise<CoTeacher> {
+  const res = await apiClient.post<RawCoTeacher>(`/teacher/classrooms/${classroomId}/teachers`, { email });
+  return mapCoTeacher(res.data);
+}
+
+export async function removeCoTeacher(classroomId: string, userId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}/teachers/${userId}`);
 }
