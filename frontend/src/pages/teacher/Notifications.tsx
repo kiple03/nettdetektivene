@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { NotificationResponse } from '@/types/classroom.ts';
-import { notifLsKey } from '@/services/teacherService';
+import { notifLsKey } from '@/api/teacherApi';
 import { useClassroomSummaries, useNotifications } from '@/hooks/teacher/useTeacherQueries';
 import './Notifications.css';
 
