@@ -1,77 +1,78 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import type { ClassroomDetail, StudentSummary, StopSummary, CoTeacher } from '@/types/classroom.ts';
-import { updateClassroom, deleteClassroom, removeStudent, updateStudentUsername, inviteCoTeacher } from '@/services/teacherService';
+import { useClassroom, useCoTeachers, useStops, useStudentProgress } from './teacher/useTeacherQueries';
+import {
+    useDeleteClassroom,
+    useInviteCoTeacher,
+    useInviteCoTeacherError,
+    useRemoveStudent,
+    useUpdateClassroom,
+    useUpdateStudentUsername,
+} from './teacher/useTeacherMutations';
 import { decodeToken } from '@/stores/authStore';
 
-type LoaderData = {
-    classroom: ClassroomDetail | null;
-    students: StudentSummary[];
-    stops: StopSummary[];
-    teachers: CoTeacher[];
-};
-
-export function useClassroomDetailPage(loaderData: LoaderData) {
-    const { classroom: initial, students, stops, teachers: initialTeachers } = loaderData;
-    const [classroom, setClassroom] = useState(initial);
-    const [editMode, setEditMode] = useState(false);
-    const [editTitle, setEditTitle] = useState(initial?.title ?? '');
-    const [saving, setSaving] = useState(false);
-    const [saveError, setSaveError] = useState<string | null>(null);
-    const [studentList, setStudentList] = useState<StudentSummary[]>(students);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [deleting, setDeleting] = useState(false);
-    const [deleteError, setDeleteError] = useState<string | null>(null);
-    const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
-    const [editUsernameValue, setEditUsernameValue] = useState('');
-    const [savingUsername, setSavingUsername] = useState(false);
-    const [usernameError, setUsernameError] = useState<string | null>(null);
-    const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
-    const [removingId, setRemovingId] = useState<string | null>(null);
-    const [didCopyCode, setDidCopyCode] = useState(false);
-    const [teacherList, setTeacherList] = useState<CoTeacher[]>(initialTeachers);
-    const [inviteEmail, setInviteEmail] = useState('');
-    const [inviting, setInviting] = useState(false);
-    const [inviteError, setInviteError] = useState<string | null>(null);
-    const currentUserId = decodeToken()?.userId ?? '';
-    const isOwner = teacherList.some((teacher) => teacher.userId === currentUserId && teacher.isOwner);
+export function useClassroomDetailPage(classroomId: string) {
     const navigate = useNavigate();
 
-    const totalStops = stops.length;
+    const classroomQuery = useClassroom(classroomId);
+    const studentsQuery = useStudentProgress(classroomId);
+    const stopsQuery = useStops();
+    const coTeachersQuery = useCoTeachers(classroomId);
 
-    const leaderboard = useMemo(() => {
-        return [...studentList]
-            .sort((a, b) => {
-                if (b.medalsEarned !== a.medalsEarned) return b.medalsEarned - a.medalsEarned;
-                return b.levelsCompleted - a.levelsCompleted;
-            })
-            .map((student, index) => ({
-                userId: student.userId,
-                rank: index + 1,
-            }));
-    }, [studentList]);
+    const classroom = classroomQuery.data ?? null;
+    const studentList = studentsQuery.data ?? [];
+    const totalStops = stopsQuery.data?.length ?? 0;
+    const teacherList = coTeachersQuery.data ?? [];
+
+    // UI state only
+    const [editMode, setEditMode] = useState(false);
+    const [editTitle, setEditTitle] = useState('');
+    const [saveError, setSaveError] = useState<string | null>(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
+    const [editUsernameValue, setEditUsernameValue] = useState('');
+    const [usernameError, setUsernameError] = useState<string | null>(null);
+    const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+    const [didCopyCode, setDidCopyCode] = useState(false);
+    const [inviteEmail, setInviteEmail] = useState('');
+
+    const updateMutation = useUpdateClassroom(classroomId);
+    const deleteMutation = useDeleteClassroom(classroomId);
+    const removeStudentMutation = useRemoveStudent(classroomId);
+    const updateUsernameMutation = useUpdateStudentUsername(classroomId);
+    const inviteMutation = useInviteCoTeacher(classroomId);
+
+    const currentUserId = decodeToken()?.userId ?? '';
+    const isOwner = teacherList.some((t) => t.userId === currentUserId && t.isOwner);
+
+    const leaderboard = useMemo(
+        () =>
+            [...studentList]
+                .sort((a, b) => {
+                    if (b.medalsEarned !== a.medalsEarned) return b.medalsEarned - a.medalsEarned;
+                    return b.levelsCompleted - a.levelsCompleted;
+                })
+                .map((student, index) => ({ userId: student.userId, rank: index + 1 })),
+        [studentList],
+    );
 
     function getLeaderboardRank(userId: string) {
-        return leaderboard.find((entry) => entry.userId === userId)?.rank ?? studentList.length;
+        return leaderboard.find((e) => e.userId === userId)?.rank ?? studentList.length;
     }
 
     async function handleSave() {
         if (!classroom) return;
-        if (editTitle.trim().length < 2) {
+        const trimmed = editTitle.trim();
+        if (trimmed.length < 2) {
             setSaveError('Klassenavn må være minst 2 tegn.');
             return;
         }
-        setSaving(true);
         setSaveError(null);
         try {
-            const updated = await updateClassroom(classroom.id, editTitle.trim(), classroom.description);
-            setClassroom(updated);
+            await updateMutation.mutateAsync({ title: trimmed, description: classroom.description });
             setEditMode(false);
         } catch {
             setSaveError('Kunne ikke lagre. Prøv igjen.');
-        } finally {
-            setSaving(false);
         }
     }
 
@@ -83,19 +84,15 @@ export function useClassroomDetailPage(loaderData: LoaderData) {
     }
 
     async function handleDelete() {
-        if (!classroom) return;
-        setDeleting(true);
-        setDeleteError(null);
         try {
-            await deleteClassroom(classroom.id);
+            await deleteMutation.mutateAsync();
             navigate('/teacher');
         } catch {
-            setDeleteError('Kunne ikke slette. Prøv igjen.');
-            setDeleting(false);
+            // error surfaced via deleteMutation.error
         }
     }
 
-    function startEditUsername(student: StudentSummary) {
+    function startEditUsername(student: { userId: string; username: string }) {
         setEditingStudentId(student.userId);
         setEditUsernameValue(student.username);
         setUsernameError(null);
@@ -111,84 +108,61 @@ export function useClassroomDetailPage(loaderData: LoaderData) {
         try {
             await navigator.clipboard.writeText(classroom.joinCode);
             setDidCopyCode(true);
-            window.setTimeout(() => {
-                setDidCopyCode(false);
-            }, 1800);
+            window.setTimeout(() => setDidCopyCode(false), 1800);
         } catch {
             setDidCopyCode(false);
         }
     }
 
-    async function saveUsername(student: StudentSummary) {
-        if (!classroom) return;
+    async function saveUsername(student: { userId: string; username: string }) {
         const trimmed = editUsernameValue.trim();
         if (trimmed.length < 3) {
             setUsernameError('Brukernavn må være minst 3 tegn.');
             return;
         }
-        setSavingUsername(true);
         setUsernameError(null);
         try {
-            await updateStudentUsername(classroom.id, student.userId, trimmed);
-            setStudentList((prev) => prev.map((item) => (item.userId === student.userId ? { ...item, username: trimmed } : item)));
+            await updateUsernameMutation.mutateAsync({ studentId: student.userId, username: trimmed });
             setEditingStudentId(null);
         } catch {
             setUsernameError('Brukernavnet er allerede tatt eller ugyldig.');
-        } finally {
-            setSavingUsername(false);
         }
     }
 
     async function handleRemoveStudent(studentId: string) {
-        if (!classroom) return;
-        setRemovingId(studentId);
+        await removeStudentMutation.mutateAsync(studentId);
+        setConfirmRemoveId(null);
+    }
+
+    async function handleInviteTeacher(e: { preventDefault: () => void }) {
+        e.preventDefault();
+        const email = inviteEmail.trim();
+        if (!email) return;
         try {
-            await removeStudent(classroom.id, studentId);
-            setStudentList((prev) => prev.filter((student) => student.userId !== studentId));
-            setConfirmRemoveId(null);
-        } finally {
-            setRemovingId(null);
+            await inviteMutation.mutateAsync(email);
+            setInviteEmail('');
+        } catch {
+            // error surfaced via inviteMutation.error
         }
     }
 
-    async function handleInviteTeacher(e: React.FormEvent) {
-        e.preventDefault();
-        if (!classroom) return;
-        const email = inviteEmail.trim();
-        if (!email) return;
-        setInviting(true);
-        setInviteError(null);
-        try {
-            const added = await inviteCoTeacher(classroom.id, email);
-            setTeacherList((prev) => [...prev, added]);
-            setInviteEmail('');
-        } catch (err) {
-            if (axios.isAxiosError(err)) {
-                if (err.response?.status === 404) setInviteError('Ingen lærer med den e-postadressen ble funnet.');
-                else if (err.response?.status === 409) setInviteError('Læreren er allerede lagt til i klassen.');
-                else if (err.response?.status === 400) setInviteError('Den angitte brukeren er ikke registrert som lærer.');
-                else setInviteError('Noe gikk galt. Prøv igjen.');
-            } else {
-                setInviteError('Noe gikk galt. Prøv igjen.');
-            }
-        } finally {
-            setInviting(false);
-        }
-    }
+    const inviteError = useInviteCoTeacherError(inviteMutation.error);
+    const deleteError = deleteMutation.isError ? 'Kunne ikke slette. Prøv igjen.' : null;
 
     return {
         classroom,
+        isLoading: classroomQuery.isLoading,
         editMode,
         setEditMode,
         editTitle,
         setEditTitle,
-        saving,
+        saving: updateMutation.isPending,
         saveError,
         handleSave,
         handleCancel,
         showDeleteModal,
         setShowDeleteModal,
-        deleting,
+        deleting: deleteMutation.isPending,
         deleteError,
         handleDelete,
         didCopyCode,
@@ -198,23 +172,22 @@ export function useClassroomDetailPage(loaderData: LoaderData) {
         editingStudentId,
         editUsernameValue,
         setEditUsernameValue,
-        savingUsername,
+        savingUsername: updateUsernameMutation.isPending,
         usernameError,
         startEditUsername,
         cancelEditUsername,
         saveUsername,
         confirmRemoveId,
         setConfirmRemoveId,
-        removingId,
+        removingId: removeStudentMutation.isPending ? removeStudentMutation.variables : null,
         handleRemoveStudent,
         teacherList,
         inviteEmail,
         setInviteEmail,
-        inviting,
+        inviting: inviteMutation.isPending,
         inviteError,
         handleInviteTeacher,
         isOwner,
-        setTeacherList,
         getLeaderboardRank,
     };
 }
