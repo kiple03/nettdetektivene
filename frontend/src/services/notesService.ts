@@ -26,9 +26,15 @@ type NoteResponse = {
 
 type NotesOverviewResponse = {
     reflections?: Partial<Record<TabId, NoteResponse[]>>;
+    levelNotes?: Partial<Record<TabId, NoteResponse[]>>;
 };
 
-const EMPTY_NOTES: NotesMap = {
+export type NotesData = {
+    reflections: NotesMap;
+    levelNotes: NotesMap;
+};
+
+const EMPTY_NOTES_MAP = (): NotesMap => ({
     nyheter: [],
     bilder: [],
     epost: [],
@@ -36,20 +42,29 @@ const EMPTY_NOTES: NotesMap = {
     nett: [],
     sosiale: [],
     egne: [],
-};
+});
 
-export async function getMyNotes(): Promise<NotesMap> {
-    const res = await apiClient.get<NotesOverviewResponse>("/v1/notes/me");
-    const reflections = res.data.reflections ?? {};
+function toNotesMap(raw: Partial<Record<TabId, NoteResponse[]>> | undefined): NotesMap {
+    const base = EMPTY_NOTES_MAP();
+    if (!raw) return base;
 
     return {
-        ...EMPTY_NOTES,
+        ...base,
         ...Object.fromEntries(
-            Object.entries(reflections).map(([tab, notes]) => [
+            Object.entries(raw).map(([tab, notes]) => [
                 tab,
                 (notes ?? []).map((n) => ({ id: n.id, content: n.content })),
             ])
         ),
+    };
+}
+
+export async function getMyNotes(): Promise<NotesData> {
+    const res = await apiClient.get<NotesOverviewResponse>("/v1/notes/me");
+
+    return {
+        reflections: toNotesMap(res.data.reflections),
+        levelNotes: toNotesMap(res.data.levelNotes),
     };
 }
 

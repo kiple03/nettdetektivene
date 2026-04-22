@@ -87,6 +87,16 @@ const TABS: TabConfig[] = [
     },
 ];
 
+const EMPTY_NOTES_MAP = (): NotesMap => ({
+    nyheter: [],
+    bilder: [],
+    epost: [],
+    passord: [],
+    nett: [],
+    sosiale: [],
+    egne: [],
+});
+
 const Spirals = ({ count = 16 }: { count?: number }) => (
     <div className={styles.spiralStrip}>
         {Array.from({ length: count }).map((_, i) => (
@@ -100,28 +110,21 @@ function getTabConfig(tabId: TabId): TabConfig {
 }
 
 function getPossessive(name: string): string {
-    return /[sxzSXZ]$/.test(name) ? `${name}'` : `${name}s`;
+    return /[sxzSXZ]$/.test(name) ? `${name}'` : `${name}`;
 }
 
 export default function NotesPage() {
     const { data: userProfile } = useUserProfile();
     const username = userProfile?.username;
     const notebookTitle = username
-        ? `${getPossessive(username)} notatblokk`
+        ? `${getPossessive(username)} sin notatblokk`
         : "Mi notatblokk";
 
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<TabId>("nyheter");
     const [draft, setDraft] = useState("");
-    const [savedNotes, setSavedNotes] = useState<NotesMap>({
-        nyheter: [],
-        bilder: [],
-        epost: [],
-        passord: [],
-        nett: [],
-        sosiale: [],
-        egne: [],
-    });
+    const [savedNotes, setSavedNotes] = useState<NotesMap>(EMPTY_NOTES_MAP());
+    const [levelNotes, setLevelNotes] = useState<NotesMap>(EMPTY_NOTES_MAP());
     const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState<string | null>(null);
     const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -131,7 +134,6 @@ export default function NotesPage() {
         [activeTab]
     );
 
-    // Reset draft when switching tabs
     useEffect(() => {
         setDraft("");
         setSaveState("idle");
@@ -144,9 +146,10 @@ export default function NotesPage() {
             try {
                 setIsLoading(true);
                 setLoadError(null);
-                const notes = await getMyNotes();
+                const data = await getMyNotes();
                 if (!isMounted) return;
-                setSavedNotes(notes);
+                setSavedNotes(data.reflections);
+                setLevelNotes(data.levelNotes);
             } catch (error) {
                 console.error("Failed to load notes", error);
                 if (!isMounted) return;
@@ -157,29 +160,33 @@ export default function NotesPage() {
         }
 
         loadNotes();
-        return () => { isMounted = false; };
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
-    const visibleSavedNotes = useMemo(() => {
+    const visibleNotes = useMemo(() => {
         if (activeTab === "egne") {
-            return TAB_ORDER.flatMap((tabId) =>
-                savedNotes[tabId].map((note) => ({
-                    ...note,
-                    category: tabId,
-                }))
+            const relevantTabs = TAB_ORDER.filter((t) => t !== "egne");
+
+            const own = relevantTabs.flatMap((tabId) =>
+                savedNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: false }))
             );
+            const level = relevantTabs.flatMap((tabId) =>
+                levelNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: true }))
+            );
+
+            return { own, level };
         }
 
-        return savedNotes[activeTab].map((note) => ({
-            ...note,
-            category: activeTab,
-        }));
-    }, [activeTab, savedNotes]);
+        return {
+            own: savedNotes[activeTab].map((note) => ({ ...note, category: activeTab, isLevel: false })),
+            level: levelNotes[activeTab].map((note) => ({ ...note, category: activeTab, isLevel: true })),
+        };
+    }, [activeTab, savedNotes, levelNotes]);
 
     const handleDraftChange = (value: string) => {
-        if (saveState === "saved" || saveState === "error") {
-            setSaveState("idle");
-        }
+        if (saveState === "saved" || saveState === "error") setSaveState("idle");
         setDraft(value);
     };
 
@@ -223,11 +230,14 @@ export default function NotesPage() {
         return null;
     })();
 
+    const hasAnyNotes = visibleNotes.own.length > 0 || visibleNotes.level.length > 0;
+    const isEgneTab = activeTab === "egne";
+
     return (
         <div
             className={styles.pageWrapper}
             style={{
-                backgroundImage: `url(${backgroundImg})`,
+                backgroundImage: `linear-gradient(rgba(32, 20, 10, 0.18), rgba(24, 14, 8, 0.26)), url(${backgroundImg})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
             }}
@@ -247,20 +257,38 @@ export default function NotesPage() {
                         <Spirals />
 
                         <div className={styles.cover}>
-                            <span className={styles.coverTitle}>Notatblokk</span>
+                            <div className={styles.coverBadge}>Sak #021</div>
+                            <div className={styles.coverTapeLeft} />
+                            <div className={styles.coverTapeRight} />
 
-                            <img
-                                src={detectiveImg}
-                                alt="Nettdetektiv"
-                                className={styles.coverMascot}
-                            />
+                            <span className={styles.coverTitle}>Notatblokk</span>
+                            <span className={styles.coverSubtitle}>
+                                Junior-detektivens saksmappe
+                            </span>
+
+                            <div className={styles.coverClueRow}>
+                                <span className={styles.coverClueChip}>Spor</span>
+                                <span className={styles.coverClueChip}>Bevis</span>
+                                <span className={styles.coverClueChip}>Mysterium</span>
+                            </div>
+
+                            <div className={styles.coverMascotWrap}>
+                                <div className={styles.coverMagnifierAccent} />
+                                <img
+                                    src={detectiveImg}
+                                    alt="Nettdetektiv"
+                                    className={styles.coverMascot}
+                                />
+                            </div>
+
+                            <div className={styles.coverStamp}>Top Secret</div>
 
                             <span className={styles.coverCopyright}>
                                 © 2026 Nettdetektivene
                             </span>
                         </div>
 
-                        <div className={styles.clickHint}>👆 Trykk for å åpne!</div>
+                        <div className={styles.clickHint}>🔎 Trykk for å åpne!</div>
                     </div>
                 </div>
             )}
@@ -285,7 +313,7 @@ export default function NotesPage() {
 
                             <div className={styles.pageContent}>
                                 <div className={styles.pageHeader}>
-                                    <span className={styles.pageHeaderIcon}>📓</span>
+                                    <span className={styles.pageHeaderIcon}>🕵️</span>
                                     <div>
                                         <h2 className={styles.pageHeaderTitle}>{notebookTitle}</h2>
                                         <p className={styles.pageHeaderSub}>
@@ -304,47 +332,49 @@ export default function NotesPage() {
                                 </div>
 
                                 <div className={styles.pageSpread}>
-                                    <div className={styles.leftNotebookPage}>
-                                        <div className={styles.reflectionBox}>
-                                            <TextArea
-                                                id={`reflection-${activeTab}`}
-                                                label="✏️ Skriv din egen refleksjon:"
-                                                placeholder={activeConfig.placeholder}
-                                                value={draft}
-                                                onChange={(e) => handleDraftChange(e.target.value)}
-                                                labelClassName={styles.reflectionLabel}
-                                                className={styles.reflectionTextarea}
-                                            />
+                                    {!isEgneTab && (
+                                        <div className={styles.leftNotebookPage}>
+                                            <div className={styles.reflectionBox}>
+                                                <TextArea
+                                                    id={`reflection-${activeTab}`}
+                                                    label="✏️ Skriv din egen refleksjon:"
+                                                    placeholder={activeConfig.placeholder}
+                                                    value={draft}
+                                                    onChange={(e) => handleDraftChange(e.target.value)}
+                                                    labelClassName={styles.reflectionLabel}
+                                                    className={styles.reflectionTextarea}
+                                                />
 
-                                            <div className={styles.saveRow}>
-                                                <Button
-                                                    variant="fun"
-                                                    onClick={handleSave}
-                                                    disabled={
-                                                        isLoading ||
-                                                        !!loadError ||
-                                                        saveState === "saving" ||
-                                                        !draft.trim()
-                                                    }
-                                                    className={styles.saveButton}
-                                                >
-                                                    {saveState === "saving" ? "Lagrer..." : "Lagre"}
-                                                </Button>
+                                                <div className={styles.saveRow}>
+                                                    <Button
+                                                        variant="fun"
+                                                        onClick={handleSave}
+                                                        disabled={
+                                                            isLoading ||
+                                                            !!loadError ||
+                                                            saveState === "saving" ||
+                                                            !draft.trim()
+                                                        }
+                                                        className={styles.saveButton}
+                                                    >
+                                                        {saveState === "saving" ? "Lagrer..." : "Lagre"}
+                                                    </Button>
 
-                                                {saveState === "saved" && (
-                                                    <span className={styles.savedText}>Lagret!</span>
-                                                )}
+                                                    {saveState === "saved" && (
+                                                        <span className={styles.savedText}>Lagret!</span>
+                                                    )}
 
-                                                {saveState === "error" && (
-                                                    <span className={styles.errorText}>
-                                                        Kunne ikke lagre
-                                                    </span>
-                                                )}
+                                                    {saveState === "error" && (
+                                                        <span className={styles.errorText}>
+                                                            Kunne ikke lagre
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    )}
 
-                                    <div className={styles.rightNotebookPage}>
+                                    <div className={isEgneTab ? styles.fullNotebookPage : styles.rightNotebookPage}>
                                         <div className={styles.tabStrip}>
                                             {TABS.map((tab) => (
                                                 <Button
@@ -371,41 +401,84 @@ export default function NotesPage() {
                                         </div>
 
                                         <div className={styles.savedNotesPanel}>
-                                            {visibleSavedNotes.length === 0 ? (
+                                            {!hasAnyNotes ? (
                                                 <div className={styles.emptyState}>
                                                     Ingen lagrede notater her ennå.
                                                 </div>
                                             ) : (
-                                                visibleSavedNotes.map((note) => {
-                                                    const tab = getTabConfig(note.category);
-
-                                                    return (
-                                                        <div key={note.id} className={styles.savedNoteCard}>
-                                                            <div
-                                                                className={styles.savedNoteHeader}
-                                                                style={{
-                                                                    borderLeft: `10px solid ${tab.color}`,
-                                                                    paddingLeft: "10px",
-                                                                }}
-                                                            >
-                                                                <span>{tab.icon}</span>
-                                                                <span>{tab.label}</span>
-                                                                <Button
-                                                                    variant="destructive"
-                                                                    onClick={() => handleDelete(note.id)}
-                                                                    aria-label="Slett notat"
-                                                                    style={{ marginLeft: "auto", padding: "2px 10px", fontSize: "0.8rem" }}
-                                                                >
-                                                                    ✕
-                                                                </Button>
-                                                            </div>
-
-                                                            <p className={styles.savedNoteText}>
-                                                                {note.content}
+                                                <>
+                                                    {visibleNotes.level.length > 0 && (
+                                                        <>
+                                                            <p className={styles.notesSectionHeader}>
+                                                                📌 Fra nivået
                                                             </p>
-                                                        </div>
-                                                    );
-                                                })
+                                                            {visibleNotes.level.map((note) => {
+                                                                const tab = getTabConfig(note.category);
+                                                                return (
+                                                                    <div key={note.id} className={styles.savedNoteCard}>
+                                                                        {isEgneTab && (
+                                                                            <div
+                                                                                className={styles.savedNoteHeader}
+                                                                                style={{
+                                                                                    borderLeft: `10px solid ${tab.color}`,
+                                                                                    paddingLeft: "10px",
+                                                                                }}
+                                                                            >
+                                                                                <span>{tab.icon}</span>
+                                                                                <span>{tab.label}</span>
+                                                                            </div>
+                                                                        )}
+                                                                        <p className={styles.savedNoteText}>
+                                                                            {note.content}
+                                                                        </p>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </>
+                                                    )}
+
+                                                    {visibleNotes.own.length > 0 && (
+                                                        <>
+                                                            <p className={styles.notesSectionHeader}>
+                                                                ✏️ Mine notater
+                                                            </p>
+                                                            {visibleNotes.own.map((note) => {
+                                                                const tab = getTabConfig(note.category);
+                                                                return (
+                                                                    <div key={note.id} className={styles.savedNoteCard}>
+                                                                        {isEgneTab && (
+                                                                            <div
+                                                                                className={styles.savedNoteHeader}
+                                                                                style={{
+                                                                                    borderLeft: `10px solid ${tab.color}`,
+                                                                                    paddingLeft: "10px",
+                                                                                }}
+                                                                            >
+                                                                                <span>{tab.icon}</span>
+                                                                                <span>{tab.label}</span>
+                                                                            </div>
+                                                                        )}
+                                                                        <p className={styles.savedNoteText}>
+                                                                            {note.content}
+                                                                        </p>
+                                                                        <Button
+                                                                            variant="destructive"
+                                                                            onClick={() => handleDelete(note.id)}
+                                                                            aria-label="Slett notat"
+                                                                            style={{
+                                                                                marginTop: "8px",
+                                                                                padding: "2px 10px",
+                                                                                fontSize: "0.8rem",
+                                                                            }}
+                                                                        >
+                                                                            ✕ Slett
+                                                                        </Button>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </>
+                                                    )}
+                                                </>
                                             )}
                                         </div>
                                     </div>

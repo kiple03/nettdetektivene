@@ -11,13 +11,24 @@
     padding: 24px 16px 60px;
 }
 
+.pageWrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+            radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.16), transparent 20%),
+            radial-gradient(circle at 82% 24%, rgba(255, 255, 255, 0.12), transparent 18%),
+            linear-gradient(180deg, rgba(72, 40, 18, 0.16), rgba(18, 9, 3, 0.28));
+    pointer-events: none;
+}
+
 .sceneTitle {
-    color: #fff;
+    color: #fffaf0;
     font-size: 1.35rem;
     font-weight: 700;
     letter-spacing: 0.08em;
     margin-bottom: 20px;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
     z-index: 10;
     position: relative;
 }
@@ -29,23 +40,54 @@
 }
 
 .notebookClosed {
-    width: 320px;
-    min-height: 440px;
-    border-radius: 6px 14px 14px 6px;
+    width: 340px;
+    min-height: 500px;
+    border-radius: 10px 24px 24px 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     cursor: pointer;
-    box-shadow: 6px 8px 32px rgba(0, 0, 0, 0.5), -2px 0 0 #b0e0ea;
+    box-shadow:
+            0 22px 46px rgba(0, 0, 0, 0.46),
+            -3px 0 0 rgba(255, 243, 223, 0.85);
     animation: floatBook 3.5s ease-in-out infinite;
     transition: box-shadow 0.18s ease;
     overflow: visible;
     outline: none;
 }
 
+.notebookClosed::before,
+.notebookClosed::after {
+    content: "";
+    position: absolute;
+    background: #f1e0b9;
+    border: 2px solid rgba(94, 63, 29, 0.12);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    z-index: -1;
+}
+
+.notebookClosed::before {
+    width: 124px;
+    height: 86px;
+    top: 24px;
+    left: -52px;
+    transform: rotate(-8deg);
+}
+
+.notebookClosed::after {
+    width: 118px;
+    height: 82px;
+    right: -42px;
+    bottom: 88px;
+    transform: rotate(8deg);
+}
+
 .notebookClosed:hover {
-    box-shadow: 8px 14px 44px rgba(0, 0, 0, 0.6), -2px 0 0 #b0e0ea;
+    box-shadow:
+            0 28px 58px rgba(0, 0, 0, 0.56),
+            -3px 0 0 rgba(255, 243, 223, 0.9);
     animation: none;
     transform: translateY(-6px) scale(1.025);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -60,61 +102,215 @@
     50% { transform: translateY(-10px); }
 }
 
+.notesSectionHeader {
+    font-family: "Baloo 2", cursive;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #5e4022;
+    margin: 8px 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.fullNotebookPage {
+    grid-column: 1 / -1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
 .cover {
     width: 100%;
-    min-height: 440px;
-    border-radius: 6px 14px 14px 6px;
-    background: linear-gradient(180deg, #00bcd4 0%, #00bcd4 62%, #f5a623 62%, #f5a623 100%);
+    min-height: 500px;
+    border-radius: 10px 24px 24px 10px;
+    background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(0, 0, 0, 0.04)),
+            linear-gradient(180deg, #dcc69d 0%, #ccb181 58%, #c29a5d 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: 22px 18px 18px 28px;
+    padding: 24px 20px 20px 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.cover::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 3px dashed rgba(90, 58, 30, 0.22);
+    border-radius: 22px;
+    pointer-events: none;
+}
+
+.cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+            radial-gradient(circle at 50% 35%, rgba(255,255,255,0.12), transparent 28%),
+            linear-gradient(180deg, rgba(113, 69, 23, 0), rgba(84, 54, 28, 0.08));
+    pointer-events: none;
+}
+
+.coverBadge {
+    position: absolute;
+    top: 20px;
+    right: 18px;
+    background: #b43a34;
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    z-index: 2;
+}
+
+.coverTapeLeft,
+.coverTapeRight {
+    position: absolute;
+    top: 16px;
+    width: 62px;
+    height: 22px;
+    background: rgba(255, 244, 198, 0.55);
+    border: 1px solid rgba(138, 112, 78, 0.18);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    z-index: 1;
+}
+
+.coverTapeLeft {
+    left: 26px;
+    transform: rotate(-14deg);
+}
+
+.coverTapeRight {
+    right: 72px;
+    transform: rotate(14deg);
 }
 
 .coverTitle {
-    font-size: 1.4rem;
+    font-size: 1.45rem;
     font-weight: 800;
-    color: #fff;
+    color: #4e3520;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+    z-index: 2;
+    margin-top: 20px;
+}
+
+.coverSubtitle {
+    color: #6d4c2d;
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-top: 6px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.coverClueRow {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    position: relative;
+    z-index: 2;
+}
+
+.coverClueChip {
+    background: rgba(255, 255, 255, 0.34);
+    border: 2px solid rgba(113, 77, 45, 0.18);
+    color: #5e4022;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.coverMascotWrap {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 230px;
+    margin-top: 6px;
+    z-index: 2;
+}
+
+.coverMagnifierAccent {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(192, 240, 255, 0.34) 0%, rgba(192, 240, 255, 0.08) 55%, transparent 72%);
+    filter: blur(1px);
 }
 
 .coverMascot {
-    width: 190px;
-    height: 190px;
+    width: 210px;
+    height: 210px;
     object-fit: contain;
-    filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35));
-    margin-top: 6px;
+    filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.34));
+    margin-top: 2px;
+}
+
+.coverStamp {
+    background: rgba(255, 248, 216, 0.78);
+    color: #8b5a22;
+    border: 3px dashed #c8842b;
+    border-radius: 18px;
+    padding: 10px 18px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: rotate(-5deg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 2;
 }
 
 .coverCopyright {
-    font-size: 0.68rem;
-    color: rgba(0, 0, 0, 0.3);
+    font-size: 0.7rem;
+    color: rgba(86, 55, 25, 0.55);
     align-self: flex-start;
+    position: relative;
+    z-index: 2;
 }
 
 .clickHint {
     position: absolute;
-    bottom: -44px;
+    bottom: -48px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 252, 246, 0.18);
+    border: 2px solid rgba(255, 255, 255, 0.5);
     color: #fff;
-    border-radius: 20px;
-    padding: 7px 20px;
-    font-size: 0.88rem;
-    font-weight: 600;
+    border-radius: 999px;
+    padding: 8px 22px;
+    font-size: 0.9rem;
+    font-weight: 700;
     white-space: nowrap;
     animation: pulseBadge 2s ease-in-out infinite;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
 }
 
 @keyframes pulseBadge {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; box-shadow: 0 0 14px rgba(255, 255, 255, 0.4); }
+    0%, 100% { opacity: 0.82; }
+    50% {
+        opacity: 1;
+        box-shadow: 0 0 16px rgba(255, 255, 255, 0.42);
+    }
 }
 
 .spiralStrip {
@@ -136,8 +332,9 @@
     height: 15px;
     border: 3.5px solid #333;
     border-radius: 50%;
-    background: linear-gradient(135deg, #999, #444);
+    background: linear-gradient(135deg, #9a9aa0, #44464e);
     flex-shrink: 0;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.28);
 }
 
 .notebookOpen {
@@ -151,11 +348,11 @@
     display: flex;
     width: 100%;
     height: 100%;
-    border-radius: 8px 18px 18px 8px;
+    border-radius: 12px 22px 22px 12px;
     box-shadow: 0 18px 64px rgba(0, 0, 0, 0.55);
     overflow: hidden;
     animation: openAnimation 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    background: #fff9f0;
+    background: #fff8ee;
 }
 
 @keyframes openAnimation {
@@ -164,10 +361,12 @@
 }
 
 .bookLeft {
-    width: 58px;
+    width: 62px;
     height: 100%;
-    border-radius: 8px 0 0 8px;
-    background: linear-gradient(180deg, #00bcd4 0%, #00bcd4 62%, #f5a623 62%);
+    border-radius: 12px 0 0 12px;
+    background:
+            linear-gradient(180deg, rgba(255,255,255,0.12), rgba(0,0,0,0.05)),
+            linear-gradient(180deg, #b58b57 0%, #a67b48 52%, #8e6539 100%);
     position: relative;
     flex-shrink: 0;
     box-shadow: inset -4px 0 12px rgba(0, 0, 0, 0.18);
@@ -185,7 +384,7 @@
 .bookLeftTitle {
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    color: #fff;
+    color: #fff7ec;
     font-weight: 800;
     font-size: 0.9rem;
     letter-spacing: 0.18em;
@@ -196,8 +395,8 @@
 .bookPages {
     flex: 1;
     height: 100%;
-    background: #fff9f0;
-    border-radius: 0 18px 18px 0;
+    background: #fff8ee;
+    border-radius: 0 22px 22px 0;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -213,8 +412,8 @@
             to bottom,
             transparent,
             transparent 31px,
-            #b8d4e8 31px,
-            #b8d4e8 32px
+            #d7e3ef 31px,
+            #d7e3ef 32px
     );
     pointer-events: none;
     z-index: 0;
@@ -227,7 +426,7 @@
     top: 16px;
     bottom: 16px;
     width: 2px;
-    background: rgba(44, 62, 107, 0.12);
+    background: rgba(94, 64, 34, 0.12);
     z-index: 0;
 }
 
@@ -262,7 +461,7 @@
     gap: 14px;
     padding-right: 70px;
     padding-bottom: 12px;
-    border-bottom: 3px solid #00bcd4;
+    border-bottom: 3px solid #c89a61;
     flex-shrink: 0;
 }
 
@@ -274,14 +473,14 @@
 .pageHeaderTitle {
     font-size: 1.45rem;
     font-weight: 800;
-    color: #2c3e6b;
+    color: #5a3d22;
     margin: 0;
 }
 
 .pageHeaderSub {
     font-family: "Patrick Hand", cursive;
-    font-size: 0.9rem;
-    color: #888;
+    font-size: 0.94rem;
+    color: #87694c;
     margin: 0;
 }
 
@@ -318,7 +517,7 @@
     padding: 6px 14px !important;
     border-radius: 20px !important;
     border: 2.5px solid currentColor !important;
-    background: transparent;
+    background: rgba(255,255,255,0.45);
     font-family: "Baloo 2", cursive !important;
     font-size: 0.82rem !important;
     font-weight: 700 !important;
@@ -328,16 +527,17 @@
     align-items: center;
     gap: 4px;
     line-height: 1.3;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 .tabBtn:hover {
-    opacity: 0.85;
+    opacity: 0.9;
     transform: translateY(-1px);
 }
 
 .reflectionBox {
-    background: rgba(255, 255, 255, 0.82);
-    border: 2.5px dashed #ccc;
+    background: rgba(255, 252, 246, 0.86);
+    border: 2.5px dashed #d0b38e;
     border-radius: 20px;
     padding: 18px 18px 16px;
     display: flex;
@@ -345,13 +545,14 @@
     gap: 10px;
     height: 100%;
     min-height: 0;
+    box-shadow: 0 8px 22px rgba(84, 54, 28, 0.06);
 }
 
 .reflectionLabel {
     font-family: "Baloo 2", cursive;
     font-weight: 700;
     font-size: 0.92rem;
-    color: #2c3e6b;
+    color: #5e4022;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -373,15 +574,15 @@
     background-image: repeating-linear-gradient(
             transparent,
             transparent 31px,
-            #e0e0e0 31px,
-            #e0e0e0 32px
+            #e3ddd3 31px,
+            #e3ddd3 32px
     ) !important;
     padding: 0 !important;
     border-radius: 0 !important;
 }
 
 .reflectionTextarea::placeholder {
-    color: #bbb;
+    color: #b7a997;
 }
 
 .saveRow {
@@ -411,8 +612,8 @@
 }
 
 .savedNotesPanel {
-    background: rgba(255, 255, 255, 0.72);
-    border: 2px dashed rgba(140, 140, 140, 0.35);
+    background: rgba(255, 252, 246, 0.78);
+    border: 2px dashed rgba(171, 136, 96, 0.35);
     border-radius: 22px;
     padding: 14px;
     flex: 1;
@@ -421,14 +622,16 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
 }
 
 .savedNoteCard {
-    background: #f5f5f5;
+    background: #f8f2ea;
     border-radius: 22px;
     padding: 16px 18px;
     text-align: left;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(120, 86, 50, 0.07);
 }
 
 .savedNoteHeader {
@@ -437,7 +640,7 @@
     gap: 10px;
     margin-bottom: 8px;
     font-weight: 800;
-    color: #1f2d5c;
+    color: #5a3d22;
     font-size: 1.15rem;
 }
 
@@ -452,7 +655,7 @@
 
 .emptyState {
     text-align: center;
-    color: #6b7280;
+    color: #8f7a63;
     font-family: "Patrick Hand", cursive;
     font-size: 1rem;
     padding: 24px 10px;
@@ -498,13 +701,22 @@
 
 @media (max-width: 600px) {
     .notebookClosed {
-        width: 280px;
-        min-height: 390px;
+        width: 292px;
+        min-height: 452px;
+    }
+
+    .cover {
+        min-height: 452px;
+        padding: 22px 16px 18px 24px;
     }
 
     .coverMascot {
-        width: 155px;
-        height: 155px;
+        width: 170px;
+        height: 170px;
+    }
+
+    .coverTitle {
+        font-size: 1.2rem;
     }
 
     .pageContent {
