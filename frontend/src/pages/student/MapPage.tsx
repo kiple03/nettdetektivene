@@ -1,8 +1,12 @@
-import { useCallback, useRef, useState } from "react";
+import { type CSSProperties, useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import { useQuery } from "@tanstack/react-query";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import { getGameStops } from "@/api/gameApi";
+import type { EquippedItem } from "@/types/user";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
+import { CarWithAvatar } from "@/components/map/CarWithAvatar";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
 import detektivkontoret from "@/assets/images/map/detektivkontoret.svg";
 import fotografen from "@/assets/images/map/fotografen.svg";
@@ -19,6 +23,7 @@ import {
 } from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
+import { StopLevelsModal } from "@/components/map/StopLevelsModal";
 
 interface Level {
     step: string;
@@ -26,8 +31,7 @@ interface Level {
     route: string;
     icon: string;
     unlocked: boolean;
-    x?: string;
-    y?: string;
+    pathOffset: string;
 }
 
 const levels: Level[] = [
@@ -35,10 +39,9 @@ const levels: Level[] = [
         step: "1",
         title: "Nyhetskvartalet",
         route: "/game",
-        x: "8%",
-        y: "46%",
         icon: nyhetskvartalet,
         unlocked: true,
+        pathOffset: "23.5%",
     },
     {
         step: "2",
@@ -46,6 +49,7 @@ const levels: Level[] = [
         route: "/levelTwo",
         icon: fotografen,
         unlocked: false,
+        pathOffset: "31.3%",
     },
     {
         step: "3",
@@ -53,6 +57,7 @@ const levels: Level[] = [
         route: "/levelThree",
         icon: postkontoret,
         unlocked: false,
+        pathOffset: "35.5%",
     },
     {
         step: "4",
@@ -60,6 +65,7 @@ const levels: Level[] = [
         route: "/levelFour",
         icon: passordbanken,
         unlocked: false,
+        pathOffset: "47.3%",
     },
     {
         step: "5",
@@ -67,6 +73,7 @@ const levels: Level[] = [
         route: "/levelFive",
         icon: markedsplassen,
         unlocked: false,
+        pathOffset: "62.7%",
     },
     {
         step: "6",
@@ -74,6 +81,7 @@ const levels: Level[] = [
         route: "/levelSix",
         icon: moteplassen,
         unlocked: false,
+        pathOffset: "83.6%",
     },
     {
         step: "7",
@@ -81,6 +89,7 @@ const levels: Level[] = [
         route: "/levelFinal",
         icon: datasenteret,
         unlocked: false,
+        pathOffset: "91.9%",
     },
 ];
 
@@ -101,22 +110,52 @@ type HotspotPos = { top: string; left: string };
 type ScrollState = { canLeft: boolean; canRight: boolean; canUp: boolean; canDown: boolean };
 
 export default function MapPage() {
+    const { data: profile } = useUserProfile();
+    const { data: backendStops = [] } = useQuery({ queryKey: ["gameStops"], queryFn: getGameStops });
+    const stopIdByTitle = Object.fromEntries(backendStops.map(s => [s.name, s.id]));
+    const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
+    const navigate = useNavigate();
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
     const [scrollState, setScrollState] = useState<ScrollState>({ canLeft: false, canRight: false, canUp: false, canDown: false });
-    const navigate = useNavigate();
+    const [currentPathOffset, setCurrentPathOffset] = useState("5%");
+    const [animating, setAnimating] = useState(false);
+    const [carReversed, setCarReversed] = useState(false);
+    const [carOffsetPath, setCarOffsetPath] = useState<string | null>(null);
+    const [pendingStop, setPendingStop] = useState<Level | null>(null);
     const svgNode = useRef<SVGSVGElement | null>(null);
     const containerNode = useRef<HTMLDivElement | null>(null);
 
-    const handleLevelClick = (level: Level) => {
-        if (level.unlocked) {
-            navigate(level.route);
-            return;
-        }
+    const animateTo = (offset: string, onDone: () => void) => {
+        if (animating) return;
+        setCarReversed(parseFloat(offset) < parseFloat(currentPathOffset));
+        setAnimating(true);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setCurrentPathOffset(offset);
+                setTimeout(() => {
+                    setAnimating(false);
+                    setCarReversed(false);
+                    onDone();
+                }, 1200);
+            });
+        });
+    };
 
-        setLockedLevelTitle(level.title);
-        setLockedDialogOpen(true);
+    const handleLevelClick = (level: Level) => {
+        animateTo(level.pathOffset, () => {
+            if (level.unlocked) {
+                setPendingStop(level);
+            } else {
+                setLockedLevelTitle(level.title);
+                setLockedDialogOpen(true);
+            }
+        });
+    };
+
+    const handleBackClick = () => {
+        animateTo("0%", () => navigate("/home"));
     };
 
     const containerRef = useCallback((node: HTMLDivElement | null): void | (() => void) => {
@@ -167,6 +206,20 @@ export default function MapPage() {
                 }
             }
             setAnchorPos(result);
+
+            const carPathEl = node.getElementById("car-path") as SVGGraphicsElement | null;
+            const rawD = carPathEl?.getAttribute("d");
+            const ctm = carPathEl?.getScreenCTM();
+            if (rawD && ctm) {
+                const scaledD = rawD.replace(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g, (_, x, y) => {
+                    const rx = parseFloat(x);
+                    const ry = parseFloat(y);
+                    const screenX = ctm.a * rx + ctm.c * ry + ctm.e;
+                    const screenY = ctm.b * rx + ctm.d * ry + ctm.f;
+                    return `${(screenX - containerRect.left).toFixed(1)},${(screenY - containerRect.top).toFixed(1)}`;
+                });
+                setCarOffsetPath(scaledD);
+            }
         };
 
         compute();
@@ -186,7 +239,20 @@ export default function MapPage() {
             <MapBg ref={svgRef} className={styles.mapBg} preserveAspectRatio="xMidYMid slice" />
 
             <div className={styles.levelGrid}>
-                <BackButton
+                <div
+                    className={`${styles.car} ${animating ? styles.carAnimating : ""}`}
+                    style={{
+                        "--car-offset": currentPathOffset,
+                        ...(carOffsetPath ? { offsetPath: `path("${carOffsetPath}")` } : {}),
+                    } as CSSProperties}
+                >
+                    <div className={carReversed ? styles.carFlipped : undefined}>
+                        <CarWithAvatar items={equippedItems} size={140} />
+                    </div>
+                </div>
+
+                <button
+                    type="button"
                     className={styles.hotspot}
                     style={
                         anchorPos["level-back"]
@@ -197,7 +263,8 @@ export default function MapPage() {
                               }
                             : { display: "none" }
                     }
-                    ariaLabel="Gå tilbake"
+                    onClick={handleBackClick}
+                    aria-label="Tilbake til Detektivkontoret"
                 >
                     <div className={styles.iconWrapper}>
                         <img
@@ -206,7 +273,7 @@ export default function MapPage() {
                             className={styles.icon}
                         />
                     </div>
-                </BackButton>
+                </button>
 
                 {levels.map((level) => {
                     const pos = anchorPos[`level-${level.step}` as AnchorId];
@@ -254,6 +321,11 @@ export default function MapPage() {
             {scrollState.canDown && (
                 <button className={`${styles.scrollBtn} ${styles.scrollBtnDown}`} onClick={(e) => { e.stopPropagation(); scroll("down"); }} aria-label="Scroll down">▼</button>
             )}
+
+            <StopLevelsModal
+                stop={pendingStop ? { title: pendingStop.title, stopId: stopIdByTitle[pendingStop.title] ?? null } : null}
+                onClose={() => setPendingStop(null)}
+            />
 
             <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
                 <AlertDialogContent>

@@ -49,9 +49,21 @@ export const getGameQuestionById = async (
 }
 
 export const getGameLevelById = async (
-    levelId: number): Promise<GameQuestion> => {
-  const respone = await client.get(`/game/levels/${levelId}`);
-  return respone.data;
+    levelId: number): Promise<GameLevel> => {
+  const response = await client.get(`/game/levels/${levelId}`);
+  return response.data;
+};
+
+export const getLevelsForStop = async (
+    stopId: number): Promise<GameLevel[]> => {
+  const response = await client.get(`/game/stops/${stopId}/levels`);
+  return response.data;
+};
+
+export const getLevelQuestions = async (
+    levelId: number): Promise<GameQuestion[]> => {
+  const response = await client.get(`/game/levels/${levelId}/questions`);
+  return response.data;
 };
 
 export const submitSingleChoiceAnswer = async (
