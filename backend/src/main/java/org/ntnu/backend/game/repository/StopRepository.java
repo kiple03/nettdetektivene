@@ -24,4 +24,9 @@ public interface StopRepository extends JpaRepository<Stop, Integer> {
 
   @Query("SELECT s FROM Stop s ORDER BY s.displayOrder ASC LIMIT 1")
   Optional<Stop> findFirstStop();
+
+  @Query("SELECT s.id AS stopId, s.displayOrder AS displayOrder, COUNT(l) AS levelCount " +
+      "FROM Stop s LEFT JOIN Level l ON l.stop = s " +
+      "GROUP BY s.id, s.displayOrder")
+  List<StopLevelCount> findAllWithLevelCounts();
 }

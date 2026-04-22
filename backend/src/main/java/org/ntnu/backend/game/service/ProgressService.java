@@ -1,12 +1,19 @@
 package org.ntnu.backend.game.service;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.ntnu.backend.exception.UserProgressNotFoundException;
+import org.ntnu.backend.game.dto.ProgressSummaryResponse;
+import org.ntnu.backend.game.mapper.ProgressMapper;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.UserProgress;
 import org.ntnu.backend.game.repository.LevelRepository;
+import org.ntnu.backend.game.repository.StopLevelCount;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.repository.UserProgressRepository;
 import org.ntnu.backend.user.dto.CreateUserRequest;
@@ -42,6 +49,7 @@ public class ProgressService {
   private final UserProgressRepository userProgressRepository;
   private final LevelRepository levelRepository;
   private final StopRepository stopRepository;
+  private final ProgressMapper progressMapper;
   
   /**
    * Creates the initial {@link UserProgress} row for a newly registered student,
@@ -180,6 +188,19 @@ public class ProgressService {
               () -> progress.setGameCompleted(true)
           );
     }
+  }
+
+  public Map<UUID, ProgressSummaryResponse> getProgressForStudents(Collection<UUID> userIds) {
+    List<StopLevelCount> stopLevelCounts = stopRepository.findAllWithLevelCounts();
+    int totalLevelsInGame = stopLevelCounts.stream()
+        .mapToInt(s -> (int) s.getLevelCount())
+        .sum();
+
+    return userProgressRepository.findByUserIdIn(userIds).stream()
+        .collect(Collectors.toMap(
+            UserProgress::getId,
+            progress -> progressMapper.toSummary(progress, stopLevelCounts, totalLevelsInGame)
+        ));
   }
 
   /**
