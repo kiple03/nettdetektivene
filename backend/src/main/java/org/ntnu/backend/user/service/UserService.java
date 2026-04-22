@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.avatar.service.UserAvatarService;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.exception.UserAlreadyExistsException;
+import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.security.JwtService;
 import org.ntnu.backend.security.RefreshTokenModel;
 import org.ntnu.backend.security.RefreshTokenRepository;
@@ -50,6 +51,7 @@ public class UserService {
   private final RefreshTokenRepository refreshTokenRepository;
   private final EnrollmentRepository enrollmentRepository;
   private final UserAvatarService userAvatarService;
+  private final MedalionService medalionService;
 
   /** Lifetime of a refresh token in milliseconds, injected from {@code jwt.refresh-expiration-ms}. */
   @Value("${jwt.refresh-expiration-ms}")
@@ -79,6 +81,8 @@ public class UserService {
 
     //avatar starter for new users
     userAvatarService.starterItems(user);
+    
+    medalionService.awardInternalUsage(user.getId(), "Velkommen!", "Logge inn for første gang");    
 
     return buildLoginResponse(user);
   }

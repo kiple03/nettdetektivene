@@ -12,6 +12,8 @@ import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.util.JoinCodeGenerator;
 import org.ntnu.backend.game.repository.LevelCompletionRepository;
+import org.ntnu.backend.medalion.repository.MedalionRepository;
+import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
@@ -35,9 +37,9 @@ public class ClassroomService {
     private final ClassroomTeacherRepository classroomTeacherRepository;
     private final LevelCompletionRepository levelCompletionRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
-
     private final ClassroomMapper classroomMapper;
     private final JoinCodeGenerator joinCodeGenerator;
+    private final MedalionService medalionService;
 
     /**
      * Creates a new classroom, generates a unique join code, and assigns the specified teacher as the owner.
@@ -132,6 +134,8 @@ public class ClassroomService {
             .classroom(classroom)
             .build();
         enrollmentRepository.save(enrollment);
+        
+        medalionService.awardInternalUsage(userId, "Hello elever", "Bli med i første klasserom");
 
         return classroomMapper.toResponse(classroom);
     }

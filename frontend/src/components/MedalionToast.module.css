@@ -1,0 +1,40 @@
+ .medalion-toast {
+    position: fixed;
+    bottom: 2rem;                                                                                                                                                                    
+    right: 2rem; 
+    display: flex;                                                                                                                                                                   
+    align-items: center;
+    gap: 1rem;          
+    background: white;
+    border: 2px solid gold;
+    border-radius: 12px;                                                                                                                                                             
+    padding: 1rem;      
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);                                                                                                                                      
+    z-index: 999;                              
+    animation: slideIn 0.3s ease;                                                                                                                                                    
+  }                              
+                                                                                                                                                                                     
+  .medalion-toast__image {
+    width: 48px;                                                                                                                                                                     
+    height: 48px;
+  }                                                                                                                                                                                  
+                  
+  .medalion-toast__title {
+    font-weight: bold;    
+    font-size: 0.8rem;
+    color: goldenrod; 
+  }                                                                                                                                                                                  
+   
+  .medalion-toast__name {                                                                                                                                                            
+    font-weight: bold;   
+  }                   
+   
+  .medalion-toast__description {
+    font-size: 0.85rem;                                                                                                                                                              
+    color: gray;       
+  }                                                                                                                                                                                  
+                  
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }   
+  }

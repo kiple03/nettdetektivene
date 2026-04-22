@@ -16,6 +16,7 @@ public class MedalionResponse {
     private String name;
     private String description;
     private LocalDateTime earnedAt;
+    private String imageUrl;
 }                                  
                           
   

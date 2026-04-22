@@ -33,14 +33,26 @@ public class MedalionService {
         User user = userRepository.findById(request.getUserId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
 
+        if(medalionRepository.existsByUserIdAndName(request.getUserId(), request.getName())){
+            return toResponse(medalionRepository.findByUserIdAndName(request.getUserId(), request.getName()));
+        }
+
         Medalion medalion = Medalion.builder()
             .name(request.getName())
             .description(request.getDescription())
-            .user_id(user)
+            .user(user)
             .earned_at(LocalDateTime.now())
             .build();
 
         return toResponse(medalionRepository.save(medalion));
+    }
+
+    public void awardInternalUsage(UUID userId, String name, String description){
+        AwardMedalionRequest request = new AwardMedalionRequest();
+        request.setUserId(userId);
+        request.setName(name);
+        request.setDescription(description);
+        awardMedalion(request);
     }
 
     private MedalionResponse toResponse(Medalion medalion){
@@ -49,6 +61,7 @@ public class MedalionService {
             .name(medalion.getName())
             .description(medalion.getDescription())
             .earnedAt(medalion.getEarned_at())
+            .imageUrl("/assets/medalions/" + medalion.getName() + ".svg")
             .build();
     }
 

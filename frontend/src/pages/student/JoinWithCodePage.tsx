@@ -7,6 +7,7 @@ import styles from './JoinWithCodePage.module.css';
 
 import detectiveImage from '@/assets/images/joinWithCode/detective.png';
 import classroomBackground from '@/assets/images/joinWithCode/bgClassroomCode.png';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function JoinWithCodePage() {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function JoinWithCodePage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
+    const queryClient = useQueryClient(); //for award system
 
     const rawCode = useMemo(() => {
         return code.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 6);
@@ -49,6 +51,8 @@ export default function JoinWithCodePage() {
         try {
             await joinClassroom(rawCode);
             await refreshToken();
+
+            await queryClient.invalidateQueries({queryKey: ['medalions']});
 
             navigate("/home");
 

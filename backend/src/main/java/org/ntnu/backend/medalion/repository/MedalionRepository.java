@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MedalionRepository extends JpaRepository<Medalion, UUID>{
     List<Medalion> findByUserId(UUID userId);
+    boolean existsByUserIdAndName(UUID userId, String name);
+    Medalion findByUserIdAndName(UUID userId, String name);
 } 
