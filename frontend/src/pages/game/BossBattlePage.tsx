@@ -9,6 +9,7 @@ import { VictoryCutscene } from "@/components/boss/VictoryCutscene";
 import { DefeatCutscene } from "@/components/boss/DefeatCutscene";
 import { VictoryScreen } from "@/components/boss/VictoryScreen";
 import { DefeatScreen } from "@/components/boss/DefeatScreen";
+import { saveBossBattleResult } from "@/api/bossBattleApi";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import styles from "./BossBattlePage.module.css";
 
@@ -42,7 +43,10 @@ export default function BossBattlePage() {
             const next = bossHp - 1;
             setBossHp(next);
             if (next <= 0) {
-                setFinalSeconds(captureTime());
+                const secs = captureTime();
+                setFinalSeconds(secs);
+                saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
+                    .catch((err) => console.error("Failed to save boss battle result", err));
                 setPhase("victory");
                 return;
             }
@@ -50,7 +54,10 @@ export default function BossBattlePage() {
             const next = playerHp - 1;
             setPlayerHp(next);
             if (next <= 0) {
-                setFinalSeconds(captureTime());
+                const secs = captureTime();
+                setFinalSeconds(secs);
+                saveBossBattleResult({ won: false, timeSeconds: secs, playerHpRemaining: 0 })
+                    .catch((err) => console.error("Failed to save boss battle result", err));
                 setPhase("defeat");
                 return;
             }
