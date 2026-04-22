@@ -13,6 +13,19 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.ntnu.backend.notes.model.enums.NoteCategory;
 import org.ntnu.backend.user.model.User;
 
+/**
+ * A personal note written by a student in their own notebook.
+ *
+ * <p>Unlike {@link StudentLevelNote}, which is granted automatically from a
+ * {@link LevelNoteTemplate} when a level is completed, these notes are created
+ * manually by the student and can be edited or deleted by their owner.
+ *
+ * <p>Each note belongs to a single user and is stored with a category so it can
+ * be grouped into the correct notebook tab in the frontend.
+ *
+ * @see StudentLevelNote
+ * @see org.ntnu.backend.notes.service.NoteService
+ */
 @Entity
 @Getter
 @Setter
