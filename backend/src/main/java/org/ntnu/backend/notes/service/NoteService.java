@@ -23,6 +23,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Manages the authenticated student's notebook.
+ *
+ * <p>This service supports reading all notes available to the current user,
+ * creating personal notes, and deleting personal notes. The returned notebook
+ * combines both student-written notes and preset notes granted through level
+ * progression.
+ *
+ * <p>All operations are scoped to the authenticated user. If authentication
+ * is missing or the user cannot be found, the request fails with an HTTP
+ * error response.
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -33,6 +45,13 @@ public class NoteService {
     private final UserRepository userRepository;
     private final NoteMapper noteMapper;
 
+    /**
+     * Returns the full notebook for the authenticated user, including both
+     * personal notes and level-granted notes grouped by category.
+     *
+     * @param authentication the current authenticated user
+     * @return an overview of the user's notebook content
+     */
     @Transactional(readOnly = true)
     public NotesOverviewResponse getMyNotes(Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
@@ -41,6 +60,15 @@ public class NoteService {
         return noteMapper.toOverviewResponse(ownNotes, levelNotes);
     }
 
+    /**
+     * Creates a new personal note for the authenticated user in the given
+     * category.
+     *
+     * @param authentication the current authenticated user
+     * @param categoryRaw the category provided by the client
+     * @param request the note content to save
+     * @return the saved note as a response DTO
+     */
     public NoteResponse createNote(Authentication authentication, String categoryRaw, UpsertNoteRequest request) {
         User user = getAuthenticatedUser(authentication);
         NoteCategory category = parseCategory(categoryRaw);
@@ -54,17 +82,36 @@ public class NoteService {
         return noteMapper.toResponse(noteRepository.save(note));
     }
 
+    /**
+     * Deletes one of the authenticated user's personal notes.
+     *
+     * @param authentication the current authenticated user
+     * @param noteId the id of the note to delete
+     */
     public void deleteMyNote(Authentication authentication, UUID noteId) {
         User user = getAuthenticatedUser(authentication);
         noteRepository.deleteByIdAndUser(noteId, user);
     }
 
+    /**
+     * Resolves the authenticated user from the Spring Security authentication
+     * object and loads the matching user entity from the database.
+     *
+     * @param authentication the current authentication
+     * @return the authenticated user entity
+     */
     private User getAuthenticatedUser(Authentication authentication) {
         JwtAuthenticatedPrincipal principal = JwtAuthenticatedPrincipal.from(authentication);
         return userRepository.findById(principal.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
+    /**
+     * Parses a raw category string into a valid {@link NoteCategory}.
+     *
+     * @param raw the category value provided by the client
+     * @return the parsed note category
+     */
     private NoteCategory parseCategory(String raw) {
         try {
             return NoteCategory.valueOf(raw.trim().toUpperCase(Locale.ROOT));
