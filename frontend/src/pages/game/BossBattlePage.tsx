@@ -5,10 +5,14 @@ import { HealthBar } from "@/components/boss/HealthBar";
 import { BossCharacter } from "@/components/boss/BossCharacter";
 import { IntroCutscene } from "@/components/boss/IntroCutscene";
 import { AttackOrchestrator } from "@/components/boss/AttackOrchestrator";
+import { VictoryCutscene } from "@/components/boss/VictoryCutscene";
+import { DefeatCutscene } from "@/components/boss/DefeatCutscene";
+import { VictoryScreen } from "@/components/boss/VictoryScreen";
+import { DefeatScreen } from "@/components/boss/DefeatScreen";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import styles from "./BossBattlePage.module.css";
 
-type Phase = "intro" | "battle" | "attacking" | "modal" | "victory" | "defeat";
+type Phase = "intro" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
 
 const MAX_HP = 5;
 
@@ -20,7 +24,7 @@ export default function BossBattlePage() {
     const [playerHp, setPlayerHp] = useState(MAX_HP);
     const [bossHp, setBossHp] = useState(MAX_HP);
     const [finalSeconds, setFinalSeconds] = useState(0);
-    const [currentSprite, setCurrentSprite] = useState<string>(sharkBase);
+    const [currentSprite] = useState<string>(sharkBase);
     const startTimeRef = useRef<number | null>(null);
 
     const startBattle = () => {
@@ -110,30 +114,31 @@ export default function BossBattlePage() {
                 </>
             )}
 
-            {/* VICTORY */}
+            {/* VICTORY CUTSCENE */}
             {phase === "victory" && (
                 <div className={styles.cutsceneOverlay}>
-                    {/* TODO task 8: replace with <VictoryCutscene onComplete={...} /> then <VictoryScreen /> */}
-                    <div className={styles.victoryScreen}>
-                        <h2>🎉 Du vant!</h2>
-                        <p>Tid: {Math.floor(finalSeconds / 60)}:{String(finalSeconds % 60).padStart(2, "0")}</p>
-                        <p>HP igjen: {playerHp} / {MAX_HP}</p>
-                        <a href="/map" className={styles.startButton}>Tilbake til kartet</a>
-                    </div>
+                    <VictoryCutscene onComplete={() => setPhase("victory-screen")} />
                 </div>
             )}
 
-            {/* DEFEAT */}
+            {/* VICTORY SCREEN */}
+            {phase === "victory-screen" && (
+                <div className={styles.cutsceneOverlay}>
+                    <VictoryScreen timeSeconds={finalSeconds} playerHp={playerHp} maxHp={MAX_HP} />
+                </div>
+            )}
+
+            {/* DEFEAT CUTSCENE */}
             {phase === "defeat" && (
                 <div className={styles.cutsceneOverlay}>
-                    {/* TODO task 8: replace with <DefeatCutscene onComplete={...} /> then <DefeatScreen /> */}
-                    <div className={styles.defeatScreen}>
-                        <h2>💀 Du tapte!</h2>
-                        <p>Hackeren vant denne gangen...</p>
-                        <button className={styles.startButton} onClick={resetBattle}>
-                            Prøv igjen
-                        </button>
-                    </div>
+                    <DefeatCutscene onComplete={() => setPhase("defeat-screen")} />
+                </div>
+            )}
+
+            {/* DEFEAT SCREEN */}
+            {phase === "defeat-screen" && (
+                <div className={styles.cutsceneOverlay}>
+                    <DefeatScreen onRetry={resetBattle} />
                 </div>
             )}
         </div>

@@ -1,0 +1,19 @@
+import { useRef } from "react";
+
+interface Props {
+    onComplete: () => void;
+}
+
+export function DefeatCutscene({ onComplete }: Props) {
+    // Stub animation sequence:
+    // 1. Boss disappears (fade out)
+    // 2. Boss slowly rises back up from below the screen
+    // 3. onComplete
+
+    const called = useRef(false);
+    if (!called.current) {
+        called.current = true;
+        setTimeout(onComplete, 0);
+    }
+    return null;
+}
