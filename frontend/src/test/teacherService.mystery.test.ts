@@ -4,7 +4,7 @@ import {
   approveMysterySubmission,
   rejectMysterySubmission,
   featureMysterySubmission,
-} from '../services/teacherService';
+} from '../api/teacherApi';
 
 vi.mock('../api/client', () => ({
   default: {

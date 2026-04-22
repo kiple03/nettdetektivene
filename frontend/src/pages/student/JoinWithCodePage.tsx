@@ -1,8 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AxiosError } from 'axios';
-import { joinClassroom } from '@/api/classroomApi';
-import { refreshToken } from '@/api/authApi';
+import { useJoinClassroom } from '@/hooks/student/useJoinClassroom';
 import styles from './JoinWithCodePage.module.css';
 
 import detectiveImage from '@/assets/images/joinWithCode/detective.png';
@@ -11,9 +9,8 @@ import { useQueryClient } from '@tanstack/react-query';
 
 export default function JoinWithCodePage() {
     const navigate = useNavigate();
+    const { joinClassroom, reset, isPending, error } = useJoinClassroom();
     const [code, setCode] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const queryClient = useQueryClient(); //for award system
 
@@ -31,7 +28,7 @@ export default function JoinWithCodePage() {
             .replace(/[^a-zA-Z0-9]/g, '')
             .toUpperCase()
             .slice(0, 6);
-
+        reset();
         setCode(cleaned);
     };
 
@@ -44,29 +41,13 @@ export default function JoinWithCodePage() {
 
     const handleJoin = async () => {
         if (rawCode.length < 6) return;
-
-        setLoading(true);
-        setError('');
-
         try {
             await joinClassroom(rawCode);
-            await refreshToken();
-
             await queryClient.invalidateQueries({queryKey: ['medalions']});
 
             navigate("/home");
-
-        } catch (err) {
-            const status = (err as AxiosError).response?.status;
-
-            if (status === 404) setError('Ugyldig kode. Prøv igjen.');
-            else if (status === 409) {
-                const message = ((err as AxiosError).response?.data as { message?: string } | undefined)?.message;
-                setError(message ?? 'Du er allerede med i et klasserom.');
-            }
-            else setError('Noe gikk galt. Prøv igjen.');
-        } finally {
-            setLoading(false);
+        } catch {
+            // error surfaced via error from useJoinClassroom
         }
     };
 
@@ -158,9 +139,9 @@ export default function JoinWithCodePage() {
                             type="button"
                             onClick={handleJoin}
                             className={styles.button}
-                            disabled={loading || rawCode.length < 6}
+                            disabled={isPending || rawCode.length < 6}
                         >
-                            {loading ? 'Kobler til...' : 'Bli med'}
+                            {isPending ? 'Kobler til...' : 'Bli med'}
                         </button>
                     </div>
                 </div>

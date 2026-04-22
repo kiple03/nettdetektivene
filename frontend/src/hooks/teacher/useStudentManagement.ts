@@ -1,0 +1,84 @@
+import { useMemo, useState } from 'react';
+import { useStops, useStudentProgress } from './useTeacherQueries';
+import { useRemoveStudent, useUpdateStudentUsername } from './useTeacherMutations';
+import type { StudentSummary } from '@/types/classroom';
+
+export function useStudentManagement(classroomId: string) {
+    const studentsQuery = useStudentProgress(classroomId);
+    const stopsQuery = useStops();
+
+    const studentList = studentsQuery.data ?? [];
+    const totalStops = stopsQuery.data?.length ?? 0;
+
+    const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
+    const [editUsernameValue, setEditUsernameValue] = useState('');
+    const [usernameError, setUsernameError] = useState<string | null>(null);
+    const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+
+    const removeStudentMutation = useRemoveStudent(classroomId);
+    const updateUsernameMutation = useUpdateStudentUsername(classroomId);
+
+    const leaderboard = useMemo(
+        () =>
+            [...studentList]
+                .sort((a, b) => {
+                    if (b.medalsEarned !== a.medalsEarned) return b.medalsEarned - a.medalsEarned;
+                    return b.levelsCompleted - a.levelsCompleted;
+                })
+                .map((student, index) => ({ userId: student.userId, rank: index + 1 })),
+        [studentList],
+    );
+
+    function getLeaderboardRank(userId: string) {
+        return leaderboard.find((e) => e.userId === userId)?.rank ?? studentList.length;
+    }
+
+    function startEditUsername(student: Pick<StudentSummary, 'userId' | 'username'>) {
+        setEditingStudentId(student.userId);
+        setEditUsernameValue(student.username);
+        setUsernameError(null);
+    }
+
+    function cancelEditUsername() {
+        setEditingStudentId(null);
+        setUsernameError(null);
+    }
+
+    async function saveUsername(student: Pick<StudentSummary, 'userId'>) {
+        const trimmed = editUsernameValue.trim();
+        if (trimmed.length < 3) {
+            setUsernameError('Brukernavn må være minst 3 tegn.');
+            return;
+        }
+        setUsernameError(null);
+        try {
+            await updateUsernameMutation.mutateAsync({ studentId: student.userId, username: trimmed });
+            setEditingStudentId(null);
+        } catch {
+            setUsernameError('Brukernavnet er allerede tatt eller ugyldig.');
+        }
+    }
+
+    async function handleRemoveStudent(studentId: string) {
+        await removeStudentMutation.mutateAsync(studentId);
+        setConfirmRemoveId(null);
+    }
+
+    return {
+        studentList,
+        totalStops,
+        editingStudentId,
+        editUsernameValue,
+        setEditUsernameValue,
+        savingUsername: updateUsernameMutation.isPending,
+        usernameError,
+        startEditUsername,
+        cancelEditUsername,
+        saveUsername,
+        confirmRemoveId,
+        setConfirmRemoveId,
+        removingId: removeStudentMutation.isPending ? removeStudentMutation.variables : null,
+        handleRemoveStudent,
+        getLeaderboardRank,
+    };
+}

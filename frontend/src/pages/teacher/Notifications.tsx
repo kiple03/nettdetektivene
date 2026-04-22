@@ -1,13 +1,8 @@
-import { useLoaderData } from 'react-router-dom';
 import { useState } from 'react';
-import type { ClassroomSummary, NotificationResponse } from '@/types/classroom.ts';
-import { notifLsKey } from '@/services/teacherService';
+import type { NotificationResponse } from '@/types/classroom.ts';
+import { notifLsKey } from '@/api/teacherApi';
+import { useClassroomSummaries, useNotifications } from '@/hooks/teacher/useTeacherQueries';
 import './Notifications.css';
-
-type LoaderData = {
-  notifications: NotificationResponse[];
-  classrooms: ClassroomSummary[];
-};
 
 type NotificationType = NotificationResponse['type'];
 
@@ -27,33 +22,35 @@ const TYPE_ICONS: Record<NotificationType, string> = {
   co_teacher_added: '👩‍🏫',
 };
 
-// Unique key for a notification used both as React key and for read-state tracking
 function notifKey(n: NotificationResponse): string {
   return `${n.studentUsername}-${n.timestamp}`;
 }
 
 export default function Notifications() {
-  const { notifications: initial, classrooms } = useLoaderData() as LoaderData;
-  const [notifications, setNotifications] = useState(initial);
+  const { data: fetchedNotifications = [] } = useNotifications();
+  const { data: classrooms = [] } = useClassroomSummaries();
+
+  // Read state is client-only (localStorage), so we mirror it in local state
+  const [readKeys, setReadKeys] = useState<Set<string>>(() => new Set());
+
+  const notifications = fetchedNotifications.map(n => ({
+    ...n,
+    read: n.read || readKeys.has(notifKey(n)),
+  }));
+
   const [classroomFilter, setClassroomFilter] = useState<string | 'all'>('all');
 
   function markRead(key: string) {
-    setNotifications(prev =>
-      prev.map(n => {
-        if (notifKey(n) !== key) return n;
-        localStorage.setItem(notifLsKey(n.studentUsername, n.timestamp), 'true');
-        return { ...n, read: true };
-      })
-    );
+    const n = fetchedNotifications.find(x => notifKey(x) === key);
+    if (n) localStorage.setItem(notifLsKey(n.studentUsername, n.timestamp), 'true');
+    setReadKeys(prev => new Set(prev).add(key));
   }
 
   function markAllRead() {
-    setNotifications(prev =>
-      prev.map(n => {
-        localStorage.setItem(notifLsKey(n.studentUsername, n.timestamp), 'true');
-        return { ...n, read: true };
-      })
-    );
+    fetchedNotifications.forEach(n => {
+      localStorage.setItem(notifLsKey(n.studentUsername, n.timestamp), 'true');
+    });
+    setReadKeys(new Set(fetchedNotifications.map(notifKey)));
   }
 
   const filtered = classroomFilter === 'all'
@@ -80,7 +77,6 @@ export default function Notifications() {
         </div>
       </header>
 
-      {/* Classroom filter */}
       <div className="notifs__filters" role="tablist">
         <button
           role="tab"
@@ -103,7 +99,6 @@ export default function Notifications() {
         ))}
       </div>
 
-      {/* Notification list */}
       {filtered.length === 0 ? (
         <p className="notifs__empty">Ingen varsler for denne klassen.</p>
       ) : (
