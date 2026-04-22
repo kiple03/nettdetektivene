@@ -8,7 +8,7 @@ import {
     getMysterySubmissions,
     getStops,
     getNotifications,
-} from '@/services/teacherService';
+} from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
 
 export function useClassroomSummaries() {
