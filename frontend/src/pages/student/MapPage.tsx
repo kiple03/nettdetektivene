@@ -122,6 +122,7 @@ export default function MapPage() {
     const autoStopId = Number(searchParams.get("levelId")) || null;
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedStopTitle, setLockedStopTitle] = useState("");
+    const [adminBypassInput, setAdminBypassInput] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
     const [scrollState, setScrollState] = useState<ScrollState>({ canLeft: false, canRight: false, canUp: false, canDown: false });
     const [currentPathOffset, setCurrentPathOffset] = useState("5%");
@@ -153,6 +154,15 @@ export default function MapPage() {
                 }, 1200);
             });
         });
+    };
+
+    const handleAdminBypassInput = (value: string) => {
+        setAdminBypassInput(value);
+        if (value === "admin") {
+            setLockedDialogOpen(false);
+            setAdminBypassInput("");
+            navigate("/boss");
+        }
     };
 
     const handleStopClick = (stop: Stop) => {
@@ -344,13 +354,24 @@ export default function MapPage() {
                 }}
             />
 
-            <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
+            <AlertDialog open={lockedDialogOpen} onOpenChange={(open) => { setLockedDialogOpen(open); if (!open) setAdminBypassInput(""); }}>
                 <AlertDialogContent>
                     <AlertDialogTitle>Nivå låst 🔒</AlertDialogTitle>
 
                     <AlertDialogDescription>
                         {lockedStopTitle} er ikke åpnet ennå. Du må fullføre de tidligere nivåene først.
                     </AlertDialogDescription>
+
+                    {lockedStopTitle === "Datasenteret" && (
+                        <input
+                            type="text"
+                            className={styles.adminBypassInput}
+                            value={adminBypassInput}
+                            onChange={(e) => handleAdminBypassInput(e.target.value)}
+                            autoComplete="off"
+                            aria-label="admin"
+                        />
+                    )}
 
                     <div className={styles.dialogActions}>
                         <Button

@@ -148,6 +148,19 @@
   justify-content: flex-end;
 }
 
+.adminBypassInput {
+  width: 100%;
+  margin-top: 10px;
+  padding: 2px 4px;
+  font-size: 0.6rem;
+  color: rgba(0, 0, 0, 0.2);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  outline: none;
+  caret-color: rgba(0, 0, 0, 0.2);
+}
+
 @media (orientation: portrait) {
   .container {
     overflow-x: hidden;
