@@ -408,6 +408,16 @@
   transition: width 0.4s ease;
 }
 
+.classroom-card__teachers {
+  font-size: 11px;
+  color: #7a6040;
+  padding: 0 18px 8px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Footer */
 .classroom-card__footer {
   display: flex;

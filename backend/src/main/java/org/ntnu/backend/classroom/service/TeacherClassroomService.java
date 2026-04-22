@@ -3,7 +3,9 @@ package org.ntnu.backend.classroom.service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
@@ -70,16 +72,29 @@ public class TeacherClassroomService {
      */
     public List<ClassroomSummaryResponse> listClassrooms(UUID teacherId) {
         long assignmentCount = levelRepository.count();
-        return classroomTeacherRepository
-            .findClassroomsWithStudentCountByTeacherId(teacherId)
+        List<Object[]> rows = classroomTeacherRepository.findClassroomsWithStudentCountByTeacherId(teacherId);
+
+        List<UUID> classroomIds = rows.stream()
+            .map(row -> UUID.fromString(row[0].toString()))
+            .toList();
+
+        Map<UUID, List<String>> teachersByClassroom = classroomTeacherRepository
+            .findWithUsersByClassroomIdIn(classroomIds)
             .stream()
+            .collect(Collectors.groupingBy(
+                ct -> ct.getId().getClassroomId(),
+                Collectors.mapping(ct -> ct.getUser().getUsername(), Collectors.toList())
+            ));
+
+        return rows.stream()
             .map(row -> {
+                UUID classroomId = UUID.fromString(row[0].toString());
                 long studentCount = ((Number) row[5]).longValue();
                 long completedCount = ((Number) row[6]).longValue();
                 long possible = assignmentCount * studentCount;
                 int progressPercent = possible > 0 ? (int) (completedCount * 100 / possible) : 0;
                 return ClassroomSummaryResponse.builder()
-                    .id(row[0].toString())
+                    .id(classroomId.toString())
                     .title((String) row[1])
                     .description((String) row[2])
                     .joinCode((String) row[3])
@@ -88,6 +103,7 @@ public class TeacherClassroomService {
                     .assignmentCount((int) assignmentCount)
                     .completedCount((int) completedCount)
                     .progressPercent(progressPercent)
+                    .teacherUsernames(teachersByClassroom.getOrDefault(classroomId, List.of()))
                     .build();
             })
             .toList();

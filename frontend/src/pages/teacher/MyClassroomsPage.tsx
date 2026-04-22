@@ -4,7 +4,6 @@ import { Check, Copy } from 'lucide-react';
 import type { ClassroomSummary } from '@/types/classroom.ts';
 import { Button } from '@/components/ui/buttons/Button.tsx';
 import { TextInput } from '@/components/ui/textInput/TextInput.tsx';
-import { mockClassroomSummaries } from '@/mock/mockClassroomData.ts';
 import './MyClassroomsPage.css';
 
 const CARD_ACCENT_COLORS = [
@@ -18,7 +17,7 @@ const CARD_ACCENT_COLORS = [
 
 export default function MyClassroomsPage() {
     const loaderData = useLoaderData() as ClassroomSummary[] | null;
-    const summaries = loaderData ?? mockClassroomSummaries;
+    const summaries = loaderData ?? [];
     const navigate = useNavigate();
 
     const [search, setSearch] = useState('');
@@ -201,6 +200,12 @@ export default function MyClassroomsPage() {
                                             />
                                         </div>
                                     </div>
+
+                                    {summary.teacherUsernames.length > 0 && (
+                                        <p className="classroom-card__teachers">
+                                            {summary.teacherUsernames.join(', ')}
+                                        </p>
+                                    )}
 
                                     <div className="classroom-card__footer">
                                         <span className="classroom-card__join-code">
