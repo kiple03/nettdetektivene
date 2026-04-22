@@ -148,6 +148,23 @@
   justify-content: flex-end;
 }
 
+.datasenteretIcons {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.sharkWrapper {
+  position: relative;
+  display: inline-block;
+  margin-left: -50px;
+}
+
+.sharkWrapper .icon {
+  max-width: 87px;
+  max-height: 87px;
+}
+
 .sharkSilhouette {
   filter: brightness(0);
 }

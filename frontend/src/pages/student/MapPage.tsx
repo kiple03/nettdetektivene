@@ -322,8 +322,14 @@ export default function MapPage() {
                             <div className={styles.iconWrapper}>
                                 {stop.title === "Datasenteret" && !isUnlocked(stop.title) ? (
                                     <>
-                                        <img src={sharkBase} alt={stop.title} className={`${styles.icon} ${styles.sharkSilhouette}`} />
-                                        <span className={styles.sharkQuestionMark}>?</span>
+                                        <div className={styles.datasenteretIcons}>
+                                            <img src={datasenteret} alt="Datasenteret" className={`${styles.icon} ${styles.lockedIcon}`} />
+                                            <div className={styles.sharkWrapper}>
+                                                <img src={sharkBase} alt="Shark" className={`${styles.icon} ${styles.sharkSilhouette}`} />
+                                                <span className={styles.sharkQuestionMark}>?</span>
+                                            </div>
+                                        </div>
+                                        <LockBadge />
                                     </>
                                 ) : (
                                     <>
