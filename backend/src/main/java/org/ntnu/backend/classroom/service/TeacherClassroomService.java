@@ -44,7 +44,6 @@ public class TeacherClassroomService {
     private final ClassroomService classroomService;
     private final ClassroomAuthorizationService classroomAuthorizationService;
     private final EnrollmentRepository enrollmentRepository;
-    private final LevelCompletionRepository levelCompletionRepository;
     private final LevelRepository levelRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final UserRepository userRepository;
@@ -124,7 +123,6 @@ public class TeacherClassroomService {
         return enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroomId)
             .stream()
             .map(enrollment -> {
-                long count = levelCompletionRepository.countByEnrollmentId(enrollment.getId());
                 return StudentProgressResponse.builder()
                     .userId(enrollment.getUser().getId().toString())
                     .username(enrollment.getUser().getUsername())
@@ -151,8 +149,7 @@ public class TeacherClassroomService {
         var enrollment = enrollmentRepository
             .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        var completions = levelCompletionRepository.findByEnrollmentId(enrollment.getId())
-            .stream()
+
             .map(lc -> LevelCompletionEntry.builder()
                 .levelId(lc.getLevel().getId())
                 .completedAt(lc.getCompletedAt())

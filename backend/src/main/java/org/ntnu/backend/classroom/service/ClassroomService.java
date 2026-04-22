@@ -32,7 +32,6 @@ public class ClassroomService {
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ClassroomTeacherRepository classroomTeacherRepository;
-    private final LevelCompletionRepository levelCompletionRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
 
     private final ClassroomMapper classroomMapper;
@@ -91,7 +90,6 @@ public class ClassroomService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Klasserom ikke funnet");
         }
         mysterySubmissionRepository.deleteByEnrollmentClassroomId(id);
-        levelCompletionRepository.deleteByEnrollmentClassroomId(id);
         enrollmentRepository.deleteByClassroomId(id);
         classroomTeacherRepository.deleteByClassroomId(id);
         classroomRepository.deleteById(id);
