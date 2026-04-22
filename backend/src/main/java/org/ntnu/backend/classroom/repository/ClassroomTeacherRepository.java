@@ -1,6 +1,7 @@
 package org.ntnu.backend.classroom.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
@@ -18,6 +19,15 @@ public interface ClassroomTeacherRepository extends JpaRepository<ClassroomTeach
   boolean existsByClassroomIdAndUserId(UUID classroomId, UUID userId);
 
   void deleteByClassroomId(UUID classroomId);
+
+  @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.user WHERE ct.id.classroomId = :classroomId")
+  List<ClassroomTeacher> findWithUsersByClassroomId(@Param("classroomId") UUID classroomId);
+
+  @Query("SELECT ct FROM ClassroomTeacher ct WHERE ct.id.classroomId = :classroomId AND ct.id.userId = :userId")
+  Optional<ClassroomTeacher> findOneByClassroomIdAndUserId(@Param("classroomId") UUID classroomId, @Param("userId") UUID userId);
+
+  @Query("SELECT CASE WHEN COUNT(ct) > 0 THEN true ELSE false END FROM ClassroomTeacher ct WHERE ct.id.classroomId = :classroomId AND ct.id.userId = :userId AND ct.isOwner = true")
+  boolean isOwnerOfClassroom(@Param("classroomId") UUID classroomId, @Param("userId") UUID userId);
 
     @Query("""
         SELECT ct.classroom.id, ct.classroom.title, ct.classroom.description,
