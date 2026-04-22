@@ -16,18 +16,37 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 
 
+/**
+ * Service class for medalion logic.
+ * Handles awarding and fetching medalions for users.
+ * Awarding is idempotent — a user will never receive the same medalion twice.
+ */
 @Service
 @RequiredArgsConstructor
 public class MedalionService {
     private final MedalionRepository medalionRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Returns all medalions earned by a specific user.
+     *
+     * @param user the ID of the user
+     * @return a list of {@link MedalionResponse} belonging to the user
+     */
     public List<MedalionResponse> getAllUsersMedalion(UUID user){
         return medalionRepository.findByUserId(user).stream()
             .map(this::toResponse)
             .toList();
     }
 
+    /**
+     * Awards a medalion to a user based on the given request.
+     * If the user already has a medalion with the same name, the existing one is returned without saving a duplicate.
+     *
+     * @param request the request containing userId, name, and description
+     * @return the awarded or already existing {@link MedalionResponse}
+     * @throws ResponseStatusException with 404 if the user is not found
+     */
     @Transactional
     public MedalionResponse awardMedalion(AwardMedalionRequest request){
         User user = userRepository.findById(request.getUserId())
@@ -47,6 +66,14 @@ public class MedalionService {
         return toResponse(medalionRepository.save(medalion));
     }
 
+    /**
+     * Convenience method for awarding a medalion internally from other services.
+     * Builds the request and delegates to {@link #awardMedalion(AwardMedalionRequest)}.
+     *
+     * @param userId the ID of the user to award
+     * @param name the name of the medalion
+     * @param description the description of the achievement
+     */
     public void awardInternalUsage(UUID userId, String name, String description){
         AwardMedalionRequest request = new AwardMedalionRequest();
         request.setUserId(userId);
@@ -55,6 +82,13 @@ public class MedalionService {
         awardMedalion(request);
     }
 
+    /**
+     * Maps a {@link Medalion} entity to a {@link MedalionResponse} DTO.
+     * Constructs the image URL from the medalion name.
+     *
+     * @param medalion the entity to map
+     * @return the mapped response DTO
+     */
     private MedalionResponse toResponse(Medalion medalion){
         return MedalionResponse.builder()
             .id(medalion.getId())

@@ -15,17 +15,34 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * REST controller for medalion functionality.
+ * Exposes endpoints for awarding and fetching medalions tied to the authenticated user.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user/medalions")
 public class MedalionController {
     private final MedalionService medalionService;
 
+    /**
+     * Awards a new medalion to a user.
+     *
+     * @param principal the authenticated user's JWT principal
+     * @param request the request body containing medalion name and description
+     * @return the awarded {@link MedalionResponse}
+     */
     @PostMapping
     public ResponseEntity<MedalionResponse> awardUser(@AuthenticationPrincipal JwtAuthenticatedPrincipal principal, @Valid @RequestBody AwardMedalionRequest request){
         return ResponseEntity.ok(medalionService.awardMedalion(request));
     }
 
+    /**
+     * Retrieves all medalions earned by the authenticated user.
+     *
+     * @param principal the authenticated user's JWT principal
+     * @return a list of {@link MedalionResponse} belonging to the user
+     */
     @GetMapping
     public ResponseEntity<List<MedalionResponse>> getMedalions(@AuthenticationPrincipal JwtAuthenticatedPrincipal principal){
         return ResponseEntity.ok(medalionService.getAllUsersMedalion(principal.getUserId()));
