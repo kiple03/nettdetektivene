@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useJoinClassroom } from '@/hooks/student/useJoinClassroom';
+import { useJoinClassroom } from '@/hooks/student/useJoinClassroom';
 import styles from './JoinWithCodePage.module.css';
 
 import detectiveImage from '@/assets/images/joinWithCode/detective.png';
@@ -28,6 +29,7 @@ export default function JoinWithCodePage() {
             .toUpperCase()
             .slice(0, 6);
         reset();
+        reset();
         setCode(cleaned);
     };
 
@@ -47,6 +49,8 @@ export default function JoinWithCodePage() {
             await queryClient.invalidateQueries({queryKey: ['medalions']});
 
             navigate("/home");
+        } catch {
+            // error surfaced via error from useJoinClassroom
         } catch {
             // error surfaced via error from useJoinClassroom
         }
@@ -141,7 +145,9 @@ export default function JoinWithCodePage() {
                             onClick={handleJoin}
                             className={styles.button}
                             disabled={isPending || rawCode.length < 6}
+                            disabled={isPending || rawCode.length < 6}
                         >
+                            {isPending ? 'Kobler til...' : 'Bli med'}
                             {isPending ? 'Kobler til...' : 'Bli med'}
                         </button>
                     </div>
