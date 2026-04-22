@@ -80,36 +80,32 @@ export default function BossBattlePage() {
 
     return (
         <div className={styles.arena}>
-            {/* Characters — always in grid during intro+battle so position never jumps */}
+            {/* Characters + HP bars — always in grid during intro+battle so position never jumps */}
             {showCharacters && (
                 <>
                     <div className={styles.bossCharArea}>
                         <BossCharacter sprite={currentSprite} />
+                        {showBattle && (
+                            <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
+                        )}
                     </div>
                     <div className={styles.playerCharArea}>
                         <LayeredAvatar items={equippedItems} size={120} circular={false} />
                         {profile?.username && (
                             <span className={styles.playerName}>{profile.username}</span>
                         )}
+                        {showBattle && (
+                            <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
+                        )}
                     </div>
                 </>
             )}
 
-            {/* HP bars + attack — only during battle */}
-            {showBattle && (
-                <>
-                    <div className={styles.bossHpArea}>
-                        <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
-                    </div>
-                    <div className={styles.playerHpArea}>
-                        <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
-                    </div>
-                    {phase === "battle" && (
-                        <div className={styles.attackPrompt}>
-                            <AttackOrchestrator onAnswer={handleAnswer} />
-                        </div>
-                    )}
-                </>
+            {/* Attack — only during battle */}
+            {phase === "battle" && (
+                <div className={styles.attackPrompt}>
+                    <AttackOrchestrator onAnswer={handleAnswer} />
+                </div>
             )}
 
             {/* INTRO — dark overlay + dialog; characters sit above it (z-index: 60) */}

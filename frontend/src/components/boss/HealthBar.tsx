@@ -13,7 +13,7 @@ export function HealthBar({ label, hp, maxHp, side }: HealthBarProps) {
     return (
         <div className={styles.container}>
             <span className={styles.label}>{label}</span>
-            <div className={styles.segments}>
+            <div className={styles.bar}>
                 {Array.from({ length: maxHp }).map((_, i) => (
                     <div
                         key={i}
