@@ -1,14 +1,21 @@
 package org.ntnu.backend.game.service;
 
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.StopResponse;
+import org.ntnu.backend.game.dto.progress.SubmitLevelRequest;
 import org.ntnu.backend.game.mapper.GameMapper;
+import org.ntnu.backend.game.model.Level;
+import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.repository.LevelRepository;
+import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.repository.StopRepository;
+import org.ntnu.backend.game.validation.LevelSubmissionValidator;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,7 +36,10 @@ public class GameService {
 
   private final StopRepository stopRepository;
   private final LevelRepository levelRepository;
+  private final QuestionRepository questionRepository;
+  private final ProgressService progressService;
   private final GameMapper gameMapper;
+  private final LevelSubmissionValidator levelSubmissionValidator;
 
 
   // needs to set lockead/unlocked later
@@ -71,5 +81,15 @@ public class GameService {
         .stream()
         .map(level -> gameMapper.toLevelResponse(level, false))
         .toList();
+  }
+
+  @Transactional
+  public void submitLevel(int levelId, SubmitLevelRequest request, UUID userId, RoleEnum role) {
+    Level level = levelRepository.findById(levelId)
+        .orElseThrow(() -> new LevelNotFoundException(levelId));
+    List<Question> questions = questionRepository.findByLevelIdOrderByIdAsc(levelId);
+
+    levelSubmissionValidator.validate(questions, request.answers());
+    progressService.recordCompletionOfLevel(userId, role, level);
   }
 }

@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto;
+package org.ntnu.backend.game.dto.progress;
 
 import java.util.UUID;
 

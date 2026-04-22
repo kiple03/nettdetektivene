@@ -1,7 +1,7 @@
 package org.ntnu.backend.game.mapper;
 
 import java.util.List;
-import org.ntnu.backend.game.dto.ProgressSummaryResponse;
+import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.UserProgress;
 import org.ntnu.backend.game.repository.StopLevelCount;

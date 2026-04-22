@@ -21,9 +21,11 @@ import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.repository.LevelRepository;
+import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.util.OptionValidator;
+import org.ntnu.backend.game.validation.LevelSubmissionValidator;
 import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +33,9 @@ class GameServiceTest {
 
   @Mock private StopRepository stopRepository;
   @Mock private LevelRepository levelRepository;
+  @Mock private QuestionRepository questionRepository;
+  @Mock private LevelSubmissionValidator levelSubmissionValidator;
+  @Mock private ProgressService progressService;
 
   private GameService gameService;
   private final UUID userId = UUID.randomUUID();
@@ -41,7 +46,14 @@ class GameServiceTest {
         Validation.buildDefaultValidatorFactory().getValidator());
     OptionParser optionParser = new OptionParser(new ObjectMapper(), optionValidator);
     GameMapper gameMapper = new GameMapper(optionParser);
-    gameService = new GameService(stopRepository, levelRepository, gameMapper);
+    gameService = new GameService(
+        stopRepository,
+        levelRepository,
+        questionRepository,
+        progressService,
+        gameMapper,
+        levelSubmissionValidator
+    );
   }
 
   // ===== getStopsForUser =====
