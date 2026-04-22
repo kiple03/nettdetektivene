@@ -645,7 +645,8 @@
 .classroom-detail__teacher-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px 8px;
+  flex-wrap: wrap;
   min-width: 0;
 }
 
@@ -656,6 +657,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.classroom-detail__teacher-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: rgba(90, 62, 27, 0.7);
+  word-break: break-word;
 }
 
 .classroom-detail__teacher-badge {
