@@ -82,59 +82,7 @@
     justify-content: center;
 }
 
-/* ---- Placeholder styles (replaced by real components in tasks 3–8) ---- */
-
-.hpBarPlaceholder {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    padding: 8px 12px;
-    min-width: 160px;
-}
-
-.hpLabel {
-    display: block;
-    font-size: 0.7rem;
-    color: #ccc;
-    margin-bottom: 6px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 180px;
-}
-
-.hpSegments {
-    display: flex;
-    gap: 4px;
-}
-
-.hpSegment {
-    flex: 1;
-    height: 12px;
-    border-radius: 3px;
-    transition: background 0.3s;
-}
-
-.hpFilled {
-    background: #4caf50;
-}
-
-.hpEmpty {
-    background: #333;
-}
-
-.bossCharPlaceholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    font-size: 5rem;
-}
-
-.bossName {
-    font-size: 0.7rem;
-    color: #aaa;
-}
+/* ---- Placeholder styles (replaced by real components in tasks 4–8) ---- */
 
 .playerName {
     font-size: 0.8rem;

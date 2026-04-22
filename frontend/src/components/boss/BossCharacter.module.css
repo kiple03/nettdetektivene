@@ -1,0 +1,18 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.sprite {
+    width: clamp(120px, 25vw, 220px);
+    height: auto;
+    object-fit: contain;
+}
+
+.name {
+    font-size: 0.7rem;
+    color: #aaa;
+    text-align: center;
+}

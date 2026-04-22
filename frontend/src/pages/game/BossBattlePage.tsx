@@ -1,6 +1,9 @@
 import { useState, useRef } from "react";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { LayeredAvatar } from "@/components/user/LayeredAvatar";
+import { HealthBar } from "@/components/boss/HealthBar";
+import { BossCharacter } from "@/components/boss/BossCharacter";
+import sharkBase from "@/assets/images/boss/shark-base.png";
 import styles from "./BossBattlePage.module.css";
 
 type Phase = "intro" | "battle" | "attacking" | "modal" | "victory" | "defeat";
@@ -15,6 +18,7 @@ export default function BossBattlePage() {
     const [playerHp, setPlayerHp] = useState(MAX_HP);
     const [bossHp, setBossHp] = useState(MAX_HP);
     const [finalSeconds, setFinalSeconds] = useState(0);
+    const [currentSprite, setCurrentSprite] = useState<string>(sharkBase);
     const startTimeRef = useRef<number | null>(null);
 
     const startBattle = () => {
@@ -81,27 +85,12 @@ export default function BossBattlePage() {
                 <>
                     {/* Boss HP bar — top-left */}
                     <div className={styles.bossHpArea}>
-                        {/* TODO task 3: replace with <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" /> */}
-                        <div className={styles.hpBarPlaceholder}>
-                            <span className={styles.hpLabel}>hacker_kAI__( ͡° ͜ʖ ͡°)</span>
-                            <div className={styles.hpSegments}>
-                                {Array.from({ length: MAX_HP }).map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className={`${styles.hpSegment} ${i < bossHp ? styles.hpFilled : styles.hpEmpty}`}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                        <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
                     </div>
 
                     {/* Boss character — upper-right */}
                     <div className={styles.bossCharArea}>
-                        {/* TODO task 3: replace with <BossCharacter sprite={currentSprite} /> */}
-                        <div className={styles.bossCharPlaceholder}>
-                            <span>👾</span>
-                            <span className={styles.bossName}>hacker_kAI__( ͡° ͜ʖ ͡°)</span>
-                        </div>
+                        <BossCharacter sprite={currentSprite} />
                     </div>
 
                     {/* Player character — lower-left */}
@@ -114,18 +103,7 @@ export default function BossBattlePage() {
 
                     {/* Player HP bar — bottom-right */}
                     <div className={styles.playerHpArea}>
-                        {/* TODO task 3: replace with <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" /> */}
-                        <div className={styles.hpBarPlaceholder}>
-                            <span className={styles.hpLabel}>{profile?.username ?? "Spiller"}</span>
-                            <div className={styles.hpSegments}>
-                                {Array.from({ length: MAX_HP }).map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className={`${styles.hpSegment} ${i < playerHp ? styles.hpFilled : styles.hpEmpty}`}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                        <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
                     </div>
 
                     {/* Attack orchestrator */}
