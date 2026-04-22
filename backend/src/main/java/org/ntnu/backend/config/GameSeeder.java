@@ -3,10 +3,7 @@ package org.ntnu.backend.config;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.ntnu.backend.game.model.Level;
-import org.ntnu.backend.game.model.MultipleChoiceOption;
-import org.ntnu.backend.game.model.Question;
-import org.ntnu.backend.game.model.Stop;
+import org.ntnu.backend.game.model.*;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.QuestionRepository;
@@ -125,6 +122,85 @@ public class GameSeeder implements CommandLineRunner {
             new MultipleChoiceOption(3, "Artikkelen handler om noe du ikke visste fra før", "placeholder.jpg", false, "At noe er nytt for deg betyr ikke at det er falskt. Sjekk kilden i stedet.")
         )
     );
+  }
+
+  private void seedPhoto() {
+    Stop stop = stopRepository.findByName("Fotografen").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Fotografen");
+      s.setDisplayOrder(2);
+      return stopRepository.save(s);
+    });
+
+    Level level = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte, KI eller manipulert?").orElseGet(() -> {
+      Level l = new Level();
+      l.setTitle("Ekte, KI eller manipulert?");
+      l.setDescription("Se nøye på bildet og velg om det er ekte, KI-generert eller manipulert.");
+      l.setLevelType(LevelType.PICTURE_QUIZ);
+      l.setStop(stop);
+      return levelRepository.save(l);
+    });
+
+    ensurePictureQuestion(
+            level,
+            "Ser dette bildet ekte ut, eller er det laget med KI?",
+            List.of(
+                    new PictureQuizOption(1, "Ekte", "/images/photographer/girl-1.png", false,
+                            "Bildet er ikke ekte. Det har tegn på KI-generering."),
+                    new PictureQuizOption(2, "KI-generert", "/images/photographer/girl-1.png", true,
+                            "Riktig. Ansiktstrekkene og detaljene i bildet tyder på at det er KI-generert."),
+                    new PictureQuizOption(3, "Manipulert", "/images/photographer/girl-1.png", false,
+                            "Bildet ser ikke ut som et ekte foto som bare er redigert. Det ser KI-generert ut.")
+            )
+    );
+
+    ensurePictureQuestion(
+            level,
+            "Hvilken kategori passer best for dette bildet?",
+            List.of(
+                    new PictureQuizOption(1, "Ekte", "/images/photographer/street-1.png", false,
+                            "Dette bildet er ikke et vanlig ekte foto."),
+                    new PictureQuizOption(2, "KI-generert", "/images/photographer/street-1.png", false,
+                            "Det er ikke hovedsakelig KI-generert."),
+                    new PictureQuizOption(3, "Manipulert", "/images/photographer/street-1.png", true,
+                            "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt.")
+            )
+    );
+
+    ensurePictureQuestion(
+            level,
+            "Er dette bildet KI-generert?",
+            List.of(
+                    new PictureQuizOption(1, "Ja, fordi hendene og detaljene ser unormale ut", "/images/photographer/girl-2.png", true,
+                            "Riktig. Rare detaljer som hender, hår, øredobber eller bakgrunn kan være tegn på KI."),
+                    new PictureQuizOption(2, "Nei, fordi bildet ser fint og realistisk ut", "/images/photographer/girl-2.png", false,
+                            "Selv om et bilde ser realistisk ut, kan det fortsatt være KI-generert.")
+            )
+    );
+  }
+
+  private void ensurePictureQuestion(Level level, String questionText, List<PictureQuizOption> options) {
+    boolean exists = questionRepository
+            .findByLevelIdAndQuestionText(level.getId(), questionText)
+            .isPresent();
+    if (exists) return;
+
+    optionValidator.validate(List.copyOf(options), level.getLevelType());
+
+    Question question = new Question();
+    question.setQuestionText(questionText);
+    question.setLevel(level);
+    question.setOptionContent(writePictureOptions(options));
+    questionRepository.save(question);
+  }
+
+  private String writePictureOptions(List<PictureQuizOption> options) {
+    try {
+      return new ObjectMapper().writeValueAsString(options);
+    } catch (JacksonException e) {
+      log.error("Error while writing picture quiz options json", e);
+      throw new IllegalStateException("Failed to serialize picture quiz options", e);
+    }
   }
 
   private void ensureQuestion(Level level, String questionText, List<MultipleChoiceOption> options) {

@@ -1,6 +1,6 @@
 import client from "./client"
 
-export type LevelType = "MULTIPLE_CHOICE" // legge til flere oppgavetyper senere
+export type LevelType = "MULTIPLE_CHOICE"| "PICTURE_QUIZ" // legge til flere oppgavetyper senere
 
 export interface GameStop {
   id: number;
