@@ -9,11 +9,12 @@ import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
+import org.ntnu.backend.game.dto.progress.SubmitLevelRequest;
 import org.ntnu.backend.game.model.enums.LevelType;
-import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.GameService;
 import org.ntnu.backend.game.service.QuestionService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  * view a question, and submit an answer for feedback.
  *
  * <p>All endpoints require authentication. Stops and levels are global
- * no classroom scoping. Questions are both global and classroom specific (not implemented)..
+ * no classroom scoping. Questions are both global and classroom specific (not implemented).
  *
  * @see GameService
  * @see QuestionService
@@ -46,17 +47,26 @@ public class GameController {
    */
   @GetMapping("/stops")
   public List<StopResponse> getGameStops(@AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return gameService.getStopsForUser(principal.getUserId());
+    return gameService.getStopsForUser(principal.getUserId(), principal.getRole());
 
   }
 
+  /**
+   * Returns all levels for a given stop, ordered by ID.
+   * Each level includes its lock state for the current student.
+   */
   @GetMapping("/stops/{stopId}/levels")
   public List<LevelResponse> getLevelsForStop(
       @PathVariable int stopId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return gameService.getLevelsForStop(stopId, principal.getUserId());
+    return gameService.getLevelsForStop(stopId, principal.getUserId(), principal.getRole());
   }
 
+  /**
+   * Returns all questions for a given level. Options are included
+   * but answer data (correct flags, explanations) is excluded.
+   * The frontend shows these one at a time and controls the flow locally.
+   */
   @GetMapping("/levels/{levelId}/questions")
   public List<QuestionResponse> getQuestionsForLevel(
       @PathVariable int levelId,
@@ -73,7 +83,7 @@ public class GameController {
   public LevelResponse getLevel(
       @PathVariable int levelId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return gameService.getLevel(levelId, principal.getUserId());
+    return gameService.getLevel(levelId, principal.getUserId(), principal.getRole());
   }
 
 
@@ -107,5 +117,15 @@ public class GameController {
       @RequestBody SubmitAnswerRequest request,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
     return questionService.submitAnswer(questionId, request);
+  }
+
+
+  @PostMapping("/levels/{levelId}/submit")
+  public ResponseEntity<Void> submitLevel(
+      @PathVariable int levelId,
+      @RequestBody SubmitLevelRequest request,
+      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+    gameService.submitLevel(levelId, request, principal.getUserId(), principal.getRole());
+    return ResponseEntity.noContent().build();
   }
 }

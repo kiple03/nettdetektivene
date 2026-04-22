@@ -11,7 +11,7 @@ import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.repository.StopRepository;
-import org.ntnu.backend.game.service.OptionValidator;
+import org.ntnu.backend.game.util.OptionValidator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +37,14 @@ public class GameSeeder implements CommandLineRunner {
   private final QuestionRepository questionRepository;
   private final OptionValidator optionValidator;
 
+  /**
+   * Executes automatically when the Spring Boot application starts.
+   * Checks if the database is already seeded by verifying if any Stops exist.
+   * If the database is empty, it triggers the initial seeding process.
+   *
+   * @param args Command line arguments passed to the application.
+   */
   @Override
-  @Transactional
   public void run(String... args) {
     log.info("GameSeeder: deduplicating and ensuring seed data...");
     deduplicateStops();
@@ -136,6 +142,13 @@ public class GameSeeder implements CommandLineRunner {
     questionRepository.save(question);
   }
 
+  /**
+   * Serializes a list of multiple-choice options into a JSON string to be stored in the database.
+   *
+   * @param options The list of options to be converted to JSON.
+   * @return A JSON string representing the provided options.
+   * @throws IllegalStateException If the JSON serialization process fails.
+   */
   private String writeOptions(List<MultipleChoiceOption> options) {
     try {
       return new ObjectMapper().writeValueAsString(options);

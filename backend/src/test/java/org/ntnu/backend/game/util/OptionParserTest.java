@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.service;
+package org.ntnu.backend.game.util;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,8 @@ import org.ntnu.backend.exception.InvalidOptionFormatException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
+import org.ntnu.backend.game.util.OptionParser;
+import org.ntnu.backend.game.util.OptionValidator;
 import tools.jackson.databind.ObjectMapper;
 
 public class OptionParserTest {

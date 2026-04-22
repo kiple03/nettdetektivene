@@ -1,8 +1,9 @@
-import { type CSSProperties, useCallback, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { type CSSProperties, useCallback, useMemo, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { getGameStops } from "@/api/gameApi";
+import { studentKeys } from "@/hooks/student/queryKeys";
 import type { EquippedItem } from "@/types/user";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
@@ -111,10 +112,12 @@ type ScrollState = { canLeft: boolean; canRight: boolean; canUp: boolean; canDow
 
 export default function MapPage() {
     const { data: profile } = useUserProfile();
-    const { data: backendStops = [] } = useQuery({ queryKey: ["gameStops"], queryFn: getGameStops });
+    const { data: backendStops = [] } = useQuery({ queryKey: studentKeys.gameStops, queryFn: getGameStops });
     const stopIdByTitle = Object.fromEntries(backendStops.map(s => [s.name, s.id]));
     const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const autoStopId = Number(searchParams.get("stopId")) || null;
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedLevelTitle, setLockedLevelTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
@@ -123,7 +126,14 @@ export default function MapPage() {
     const [animating, setAnimating] = useState(false);
     const [carReversed, setCarReversed] = useState(false);
     const [carOffsetPath, setCarOffsetPath] = useState<string | null>(null);
-    const [pendingStop, setPendingStop] = useState<Level | null>(null);
+    const [manualPendingStop, setManualPendingStop] = useState<Level | null>(null);
+    const autoStop = useMemo(() => {
+        if (!autoStopId || !backendStops.length) return null;
+        const match = backendStops.find(s => s.id === autoStopId);
+        if (!match) return null;
+        return levels.find(l => l.title === match.name) ?? null;
+    }, [autoStopId, backendStops]);
+    const pendingStop = manualPendingStop ?? autoStop;
     const svgNode = useRef<SVGSVGElement | null>(null);
     const containerNode = useRef<HTMLDivElement | null>(null);
 
@@ -146,7 +156,7 @@ export default function MapPage() {
     const handleLevelClick = (level: Level) => {
         animateTo(level.pathOffset, () => {
             if (level.unlocked) {
-                setPendingStop(level);
+                setManualPendingStop(level);
             } else {
                 setLockedLevelTitle(level.title);
                 setLockedDialogOpen(true);
@@ -324,7 +334,10 @@ export default function MapPage() {
 
             <StopLevelsModal
                 stop={pendingStop ? { title: pendingStop.title, stopId: stopIdByTitle[pendingStop.title] ?? null } : null}
-                onClose={() => setPendingStop(null)}
+                onClose={() => {
+                    setManualPendingStop(null);
+                    if (searchParams.has("stopId")) setSearchParams({});
+                }}
             />
 
             <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
