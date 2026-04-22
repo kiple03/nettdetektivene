@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import { Check, Copy } from 'lucide-react';
+import { Check, Copy, Mail, Pencil, Trash2 } from 'lucide-react';
 import axios from 'axios';
 import type { ClassroomDetail, StudentSummary, StopSummary, CoTeacher } from '@/types/classroom.ts';
 import { Button } from '@/components/ui/buttons/Button';
-import { updateClassroom, deleteClassroom, removeStudent, updateStudentUsername, inviteCoTeacher, removeCoTeacher } from '@/services/teacherService';
+import { updateClassroom, deleteClassroom, removeStudent, updateStudentUsername, inviteCoTeacher } from '@/services/teacherService';
 import { LayeredAvatar } from '@/components/user/LayeredAvatar';
 import { decodeToken } from '@/stores/authStore';
 import './ClassroomDetail.css';
@@ -38,8 +38,6 @@ export default function ClassroomDetailPage() {
     const [inviteEmail, setInviteEmail] = useState('');
     const [inviting, setInviting] = useState(false);
     const [inviteError, setInviteError] = useState<string | null>(null);
-    const [confirmRemoveTeacherId, setConfirmRemoveTeacherId] = useState<string | null>(null);
-    const [removingTeacherId, setRemovingTeacherId] = useState<string | null>(null);
     const currentUserId = decodeToken()?.userId ?? '';
     const isOwner = teacherList.some(t => t.userId === currentUserId && t.isOwner);
     const navigate = useNavigate();
@@ -187,18 +185,6 @@ export default function ClassroomDetailPage() {
         }
     }
 
-    async function handleRemoveTeacher(teacherId: string) {
-        if (!classroom) return;
-        setRemovingTeacherId(teacherId);
-        try {
-            await removeCoTeacher(classroom.id, teacherId);
-            setTeacherList(prev => prev.filter(t => t.userId !== teacherId));
-            setConfirmRemoveTeacherId(null);
-        } finally {
-            setRemovingTeacherId(null);
-        }
-    }
-
     return (
         <div className="classroom-detail">
             <Link to="/teacher" className="classroom-detail__back">← Tilbake til oversikten</Link>
@@ -246,7 +232,7 @@ export default function ClassroomDetailPage() {
                                 aria-label="Rediger klassenavn"
                                 onClick={() => { setEditTitle(classroom.title); setEditMode(true); }}
                             >
-                                <PencilIcon />
+                                <Pencil size={18} strokeWidth={2.2} aria-hidden="true" />
                             </button>
                             <div className="classroom-detail__title-divider" />
                             <button
@@ -254,7 +240,7 @@ export default function ClassroomDetailPage() {
                                 aria-label="Slett klasse"
                                 onClick={() => setShowDeleteModal(true)}
                             >
-                                <TrashIcon />
+                                <Trash2 size={18} strokeWidth={2.2} aria-hidden="true" />
                             </button>
                         </div>
                     </div>
@@ -321,47 +307,18 @@ export default function ClassroomDetailPage() {
                             </h2>
                             <ul className="classroom-detail__teacher-list">
                                 {teacherList.map(teacher => {
-                                    const isConfirming = confirmRemoveTeacherId === teacher.userId;
-                                    const showRemove = isOwner
-                                        ? teacher.userId !== currentUserId
-                                        : teacher.userId === currentUserId;
                                     return (
                                         <li key={teacher.userId} className="classroom-detail__teacher-row">
                                             <div className="classroom-detail__teacher-info">
                                                 <span className="classroom-detail__teacher-name">{teacher.username}</span>
+                                                <span className="classroom-detail__teacher-email">
+                                                    <Mail size={13} strokeWidth={2.1} aria-hidden="true" />
+                                                    {teacher.email}
+                                                </span>
                                                 {teacher.isOwner && (
                                                     <span className="classroom-detail__teacher-badge">Eier</span>
                                                 )}
                                             </div>
-                                            {showRemove && (
-                                                isConfirming ? (
-                                                    <div className="classroom-detail__student-actions">
-                                                        <span className="classroom-detail__confirm-label">Fjerne?</span>
-                                                        <button
-                                                            className="classroom-detail__action-btn classroom-detail__action-btn--danger"
-                                                            onClick={() => handleRemoveTeacher(teacher.userId)}
-                                                            disabled={removingTeacherId === teacher.userId}
-                                                        >
-                                                            {removingTeacherId === teacher.userId ? '…' : 'Ja'}
-                                                        </button>
-                                                        <button
-                                                            className="classroom-detail__action-btn"
-                                                            onClick={() => setConfirmRemoveTeacherId(null)}
-                                                            disabled={removingTeacherId === teacher.userId}
-                                                        >
-                                                            Nei
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <button
-                                                        className="classroom-detail__icon-btn classroom-detail__icon-btn--danger"
-                                                        aria-label="Fjern lærer"
-                                                        onClick={() => setConfirmRemoveTeacherId(teacher.userId)}
-                                                    >
-                                                        <TrashIcon />
-                                                    </button>
-                                                )
-                                            )}
                                         </li>
                                     );
                                 })}
@@ -490,14 +447,14 @@ export default function ClassroomDetailPage() {
                                                             aria-label="Rediger brukernavn"
                                                             onClick={() => startEditUsername(student)}
                                                         >
-                                                            <PencilIcon />
+                                                            <Pencil size={18} strokeWidth={2.2} aria-hidden="true" />
                                                         </button>
                                                         <button
                                                             className="classroom-detail__icon-btn classroom-detail__icon-btn--danger"
                                                             aria-label="Fjern elev fra klasserom"
                                                             onClick={() => setConfirmRemoveId(userId)}
                                                         >
-                                                            <TrashIcon />
+                                                            <Trash2 size={18} strokeWidth={2.2} aria-hidden="true" />
                                                         </button>
                                                     </>
                                                 ) : null}
@@ -541,40 +498,5 @@ export default function ClassroomDetailPage() {
                 </div>
             )}
         </div>
-    );
-}
-
-function TrashIcon() {
-    return (
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-                d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path
-                d="M10 11v6M14 11v6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-            />
-        </svg>
-    );
-}
-
-function PencilIcon() {
-    return (
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-                d="M15.232 5.232l3.536 3.536M9 11l6.586-6.586a2 2 0 0 1 2.828 0l.172.172a2 2 0 0 1 0 2.828L12 14H9v-3z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-            />
-            <path d="M5 20h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        </svg>
     );
 }
