@@ -1,6 +1,8 @@
 import { type CSSProperties, useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { getGameStops } from "@/api/gameApi";
 import type { EquippedItem } from "@/types/user";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
@@ -30,7 +32,6 @@ interface Level {
     icon: string;
     unlocked: boolean;
     pathOffset: string;
-    stopId: number | null;
 }
 
 const levels: Level[] = [
@@ -41,7 +42,6 @@ const levels: Level[] = [
         icon: nyhetskvartalet,
         unlocked: true,
         pathOffset: "23.5%",
-        stopId: 1,
     },
     {
         step: "2",
@@ -50,7 +50,6 @@ const levels: Level[] = [
         icon: fotografen,
         unlocked: false,
         pathOffset: "31.3%",
-        stopId: null,
     },
     {
         step: "3",
@@ -59,7 +58,6 @@ const levels: Level[] = [
         icon: postkontoret,
         unlocked: false,
         pathOffset: "35.5%",
-        stopId: null,
     },
     {
         step: "4",
@@ -68,7 +66,6 @@ const levels: Level[] = [
         icon: passordbanken,
         unlocked: false,
         pathOffset: "47.3%",
-        stopId: null,
     },
     {
         step: "5",
@@ -77,7 +74,6 @@ const levels: Level[] = [
         icon: markedsplassen,
         unlocked: false,
         pathOffset: "62.7%",
-        stopId: null,
     },
     {
         step: "6",
@@ -86,7 +82,6 @@ const levels: Level[] = [
         icon: moteplassen,
         unlocked: false,
         pathOffset: "83.6%",
-        stopId: null,
     },
     {
         step: "7",
@@ -95,7 +90,6 @@ const levels: Level[] = [
         icon: datasenteret,
         unlocked: false,
         pathOffset: "91.9%",
-        stopId: null,
     },
 ];
 
@@ -117,6 +111,8 @@ type ScrollState = { canLeft: boolean; canRight: boolean; canUp: boolean; canDow
 
 export default function MapPage() {
     const { data: profile } = useUserProfile();
+    const { data: backendStops = [] } = useQuery({ queryKey: ["gameStops"], queryFn: getGameStops });
+    const stopIdByTitle = Object.fromEntries(backendStops.map(s => [s.name, s.id]));
     const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
     const navigate = useNavigate();
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
@@ -327,7 +323,7 @@ export default function MapPage() {
             )}
 
             <StopLevelsModal
-                stop={pendingStop}
+                stop={pendingStop ? { title: pendingStop.title, stopId: stopIdByTitle[pendingStop.title] ?? null } : null}
                 onClose={() => setPendingStop(null)}
             />
 
