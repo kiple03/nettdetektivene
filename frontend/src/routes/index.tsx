@@ -146,8 +146,16 @@ export const router = createBrowserRouter([
             {
                 path: '/teacher/classrooms/:id/students/:studentId',
                 element: <StudentDetail />,
-                loader: ({ params }: LoaderFunctionArgs) =>
-                    getStudentDetail(params.id!, params.studentId!).catch(() => null),
+                loader: async ({ params }: LoaderFunctionArgs) => {
+                    const classroomId = params.id!;
+                    const studentId = params.studentId!;
+                    const [studentDetail, studentProgress] = await Promise.all([
+                        getStudentDetail(classroomId, studentId).catch(() => null),
+                        getStudentProgress(classroomId).catch(() => []),
+                    ]);
+                    const studentProfile = studentProgress.find((student) => student.userId === studentId) ?? null;
+                    return { studentDetail, studentProfile };
+                },
             },
             {
                 path: '/teacher/classrooms/:id/mystery-submissions',

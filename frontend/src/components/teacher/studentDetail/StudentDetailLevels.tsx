@@ -7,7 +7,8 @@ type StudentDetailLevelsProps = {
 
 export function StudentDetailLevels({ levelCompletions }: StudentDetailLevelsProps) {
     return (
-        <Card variant="unstyled" className="student-detail__section">
+        <Card variant="unstyled" className="student-detail__note">
+            <div className="student-detail__note-tape" />
             <h2 className="student-detail__section-title">Nivåer fullført</h2>
             {levelCompletions.length === 0 ? (
                 <p className="student-detail__empty">Ingen nivåer fullført ennå.</p>

@@ -1,11 +1,16 @@
 import { Link, useLoaderData, useParams } from 'react-router-dom';
-import type { StudentDetail as StudentDetailType } from '@/types/classroom';
+import type { StudentDetail as StudentDetailType, StudentSummary } from '@/types/classroom';
 import { StudentDetailHeader } from '@/components/teacher/studentDetail/StudentDetailHeader';
 import { StudentDetailLevels } from '@/components/teacher/studentDetail/StudentDetailLevels';
 import './StudentDetail.css';
 
+type LoaderData = {
+    studentDetail: StudentDetailType | null;
+    studentProfile: StudentSummary | null;
+};
+
 export default function StudentDetail() {
-    const data = useLoaderData() as StudentDetailType | null;
+    const { studentDetail: data, studentProfile } = useLoaderData() as LoaderData;
     const { id: classroomId } = useParams<{ id: string }>();
     const backLink = `/teacher/classrooms/${classroomId}`;
 
@@ -22,13 +27,18 @@ export default function StudentDetail() {
 
     return (
         <div className="student-detail">
-            <StudentDetailHeader
-                backLink={backLink}
-                username={username}
-                completedCount={levelCompletions.length}
-            />
+            <div className="student-detail__board-wrap">
+                <div className="student-detail__corkboard">
+                    <StudentDetailHeader
+                        backLink={backLink}
+                        username={username}
+                        completedCount={levelCompletions.length}
+                        avatarItems={studentProfile?.equippedItems ?? []}
+                    />
 
-            <StudentDetailLevels levelCompletions={levelCompletions} />
+                    <StudentDetailLevels levelCompletions={levelCompletions} />
+                </div>
+            </div>
         </div>
     );
 }
