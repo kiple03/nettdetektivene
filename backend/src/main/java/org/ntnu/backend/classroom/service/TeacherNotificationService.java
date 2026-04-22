@@ -6,7 +6,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.NotificationResponse;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
-import org.ntnu.backend.game.repository.LevelCompletionRepository;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,27 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TeacherNotificationService {
 
-    private final LevelCompletionRepository levelCompletionRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final ClassroomTeacherRepository classroomTeacherRepository;
 
     @Transactional(readOnly = true)
     public List<NotificationResponse> getNotifications(UUID teacherId) {
         List<NotificationResponse> notifications = new ArrayList<>();
-
-        levelCompletionRepository.findRecentByTeacherId(teacherId)
-            .forEach(lc -> {
-                var enrollment = lc.getEnrollment();
-                var username = enrollment.getUser().getUsername();
-                var classroom = enrollment.getClassroom();
-                notifications.add(NotificationResponse.builder()
-                    .type("LEVEL_COMPLETED")
-                    .message(username + " completed a level in " + classroom.getTitle())
-                    .classroomId(classroom.getId().toString())
-                    .studentUsername(username)
-                    .timestamp(lc.getCompletedAt())
-                    .build());
-            });
 
         mysterySubmissionRepository.findRecentByTeacherId(teacherId)
             .forEach(ms -> {

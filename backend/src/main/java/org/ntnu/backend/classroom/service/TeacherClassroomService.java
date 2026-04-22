@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -11,27 +13,31 @@ import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
+import org.ntnu.backend.classroom.dto.StopResponse;
 import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
-import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.classroom.mapper.ClassroomMapper;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.model.Classroom;
+import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
+import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.security.access.AccessDeniedException;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
-import org.ntnu.backend.game.repository.LevelCompletionRepository;
+import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
+import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.repository.UserRepository;
@@ -53,60 +59,61 @@ public class TeacherClassroomService {
     private final ClassroomService classroomService;
     private final ClassroomAuthorizationService classroomAuthorizationService;
     private final EnrollmentRepository enrollmentRepository;
-    private final LevelCompletionRepository levelCompletionRepository;
     private final LevelRepository levelRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final UserRepository userRepository;
+    private final StopRepository stopRepository;
+    private final ProgressService progressService;
+    private final ClassroomMapper classroomMapper;
     private final UserInventoryItemRepository userInventoryItemRepository;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
     }
 
+
     /**
      * Lists all classrooms owned by a specific teacher, calculating overall
-     * student progress percentage and assignment completion statistics.
+     * student progress percentage based on each active student's
+     * {@link ProgressSummaryResponse#totalLevelsCompleted()}.
      *
      * @param teacherId the UUID of the teacher
      * @return a list of classroom summaries with calculated statistics
      */
+    @Transactional(readOnly = true)
     public List<ClassroomSummaryResponse> listClassrooms(UUID teacherId) {
-        long assignmentCount = levelRepository.count();
-        List<Object[]> rows = classroomTeacherRepository.findClassroomsWithStudentCountByTeacherId(teacherId);
+        List<Classroom> classrooms = classroomTeacherRepository.findClassroomsByTeacherId(teacherId);
+        int totalLevelsInGame = (int) levelRepository.count();
 
-        List<UUID> classroomIds = rows.stream()
-            .map(row -> UUID.fromString(row[0].toString()))
+        List<UUID> allStudentIds = classrooms.stream()
+            .flatMap(c -> enrollmentRepository.findByClassroomIdAndLeftAtIsNull(c.getId()).stream())
+            .map(e -> e.getUser().getId())
             .toList();
 
-        Map<UUID, List<String>> teachersByClassroom = classroomTeacherRepository
-            .findWithUsersByClassroomIdIn(classroomIds)
-            .stream()
-            .collect(Collectors.groupingBy(
-                ct -> ct.getId().getClassroomId(),
-                Collectors.mapping(ct -> ct.getUser().getUsername(), Collectors.toList())
-            ));
+        Map<UUID, ProgressSummaryResponse> progressByStudent =
+            progressService.getProgressForStudents(allStudentIds);
 
-        return rows.stream()
-            .map(row -> {
-                UUID classroomId = UUID.fromString(row[0].toString());
-                long studentCount = ((Number) row[5]).longValue();
-                long completedCount = ((Number) row[6]).longValue();
-                long possible = assignmentCount * studentCount;
-                int progressPercent = possible > 0 ? (int) (completedCount * 100 / possible) : 0;
-                return ClassroomSummaryResponse.builder()
-                    .id(classroomId.toString())
-                    .title((String) row[1])
-                    .description((String) row[2])
-                    .joinCode((String) row[3])
-                    .createdAt((LocalDateTime) row[4])
-                    .studentCount(studentCount)
-                    .assignmentCount((int) assignmentCount)
-                    .completedCount((int) completedCount)
-                    .progressPercent(progressPercent)
-                    .teacherUsernames(teachersByClassroom.getOrDefault(classroomId, List.of()))
-                    .build();
-            })
+        return classrooms.stream()
+            .map(classroom -> summarizeClassroom(classroom, progressByStudent, totalLevelsInGame))
             .toList();
+    }
+
+    private ClassroomSummaryResponse summarizeClassroom(
+        Classroom classroom,
+        Map<UUID, ProgressSummaryResponse> progressByStudent,
+        int totalLevelsInGame) {
+
+        List<Enrollment> activeEnrollments =
+            enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroom.getId());
+
+        int completedCount = activeEnrollments.stream()
+            .map(e -> progressByStudent.get(e.getUser().getId()))
+            .filter(Objects::nonNull)
+            .mapToInt(ProgressSummaryResponse::totalLevelsCompleted)
+            .sum();
+
+        return classroomMapper.toSummary(
+            classroom, activeEnrollments.size(), totalLevelsInGame, completedCount);
     }
 
     /**
@@ -144,29 +151,19 @@ public class TeacherClassroomService {
     @Transactional(readOnly = true)
     public List<StudentProgressResponse> listStudents(UUID classroomId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
-        return enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroomId)
-            .stream()
-            .map(enrollment -> {
-                long count = levelCompletionRepository.countByEnrollmentId(enrollment.getId());
-                UUID userId = enrollment.getUser().getId();
-                List<EquippedItemDto> equippedItems = userInventoryItemRepository
-                    .findByUserIdAndIsEquippedTrue(userId)
-                    .stream()
-                    .map(inv -> EquippedItemDto.builder()
-                        .id(inv.getAvatarItem().getId())
-                        .name(inv.getAvatarItem().getName())
-                        .category(inv.getAvatarItem().getCategory())
-                        .imageUrl("/assets/" + inv.getAvatarItem().getName() + ".svg")
-                        .build())
-                    .toList();
-                return StudentProgressResponse.builder()
-                    .userId(userId.toString())
-                    .username(enrollment.getUser().getUsername())
-                    .levelsCompleted(count)
-                    .medalsEarned(count)
-                    .equippedItems(equippedItems)
-                    .build();
-            })
+
+        List<Enrollment> enrollments =
+            enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroomId);
+        List<UUID> studentIds = enrollments.stream()
+            .map(e -> e.getUser().getId())
+            .toList();
+
+        Map<UUID, ProgressSummaryResponse> progressByStudent =
+            progressService.getProgressForStudents(studentIds);
+
+        return enrollments.stream()
+            .map(e -> classroomMapper.toStudentProgress(
+                e, progressByStudent.get(e.getUser().getId())))
             .toList();
     }
 
@@ -196,7 +193,7 @@ public class TeacherClassroomService {
         userRepository.save(user);
     }
 
-    
+
     /**
      * Fetches detailed data for a specific student in a classroom, including
      * exactly which levels they have completed and when.
@@ -209,20 +206,15 @@ public class TeacherClassroomService {
     @Transactional(readOnly = true)
     public StudentDetailResponse getStudentDetail(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
-        var enrollment = enrollmentRepository
+
+        Enrollment enrollment = enrollmentRepository
             .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        var completions = levelCompletionRepository.findByEnrollmentId(enrollment.getId())
-            .stream()
-            .map(lc -> LevelCompletionEntry.builder()
-                .levelId(lc.getLevel().getId())
-                .completedAt(lc.getCompletedAt())
-                .build())
-            .toList();
-        return StudentDetailResponse.builder()
-            .username(enrollment.getUser().getUsername())
-            .completions(completions)
-            .build();
+
+        ProgressSummaryResponse progress =
+            progressService.getProgressForStudents(List.of(studentId)).get(studentId);
+
+        return classroomMapper.toStudentDetail(enrollment, progress);
     }
 
     public List<CoTeacherResponse> listCoTeachers(UUID classroomId, JwtAuthenticatedPrincipal principal) {
@@ -296,13 +288,7 @@ public class TeacherClassroomService {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
         Classroom classroom = classroomRepository.findById(classroomId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return ClassroomResponse.builder()
-            .id(classroom.getId().toString())
-            .title(classroom.getTitle())
-            .description(classroom.getDescription())
-            .joinCode(classroom.getJoinCode())
-            .createdAt(classroom.getCreatedAt())
-            .build();
+        return classroomMapper.toResponse(classroom);
     }
 
     /**
@@ -328,6 +314,7 @@ public class TeacherClassroomService {
                 .build())
             .toList();
     }
+
 
     /**
      * Verifies access and applies a teacher's review (grading or featuring) to a

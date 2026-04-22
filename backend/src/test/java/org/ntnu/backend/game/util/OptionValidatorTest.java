@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.service;
+package org.ntnu.backend.game.util;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -10,6 +10,7 @@ import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
+import org.ntnu.backend.game.util.OptionValidator;
 
 public class OptionValidatorTest {
 
@@ -59,6 +60,40 @@ public class OptionValidatorTest {
     List<Option> options = List.of(
         new MultipleChoiceOption(1, "A", "", true, "")
     );
+
+    assertThrows(
+        OptionValidationException.class,
+        () -> validator.validate(options, LevelType.MULTIPLE_CHOICE)
+    );
+  }
+
+  @Test
+  void validateMultipleChoice_nullText_throws() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, null, "https://example.com/a.jpg", true, "Reason")
+    );
+
+    assertThrows(
+        OptionValidationException.class,
+        () -> validator.validate(options, LevelType.MULTIPLE_CHOICE)
+    );
+  }
+
+  @Test
+  void validateMultipleChoice_nullImageUrl_throws() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, "A", null, true, "Reason")
+    );
+
+    assertThrows(
+        OptionValidationException.class,
+        () -> validator.validate(options, LevelType.MULTIPLE_CHOICE)
+    );
+  }
+
+  @Test
+  void validateMultipleChoice_emptyList_throws() {
+    List<Option> options = List.of();
 
     assertThrows(
         OptionValidationException.class,

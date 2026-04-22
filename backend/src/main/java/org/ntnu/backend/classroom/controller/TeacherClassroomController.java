@@ -10,7 +10,9 @@ import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
+import org.ntnu.backend.classroom.dto.NotificationResponse;
 import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
+import org.ntnu.backend.classroom.dto.StopResponse;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
@@ -135,6 +137,13 @@ public class TeacherClassroomController {
         return teacherClassroomService.createClassroom(request, principal.getUserId());
     }
 
+    // TODO: rework implementation
+//    @GetMapping("/notifications")
+//    @PreAuthorize("hasRole('TEACHER')")
+//    public List<NotificationResponse> getNotifications(
+//        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+//        return teacherClassroomService.getNotifications(principal.getUserId());
+//    }
     @GetMapping("/{id}/teachers")
     @PreAuthorize("hasRole('TEACHER')")
     public List<CoTeacherResponse> listCoTeachers(

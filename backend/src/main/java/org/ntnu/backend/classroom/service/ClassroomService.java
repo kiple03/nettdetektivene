@@ -11,8 +11,6 @@ import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.util.JoinCodeGenerator;
-import org.ntnu.backend.game.repository.LevelCompletionRepository;
-import org.ntnu.backend.medalion.repository.MedalionRepository;
 import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.user.model.User;
@@ -35,8 +33,8 @@ public class ClassroomService {
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ClassroomTeacherRepository classroomTeacherRepository;
-    private final LevelCompletionRepository levelCompletionRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
+
     private final ClassroomMapper classroomMapper;
     private final JoinCodeGenerator joinCodeGenerator;
     private final MedalionService medalionService;
@@ -94,7 +92,6 @@ public class ClassroomService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Klasserom ikke funnet");
         }
         mysterySubmissionRepository.deleteByEnrollmentClassroomId(id);
-        levelCompletionRepository.deleteByEnrollmentClassroomId(id);
         enrollmentRepository.deleteByClassroomId(id);
         classroomTeacherRepository.deleteByClassroomId(id);
         classroomRepository.deleteById(id);
@@ -134,7 +131,7 @@ public class ClassroomService {
             .classroom(classroom)
             .build();
         enrollmentRepository.save(enrollment);
-        
+
         medalionService.awardInternalUsage(userId, "Hello elever", "Bli med i første klasserom");
 
         return classroomMapper.toResponse(classroom);
