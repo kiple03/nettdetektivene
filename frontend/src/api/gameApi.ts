@@ -76,8 +76,3 @@ export const submitSingleChoiceAnswer = async (
   return response.data;
 };
 
-export const getQuestionsForLevel = async (
-    levelId: number): Promise<GameQuestion[]> => {
-  const response = await client.get(`game/levels/${levelId}/questions`);
-  return response.data;
-};
