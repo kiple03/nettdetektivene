@@ -92,7 +92,7 @@ public class GameSeeder implements CommandLineRunner {
 
     Level level1 = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte eller falskt? 1").orElseGet(() -> {
       Level l = new Level();
-      l.setTitle("Ekte eller falskt?");
+      l.setTitle("Ekte eller falskt? 1");
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
       l.setLevelType(LevelType.MULTIPLE_CHOICE);
       l.setStop(stop);
@@ -102,22 +102,22 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level1,
         "Hvilken nyhetssak er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Norge mangler en plan for matberedskap - løsningen er 5000 nye 'Jon Almaas-er'", "placeholder.jpg", true, "Den andre artikelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid."),
-            new MultipleChoiceOption(2, "Jon Almaas er den aller beste", "placeholder.jpg", false, "Denne artikkelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid.")
+            new MultipleChoiceOption(1, "Norge mangler en plan for matberedskap - løsningen er 5000 nye 'Jon Almaas-er'", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-1.png", true, "Den andre artikelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid."),
+            new MultipleChoiceOption(2, "Jon Almaas er den aller beste", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-2.png", false, "Denne artikkelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid.")
         )
     );
 
     ensureQuestion(level1,
         "Hvilken nyhetssak er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "EKSTRA penger til flere ansate i barnehagen: -Jeg er jublende glad", "placeholder.jpg", false, "I denne artikelen blir det brukt store bokstavene og Ukjent stortingspolitker"),
-            new MultipleChoiceOption(2, "Ekstra penger til flere ansate i barnehagen: -Jeg er jublende glad", "placeholder.jpg", true, "Oppdaget du de store bokstavene og den Ukjente stortingspolitikeren?")
+            new MultipleChoiceOption(1, "EKSTRA penger til flere ansate i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-1.png", false, "I denne artikelen blir det brukt store bokstavene og Ukjent stortingspolitker"),
+            new MultipleChoiceOption(2, "Ekstra penger til flere ansate i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-2.png", true, "Oppdaget du de store bokstavene og den Ukjente stortingspolitikeren?")
         )
     );
 
     Level level2 = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte eller falskt? 2").orElseGet(() -> {
       Level l = new Level();
-      l.setTitle("Ekte eller falskt?");
+      l.setTitle("Ekte eller falskt? 2");
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
       l.setLevelType(LevelType.MULTIPLE_CHOICE);
       l.setStop(stop);
@@ -127,22 +127,22 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level2,
         "Hvilken nyhetssak er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Artikkel 1", "placeholder.jpg", true, "Den andre atrikkelen inneholder en ukjent mann og 2600-tallet!"),
-            new MultipleChoiceOption(2, "Artikkel 2", "placeholder.jpg", false, "Denne artikkelen innholder en ukjent mann og 2600-tallet")
+            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-1.png", true, "Den andre atrikkelen inneholder en ukjent mann og 2600-tallet!"),
+            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-2.png", false, "Denne artikkelen innholder en ukjent mann og 2600-tallet")
         )
     );
 
     ensureQuestion(level2,
         "Hvilken nyhetssak er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Artikkel 1", "placeholder.jpg", false, "Hvor er etternavnet til næringsminsteren? Nåer er klokken 09:71?"),
-            new MultipleChoiceOption(2, "Artikkel 2", "placeholder.jpg", true, "Flott! Du oppdaget at næringsministeren mangler etternavn og at det var noe rart med klokkeslettet?")
+            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-1.png", false, "Hvor er etternavnet til næringsminsteren? Nåer er klokken 09:71?"),
+            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-2.png", true, "Flott! Du oppdaget at næringsministeren mangler etternavn og at det var noe rart med klokkeslettet?")
         )
     );
 
     Level level3 = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte eller falskt? 3").orElseGet(() -> {
       Level l = new Level();
-      l.setTitle("Ekte eller falskt?");
+      l.setTitle("Ekte eller falskt? 3");
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
       l.setLevelType(LevelType.MULTIPLE_CHOICE);
       l.setStop(stop);
@@ -152,16 +152,16 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level3,
         "Hvilken nyhetssak er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Har solgt over 40 000 biletter", "placeholder.jpg", true, "Det stemmer! Det er mer logisk riktig å lage artikkel på at 40 000 biletter er solgt! I tilegg fant du kanskje det manglende etternavnet i bildeteksten?"),
-            new MultipleChoiceOption(2, "Har solgt over 20 biletter", "placeholder.jpg", false, "Fornavn brukes sjeldent alene i nyhetsartikler og 20 billetter solgt er ikke logisk å lage artikkel på.")
+            new MultipleChoiceOption(1, "Har solgt over 40 000 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News5-1.png", true, "Det stemmer! Det er mer logisk riktig å lage artikkel på at 40 000 biletter er solgt! I tilegg fant du kanskje det manglende etternavnet i bildeteksten?"),
+            new MultipleChoiceOption(2, "Har solgt over 20 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News5-2.png", false, "Fornavn brukes sjeldent alene i nyhetsartikler og 20 billetter solgt er ikke logisk å lage artikkel på.")
         )
     );
 
     ensureQuestion(level3,
         "Hvilken nyhetssak er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Artikkel 1", "placeholder.jpg", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
-            new MultipleChoiceOption(2, "Artikkel 2", "placeholder.jpg", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
+            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-1.png", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
+            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-2.png", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
         )
     );
   }
