@@ -10,7 +10,7 @@ import {
     approveMysterySubmission,
     rejectMysterySubmission,
     featureMysterySubmission,
-} from '@/services/teacherService';
+} from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
 import type { ClassroomDetail, CoTeacher, MysterySubmissionResponse, StudentSummary } from '@/types/classroom';
 
