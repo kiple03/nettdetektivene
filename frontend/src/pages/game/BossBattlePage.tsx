@@ -3,6 +3,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { LayeredAvatar } from "@/components/user/LayeredAvatar";
 import { HealthBar } from "@/components/boss/HealthBar";
 import { BossCharacter } from "@/components/boss/BossCharacter";
+import { IntroCutscene } from "@/components/boss/IntroCutscene";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import styles from "./BossBattlePage.module.css";
 
@@ -65,18 +66,11 @@ export default function BossBattlePage() {
             {/* INTRO PHASE */}
             {phase === "intro" && (
                 <div className={styles.cutsceneOverlay}>
-                    {/* TODO task 4: replace with <IntroCutscene onComplete={startBattle} /> */}
-                    <div className={styles.introCutscene}>
-                        <div className={styles.introText}>
-                            <p>
-                                <strong>hacker_kAI__( ͡° ͜ʖ ͡°)</strong> har hacket seg inn i Datasenteret!
-                            </p>
-                            <p>Du er vår siste sjanse — bekjemp hackeren!</p>
-                        </div>
-                        <button className={styles.startButton} onClick={startBattle}>
-                            Start kamp!
-                        </button>
-                    </div>
+                    <IntroCutscene
+                        equippedItems={equippedItems}
+                        username={profile?.username ?? ""}
+                        onComplete={startBattle}
+                    />
                 </div>
             )}
 

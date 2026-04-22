@@ -1,0 +1,135 @@
+.scene {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Boss — top-right, fades and slides in on mount */
+.bossArea {
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    animation: fadeSlideDown 0.7s ease both;
+}
+
+/* Player — bottom-left, fades and slides in on mount */
+.playerArea {
+    position: absolute;
+    bottom: 160px;
+    left: 8%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    animation: fadeSlideUp 0.7s ease both;
+}
+
+.playerName {
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
+/* Dialog strip — bottom of screen */
+.dialog {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #0d1b2a;
+    border-top: 2px solid #4a9eff;
+    padding: 20px 28px 16px;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dialogText {
+    color: white;
+    font-size: 1.05rem;
+    margin: 0;
+    line-height: 1.5;
+    animation: fadeIn 0.4s ease both;
+}
+
+.btnRow {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nesteBtn {
+    padding: 8px 22px;
+    border-radius: 8px;
+    border: 2px solid #4a9eff;
+    background: transparent;
+    color: #4a9eff;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.nesteBtn:hover {
+    background: #4a9eff;
+    color: white;
+}
+
+.startBtn {
+    padding: 12px 36px;
+    border-radius: 10px;
+    border: none;
+    background: #4a9eff;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.15s;
+    animation: fadeIn 0.4s ease both;
+}
+
+.startBtn:hover {
+    background: #2a7edf;
+}
+
+@keyframes fadeSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@media (max-width: 767px) {
+    .bossArea {
+        top: 4%;
+        right: 4%;
+    }
+
+    .playerArea {
+        bottom: 150px;
+        left: 4%;
+    }
+
+    .dialogText {
+        font-size: 0.95rem;
+    }
+}
