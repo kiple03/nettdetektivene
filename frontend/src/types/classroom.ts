@@ -40,6 +40,10 @@ export interface StudentDetail {
   userId: string;
   username: string;
   levelCompletions: LevelEntry[];
+  currentStopName: string | null;
+  currentLevelOrder: number | null;
+  totalLevelsCompleted: number | null;
+  gameCompleted: boolean | null;
 }
 
 export interface MysterySubmissionResponse {

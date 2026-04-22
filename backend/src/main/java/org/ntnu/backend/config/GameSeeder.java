@@ -14,7 +14,6 @@ import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.util.OptionValidator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -48,6 +47,7 @@ public class GameSeeder implements CommandLineRunner {
   public void run(String... args) {
     log.info("GameSeeder: deduplicating and ensuring seed data...");
     deduplicateStops();
+    deduplicateLevels();
     seedNews();
     log.info("GameSeeder: done");
   }
@@ -75,11 +75,36 @@ public class GameSeeder implements CommandLineRunner {
   private void deleteStop(Stop stop) {
     List<Level> levels = levelRepository.findByStopIdOrderByIdAsc(stop.getId());
     for (Level level : levels) {
-      List<Question> questions = questionRepository.findByLevelIdOrderByIdAsc(level.getId());
-      questionRepository.deleteAll(questions);
-      levelRepository.delete(level);
+      deleteLevel(level);
     }
     stopRepository.delete(stop);
+  }
+
+  /**
+   * For each stop, deduplicate levels by title and keep the lowest-id row.
+   */
+  private void deduplicateLevels() {
+    List<Stop> allStops = stopRepository.findAll();
+    for (Stop stop : allStops) {
+      List<Level> levels = levelRepository.findByStopIdOrderByIdAsc(stop.getId());
+      levels.stream()
+          .map(Level::getTitle)
+          .distinct()
+          .forEach(title -> {
+            List<Level> duplicates = levelRepository.findAllByStopIdAndTitleOrderByIdAsc(stop.getId(), title);
+            if (duplicates.size() <= 1) return;
+            for (Level dup : duplicates.subList(1, duplicates.size())) {
+              log.info("GameSeeder: deleting duplicate level '{}' id={} for stop '{}'", title, dup.getId(), stop.getName());
+              deleteLevel(dup);
+            }
+          });
+    }
+  }
+
+  private void deleteLevel(Level level) {
+    List<Question> questions = questionRepository.findByLevelIdOrderByIdAsc(level.getId());
+    questionRepository.deleteAll(questions);
+    levelRepository.delete(level);
   }
 
   private void seedNews() {
@@ -90,7 +115,8 @@ public class GameSeeder implements CommandLineRunner {
       return stopRepository.save(s);
     });
 
-    Level level1 = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte eller falskt? 1").orElseGet(() -> {
+    Level level1 = levelRepository.findByStopIdOrderByIdAsc(stop.getId(), "Ekte eller falskt?").orElseGet(() -> {
+
       Level l = new Level();
       l.setTitle("Ekte eller falskt? 1");
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
@@ -115,7 +141,7 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
-    Level level2 = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte eller falskt? 2").orElseGet(() -> {
+    Level level2 = levelRepository.findByStopIdOrderByIdAsc(stop.getId(), "Ekte eller falskt? 2").orElseGet(() -> {
       Level l = new Level();
       l.setTitle("Ekte eller falskt? 2");
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
@@ -140,7 +166,7 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
-    Level level3 = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte eller falskt? 3").orElseGet(() -> {
+    Level level3 = levelRepository.findByStopIdOrderByIdAsc(stop.getId(), "Ekte eller falskt? 3").orElseGet(() -> {
       Level l = new Level();
       l.setTitle("Ekte eller falskt? 3");
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
