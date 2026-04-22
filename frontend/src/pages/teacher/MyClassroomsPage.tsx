@@ -1,14 +1,13 @@
 import { useMemo, useState } from 'react';
-import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import type { ClassroomSummary } from '@/types/classroom.ts';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/buttons/Button.tsx';
 import { TextInput } from '@/components/ui/textInput/TextInput.tsx';
 import { MyClassroomsBoard } from '@/components/teacher/classroomList/MyClassroomsBoard';
+import { useClassroomSummaries } from '@/hooks/teacher/useTeacherQueries';
 import './MyClassroomsPage.css';
 
 export default function MyClassroomsPage() {
-    const loaderData = useLoaderData() as ClassroomSummary[] | null;
-    const summaries = loaderData ?? [];
+    const { data: summaries = [] } = useClassroomSummaries();
     const navigate = useNavigate();
 
     const [search, setSearch] = useState('');
@@ -17,7 +16,6 @@ export default function MyClassroomsPage() {
 
     const filtered = useMemo(() => {
         const query = search.toLowerCase();
-
         return summaries.filter((summary) =>
             [summary.title, summary.description ?? '', summary.joinCode]
                 .join(' ')

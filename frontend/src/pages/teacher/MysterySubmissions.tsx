@@ -1,17 +1,13 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useState } from 'react';
-import type { ClassroomDetail, MysterySubmissionResponse } from '@/types/classroom.ts';
+import type { MysterySubmissionResponse } from '@/types/classroom.ts';
+import { useClassroom, useMysterySubmissions } from '@/hooks/teacher/useTeacherQueries';
 import {
-  approveMysterySubmission,
-  rejectMysterySubmission,
-  featureMysterySubmission,
-} from '@/services/teacherService';
+  useApproveMysterySubmission,
+  useFeatureMysterySubmission,
+  useRejectMysterySubmission,
+} from '@/hooks/teacher/useTeacherMutations';
 import './MysterySubmissions.css';
-
-type LoaderData = {
-  classroom: ClassroomDetail | null;
-  submissions: MysterySubmissionResponse[];
-};
 
 type Filter = 'all' | MysterySubmissionResponse['status'];
 
@@ -29,30 +25,27 @@ const STATUS_LABELS: Record<MysterySubmissionResponse['status'], string> = {
 };
 
 export default function MysterySubmissions() {
-  const { classroom, submissions: initial } = useLoaderData() as LoaderData;
-  const [submissions, setSubmissions] = useState(initial);
+  const { id: classroomId = '' } = useParams<{ id: string }>();
+  const { data: classroom = null } = useClassroom(classroomId);
+  const { data: submissions = [] } = useMysterySubmissions(classroomId);
   const [filter, setFilter] = useState<Filter>('all');
 
-  const classroomId = classroom?.id;
+  const approveMutation = useApproveMysterySubmission(classroomId);
+  const rejectMutation = useRejectMysterySubmission(classroomId);
+  const featureMutation = useFeatureMysterySubmission(classroomId);
 
-  async function approve(id: string) {
-    if (!classroomId) return;
-    const updated = await approveMysterySubmission(classroomId, id);
-    setSubmissions(prev => prev.map(s => s.id === id ? updated : s));
+  function approve(id: string) {
+    approveMutation.mutate(id);
   }
 
-  async function reject(id: string) {
-    if (!classroomId) return;
-    const updated = await rejectMysterySubmission(classroomId, id);
-    setSubmissions(prev => prev.map(s => s.id === id ? updated : s));
+  function reject(id: string) {
+    rejectMutation.mutate(id);
   }
 
-  async function toggleFeatured(id: string) {
-    if (!classroomId) return;
+  function toggleFeatured(id: string) {
     const current = submissions.find(s => s.id === id);
     if (!current) return;
-    const updated = await featureMysterySubmission(classroomId, id, !current.featured);
-    setSubmissions(prev => prev.map(s => s.id === id ? updated : s));
+    featureMutation.mutate({ submissionId: id, featured: !current.featured });
   }
 
   const filtered = filter === 'all' ? submissions : submissions.filter(s => s.status === filter);
@@ -80,7 +73,6 @@ export default function MysterySubmissions() {
         <h1 className="mystery__title">Mystery-innleveringer</h1>
       </header>
 
-      {/* Filter tabs */}
       <div className="mystery__filters" role="tablist">
         {(Object.keys(FILTER_LABELS) as Filter[]).map(f => (
           <button
@@ -96,7 +88,6 @@ export default function MysterySubmissions() {
         ))}
       </div>
 
-      {/* Submission list */}
       {filtered.length === 0 ? (
         <p className="mystery__empty">Ingen innleveringer i denne kategorien.</p>
       ) : (
