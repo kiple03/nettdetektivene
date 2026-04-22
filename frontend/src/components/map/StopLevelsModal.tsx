@@ -57,7 +57,7 @@ export function StopLevelsModal({ stop, onClose }: StopLevelsModalProps) {
                                 <button
                                     type="button"
                                     className={styles.levelButton}
-                                    onClick={() => navigate(`/game/${level.id}`)}
+                                    onClick={() => navigate(`/game/${level.id}?stopId=${stop!.stopId}`)}
                                 >
                                     <span className={styles.levelTitle}>{level.title}</span>
                                     {level.description && (

@@ -1,9 +1,12 @@
 import client from "./client"
 
+export type LevelType = "MULTIPLE_CHOICE" // legge til flere oppgavetyper senere
+
 export interface GameStop {
   id: number;
   name: string;
   displayOrder: number;
+  locked: boolean;
 }
 
 export interface QuestionOption {
@@ -14,7 +17,7 @@ export interface QuestionOption {
 
 export interface GameQuestion {
   id: number;
-  levelType: "MULTIPLE_CHOICE"; // legge til flere oppgavetyper senere
+  levelType: LevelType;
   questionText: string;
   options: QuestionOption[];
 }
@@ -23,7 +26,7 @@ export interface GameLevel {
   id: number;
   title: string;
   description: string;
-  levelType: "MULTIPLE_CHOICE";
+  levelType: LevelType;
   locked: boolean;
 }
 
@@ -68,7 +71,8 @@ export const getLevelQuestions = async (
 
 export const submitSingleChoiceAnswer = async (
     questionId: number, body: SubmitSingleChoiceAnswerRequest): Promise<SubmitAnswerResponse> => {
-  const respone =
+  const response =
       await client.post(`/game/questions/${questionId}/submit`,body);
-  return respone.data;
+  return response.data;
 };
+

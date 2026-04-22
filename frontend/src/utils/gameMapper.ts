@@ -33,7 +33,7 @@ export function mapQuestionToStationData(question: GameQuestion) : StationData {
   }
 }
 
-export function mapSubmitResponseToSumbitAnswer(response: SubmitAnswerResponse) : SubmitAnswerResult {
+export function mapSubmitResponseToSubmitAnswer(response: SubmitAnswerResponse) : SubmitAnswerResult {
   return {
     correct: response.correct,
     feedback: response.feedback,

@@ -28,3 +28,7 @@ export type SubmitAnswerResult = {
   feedback: string;
 };
 
+export type Level = {
+  id: number;
+}
+
