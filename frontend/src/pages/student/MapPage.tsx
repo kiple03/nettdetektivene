@@ -211,15 +211,17 @@ export default function MapPage() {
             }
             setAnchorPos(result);
 
-            // Build car path in CSS px: raw d coords × scale(0.135) × (renderedWidth / SVG viewBox width)
-            const svgRect = node.getBoundingClientRect();
-            const carPathEl = node.getElementById("car-path");
+            const carPathEl = node.getElementById("car-path") as SVGGraphicsElement | null;
             const rawD = carPathEl?.getAttribute("d");
-            if (rawD) {
-                const scale = 0.135 * svgRect.width / 1440;
-                const scaledD = rawD.replace(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g, (_, x, y) =>
-                    `${(parseFloat(x) * scale).toFixed(1)},${(parseFloat(y) * scale).toFixed(1)}`
-                );
+            const ctm = carPathEl?.getScreenCTM();
+            if (rawD && ctm) {
+                const scaledD = rawD.replace(/(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g, (_, x, y) => {
+                    const rx = parseFloat(x);
+                    const ry = parseFloat(y);
+                    const screenX = ctm.a * rx + ctm.c * ry + ctm.e;
+                    const screenY = ctm.b * rx + ctm.d * ry + ctm.f;
+                    return `${(screenX - containerRect.left).toFixed(1)},${(screenY - containerRect.top).toFixed(1)}`;
+                });
                 setCarOffsetPath(scaledD);
             }
         };

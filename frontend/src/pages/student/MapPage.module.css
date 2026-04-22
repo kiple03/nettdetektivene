@@ -197,4 +197,8 @@
     bottom: unset;
     transform: translate(-50%, -50%) rotate(-90deg);
   }
+
+  .car {
+    offset-rotate: auto 90deg;
+  }
 }
