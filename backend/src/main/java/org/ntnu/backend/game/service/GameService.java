@@ -42,24 +42,21 @@ public class GameService {
   private final LevelSubmissionValidator levelSubmissionValidator;
 
 
-  // needs to set lockead/unlocked later
-  // hgardcoded all unlocked
-
   /**
    * Returns all stops for the game map, ordered by display position.
    *
    * <p>Each stop includes its lock status for the given student.
-   * Currently hardcoded to unlocked, will use completion data
-   * from enrollment/progress tables once implemented.
    *
    * @param userId the student requesting the map (unused until lock logic is added)
    * @return all stops with per-student lock state
    */
-  public List<StopResponse> getStopsForUser(UUID userId) {
+  public List<StopResponse> getStopsForUser(UUID userId, RoleEnum role) {
     return stopRepository.findAllByOrderByDisplayOrderAsc()
         .stream()
-        .map(stop -> gameMapper.toStopOverviewResponse(stop, false))
-        .toList();
+        .map(stop -> gameMapper.toStopOverviewResponse(
+            stop,
+            !progressService.isStopAccessible(userId, role, stop)
+        )).toList();
   }
 
   /**
@@ -70,17 +67,21 @@ public class GameService {
    * @return the level details including type and description
    * @throws LevelNotFoundException if no level exists with this ID
    */
-  public LevelResponse getLevel(int levelId, UUID userId) {
+  public LevelResponse getLevel(int levelId, UUID userId, RoleEnum role) {
     return levelRepository.findById(levelId)
-        .map(level -> gameMapper.toLevelResponse(level, false))
-        .orElseThrow(() -> new LevelNotFoundException(levelId));
+        .map(level -> gameMapper.toLevelResponse(
+            level,
+            !progressService.isLevelAccessible(userId, role, level)
+        )).orElseThrow(() -> new LevelNotFoundException(levelId));
   }
 
-  public List<LevelResponse> getLevelsForStop(int stopId, UUID userId) {
+  public List<LevelResponse> getLevelsForStop(int stopId, UUID userId, RoleEnum role) {
     return levelRepository.findByStopIdOrderByIdAsc(stopId)
         .stream()
-        .map(level -> gameMapper.toLevelResponse(level, false))
-        .toList();
+        .map(level -> gameMapper.toLevelResponse(
+            level,
+            !progressService.isLevelAccessible(userId, role, level)
+        )).toList();
   }
 
   @Transactional
