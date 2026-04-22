@@ -1,20 +1,18 @@
-import { Link, useLoaderData, useParams } from 'react-router-dom';
-import type { StudentDetail as StudentDetailType, StudentSummary } from '@/types/classroom';
+import { Link, useParams } from 'react-router-dom';
+import { useStudentDetail, useStudentProgress } from '@/hooks/teacher/useTeacherQueries';
 import { StudentDetailHeader } from '@/components/teacher/studentDetail/StudentDetailHeader';
 import { StudentDetailLevels } from '@/components/teacher/studentDetail/StudentDetailLevels';
 import './StudentDetail.css';
 
-type LoaderData = {
-    studentDetail: StudentDetailType | null;
-    studentProfile: StudentSummary | null;
-};
-
 export default function StudentDetail() {
-    const { studentDetail: data, studentProfile } = useLoaderData() as LoaderData;
-    const { id: classroomId } = useParams<{ id: string }>();
+    const { id: classroomId = '', studentId = '' } = useParams<{ id: string; studentId: string }>();
     const backLink = `/teacher/classrooms/${classroomId}`;
 
-    if (!data) {
+    const { data: studentDetail = null } = useStudentDetail(classroomId, studentId);
+    const { data: students = [] } = useStudentProgress(classroomId);
+    const studentProfile = students.find((s) => s.userId === studentId) ?? null;
+
+    if (!studentDetail) {
         return (
             <div className="student-detail">
                 <Link to={backLink} className="student-detail__back">← Tilbake</Link>
@@ -23,7 +21,7 @@ export default function StudentDetail() {
         );
     }
 
-    const { username, levelCompletions } = data;
+    const { username, levelCompletions } = studentDetail;
 
     return (
         <div className="student-detail">
