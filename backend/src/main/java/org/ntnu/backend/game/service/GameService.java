@@ -1,6 +1,5 @@
 package org.ntnu.backend.game.service;
 
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -17,6 +16,7 @@ import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.validation.LevelSubmissionValidator;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the game map and level navigation. Provides stop overviews
@@ -50,6 +50,7 @@ public class GameService {
    * @param userId the student requesting the map (unused until lock logic is added)
    * @return all stops with per-student lock state
    */
+  @Transactional(readOnly = true)
   public List<StopResponse> getStopsForUser(UUID userId, RoleEnum role) {
     return stopRepository.findAllByOrderByDisplayOrderAsc()
         .stream()
@@ -67,6 +68,7 @@ public class GameService {
    * @return the level details including type and description
    * @throws LevelNotFoundException if no level exists with this ID
    */
+  @Transactional(readOnly = true)
   public LevelResponse getLevel(int levelId, UUID userId, RoleEnum role) {
     return levelRepository.findById(levelId)
         .map(level -> gameMapper.toLevelResponse(
@@ -75,6 +77,7 @@ public class GameService {
         )).orElseThrow(() -> new LevelNotFoundException(levelId));
   }
 
+  @Transactional(readOnly = true)
   public List<LevelResponse> getLevelsForStop(int stopId, UUID userId, RoleEnum role) {
     return levelRepository.findByStopIdOrderByIdAsc(stopId)
         .stream()

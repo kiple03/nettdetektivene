@@ -48,7 +48,7 @@ public class GameController {
    */
   @GetMapping("/stops")
   public List<StopResponse> getGameStops(@AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return gameService.getStopsForUser(principal.getUserId());
+    return gameService.getStopsForUser(principal.getUserId(), principal.getRole()));
 
   }
 
@@ -60,7 +60,7 @@ public class GameController {
   public List<LevelResponse> getLevelsForStop(
       @PathVariable int stopId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return gameService.getLevelsForStop(stopId, principal.getUserId());
+    return gameService.getLevelsForStop(stopId, principal.getUserId(), principal.getRole()));
   }
 
   /**
@@ -84,7 +84,7 @@ public class GameController {
   public LevelResponse getLevel(
       @PathVariable int levelId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return gameService.getLevel(levelId, principal.getUserId());
+    return gameService.getLevel(levelId, principal.getUserId(), principal.getRole());
   }
 
 
