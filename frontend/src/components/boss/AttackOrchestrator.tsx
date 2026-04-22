@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AttackAnimation } from "./AttackAnimation";
 import styles from "./AttackOrchestrator.module.css";
 
 export type AttackType =
@@ -56,7 +57,7 @@ function pickAttack(): ResolvedAttack {
     return { effectiveType: last.type, label: last.label };
 }
 
-type InnerPhase = "waiting" | "modal";
+type InnerPhase = "waiting" | "animating" | "modal";
 
 interface Props {
     onAnswer: (correct: boolean) => void;
@@ -69,10 +70,7 @@ export function AttackOrchestrator({ onAnswer }: Props) {
     const handleStartAttack = () => {
         const attack = pickAttack();
         setCurrentAttack(attack);
-        // Animation stub: task 6 will add per-attack animation sequences here
-        // (each case: commented steps + onComplete() called immediately)
-        // onComplete() → setInnerPhase("modal")
-        setInnerPhase("modal");
+        setInnerPhase("animating");
     };
 
     const handleAnswer = (correct: boolean) => {
@@ -87,6 +85,12 @@ export function AttackOrchestrator({ onAnswer }: Props) {
                 <button className={styles.attackButton} onClick={handleStartAttack}>
                     Neste angrep
                 </button>
+            )}
+            {innerPhase === "animating" && currentAttack && (
+                <AttackAnimation
+                    attackType={currentAttack.effectiveType}
+                    onComplete={() => setInnerPhase("modal")}
+                />
             )}
             {innerPhase === "modal" && currentAttack && (
                 <div className={styles.modalOverlay}>
