@@ -35,6 +35,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
+import org.ntnu.backend.medalion.service.MedalionService;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -53,6 +54,8 @@ class UserServiceTest {
   private EnrollmentRepository enrollmentRepository;
   @Mock
   private UserAvatarService userAvatarService;
+  @Mock 
+  private MedalionService medalionService;
 
   @InjectMocks
   private UserService userService;
