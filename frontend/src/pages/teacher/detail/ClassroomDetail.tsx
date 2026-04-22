@@ -3,6 +3,7 @@ import type { ClassroomDetail, StudentSummary, StopSummary, CoTeacher } from '@/
 import { useClassroomDetailPage } from '@/hooks/useClassroomDetailPage';
 import { ClassroomDetailBoard } from '@/components/teacher/classroomDetail/ClassroomDetailBoard';
 import { ClassroomDetailHeader } from '@/components/teacher/classroomDetail/ClassroomDetailHeader';
+import { ClassroomDetailDeleteDialog } from '@/components/teacher/classroomDetail/ClassroomDetailDeleteDialog';
 import './ClassroomDetail.css';
 
 type LoaderData = {
@@ -111,35 +112,14 @@ export default function ClassroomDetailPage() {
                 onConfirmRemoveChange={setConfirmRemoveId}
             />
 
-            {showDeleteModal && (
-                <div className="classroom-detail__modal-backdrop" onClick={() => !deleting && setShowDeleteModal(false)}>
-                    <div className="classroom-detail__modal" onClick={(e) => e.stopPropagation()}>
-                        <h2 className="classroom-detail__modal-title">Slett klasse?</h2>
-                        <p className="classroom-detail__modal-body">
-                            Dette vil slette <strong>{classroom.title}</strong> og melde ut alle elever. Handlingen kan ikke angres.
-                        </p>
-                        {deleteError && (
-                            <p className="classroom-detail__modal-error">{deleteError}</p>
-                        )}
-                        <div className="classroom-detail__modal-actions">
-                            <button
-                                className="classroom-detail__modal-cancel"
-                                onClick={() => setShowDeleteModal(false)}
-                                disabled={deleting}
-                            >
-                                Avbryt
-                            </button>
-                            <button
-                                className="classroom-detail__modal-confirm"
-                                onClick={handleDelete}
-                                disabled={deleting}
-                            >
-                                {deleting ? 'Sletter…' : 'Slett klasse'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ClassroomDetailDeleteDialog
+                title={classroom.title}
+                open={showDeleteModal}
+                deleting={deleting}
+                error={deleteError}
+                onCancel={() => setShowDeleteModal(false)}
+                onConfirm={handleDelete}
+            />
         </div>
     );
 }
