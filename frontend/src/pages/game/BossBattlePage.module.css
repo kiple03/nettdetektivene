@@ -1,9 +1,8 @@
 .arena {
-    position: relative;
-    width: 100vw;
-    height: 100dvh;
+    position: fixed;
+    inset: 0;
     overflow: hidden;
-    background: linear-gradient(160deg, #0a0a1a 0%, #0d1b2a 40%, #0a0f1e 100%);
+    background: #ffffff !important;
     display: grid;
     /* Pokémon-style 2×2 quadrant grid */
     grid-template-columns: 1fr 1fr;
@@ -39,7 +38,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    z-index: 60;
 }
 
 .playerCharArea {
@@ -49,7 +48,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 10;
+    z-index: 60;
 }
 
 /* Attack prompt — centered bottom */
@@ -70,6 +69,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+@keyframes fadeOverlayOut {
+    from { background: rgba(0, 0, 0, 0.85); }
+    to   { background: rgba(0, 0, 0, 0); }
+}
+
+.cutsceneFadeOut {
+    animation: fadeOverlayOut 0.6s ease forwards;
 }
 
 /* ---- Placeholder styles (replaced by real components in tasks 4–8) ---- */

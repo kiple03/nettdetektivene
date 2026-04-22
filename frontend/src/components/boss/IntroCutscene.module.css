@@ -4,31 +4,6 @@
     height: 100%;
 }
 
-/* Boss — top-right, fades and slides in on mount */
-.bossArea {
-    position: absolute;
-    top: 8%;
-    right: 8%;
-    animation: fadeSlideDown 0.7s ease both;
-}
-
-/* Player — bottom-left, fades and slides in on mount */
-.playerArea {
-    position: absolute;
-    bottom: 160px;
-    left: 8%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    animation: fadeSlideUp 0.7s ease both;
-}
-
-.playerName {
-    font-size: 0.85rem;
-    color: #ccc;
-}
-
 /* Dialog strip — bottom of screen */
 .dialog {
     position: absolute;
@@ -91,44 +66,12 @@
     background: #2a7edf;
 }
 
-@keyframes fadeSlideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-24px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeSlideUp {
-    from {
-        opacity: 0;
-        transform: translateY(24px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 @keyframes fadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }
 }
 
 @media (max-width: 767px) {
-    .bossArea {
-        top: 4%;
-        right: 4%;
-    }
-
-    .playerArea {
-        bottom: 150px;
-        left: 4%;
-    }
-
     .dialogText {
         font-size: 0.95rem;
     }

@@ -13,7 +13,7 @@ import { saveBossBattleResult } from "@/api/bossBattleApi";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import styles from "./BossBattlePage.module.css";
 
-type Phase = "intro" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
+type Phase = "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
 
 const MAX_HP = 5;
 
@@ -27,6 +27,8 @@ export default function BossBattlePage() {
     const [finalSeconds, setFinalSeconds] = useState(0);
     const [currentSprite] = useState<string>(sharkBase);
     const startTimeRef = useRef<number | null>(null);
+
+    const beginFade = () => setPhase("intro-fading");
 
     const startBattle = () => {
         startTimeRef.current = Date.now();
@@ -73,52 +75,59 @@ export default function BossBattlePage() {
         setPhase("intro");
     };
 
+    const showCharacters = phase === "intro" || phase === "intro-fading" || phase === "battle" || phase === "attacking";
+    const showBattle = phase === "battle" || phase === "attacking";
+
     return (
         <div className={styles.arena}>
-            {/* INTRO PHASE */}
-            {phase === "intro" && (
-                <div className={styles.cutsceneOverlay}>
-                    <IntroCutscene
-                        equippedItems={equippedItems}
-                        username={profile?.username ?? ""}
-                        onComplete={startBattle}
-                    />
-                </div>
-            )}
-
-            {/* BATTLE ARENA (battle | attacking phases) */}
-            {(phase === "battle" || phase === "attacking") && (
+            {/* Characters — always in grid during intro+battle so position never jumps */}
+            {showCharacters && (
                 <>
-                    {/* Boss HP bar — top-left */}
-                    <div className={styles.bossHpArea}>
-                        <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
-                    </div>
-
-                    {/* Boss character — upper-right */}
                     <div className={styles.bossCharArea}>
                         <BossCharacter sprite={currentSprite} />
                     </div>
-
-                    {/* Player character — lower-left */}
                     <div className={styles.playerCharArea}>
                         <LayeredAvatar items={equippedItems} size={120} circular={false} />
                         {profile?.username && (
                             <span className={styles.playerName}>{profile.username}</span>
                         )}
                     </div>
+                </>
+            )}
 
-                    {/* Player HP bar — bottom-right */}
+            {/* HP bars + attack — only during battle */}
+            {showBattle && (
+                <>
+                    <div className={styles.bossHpArea}>
+                        <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
+                    </div>
                     <div className={styles.playerHpArea}>
                         <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
                     </div>
-
-                    {/* Attack orchestrator — manages the full turn loop (pick → animate stub → modal) */}
                     {phase === "battle" && (
                         <div className={styles.attackPrompt}>
                             <AttackOrchestrator onAnswer={handleAnswer} />
                         </div>
                     )}
                 </>
+            )}
+
+            {/* INTRO — dark overlay + dialog; characters sit above it (z-index: 60) */}
+            {phase === "intro" && (
+                <div className={styles.cutsceneOverlay}>
+                    <IntroCutscene
+                        username={profile?.username ?? ""}
+                        onComplete={beginFade}
+                    />
+                </div>
+            )}
+
+            {/* INTRO FADE-OUT — overlay fades away, characters already in place */}
+            {phase === "intro-fading" && (
+                <div
+                    className={`${styles.cutsceneOverlay} ${styles.cutsceneFadeOut}`}
+                    onAnimationEnd={startBattle}
+                />
             )}
 
             {/* VICTORY CUTSCENE */}
