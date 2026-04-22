@@ -158,6 +158,12 @@
   position: relative;
   display: inline-block;
   margin-left: -50px;
+  animation: sharkBob 2.4s ease-in-out infinite;
+}
+
+@keyframes sharkBob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
 }
 
 .sharkWrapper .icon {
@@ -167,6 +173,14 @@
 
 .sharkSilhouette {
   filter: brightness(0);
+  animation: sharkSpin 5s linear infinite;
+  transform-origin: center;
+  border-radius: 20%;
+}
+
+@keyframes sharkSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 .sharkQuestionMark {
