@@ -40,11 +40,13 @@ interface RawEquippedItem {
 }
 
 interface RawStudentProgress {
-  userId: string;
+  userId?: string;
+  studentId?: string;
+  id?: string;
   username: string;
   levelsCompleted: number;
   medalsEarned: number;
-  equippedItems: RawEquippedItem[];
+  equippedItems?: RawEquippedItem[] | null;
 }
 
 interface RawClassroomSummary {
@@ -75,7 +77,11 @@ interface RawLevelCompletionEntry {
 
 interface RawStudentDetail {
   username: string;
-  completions: RawLevelCompletionEntry[];
+  completions?: RawLevelCompletionEntry[];
+  currentStopName?: string;
+  currentLevelOrder?: number;
+  totalLevelsCompleted?: number;
+  gameCompleted?: boolean;
 }
 
 interface RawStop {
@@ -95,8 +101,13 @@ interface RawCoTeacher {
 // --- Mappers ---
 
 function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
+  const resolvedUserId = raw.userId ?? raw.studentId ?? raw.id;
+  if (!resolvedUserId) {
+    throw new Error('[teacherApi] Student progress row missing user id');
+  }
+
   return {
-    userId: raw.userId,
+    userId: resolvedUserId,
     username: raw.username,
     levelsCompleted: raw.levelsCompleted,
     medalsEarned: raw.medalsEarned,
@@ -124,10 +135,15 @@ function mapLevelEntry(raw: RawLevelCompletionEntry): LevelEntry {
 }
 
 function mapStudentDetail(raw: RawStudentDetail, userId: string): StudentDetail {
+  const completions = Array.isArray(raw.completions) ? raw.completions : [];
   return {
     userId,
     username: raw.username,
-    levelCompletions: raw.completions.map(mapLevelEntry),
+    levelCompletions: completions.map(mapLevelEntry),
+    currentStopName: raw.currentStopName ?? null,
+    currentLevelOrder: raw.currentLevelOrder ?? null,
+    totalLevelsCompleted: raw.totalLevelsCompleted ?? null,
+    gameCompleted: raw.gameCompleted ?? null,
   };
 }
 

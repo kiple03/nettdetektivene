@@ -1,19 +1,16 @@
 package org.ntnu.backend.classroom.service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
+
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
-import org.ntnu.backend.classroom.dto.StopResponse;
 import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
@@ -22,29 +19,31 @@ import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
-import org.ntnu.backend.classroom.mapper.ClassroomMapper;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
+import org.ntnu.backend.classroom.mapper.ClassroomMapper;
 import org.ntnu.backend.classroom.model.Classroom;
-import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
-import org.ntnu.backend.game.repository.StopRepository;
-import org.ntnu.backend.user.model.enums.RoleEnum;
-import org.springframework.security.access.AccessDeniedException;
+import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.repository.LevelRepository;
+import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import lombok.AllArgsConstructor;
 
 /**
  * Service class handling teacher-specific views, dashboards, and authorization
@@ -161,9 +160,24 @@ public class TeacherClassroomService {
         Map<UUID, ProgressSummaryResponse> progressByStudent =
             progressService.getProgressForStudents(studentIds);
 
+        Map<UUID, List<EquippedItemDto>> equippedItemsByStudent =
+            userInventoryItemRepository.findByUserIdInAndIsEquippedTrue(studentIds).stream()
+                .collect(Collectors.groupingBy(
+                    item -> item.getUser().getId(),
+                    Collectors.mapping(item -> EquippedItemDto.builder()
+                            .id(item.getAvatarItem().getId())
+                            .name(item.getAvatarItem().getName())
+                            .category(item.getAvatarItem().getCategory())
+                            .imageUrl("/assets/" + item.getAvatarItem().getName() + ".svg")
+                            .build(),
+                        Collectors.toList())
+                ));
+
         return enrollments.stream()
             .map(e -> classroomMapper.toStudentProgress(
-                e, progressByStudent.get(e.getUser().getId())))
+                e,
+                progressByStudent.get(e.getUser().getId()),
+                equippedItemsByStudent.getOrDefault(e.getUser().getId(), List.of())))
             .toList();
     }
 

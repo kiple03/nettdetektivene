@@ -40,6 +40,10 @@ describe('getStudentDetail', () => {
         { levelId: 1, completedAt: '2024-01-01T10:00:00Z' },
         { levelId: 2, completedAt: '2024-02-15T12:00:00Z' },
       ],
+      currentStopName: null,
+      currentLevelOrder: null,
+      totalLevelsCompleted: null,
+      gameCompleted: null,
     });
   });
 
@@ -61,6 +65,34 @@ describe('getStudentDetail', () => {
       userId: 'student-uuid-2',
       username: 'bob',
       levelCompletions: [],
+      currentStopName: null,
+      currentLevelOrder: null,
+      totalLevelsCompleted: null,
+      gameCompleted: null,
+    });
+  });
+
+  it('maps summary-based student detail response when completions are omitted', async () => {
+    mockedGet.mockResolvedValueOnce({
+      data: {
+        username: 'charlie',
+        currentStopName: 'Stopp 2',
+        currentLevelOrder: 3,
+        totalLevelsCompleted: 7,
+        gameCompleted: false,
+      },
+    });
+
+    const result = await getStudentDetail('classroom-uuid-1', 'student-uuid-3');
+
+    expect(result).toEqual({
+      userId: 'student-uuid-3',
+      username: 'charlie',
+      levelCompletions: [],
+      currentStopName: 'Stopp 2',
+      currentLevelOrder: 3,
+      totalLevelsCompleted: 7,
+      gameCompleted: false,
     });
   });
 

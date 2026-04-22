@@ -3,12 +3,12 @@ package org.ntnu.backend.classroom.mapper;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
-import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
+import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
-import org.ntnu.backend.classroom.model.Classroom;
 import org.springframework.stereotype.Component;
 
 /**
@@ -99,15 +99,17 @@ public class ClassroomMapper {
    * @param progress the student's progress summary, or {@code null} if missing
    */
   public StudentProgressResponse toStudentProgress(
-      Enrollment enrollment, ProgressSummaryResponse progress) {
+    Enrollment enrollment,
+    ProgressSummaryResponse progress,
+    java.util.List<org.ntnu.backend.avatar.dto.EquippedItemDto> equippedItems) {
 
     int levelsCompleted = progress != null ? progress.totalLevelsCompleted() : 0;
-    return StudentProgressResponse.builder()
-        .userId(enrollment.getUser().getId().toString())
-        .username(enrollment.getUser().getUsername())
-        .levelsCompleted(levelsCompleted)
-        .medalsEarned(levelsCompleted) // TODO: medals are per-stop; rework needed
-        .build();
+    return new StudentProgressResponse(
+        enrollment.getUser().getId().toString(),
+        enrollment.getUser().getUsername(),
+        levelsCompleted,
+        levelsCompleted, // TODO: medals are per-stop; rework needed
+        equippedItems);
   }
 
   /**
