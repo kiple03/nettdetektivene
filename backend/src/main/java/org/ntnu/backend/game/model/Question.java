@@ -8,7 +8,7 @@ import lombok.Setter;
 import org.ntnu.backend.game.dto.OptionResponse;
 import org.ntnu.backend.game.mapper.GameMapper;
 import org.ntnu.backend.game.model.enums.LevelType;
-import org.ntnu.backend.game.service.OptionParser;
+import org.ntnu.backend.game.util.OptionParser;
 
 
 /**

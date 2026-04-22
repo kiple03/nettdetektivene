@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
-import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
@@ -31,6 +30,7 @@ import org.ntnu.backend.security.JwtService;
 import org.ntnu.backend.security.JwtAuthenticationToken;
 import org.ntnu.backend.config.SecurityConfig;
 import org.ntnu.backend.security.JwtAuthenticationEntryPoint;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -55,7 +55,7 @@ class TeacherClassroomControllerTest {
 
     private JwtAuthenticationToken teacherAuth(UUID userId) {
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "teacher1", userId, "TEACHER", null,
+            "teacher1", userId, RoleEnum.TEACHER, null,
             List.of(new SimpleGrantedAuthority("ROLE_TEACHER"))
         );
         return new JwtAuthenticationToken(principal, principal.getAuthorities());
@@ -95,7 +95,7 @@ class TeacherClassroomControllerTest {
     void listClassrooms_studentRole_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, "STUDENT", UUID.randomUUID(),
+            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
             List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
@@ -142,7 +142,7 @@ class TeacherClassroomControllerTest {
     void createClassroom_studentRole_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, "STUDENT", UUID.randomUUID(),
+            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
             List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
@@ -187,7 +187,7 @@ class TeacherClassroomControllerTest {
     void getClassroom_studentRole_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, "STUDENT", UUID.randomUUID(),
+            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
             List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
@@ -247,7 +247,7 @@ class TeacherClassroomControllerTest {
     void updateClassroom_studentRole_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, "STUDENT", UUID.randomUUID(),
+            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
             List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
@@ -293,7 +293,7 @@ class TeacherClassroomControllerTest {
     void listStudents_studentRole_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, "STUDENT", UUID.randomUUID(),
+            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
             List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
@@ -322,20 +322,26 @@ class TeacherClassroomControllerTest {
         UUID teacherId = UUID.randomUUID();
         UUID classroomId = UUID.randomUUID();
         UUID studentId = UUID.randomUUID();
-        Instant completedAt = Instant.parse("2025-03-01T10:00:00Z");
 
         StudentDetailResponse detail = StudentDetailResponse.builder()
             .username("alice")
-            .completions(List.of(LevelCompletionEntry.builder().levelId(42).completedAt(completedAt).build()))
+            .currentStopName("Fotografen")
+            .currentLevelOrder(2)
+            .totalLevelsCompleted(4)
+            .gameCompleted(false)
             .build();
 
-        when(teacherClassroomService.getStudentDetail(eq(classroomId), eq(studentId), any())).thenReturn(detail);
+        when(teacherClassroomService.getStudentDetail(eq(classroomId), eq(studentId), any()))
+            .thenReturn(detail);
 
         mockMvc.perform(get("/teacher/classrooms/" + classroomId + "/students/" + studentId)
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.username").value("alice"))
-            .andExpect(jsonPath("$.completions[0].levelId").value(42));
+            .andExpect(jsonPath("$.currentStopName").value("Fotografen"))
+            .andExpect(jsonPath("$.currentLevelOrder").value(2))
+            .andExpect(jsonPath("$.totalLevelsCompleted").value(4))
+            .andExpect(jsonPath("$.gameCompleted").value(false));
     }
 
     @Test
@@ -348,7 +354,7 @@ class TeacherClassroomControllerTest {
     void getStudentDetail_studentRole_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, "STUDENT", UUID.randomUUID(),
+            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
             List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
@@ -411,7 +417,7 @@ class TeacherClassroomControllerTest {
     void listMysterySubmissions_studentRole_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, "STUDENT", UUID.randomUUID(),
+            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
             List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
@@ -522,7 +528,7 @@ class TeacherClassroomControllerTest {
     void reviewMystery_studentRole_returns403() throws Exception {
         UUID userId = UUID.randomUUID();
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, "STUDENT", UUID.randomUUID(),
+            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
             List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
         );
         JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());

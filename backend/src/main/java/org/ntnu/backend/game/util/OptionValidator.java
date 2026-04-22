@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.service;
+package org.ntnu.backend.game.util;
 
 
 import jakarta.validation.ConstraintViolation;

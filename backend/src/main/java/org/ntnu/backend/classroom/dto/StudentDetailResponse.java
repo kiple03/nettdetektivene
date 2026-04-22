@@ -13,5 +13,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class StudentDetailResponse {
     private String username;
-    private List<LevelCompletionEntry> completions;
+    private String currentStopName;
+    private int currentLevelOrder;
+    private int totalLevelsCompleted;
+    private boolean gameCompleted;
 }

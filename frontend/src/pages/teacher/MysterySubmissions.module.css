@@ -1,0 +1,218 @@
+.mystery {
+  width: 100%;
+  padding: 32px 40px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.mystery__header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.mystery__back {
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+  width: fit-content;
+}
+
+.mystery__back:hover {
+  color: var(--accent);
+}
+
+.mystery__title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.mystery__filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.mystery__filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.mystery__filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.mystery__filter-btn--active {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.mystery__filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--teacher-card-border);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.mystery__filter-btn--active .mystery__filter-count {
+  background: var(--accent);
+  color: #fff;
+}
+
+.mystery__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mystery__card {
+  background: var(--teacher-card-bg);
+  border: 1px solid var(--teacher-card-border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mystery__card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mystery__student {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.mystery__status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.mystery__status--pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--warning);
+}
+
+.mystery__status--approved {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--success);
+}
+
+.mystery__status--rejected {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+}
+
+.mystery__date {
+  font-size: 12px;
+  color: var(--text);
+  margin-left: auto;
+}
+
+.mystery__content {
+  font-size: 15px;
+  color: var(--text-h);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.mystery__image {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.mystery__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mystery__btn {
+  padding: 6px 16px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+  border: none;
+}
+
+.mystery__btn--approve {
+  background: var(--success);
+  color: #fff;
+}
+
+.mystery__btn--approve:hover {
+  opacity: 0.85;
+}
+
+.mystery__btn--reject {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+
+.mystery__btn--reject:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.mystery__btn--feature {
+  background: transparent;
+  border: 1px solid var(--teacher-card-border);
+  color: var(--text);
+}
+
+.mystery__btn--feature:hover {
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.mystery__btn--featured {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: var(--warning);
+  color: var(--warning);
+}
+
+.mystery__empty {
+  color: var(--text);
+  font-size: 14px;
+  margin: 0;
+}

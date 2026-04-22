@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createClassroom } from '../services/teacherService';
+import { createClassroom } from '../api/teacherApi';
 
 vi.mock('../api/client', () => ({
   default: {

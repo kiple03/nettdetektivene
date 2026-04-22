@@ -13,7 +13,7 @@ import org.ntnu.backend.avatar.dto.EquippedItemDto;
 public class StudentProgressResponse {
     private String userId;
     private String username;
-    private long levelsCompleted;
+    private int levelsCompleted;
     private long medalsEarned;
     private List<EquippedItemDto> equippedItems;
 }

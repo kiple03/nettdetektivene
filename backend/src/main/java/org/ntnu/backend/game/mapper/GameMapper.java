@@ -13,7 +13,7 @@ import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.enums.LevelType;
-import org.ntnu.backend.game.service.OptionParser;
+import org.ntnu.backend.game.util.OptionParser;
 import org.springframework.stereotype.Component;
 
 /**

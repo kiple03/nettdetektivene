@@ -65,7 +65,7 @@ class NoteServiceTest {
         JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
                 testUser.getEmail(),
                 testUser.getId(),
-                "STUDENT",
+                RoleEnum.STUDENT,
                 null,
                 List.of()
         );

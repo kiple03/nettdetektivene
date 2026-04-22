@@ -1,9 +1,3 @@
-/**
- * Teacher service — all data access for teacher dashboard goes through here.
- * Each function calls the real API; raw response types and mappers are defined
- * here (not exported) so backend shape changes only require updates in this file.
- */
-
 import type {
   ClassroomSummary,
   ClassroomDetail,
@@ -170,7 +164,7 @@ export function notifLsKey(username: string, timestamp: string): string {
 function mapNotification(raw: RawNotification): NotificationResponse {
   const mapped = NOTIFICATION_TYPE_MAP[raw.type];
   if (!mapped) {
-    console.warn(`[teacherService] Unknown notification type from API: "${raw.type}"`);
+    console.warn(`[teacherApi] Unknown notification type from API: "${raw.type}"`);
   }
   const type: NotificationResponse['type'] = mapped ?? 'stop_completed';
   const read = localStorage.getItem(notifLsKey(raw.studentUsername, raw.timestamp)) === 'true';
