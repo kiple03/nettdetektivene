@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AttackAnimation } from "./AttackAnimation";
+import { QuestionModal } from "./QuestionModal";
 import styles from "./AttackOrchestrator.module.css";
 
 export type AttackType =
@@ -93,25 +94,10 @@ export function AttackOrchestrator({ onAnswer }: Props) {
                 />
             )}
             {innerPhase === "modal" && currentAttack && (
-                <div className={styles.modalOverlay}>
-                    <div className={styles.questionModal}>
-                        <p className={styles.attackLabel}>{currentAttack.label}</p>
-                        <p className={styles.prompt}>Svar på angrepet!</p>
-                        {/* Task 7: replace inner content with <QuestionModal attackType={currentAttack.effectiveType} onAnswer={handleAnswer} /> */}
-                        <button
-                            className={styles.correctBtn}
-                            onClick={() => handleAnswer(true)}
-                        >
-                            ✅ Riktig svar
-                        </button>
-                        <button
-                            className={styles.wrongBtn}
-                            onClick={() => handleAnswer(false)}
-                        >
-                            ❌ Feil svar
-                        </button>
-                    </div>
-                </div>
+                <QuestionModal
+                    label={currentAttack.label}
+                    onAnswer={handleAnswer}
+                />
             )}
         </>
     );
