@@ -37,7 +37,7 @@ public class  Level {
 
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "level_order", nullable = false)
     private int order;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
