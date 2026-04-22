@@ -1,14 +1,14 @@
 package org.ntnu.backend.classroom.service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.ntnu.backend.avatar.dto.EquippedItemDto;
+import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
-import org.ntnu.backend.classroom.dto.NotificationResponse;
-import org.ntnu.backend.classroom.dto.StopResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
@@ -16,13 +16,13 @@ import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.repository.LevelCompletionRepository;
 import org.ntnu.backend.game.repository.LevelRepository;
-import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -49,7 +49,7 @@ public class TeacherClassroomService {
     private final LevelRepository levelRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final UserRepository userRepository;
-    private final StopRepository stopRepository;
+    private final UserInventoryItemRepository userInventoryItemRepository;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -126,14 +126,52 @@ public class TeacherClassroomService {
             .stream()
             .map(enrollment -> {
                 long count = levelCompletionRepository.countByEnrollmentId(enrollment.getId());
+                UUID userId = enrollment.getUser().getId();
+                List<EquippedItemDto> equippedItems = userInventoryItemRepository
+                    .findByUserIdAndIsEquippedTrue(userId)
+                    .stream()
+                    .map(inv -> EquippedItemDto.builder()
+                        .id(inv.getAvatarItem().getId())
+                        .name(inv.getAvatarItem().getName())
+                        .category(inv.getAvatarItem().getCategory())
+                        .imageUrl("/assets/" + inv.getAvatarItem().getName() + ".svg")
+                        .build())
+                    .toList();
                 return StudentProgressResponse.builder()
-                    .userId(enrollment.getUser().getId().toString())
+                    .userId(userId.toString())
                     .username(enrollment.getUser().getUsername())
                     .levelsCompleted(count)
                     .medalsEarned(count)
+                    .equippedItems(equippedItems)
                     .build();
             })
             .toList();
+    }
+
+    @Transactional
+    public void removeStudent(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        var enrollment = enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        enrollment.setLeftAt(Instant.now());
+        enrollmentRepository.save(enrollment);
+    }
+
+    @Transactional
+    public void updateStudentUsername(UUID classroomId, UUID studentId, UpdateStudentUsernameRequest request, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        var user = userRepository.findById(studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        String newUsername = request.username().trim();
+        if (!newUsername.equals(user.getUsername()) && userRepository.existsByUsername(newUsername)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Brukernavnet er allerede tatt");
+        }
+        user.setUsername(newUsername);
+        userRepository.save(user);
     }
 
     
@@ -210,49 +248,6 @@ public class TeacherClassroomService {
     }
 
     /**
-     * Gathers a chronological list of recent student events (like level completions
-     * or mystery submissions) across all classrooms owned by the teacher.
-     *
-     * @param teacherId the UUID of the teacher
-     * @return a combined, time-sorted list of activity notifications
-     */
-    @Transactional(readOnly = true)
-    public List<NotificationResponse> getNotifications(UUID teacherId) {
-        List<NotificationResponse> notifications = new ArrayList<>();
-
-        levelCompletionRepository.findRecentByTeacherId(teacherId)
-            .forEach(lc -> {
-                var enrollment = lc.getEnrollment();
-                var username = enrollment.getUser().getUsername();
-                var classroom = enrollment.getClassroom();
-                notifications.add(NotificationResponse.builder()
-                    .type("LEVEL_COMPLETED")
-                    .message(username + " completed a level in " + classroom.getTitle())
-                    .classroomId(classroom.getId().toString())
-                    .studentUsername(username)
-                    .timestamp(lc.getCompletedAt())
-                    .build());
-            });
-
-        mysterySubmissionRepository.findRecentByTeacherId(teacherId)
-            .forEach(ms -> {
-                var enrollment = ms.getEnrollment();
-                var username = enrollment.getUser().getUsername();
-                var classroom = enrollment.getClassroom();
-                notifications.add(NotificationResponse.builder()
-                    .type("MYSTERY_SUBMISSION")
-                    .message(username + " submitted a mystery answer in " + classroom.getTitle())
-                    .classroomId(classroom.getId().toString())
-                    .studentUsername(username)
-                    .timestamp(ms.getSubmittedAt())
-                    .build());
-            });
-
-        notifications.sort((a, b) -> b.getTimestamp().compareTo(a.getTimestamp()));
-        return notifications;
-    }
-
-    /**
      * Verifies access and applies a teacher's review (grading or featuring) to a
      * student's mystery submission.
      *
@@ -296,20 +291,4 @@ public class TeacherClassroomService {
             .build();
     }
 
-    /**
-     * Retrieves the ordered list of all checkpoints ("stops") defined in the game map.
-     *
-     * @return an ordered list of StopResponses
-     */
-    @Transactional(readOnly = true)
-    public List<StopResponse> listStops() {
-        return stopRepository.findAllByOrderByDisplayOrderAsc()
-            .stream()
-            .map(stop -> StopResponse.builder()
-                .id(stop.getId())
-                .name(stop.getName())
-                .displayOrder(stop.getDisplayOrder())
-                .build())
-            .toList();
-    }
 }

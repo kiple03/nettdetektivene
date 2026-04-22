@@ -8,12 +8,11 @@ import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
-import org.ntnu.backend.classroom.dto.NotificationResponse;
 import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
-import org.ntnu.backend.classroom.dto.StopResponse;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
@@ -86,6 +85,27 @@ public class TeacherClassroomController {
         return teacherClassroomService.getStudentDetail(id, studentId, principal);
     }
 
+    @DeleteMapping("/{id}/students/{studentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('TEACHER')")
+    public void removeStudent(
+            @PathVariable UUID id,
+            @PathVariable UUID studentId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        teacherClassroomService.removeStudent(id, studentId, principal);
+    }
+
+    @PatchMapping("/{id}/students/{studentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('TEACHER')")
+    public void updateStudentUsername(
+            @PathVariable UUID id,
+            @PathVariable UUID studentId,
+            @Valid @RequestBody UpdateStudentUsernameRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        teacherClassroomService.updateStudentUsername(id, studentId, request, principal);
+    }
+
     @GetMapping("/{id}/mystery")
     @PreAuthorize("hasRole('TEACHER')")
     public List<MysterySubmissionResponse> listMysterySubmissions(
@@ -111,18 +131,5 @@ public class TeacherClassroomController {
             @Valid @RequestBody CreateClassroomRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherClassroomService.createClassroom(request, principal.getUserId());
-    }
-
-    @GetMapping("/notifications")
-    @PreAuthorize("hasRole('TEACHER')")
-    public List<NotificationResponse> getNotifications(
-        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-        return teacherClassroomService.getNotifications(principal.getUserId());
-    }
-
-    @GetMapping("/stops")
-    @PreAuthorize("hasRole('TEACHER')")
-    public List<StopResponse> listStops() {
-        return teacherClassroomService.listStops();
     }
 }

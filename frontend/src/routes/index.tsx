@@ -118,12 +118,12 @@ export const router = createBrowserRouter([
                 element: <BadgesPage />,
             },
             {
-                path: '/teacher/classroom/new',
+                path: '/teacher/classrooms/new',
                 element: <CreateClassroom />,
                 action: createClassroomAction,
             },
             {
-                path: '/teacher/classroom/:id/code',
+                path: '/teacher/classrooms/:id/code',
                 element: <CodePage />,
                 loader: async ({ params }) => {
                     const id = params.id!;
@@ -131,7 +131,7 @@ export const router = createBrowserRouter([
                 },
             },
             {
-                path: '/teacher/classroom/:id',
+                path: '/teacher/classrooms/:id',
                 element: <ClassroomDetail />,
                 loader: async ({ params }) => {
                     const id = params.id!;
@@ -144,12 +144,12 @@ export const router = createBrowserRouter([
                 },
             },
             {
-                path: '/teacher/classroom/:id/student/:studentId',
+                path: '/teacher/classrooms/:id/students/:studentId',
                 element: <StudentDetail />,
                 loader: async ({ params }) => getStudentDetail(params.id!, params.studentId!),
             },
             {
-                path: '/teacher/classroom/:id/mystery',
+                path: '/teacher/classrooms/:id/mystery-submissions',
                 element: <MysterySubmissions />,
                 loader: async ({ params }) => {
                     const id = params.id!;
