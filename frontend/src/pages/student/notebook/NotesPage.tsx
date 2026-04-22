@@ -1,55 +1,46 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./NotesPage.module.css";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import TextArea from "@/components/ui/textArea/TextArea.tsx";
+import {
+    getMyNotes,
+    saveMyNote,
+    deleteMyNote,
+    type TabId,
+    type NotesMap,
+} from "@/services/notesService";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
-// ── Images ─────────────────────────────────────────────────────────────────
 import detectiveImg from "@/assets/images/joinWithCode/detective.png";
 import backgroundImg from "@/assets/detective_room_interior.png";
-
-// ── Types ───────────────────────────────────────────────────────────────────
-type TabId =
-    | "nyheter"
-    | "bilder"
-    | "epost"
-    | "passord"
-    | "nett"
-    | "sosiale"
-    | "egne";
 
 interface TabConfig {
     id: TabId;
     label: string;
     icon: string;
     color: string;
-    tips: { icon: string; title: string; body: string }[];
     placeholder: string;
 }
 
-// ── Tab configuration ────────────────────────────────────────────────────────
+type SaveState = "idle" | "saving" | "saved" | "error";
+
+const TAB_ORDER: TabId[] = [
+    "nyheter",
+    "bilder",
+    "epost",
+    "passord",
+    "nett",
+    "sosiale",
+    "egne",
+];
+
 const TABS: TabConfig[] = [
     {
         id: "nyheter",
         label: "Nyheter",
         icon: "📰",
         color: "#E57373",
-        tips: [
-            {
-                icon: "🔎",
-                title: "Se på overskriften!",
-                body: "Er den veldig skremmende eller overraskende? Det kan være falsk nyhet!",
-            },
-            {
-                icon: "🤔",
-                title: "Hvem har skrevet dette?",
-                body: "Finn ut om avisen er kjent og pålitelig.",
-            },
-            {
-                icon: "❤️‍🔥",
-                title: "Føler du deg sint eller redd?",
-                body: "Falske nyheter bruker sterke følelser for å lure deg!",
-            },
-        ],
         placeholder: "Hva har du lært om falske nyheter?",
     },
     {
@@ -57,18 +48,6 @@ const TABS: TabConfig[] = [
         label: "Bilder",
         icon: "📸",
         color: "#9C27B0",
-        tips: [
-            {
-                icon: "🖼️",
-                title: "Ikke alle bilder er ekte!",
-                body: "Kunstig intelligens kan lage bilder av ting som aldri har skjedd.",
-            },
-            {
-                icon: "👁️",
-                title: "Se på hendene og ørene!",
-                body: "KI-bilder har ofte rare fingre eller uskarp bakgrunn.",
-            },
-        ],
         placeholder: "Hva hjelper deg å se om et bilde er ekte?",
     },
     {
@@ -76,18 +55,6 @@ const TABS: TabConfig[] = [
         label: "E-post",
         icon: "✉️",
         color: "#2196F3",
-        tips: [
-            {
-                icon: "📧",
-                title: "Sjekk e-postadressen!",
-                body: "Er det rare bokstaver i adressen? Da er det mistenkelig!",
-            },
-            {
-                icon: "🔗",
-                title: "Ikke klikk på lenker!",
-                body: "Spør alltid en voksen før du klikker på en ukjent lenke.",
-            },
-        ],
         placeholder: "Hva gjør du om du får en mistenkelig e-post?",
     },
     {
@@ -95,18 +62,6 @@ const TABS: TabConfig[] = [
         label: "Passord",
         icon: "🔐",
         color: "#4CAF50",
-        tips: [
-            {
-                icon: "💪",
-                title: "Et sterkt passord er langt!",
-                body: "Bruk store og små bokstaver + tall + tegn. F.eks: Hund!Løper7",
-            },
-            {
-                icon: "🚫",
-                title: "Ikke bruk samme passord overalt!",
-                body: "Ikke bruk navn, bursdag eller «123456».",
-            },
-        ],
         placeholder: "Hva kjennetegner et godt passord?",
     },
     {
@@ -114,18 +69,6 @@ const TABS: TabConfig[] = [
         label: "Nettbutikk",
         icon: "🛒",
         color: "#FF9800",
-        tips: [
-            {
-                icon: "🔒",
-                title: "Sjekk adressen i nettleseren!",
-                body: 'En trygg nettside starter med "https://" og har et hengelås-symbol.',
-            },
-            {
-                icon: "💸",
-                title: "For godt til å være sant?",
-                body: "Kjempestore rabatter kan være lureri!",
-            },
-        ],
         placeholder: "Hva ser du etter på en nettbutikk?",
     },
     {
@@ -133,18 +76,6 @@ const TABS: TabConfig[] = [
         label: "Sosiale medier",
         icon: "💬",
         color: "#F44336",
-        tips: [
-            {
-                icon: "🛑",
-                title: "Tenk før du deler!",
-                body: "Er du sikker på at det er sant? Sjekk kilden først.",
-            },
-            {
-                icon: "👥",
-                title: "Gruppepress betyr ikke at noe er sant!",
-                body: "Mange deler noe → det betyr ikke at det er ekte.",
-            },
-        ],
         placeholder: "Hva gjør du om venner deler noe mistenkelig?",
     },
     {
@@ -152,18 +83,10 @@ const TABS: TabConfig[] = [
         label: "Mine tanker",
         icon: "✏️",
         color: "#607D8B",
-        tips: [
-            {
-                icon: "🕵️",
-                title: "Skriv det du tenker på!",
-                body: "Har du sett noe rart på nett? Skriv det her.",
-            },
-        ],
         placeholder: "Skriv hva du har oppdaget eller lurt på...",
     },
 ];
 
-// ── Spiral component ─────────────────────────────────────────────────────────
 const Spirals = ({ count = 16 }: { count?: number }) => (
     <div className={styles.spiralStrip}>
         {Array.from({ length: count }).map((_, i) => (
@@ -172,15 +95,133 @@ const Spirals = ({ count = 16 }: { count?: number }) => (
     </div>
 );
 
-// ── Main component ───────────────────────────────────────────────────────────
+function getTabConfig(tabId: TabId): TabConfig {
+    return TABS.find((tab) => tab.id === tabId)!;
+}
+
+function getPossessive(name: string): string {
+    return /[sxzSXZ]$/.test(name) ? `${name}'` : `${name}s`;
+}
+
 export default function NotesPage() {
+    const { data: userProfile } = useUserProfile();
+    const username = userProfile?.username;
+    const notebookTitle = username
+        ? `${getPossessive(username)} notatblokk`
+        : "Mi notatblokk";
+
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<TabId>("nyheter");
-    const [reflections, setReflections] = useState<Record<TabId, string>>(
-        {} as Record<TabId, string>
+    const [draft, setDraft] = useState("");
+    const [savedNotes, setSavedNotes] = useState<NotesMap>({
+        nyheter: [],
+        bilder: [],
+        epost: [],
+        passord: [],
+        nett: [],
+        sosiale: [],
+        egne: [],
+    });
+    const [isLoading, setIsLoading] = useState(true);
+    const [loadError, setLoadError] = useState<string | null>(null);
+    const [saveState, setSaveState] = useState<SaveState>("idle");
+
+    const activeConfig = useMemo(
+        () => TABS.find((tab) => tab.id === activeTab)!,
+        [activeTab]
     );
 
-    const activeConfig = TABS.find((t) => t.id === activeTab)!;
+    // Reset draft when switching tabs
+    useEffect(() => {
+        setDraft("");
+        setSaveState("idle");
+    }, [activeTab]);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadNotes() {
+            try {
+                setIsLoading(true);
+                setLoadError(null);
+                const notes = await getMyNotes();
+                if (!isMounted) return;
+                setSavedNotes(notes);
+            } catch (error) {
+                console.error("Failed to load notes", error);
+                if (!isMounted) return;
+                setLoadError("Kunne ikke laste notatene dine.");
+            } finally {
+                if (isMounted) setIsLoading(false);
+            }
+        }
+
+        loadNotes();
+        return () => { isMounted = false; };
+    }, []);
+
+    const visibleSavedNotes = useMemo(() => {
+        if (activeTab === "egne") {
+            return TAB_ORDER.flatMap((tabId) =>
+                savedNotes[tabId].map((note) => ({
+                    ...note,
+                    category: tabId,
+                }))
+            );
+        }
+
+        return savedNotes[activeTab].map((note) => ({
+            ...note,
+            category: activeTab,
+        }));
+    }, [activeTab, savedNotes]);
+
+    const handleDraftChange = (value: string) => {
+        if (saveState === "saved" || saveState === "error") {
+            setSaveState("idle");
+        }
+        setDraft(value);
+    };
+
+    const handleSave = async () => {
+        const trimmed = draft.trim();
+        if (!trimmed) return;
+
+        try {
+            setSaveState("saving");
+            const newNote = await saveMyNote(activeTab, trimmed);
+
+            setSavedNotes((prev) => ({
+                ...prev,
+                [activeTab]: [...prev[activeTab], newNote],
+            }));
+
+            setDraft("");
+            setSaveState("saved");
+            window.setTimeout(() => setSaveState("idle"), 1400);
+        } catch (error) {
+            console.error("Failed to save note", error);
+            setSaveState("error");
+        }
+    };
+
+    const handleDelete = async (noteId: string) => {
+        try {
+            await deleteMyNote(noteId);
+            setSavedNotes((prev) => ({
+                ...prev,
+                [activeTab]: prev[activeTab].filter((n) => n.id !== noteId),
+            }));
+        } catch (error) {
+            console.error("Failed to delete note", error);
+        }
+    };
+
+    const topStatusText = (() => {
+        if (isLoading) return "Laster notater...";
+        if (loadError) return loadError;
+        return null;
+    })();
 
     return (
         <div
@@ -193,7 +234,6 @@ export default function NotesPage() {
         >
             <h1 className={styles.sceneTitle}>🔍 Nettdetektivene</h1>
 
-            {/* ── CLOSED NOTEBOOK ── */}
             {!isOpen && (
                 <div className={styles.notebookScene}>
                     <div
@@ -225,21 +265,15 @@ export default function NotesPage() {
                 </div>
             )}
 
-            {/* ── OPEN NOTEBOOK ── */}
             {isOpen && (
                 <div className={styles.notebookOpen}>
                     <div className={styles.openBook}>
-
-                        {/* Left spine */}
                         <div className={styles.bookLeft}>
                             <Spirals count={16} />
                             <span className={styles.bookLeftTitle}>Notatblokk</span>
                         </div>
 
-                        {/* Paper area */}
                         <div className={styles.bookPages}>
-
-                            {/* Close button — reuses Button with destructive variant */}
                             <Button
                                 variant="destructive"
                                 className={styles.closeBtn}
@@ -250,79 +284,138 @@ export default function NotesPage() {
                             </Button>
 
                             <div className={styles.pageContent}>
-
-                                {/* Header */}
                                 <div className={styles.pageHeader}>
                                     <span className={styles.pageHeaderIcon}>📓</span>
                                     <div>
-                                        <h2 className={styles.pageHeaderTitle}>Mi notatblokk</h2>
+                                        <h2 className={styles.pageHeaderTitle}>{notebookTitle}</h2>
                                         <p className={styles.pageHeaderSub}>
                                             Her lagres alt du lærer!
                                         </p>
+
+                                        {topStatusText && (
+                                            <p
+                                                className={styles.pageHeaderSub}
+                                                style={{ color: loadError ? "#c62828" : undefined }}
+                                            >
+                                                {topStatusText}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Tab strip — reuses Button with unstyled variant + inline color */}
-                                <div className={styles.tabStrip}>
-                                    {TABS.map((tab) => (
-                                        <Button
-                                            key={tab.id}
-                                            variant="unstyled"
-                                            className={styles.tabBtn}
-                                            style={
-                                                activeTab === tab.id
-                                                    ? { background: tab.color, borderColor: tab.color, color: "#fff" }
-                                                    : { color: tab.color, borderColor: tab.color }
-                                            }
-                                            onClick={() => setActiveTab(tab.id)}
-                                        >
-                                            {tab.icon} {tab.label}
-                                        </Button>
-                                    ))}
-                                </div>
+                                <div className={styles.pageSpread}>
+                                    <div className={styles.leftNotebookPage}>
+                                        <div className={styles.reflectionBox}>
+                                            <TextArea
+                                                id={`reflection-${activeTab}`}
+                                                label="✏️ Skriv din egen refleksjon:"
+                                                placeholder={activeConfig.placeholder}
+                                                value={draft}
+                                                onChange={(e) => handleDraftChange(e.target.value)}
+                                                labelClassName={styles.reflectionLabel}
+                                                className={styles.reflectionTextarea}
+                                            />
 
-                                {/* Tips */}
-                                <div className={styles.tipsArea}>
-                                    {activeConfig.tips.map((tip, i) => (
-                                        <div
-                                            key={i}
-                                            className={styles.tipCard}
-                                            style={{ borderLeftColor: activeConfig.color }}
-                                        >
-                                            <span className={styles.tipIcon}>{tip.icon}</span>
-                                            <div className={styles.tipText}>
-                                                <strong className={styles.tipTitle}>{tip.title}</strong>
-                                                {tip.body}
+                                            <div className={styles.saveRow}>
+                                                <Button
+                                                    variant="fun"
+                                                    onClick={handleSave}
+                                                    disabled={
+                                                        isLoading ||
+                                                        !!loadError ||
+                                                        saveState === "saving" ||
+                                                        !draft.trim()
+                                                    }
+                                                    className={styles.saveButton}
+                                                >
+                                                    {saveState === "saving" ? "Lagrer..." : "Lagre"}
+                                                </Button>
+
+                                                {saveState === "saved" && (
+                                                    <span className={styles.savedText}>Lagret!</span>
+                                                )}
+
+                                                {saveState === "error" && (
+                                                    <span className={styles.errorText}>
+                                                        Kunne ikke lagre
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
 
-                                {/* Reflection box */}
-                                <div className={styles.reflectionBox}>
-                                    <label className={styles.reflectionLabel}>
-                                        ✏️ Skriv din egen refleksjon:
-                                    </label>
-                                    <textarea
-                                        className={styles.reflectionTextarea}
-                                        placeholder={activeConfig.placeholder}
-                                        value={reflections[activeTab] ?? ""}
-                                        onChange={(e) =>
-                                            setReflections((prev) => ({
-                                                ...prev,
-                                                [activeTab]: e.target.value,
-                                            }))
-                                        }
-                                    />
-                                </div>
+                                    <div className={styles.rightNotebookPage}>
+                                        <div className={styles.tabStrip}>
+                                            {TABS.map((tab) => (
+                                                <Button
+                                                    key={tab.id}
+                                                    variant="unstyled"
+                                                    className={styles.tabBtn}
+                                                    style={
+                                                        activeTab === tab.id
+                                                            ? {
+                                                                background: tab.color,
+                                                                borderColor: tab.color,
+                                                                color: "#fff",
+                                                            }
+                                                            : {
+                                                                color: tab.color,
+                                                                borderColor: tab.color,
+                                                            }
+                                                    }
+                                                    onClick={() => setActiveTab(tab.id)}
+                                                >
+                                                    {tab.icon} {tab.label}
+                                                </Button>
+                                            ))}
+                                        </div>
 
+                                        <div className={styles.savedNotesPanel}>
+                                            {visibleSavedNotes.length === 0 ? (
+                                                <div className={styles.emptyState}>
+                                                    Ingen lagrede notater her ennå.
+                                                </div>
+                                            ) : (
+                                                visibleSavedNotes.map((note) => {
+                                                    const tab = getTabConfig(note.category);
+
+                                                    return (
+                                                        <div key={note.id} className={styles.savedNoteCard}>
+                                                            <div
+                                                                className={styles.savedNoteHeader}
+                                                                style={{
+                                                                    borderLeft: `10px solid ${tab.color}`,
+                                                                    paddingLeft: "10px",
+                                                                }}
+                                                            >
+                                                                <span>{tab.icon}</span>
+                                                                <span>{tab.label}</span>
+                                                                <Button
+                                                                    variant="destructive"
+                                                                    onClick={() => handleDelete(note.id)}
+                                                                    aria-label="Slett notat"
+                                                                    style={{ marginLeft: "auto", padding: "2px 10px", fontSize: "0.8rem" }}
+                                                                >
+                                                                    ✕
+                                                                </Button>
+                                                            </div>
+
+                                                            <p className={styles.savedNoteText}>
+                                                                {note.content}
+                                                            </p>
+                                                        </div>
+                                                    );
+                                                })
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* ── BACK BUTTON — fixed bottom-left corner ── */}
             <div className={styles.backButtonWrapper}>
                 <BackButton ariaLabel="Gå tilbake til forrige side" />
             </div>

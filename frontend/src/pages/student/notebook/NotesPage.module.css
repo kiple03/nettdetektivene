@@ -1,13 +1,4 @@
-/* ============================================================
-   Notatblokk.module.css
-   Fonts: import in your index.html or global CSS:
-   @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Patrick+Hand&display=swap');
-   ============================================================ */
-
-/* ── Page wrapper ─────────────────────────────────────────── */
 .pageWrapper {
-    /* ↓↓↓ BG_PHOTO_STYLE — background photo is set via inline style in the TSX ↓↓↓ */
-    /* Fallback gradient used when no photo is provided */
     background: linear-gradient(135deg, #1a2a5e 0%, #2c3e6b 60%, #1a3a5c 100%);
     min-height: 100vh;
     display: flex;
@@ -20,7 +11,6 @@
     padding: 24px 16px 60px;
 }
 
-/* ── Scene title ──────────────────────────────────────────── */
 .sceneTitle {
     color: #fff;
     font-size: 1.35rem;
@@ -32,7 +22,6 @@
     position: relative;
 }
 
-/* ── Closed notebook scene ───────────────────────────────── */
 .notebookScene {
     position: relative;
     z-index: 10;
@@ -68,21 +57,14 @@
 
 @keyframes floatBook {
     0%, 100% { transform: translateY(0); }
-    50%       { transform: translateY(-10px); }
+    50% { transform: translateY(-10px); }
 }
 
-/* ── Cover ───────────────────────────────────────────────── */
 .cover {
     width: 100%;
     min-height: 440px;
     border-radius: 6px 14px 14px 6px;
-    background: linear-gradient(
-            180deg,
-            #00bcd4 0%,
-            #00bcd4 62%,
-            #f5a623 62%,
-            #f5a623 100%
-    );
+    background: linear-gradient(180deg, #00bcd4 0%, #00bcd4 62%, #f5a623 62%, #f5a623 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -113,7 +95,6 @@
     align-self: flex-start;
 }
 
-/* ── Click hint ──────────────────────────────────────────── */
 .clickHint {
     position: absolute;
     bottom: -44px;
@@ -133,10 +114,9 @@
 
 @keyframes pulseBadge {
     0%, 100% { opacity: 0.8; }
-    50%       { opacity: 1; box-shadow: 0 0 14px rgba(255, 255, 255, 0.4); }
+    50% { opacity: 1; box-shadow: 0 0 14px rgba(255, 255, 255, 0.4); }
 }
 
-/* ── Spiral binding ──────────────────────────────────────── */
 .spiralStrip {
     position: absolute;
     left: -20px;
@@ -160,10 +140,9 @@
     flex-shrink: 0;
 }
 
-/* ── Open notebook ───────────────────────────────────────── */
 .notebookOpen {
-    width: min(740px, 95vw);
-    min-height: 540px;
+    width: min(1100px, 96vw);
+    height: min(760px, 88vh);
     position: relative;
     z-index: 10;
 }
@@ -171,11 +150,12 @@
 .openBook {
     display: flex;
     width: 100%;
-    min-height: 540px;
-    border-radius: 6px 14px 14px 6px;
+    height: 100%;
+    border-radius: 8px 18px 18px 8px;
     box-shadow: 0 18px 64px rgba(0, 0, 0, 0.55);
-    overflow: visible;
+    overflow: hidden;
     animation: openAnimation 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    background: #fff9f0;
 }
 
 @keyframes openAnimation {
@@ -183,17 +163,11 @@
     to   { transform: scaleX(1) rotateY(0deg); opacity: 1; }
 }
 
-/* ── Book spine (left side) ──────────────────────────────── */
 .bookLeft {
-    width: 52px;
-    min-height: 540px;
-    border-radius: 6px 0 0 6px;
-    background: linear-gradient(
-            180deg,
-            #00bcd4 0%,
-            #00bcd4 62%,
-            #f5a623 62%
-    );
+    width: 58px;
+    height: 100%;
+    border-radius: 8px 0 0 8px;
+    background: linear-gradient(180deg, #00bcd4 0%, #00bcd4 62%, #f5a623 62%);
     position: relative;
     flex-shrink: 0;
     box-shadow: inset -4px 0 12px rgba(0, 0, 0, 0.18);
@@ -203,7 +177,6 @@
     overflow: visible;
 }
 
-/* Override spiralStrip positioning inside the spine */
 .bookLeft .spiralStrip {
     left: auto;
     right: -18px;
@@ -214,30 +187,28 @@
     transform: rotate(180deg);
     color: #fff;
     font-weight: 800;
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
-/* ── Paper pages ─────────────────────────────────────────── */
 .bookPages {
     flex: 1;
+    height: 100%;
     background: #fff9f0;
-    min-height: 540px;
-    border-radius: 0 14px 14px 0;
+    border-radius: 0 18px 18px 0;
     display: flex;
     flex-direction: column;
     position: relative;
     overflow: hidden;
 }
 
-/* Lined paper */
 .bookPages::before {
     content: "";
     position: absolute;
     inset: 0;
-    top: 50px;
+    top: 52px;
     background: repeating-linear-gradient(
             to bottom,
             transparent,
@@ -249,47 +220,59 @@
     z-index: 0;
 }
 
-/* Red margin */
 .bookPages::after {
     content: "";
     position: absolute;
-    left: 54px;
-    top: 0;
-    bottom: 0;
+    left: 50%;
+    top: 16px;
+    bottom: 16px;
     width: 2px;
-    background: #e57373;
-    opacity: 0.45;
+    background: rgba(44, 62, 107, 0.12);
     z-index: 0;
 }
 
-/* ── Page content ────────────────────────────────────────── */
+.closeBtn {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    border-radius: 50% !important;
+    width: 48px !important;
+    height: 48px !important;
+    min-width: unset !important;
+    padding: 0 !important;
+    font-size: 1.2rem !important;
+    z-index: 20;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
 .pageContent {
     position: relative;
     z-index: 1;
-    padding: 16px 20px 24px 70px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
     height: 100%;
+    padding: 26px 28px 22px 28px;
+    gap: 18px;
+    overflow: hidden;
 }
 
-/* ── Page header ─────────────────────────────────────────── */
 .pageHeader {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding-bottom: 10px;
-    border-bottom: 2.5px solid #00bcd4;
+    gap: 14px;
+    padding-right: 70px;
+    padding-bottom: 12px;
+    border-bottom: 3px solid #00bcd4;
+    flex-shrink: 0;
 }
 
 .pageHeaderIcon {
-    font-size: 1.8rem;
+    font-size: 1.9rem;
     line-height: 1;
 }
 
 .pageHeaderTitle {
-    font-family: "Baloo 2", cursive;
-    font-size: 1.35rem;
+    font-size: 1.45rem;
     font-weight: 800;
     color: #2c3e6b;
     margin: 0;
@@ -297,26 +280,47 @@
 
 .pageHeaderSub {
     font-family: "Patrick Hand", cursive;
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     color: #888;
     margin: 0;
 }
 
-/* ── Tab strip ───────────────────────────────────────────── */
-.tabStrip {
-    display: flex;
-    gap: 7px;
-    flex-wrap: wrap;
+.pageSpread {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    min-height: 0;
+    flex: 1;
+    overflow: hidden;
 }
 
-/* Overrides Button unstyled variant to look like a pill tab */
+.leftNotebookPage,
+.rightNotebookPage {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.rightNotebookPage {
+    overflow: hidden;
+}
+
+.tabStrip {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+}
+
 .tabBtn {
-    padding: 5px 13px !important;
+    padding: 6px 14px !important;
     border-radius: 20px !important;
     border: 2.5px solid currentColor !important;
     background: transparent;
     font-family: "Baloo 2", cursive !important;
-    font-size: 0.78rem !important;
+    font-size: 0.82rem !important;
     font-weight: 700 !important;
     cursor: pointer;
     transition: background 0.15s, color 0.15s, transform 0.1s;
@@ -331,72 +335,22 @@
     transform: translateY(-1px);
 }
 
-.tabBtnActive {
-    /* color, background, borderColor set via inline style in TSX */
-}
-
-/* ── Tips area ───────────────────────────────────────────── */
-.tipsArea {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.tipCard {
-    background: #fff;
-    border-radius: 10px;
-    padding: 11px 14px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
-    border-left: 5px solid #00bcd4; /* overridden inline */
-    animation: slideIn 0.28s ease forwards;
-}
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(7px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.tipIcon {
-    font-size: 1.45rem;
-    flex-shrink: 0;
-    line-height: 1;
-    margin-top: 2px;
-}
-
-.tipText {
-    font-family: "Patrick Hand", cursive;
-    font-size: 0.94rem;
-    line-height: 1.55;
-    color: #333;
-}
-
-.tipTitle {
-    font-family: "Baloo 2", cursive;
-    font-weight: 700;
-    display: block;
-    margin-bottom: 1px;
-    color: #1a1a1a;
-    font-size: 0.95rem;
-}
-
-/* ── Reflection box ──────────────────────────────────────── */
 .reflectionBox {
-    background: #fff;
+    background: rgba(255, 255, 255, 0.82);
     border: 2.5px dashed #ccc;
-    border-radius: 10px;
-    padding: 12px 14px;
+    border-radius: 20px;
+    padding: 18px 18px 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+    height: 100%;
+    min-height: 0;
 }
 
 .reflectionLabel {
     font-family: "Baloo 2", cursive;
     font-weight: 700;
-    font-size: 0.84rem;
+    font-size: 0.92rem;
     color: #2c3e6b;
     display: flex;
     align-items: center;
@@ -405,48 +359,105 @@
 
 .reflectionTextarea {
     width: 100%;
-    min-height: 90px;
-    border: none;
+    flex: 1;
+    min-height: 260px;
+    border: none !important;
     outline: none;
-    resize: vertical;
-    font-family: "Patrick Hand", cursive;
-    font-size: 0.95rem;
-    color: #333;
-    background: transparent;
-    line-height: 32px;
+    resize: none;
+    font-family: "Patrick Hand", cursive !important;
+    font-size: 1rem !important;
+    color: #333 !important;
+    background: transparent !important;
+    line-height: 32px !important;
+    box-shadow: none !important;
     background-image: repeating-linear-gradient(
             transparent,
             transparent 31px,
             #e0e0e0 31px,
             #e0e0e0 32px
-    );
+    ) !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
 }
 
 .reflectionTextarea::placeholder {
     color: #bbb;
 }
 
-/* ── Close button ────────────────────────────────────────── */
-/* Overrides Button component sizing/shape to make it a round icon button */
-.closeBtn {
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    border-radius: 50% !important;
-    width: 34px !important;
-    height: 34px !important;
-    min-width: unset !important;
-    padding: 0 !important;
-    font-size: 1rem !important;
-    z-index: 30;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+.saveRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
 }
 
-.closeBtn:hover {
-    transform: scale(1.12) !important;
+.saveButton {
+    min-width: 120px;
+    justify-content: center;
 }
 
-/* ── Back button — fixed bottom-left ─────────────────────── */
+.savedText {
+    color: #2e7d32;
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.errorText {
+    color: #c62828;
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.savedNotesPanel {
+    background: rgba(255, 255, 255, 0.72);
+    border: 2px dashed rgba(140, 140, 140, 0.35);
+    border-radius: 22px;
+    padding: 14px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.savedNoteCard {
+    background: #f5f5f5;
+    border-radius: 22px;
+    padding: 16px 18px;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.savedNoteHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-weight: 800;
+    color: #1f2d5c;
+    font-size: 1.15rem;
+}
+
+.savedNoteText {
+    margin: 0;
+    color: #2d2d2d;
+    line-height: 1.55;
+    font-size: 1.02rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.emptyState {
+    text-align: center;
+    color: #6b7280;
+    font-family: "Patrick Hand", cursive;
+    font-size: 1rem;
+    padding: 24px 10px;
+}
+
 .backButtonWrapper {
     position: fixed;
     bottom: 28px;
@@ -454,21 +465,62 @@
     z-index: 100;
 }
 
-/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .notebookOpen {
+        width: min(96vw, 760px);
+        height: auto;
+        min-height: 88vh;
+    }
+
+    .openBook {
+        height: auto;
+        min-height: 88vh;
+    }
+
+    .bookPages::after {
+        display: none;
+    }
+
+    .pageSpread {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+    }
+
+    .reflectionBox {
+        min-height: 360px;
+    }
+
+    .savedNotesPanel {
+        min-height: 260px;
+        max-height: 320px;
+    }
+}
+
 @media (max-width: 600px) {
     .notebookClosed {
         width: 280px;
         min-height: 390px;
     }
+
     .coverMascot {
         width: 155px;
         height: 155px;
     }
+
     .pageContent {
-        padding: 14px 14px 20px 60px;
+        padding: 18px 16px 18px 16px;
     }
+
+    .pageHeader {
+        padding-right: 58px;
+    }
+
     .tabBtn {
-        font-size: 0.72rem;
-        padding: 4px 10px;
+        font-size: 0.74rem !important;
+        padding: 5px 10px !important;
+    }
+
+    .bookLeft {
+        width: 46px;
     }
 }
