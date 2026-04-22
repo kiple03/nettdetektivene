@@ -13,7 +13,7 @@ import MysterySubmissions from "@/pages/teacher/MysterySubmissions";
 import Notifications from "@/pages/teacher/Notifications";
 import LeaderboardPage from "@/pages/student/LeaderboardPage.tsx";
 import NotesPage from "@/pages/student/NotesPage";
-import BadgesPage from "@/pages/student/BadgesPage";
+import BadgesPage from "@/pages/student/MedalionPage";
 import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
 import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";

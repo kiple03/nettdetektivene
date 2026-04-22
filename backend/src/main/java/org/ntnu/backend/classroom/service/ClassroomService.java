@@ -135,7 +135,7 @@ public class ClassroomService {
             .build();
         enrollmentRepository.save(enrollment);
         
-        medalionService.awardInternalUsage(userId, "Hello elever", "Bli med i første klasserom");
+        medalionService.awardInternalUsage(userId, "Hysj! Skolestart!", "Bli med i første klasserom");
 
         return classroomMapper.toResponse(classroom);
     }
