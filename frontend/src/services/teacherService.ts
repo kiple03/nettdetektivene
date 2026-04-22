@@ -13,6 +13,7 @@ import type {
   MysterySubmissionResponse,
   NotificationResponse,
   StopSummary,
+  CoTeacher,
 } from '../types/classroom';
 import apiClient from '../api/client';
 import axios from 'axios';
@@ -87,6 +88,13 @@ interface RawStop {
   title: string;
   description: string | null;
   displayOrder: number;
+}
+
+interface RawCoTeacher {
+  userId: string;
+  username: string;
+  email: string;
+  owner: boolean;
 }
 
 // --- Mappers ---
@@ -171,6 +179,10 @@ function mapNotification(raw: RawNotification): NotificationResponse {
     timestamp: raw.timestamp,
     read,
   };
+}
+
+function mapCoTeacher(raw: RawCoTeacher): CoTeacher {
+  return { userId: raw.userId, username: raw.username, email: raw.email, isOwner: raw.owner };
 }
 
 function mapStop(raw: RawStop): StopSummary {
@@ -285,4 +297,18 @@ export async function removeStudent(classroomId: string, studentId: string): Pro
 
 export async function updateStudentUsername(classroomId: string, studentId: string, username: string): Promise<void> {
   await apiClient.patch(`/teacher/classrooms/${classroomId}/students/${studentId}`, { username });
+}
+
+export async function getCoTeachers(classroomId: string): Promise<CoTeacher[]> {
+  const res = await apiClient.get<RawCoTeacher[]>(`/teacher/classrooms/${classroomId}/teachers`);
+  return res.data.map(mapCoTeacher);
+}
+
+export async function inviteCoTeacher(classroomId: string, email: string): Promise<CoTeacher> {
+  const res = await apiClient.post<RawCoTeacher>(`/teacher/classrooms/${classroomId}/teachers`, { email });
+  return mapCoTeacher(res.data);
+}
+
+export async function removeCoTeacher(classroomId: string, userId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}/teachers/${userId}`);
 }

@@ -67,3 +67,10 @@ export interface StopSummary {
   description: string | null;
   displayOrder: number;
 }
+
+export interface CoTeacher {
+  userId: string;
+  username: string;
+  email: string;
+  isOwner: boolean;
+}
