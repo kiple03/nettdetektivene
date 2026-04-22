@@ -1,6 +1,7 @@
 package org.ntnu.backend.classroom.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,4 +23,5 @@ public class ClassroomSummaryResponse {
     private int assignmentCount;
     private int completedCount;
     private int progressPercent;
+    private List<String> teacherUsernames;
 }
