@@ -91,9 +91,6 @@ export default function BossBattlePage() {
                     </div>
                     <div className={styles.playerCharArea}>
                         <LayeredAvatar items={equippedItems} size={120} circular={false} />
-                        {profile?.username && (
-                            <span className={styles.playerName}>{profile.username}</span>
-                        )}
                         {showBattle && (
                             <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
                         )}
