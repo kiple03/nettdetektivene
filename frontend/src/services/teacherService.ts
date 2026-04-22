@@ -63,6 +63,7 @@ interface RawClassroomSummary {
   assignmentCount: number;
   completedCount: number;
   progressPercent: number;
+  teacherUsernames: string[];
 }
 
 interface RawClassroomDetail {
@@ -120,6 +121,7 @@ function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
     assignmentCount: raw.assignmentCount,
     completedCount: raw.completedCount,
     progressPercent: raw.progressPercent,
+    teacherUsernames: raw.teacherUsernames ?? [],
   };
 }
 
@@ -157,6 +159,7 @@ function mapMysterySubmission(raw: RawMysterySubmission): MysterySubmissionRespo
 const NOTIFICATION_TYPE_MAP: Record<string, NotificationResponse['type']> = {
   LEVEL_COMPLETED: 'stop_completed',
   MYSTERY_SUBMISSION: 'mystery_submission',
+  CO_TEACHER_ADDED: 'co_teacher_added',
 };
 
 /** Stable localStorage key for a notification's read state. */
