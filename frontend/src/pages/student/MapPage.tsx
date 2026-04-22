@@ -143,6 +143,10 @@ export default function MapPage() {
 
     const animateTo = (offset: string, onDone: () => void) => {
         if (animating) return;
+        if (offset === currentPathOffset) {
+            onDone();
+            return;
+        }
         setCarReversed(parseFloat(offset) < parseFloat(currentPathOffset));
         setAnimating(true);
         requestAnimationFrame(() => {
