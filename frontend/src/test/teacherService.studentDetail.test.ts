@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getStudentDetail } from '../services/teacherService';
+import { getStudentDetail } from '../api/teacherApi';
 import axios from 'axios';
 
 vi.mock('../api/client', () => ({

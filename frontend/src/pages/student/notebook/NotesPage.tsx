@@ -9,7 +9,7 @@ import {
     deleteMyNote,
     type TabId,
     type NotesMap,
-} from "@/services/notesService";
+} from "@/api/notesService";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
 import detectiveImg from "@/assets/images/joinWithCode/detective.png";

@@ -1,6 +1,6 @@
 import { Form, Link, redirect, useActionData } from 'react-router-dom';
 import type { ActionFunctionArgs } from 'react-router-dom';
-import { createClassroom } from '@/services/teacherService.ts';
+import { createClassroom } from '@/api/teacherApi';
 import { Button } from '@/components/ui/buttons/Button.tsx';
 import './CreateClassroom.css';
 

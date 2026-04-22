@@ -1,60 +1,45 @@
-import { Link, useLoaderData } from 'react-router-dom';
-import type { ClassroomDetail, StudentSummary, StopSummary, CoTeacher } from '@/types/classroom.ts';
-import { useClassroomDetailPage } from '@/hooks/useClassroomDetailPage';
+import { Link, useParams } from 'react-router-dom';
+import { useClassroomEdit } from '@/hooks/teacher/useClassroomEdit';
+import { useStudentManagement } from '@/hooks/teacher/useStudentManagement';
+import { useTeacherInvite } from '@/hooks/teacher/useTeacherInvite';
 import { ClassroomDetailBoard } from '@/components/teacher/classroomDetail/ClassroomDetailBoard';
 import { ClassroomDetailHeader } from '@/components/teacher/classroomDetail/ClassroomDetailHeader';
 import { ClassroomDetailDeleteDialog } from '@/components/teacher/classroomDetail/ClassroomDetailDeleteDialog';
 import './ClassroomDetail.css';
 
-type LoaderData = {
-    classroom: ClassroomDetail | null;
-    students: StudentSummary[];
-    stops: StopSummary[];
-    teachers: CoTeacher[];
-};
-
 export default function ClassroomDetailPage() {
-    const loaderData = useLoaderData() as LoaderData;
+    const { id: classroomId = '' } = useParams<{ id: string }>();
+
     const {
         classroom,
-        editMode,
-        setEditMode,
-        editTitle,
-        setEditTitle,
-        saving,
-        saveError,
-        handleSave,
-        handleCancel,
-        showDeleteModal,
-        setShowDeleteModal,
-        deleting,
-        deleteError,
+        editMode, setEditMode,
+        editTitle, setEditTitle,
+        saving, saveError,
+        handleSave, handleCancel,
+        showDeleteModal, setShowDeleteModal,
+        deleting, deleteError,
         handleDelete,
-        didCopyCode,
-        handleCopyJoinCode,
-        studentList,
-        totalStops,
+        didCopyCode, handleCopyJoinCode,
+    } = useClassroomEdit(classroomId);
+
+    const {
+        studentList, totalStops,
         editingStudentId,
-        editUsernameValue,
-        setEditUsernameValue,
-        savingUsername,
-        usernameError,
-        startEditUsername,
-        cancelEditUsername,
-        saveUsername,
-        confirmRemoveId,
-        setConfirmRemoveId,
-        removingId,
-        handleRemoveStudent,
+        editUsernameValue, setEditUsernameValue,
+        savingUsername, usernameError,
+        startEditUsername, cancelEditUsername, saveUsername,
+        confirmRemoveId, setConfirmRemoveId,
+        removingId, handleRemoveStudent,
+        getLeaderboardRank,
+    } = useStudentManagement(classroomId);
+
+    const {
         teacherList,
-        inviteEmail,
-        setInviteEmail,
-        inviting,
-        inviteError,
+        inviteEmail, setInviteEmail,
+        inviting, inviteError,
         handleInviteTeacher,
         isOwner,
-        getLeaderboardRank,
-    } = useClassroomDetailPage(loaderData);
+    } = useTeacherInvite(classroomId);
 
     if (!classroom) {
         return (

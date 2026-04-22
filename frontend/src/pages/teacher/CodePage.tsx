@@ -1,17 +1,12 @@
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMemo } from "react";
+import { useClassroom } from "@/hooks/teacher/useTeacherQueries";
 import styles from "./CodePage.module.css";
 import detectiveImage from "@/assets/images/joinWithCode/detective.png";
 
-type ClassroomData = {
-    id: string;
-    title: string;
-    description?: string | null;
-    joinCode: string;
-};
-
 export default function CodePage() {
-    const classroom = useLoaderData() as ClassroomData | null | undefined;
+    const { id: classroomId = '' } = useParams<{ id: string }>();
+    const { data: classroom } = useClassroom(classroomId);
     const navigate = useNavigate();
 
     const codeChars = useMemo(() => {
