@@ -20,6 +20,7 @@ const RAW_SUMMARY = {
   assignmentCount: 8,
   completedCount: 5,
   progressPercent: 63,
+  teacherUsernames: ['teacher-a'],
 };
 
 const RAW_DETAIL = {
@@ -52,6 +53,7 @@ describe('getClassroomSummaries', () => {
         assignmentCount: 8,
         completedCount: 5,
         progressPercent: 63,
+        teacherUsernames: ['teacher-a'],
       },
     ]);
   });

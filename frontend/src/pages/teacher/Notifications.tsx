@@ -16,6 +16,7 @@ const TYPE_LABELS: Record<NotificationType, string> = {
   student_stuck: 'Elev sitter fast',
   mystery_submission: 'Mystery-innlevering',
   inappropriate_name: 'Upassende navn',
+  co_teacher_added: 'Lagt til som medlærer',
 };
 
 const TYPE_ICONS: Record<NotificationType, string> = {
@@ -23,6 +24,7 @@ const TYPE_ICONS: Record<NotificationType, string> = {
   student_stuck: '⚠️',
   mystery_submission: '🔍',
   inappropriate_name: '🚫',
+  co_teacher_added: '👩‍🏫',
 };
 
 // Unique key for a notification used both as React key and for read-state tracking

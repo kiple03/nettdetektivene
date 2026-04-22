@@ -6,7 +6,9 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
+import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
@@ -131,5 +133,33 @@ public class TeacherClassroomController {
             @Valid @RequestBody CreateClassroomRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherClassroomService.createClassroom(request, principal.getUserId());
+    }
+
+    @GetMapping("/{id}/teachers")
+    @PreAuthorize("hasRole('TEACHER')")
+    public List<CoTeacherResponse> listCoTeachers(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.listCoTeachers(id, principal);
+    }
+
+    @PostMapping("/{id}/teachers")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('TEACHER')")
+    public CoTeacherResponse inviteCoTeacher(
+            @PathVariable UUID id,
+            @Valid @RequestBody InviteCoTeacherRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.inviteCoTeacher(id, request, principal);
+    }
+
+    @DeleteMapping("/{id}/teachers/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('TEACHER')")
+    public void removeCoTeacher(
+            @PathVariable UUID id,
+            @PathVariable UUID userId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        teacherClassroomService.removeCoTeacher(id, userId, principal);
     }
 }

@@ -24,6 +24,7 @@ import CodePage from "@/pages/teacher/CodePage.tsx";
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
 import ProfilePage from "@/pages/student/ProfilePage.tsx";
+import type { LoaderFunctionArgs } from 'react-router-dom';
 import {
     getClassroomSummaries,
     getClassroom,
@@ -32,6 +33,7 @@ import {
     getStudentDetail,
     getMysterySubmissions,
     getNotifications,
+    getCoTeachers,
 } from "@/services/teacherService";
 
 export const router = createBrowserRouter([
@@ -102,7 +104,7 @@ export const router = createBrowserRouter([
             {
                 path: '/teacher',
                 element: <MyClassroomsPage />,
-                loader: () => getClassroomSummaries(),
+                loader: () => getClassroomSummaries().catch(() => []),
             },
             {
                 path: '/teacher/map',
@@ -124,37 +126,45 @@ export const router = createBrowserRouter([
             {
                 path: '/teacher/classrooms/:id/code',
                 element: <CodePage />,
-                loader: async ({ params }) => {
-                    const id = params.id!;
-                    return await getClassroom(id);
-                },
+                loader: ({ params }: LoaderFunctionArgs) =>
+                    getClassroom(params.id!).catch(() => null),
             },
             {
                 path: '/teacher/classrooms/:id',
                 element: <ClassroomDetail />,
-                loader: async ({ params }) => {
+                loader: async ({ params }: LoaderFunctionArgs) => {
                     const id = params.id!;
-                    const [classroom, students, stops] = await Promise.all([
-                        getClassroom(id),
-                        getStudentProgress(id),
-                        getStops(),
+                    const [classroom, students, stops, teachers] = await Promise.all([
+                        getClassroom(id).catch(() => null),
+                        getStudentProgress(id).catch(() => []),
+                        getStops().catch(() => []),
+                        getCoTeachers(id).catch(() => []),
                     ]);
-                    return { classroom, students, stops };
+                    return { classroom, students, stops, teachers };
                 },
             },
             {
                 path: '/teacher/classrooms/:id/students/:studentId',
                 element: <StudentDetail />,
-                loader: async ({ params }) => getStudentDetail(params.id!, params.studentId!),
+                loader: async ({ params }: LoaderFunctionArgs) => {
+                    const classroomId = params.id!;
+                    const studentId = params.studentId!;
+                    const [studentDetail, studentProgress] = await Promise.all([
+                        getStudentDetail(classroomId, studentId).catch(() => null),
+                        getStudentProgress(classroomId).catch(() => []),
+                    ]);
+                    const studentProfile = studentProgress.find((student) => student.userId === studentId) ?? null;
+                    return { studentDetail, studentProfile };
+                },
             },
             {
                 path: '/teacher/classrooms/:id/mystery-submissions',
                 element: <MysterySubmissions />,
-                loader: async ({ params }) => {
+                loader: async ({ params }: LoaderFunctionArgs) => {
                     const id = params.id!;
                     const [classroom, submissions] = await Promise.all([
-                        getClassroom(id),
-                        getMysterySubmissions(id),
+                        getClassroom(id).catch(() => null),
+                        getMysterySubmissions(id).catch(() => []),
                     ]);
                     return { classroom, submissions };
                 },
@@ -163,11 +173,11 @@ export const router = createBrowserRouter([
                 path: '/teacher/notifications',
                 element: <Notifications />,
                 loader: async () => {
-                    const [notifications, summaries] = await Promise.all([
-                        getNotifications(),
-                        getClassroomSummaries(),
+                    const [notifications, classrooms] = await Promise.all([
+                        getNotifications().catch(() => []),
+                        getClassroomSummaries().catch(() => []),
                     ]);
-                    return { notifications, classrooms: summaries };
+                    return { notifications, classrooms };
                 },
             },
         ],

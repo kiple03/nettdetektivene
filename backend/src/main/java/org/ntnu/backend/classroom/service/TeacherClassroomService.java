@@ -3,13 +3,17 @@ package org.ntnu.backend.classroom.service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
+import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
@@ -18,6 +22,10 @@ import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.model.Classroom;
+import org.ntnu.backend.classroom.model.ClassroomTeacher;
+import org.ntnu.backend.classroom.model.ClassroomTeacherId;
+import org.ntnu.backend.user.model.enums.RoleEnum;
+import org.springframework.security.access.AccessDeniedException;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
@@ -64,16 +72,29 @@ public class TeacherClassroomService {
      */
     public List<ClassroomSummaryResponse> listClassrooms(UUID teacherId) {
         long assignmentCount = levelRepository.count();
-        return classroomTeacherRepository
-            .findClassroomsWithStudentCountByTeacherId(teacherId)
+        List<Object[]> rows = classroomTeacherRepository.findClassroomsWithStudentCountByTeacherId(teacherId);
+
+        List<UUID> classroomIds = rows.stream()
+            .map(row -> UUID.fromString(row[0].toString()))
+            .toList();
+
+        Map<UUID, List<String>> teachersByClassroom = classroomTeacherRepository
+            .findWithUsersByClassroomIdIn(classroomIds)
             .stream()
+            .collect(Collectors.groupingBy(
+                ct -> ct.getId().getClassroomId(),
+                Collectors.mapping(ct -> ct.getUser().getUsername(), Collectors.toList())
+            ));
+
+        return rows.stream()
             .map(row -> {
+                UUID classroomId = UUID.fromString(row[0].toString());
                 long studentCount = ((Number) row[5]).longValue();
                 long completedCount = ((Number) row[6]).longValue();
                 long possible = assignmentCount * studentCount;
                 int progressPercent = possible > 0 ? (int) (completedCount * 100 / possible) : 0;
                 return ClassroomSummaryResponse.builder()
-                    .id(row[0].toString())
+                    .id(classroomId.toString())
                     .title((String) row[1])
                     .description((String) row[2])
                     .joinCode((String) row[3])
@@ -82,6 +103,7 @@ public class TeacherClassroomService {
                     .assignmentCount((int) assignmentCount)
                     .completedCount((int) completedCount)
                     .progressPercent(progressPercent)
+                    .teacherUsernames(teachersByClassroom.getOrDefault(classroomId, List.of()))
                     .build();
             })
             .toList();
@@ -201,6 +223,66 @@ public class TeacherClassroomService {
             .username(enrollment.getUser().getUsername())
             .completions(completions)
             .build();
+    }
+
+    public List<CoTeacherResponse> listCoTeachers(UUID classroomId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        return classroomTeacherRepository.findWithUsersByClassroomId(classroomId)
+            .stream()
+            .map(ct -> CoTeacherResponse.builder()
+                .userId(ct.getUser().getId().toString())
+                .username(ct.getUser().getUsername())
+                .email(ct.getUser().getEmail())
+                .owner(ct.isOwner())
+                .build())
+            .toList();
+    }
+
+    @Transactional
+    public CoTeacherResponse inviteCoTeacher(UUID classroomId, InviteCoTeacherRequest request, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        if (!classroomTeacherRepository.isOwnerOfClassroom(classroomId, principal.getUserId())) {
+            throw new AccessDeniedException("Bare eier kan invitere lærere");
+        }
+        var invitee = userRepository.findByEmail(request.email())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ingen lærer med den e-posten ble funnet"));
+        if (invitee.getRole() != RoleEnum.TEACHER) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukeren er ikke en lærer");
+        }
+        if (classroomTeacherRepository.existsByClassroomIdAndUserId(classroomId, invitee.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Læreren er allerede lagt til i klassen");
+        }
+        Classroom classroom = classroomRepository.findById(classroomId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        classroomTeacherRepository.save(ClassroomTeacher.builder()
+            .id(new ClassroomTeacherId(classroomId, invitee.getId()))
+            .classroom(classroom)
+            .user(invitee)
+            .isOwner(false)
+            .build());
+        return CoTeacherResponse.builder()
+            .userId(invitee.getId().toString())
+            .username(invitee.getUsername())
+            .email(invitee.getEmail())
+            .owner(false)
+            .build();
+    }
+
+    @Transactional
+    public void removeCoTeacher(UUID classroomId, UUID targetUserId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        UUID requesterId = principal.getUserId();
+        boolean requesterIsOwner = classroomTeacherRepository.isOwnerOfClassroom(classroomId, requesterId);
+        boolean removingSelf = requesterId.equals(targetUserId);
+        if (!requesterIsOwner && !removingSelf) {
+            throw new AccessDeniedException("Bare eier kan fjerne andre lærere");
+        }
+        if (requesterIsOwner && removingSelf) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Eier kan ikke forlate klasserommet");
+        }
+        var ct = classroomTeacherRepository.findOneByClassroomIdAndUserId(classroomId, targetUserId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        classroomTeacherRepository.delete(ct);
     }
 
     /**
