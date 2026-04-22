@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useJoinClassroom } from '@/hooks/student/useJoinClassroom';
-import { useJoinClassroom } from '@/hooks/student/useJoinClassroom';
 import styles from './JoinWithCodePage.module.css';
 
 import detectiveImage from '@/assets/images/joinWithCode/detective.png';
@@ -10,6 +9,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 export default function JoinWithCodePage() {
     const navigate = useNavigate();
+    const { joinClassroom, reset, isPending, error } = useJoinClassroom();
     const [code, setCode] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
     const queryClient = useQueryClient(); //for award system
@@ -29,7 +29,6 @@ export default function JoinWithCodePage() {
             .toUpperCase()
             .slice(0, 6);
         reset();
-        reset();
         setCode(cleaned);
     };
 
@@ -44,13 +43,9 @@ export default function JoinWithCodePage() {
         if (rawCode.length < 6) return;
         try {
             await joinClassroom(rawCode);
-            await refreshToken();
-
             await queryClient.invalidateQueries({queryKey: ['medalions']});
 
             navigate("/home");
-        } catch {
-            // error surfaced via error from useJoinClassroom
         } catch {
             // error surfaced via error from useJoinClassroom
         }
@@ -145,9 +140,7 @@ export default function JoinWithCodePage() {
                             onClick={handleJoin}
                             className={styles.button}
                             disabled={isPending || rawCode.length < 6}
-                            disabled={isPending || rawCode.length < 6}
                         >
-                            {isPending ? 'Kobler til...' : 'Bli med'}
                             {isPending ? 'Kobler til...' : 'Bli med'}
                         </button>
                     </div>
