@@ -96,7 +96,7 @@ public class ClassroomMapper {
    * Maps an active enrollment plus the student's progress into a dashboard list row.
    *
    * @param enrollment the active enrollment
-   * @param progress   the student's progress summary, or {@code null} if missing
+   * @param progress the student's progress summary, or {@code null} if missing
    */
   public StudentProgressResponse toStudentProgress(
       Enrollment enrollment, ProgressSummaryResponse progress) {
@@ -114,7 +114,7 @@ public class ClassroomMapper {
    * Maps an active enrollment plus the student's progress into the detailed view.
    *
    * @param enrollment the active enrollment
-   * @param progress   the student's progress summary, or {@code null} if missing
+   * @param progress the student's progress summary, or {@code null} if missing
    */
   public StudentDetailResponse toStudentDetail(
       Enrollment enrollment, ProgressSummaryResponse progress) {

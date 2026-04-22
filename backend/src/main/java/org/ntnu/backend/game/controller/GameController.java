@@ -11,7 +11,6 @@ import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
 import org.ntnu.backend.game.dto.progress.SubmitLevelRequest;
 import org.ntnu.backend.game.model.enums.LevelType;
-import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.GameService;
 import org.ntnu.backend.game.service.QuestionService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -48,7 +47,7 @@ public class GameController {
    */
   @GetMapping("/stops")
   public List<StopResponse> getGameStops(@AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return gameService.getStopsForUser(principal.getUserId(), principal.getRole()));
+    return gameService.getStopsForUser(principal.getUserId(), principal.getRole());
 
   }
 
@@ -60,7 +59,7 @@ public class GameController {
   public List<LevelResponse> getLevelsForStop(
       @PathVariable int stopId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return gameService.getLevelsForStop(stopId, principal.getUserId(), principal.getRole()));
+    return gameService.getLevelsForStop(stopId, principal.getUserId(), principal.getRole());
   }
 
   /**
