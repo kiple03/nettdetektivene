@@ -9,7 +9,9 @@ import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
+import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.ntnu.backend.classroom.dto.LevelCompletionEntry;
 import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
@@ -18,6 +20,10 @@ import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.model.Classroom;
+import org.ntnu.backend.classroom.model.ClassroomTeacher;
+import org.ntnu.backend.classroom.model.ClassroomTeacherId;
+import org.ntnu.backend.user.model.enums.RoleEnum;
+import org.springframework.security.access.AccessDeniedException;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
@@ -201,6 +207,66 @@ public class TeacherClassroomService {
             .username(enrollment.getUser().getUsername())
             .completions(completions)
             .build();
+    }
+
+    public List<CoTeacherResponse> listCoTeachers(UUID classroomId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        return classroomTeacherRepository.findWithUsersByClassroomId(classroomId)
+            .stream()
+            .map(ct -> CoTeacherResponse.builder()
+                .userId(ct.getUser().getId().toString())
+                .username(ct.getUser().getUsername())
+                .email(ct.getUser().getEmail())
+                .owner(ct.isOwner())
+                .build())
+            .toList();
+    }
+
+    @Transactional
+    public CoTeacherResponse inviteCoTeacher(UUID classroomId, InviteCoTeacherRequest request, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        if (!classroomTeacherRepository.isOwnerOfClassroom(classroomId, principal.getUserId())) {
+            throw new AccessDeniedException("Bare eier kan invitere lærere");
+        }
+        var invitee = userRepository.findByEmail(request.email())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ingen lærer med den e-posten ble funnet"));
+        if (invitee.getRole() != RoleEnum.TEACHER) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukeren er ikke en lærer");
+        }
+        if (classroomTeacherRepository.existsByClassroomIdAndUserId(classroomId, invitee.getId())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Læreren er allerede lagt til i klassen");
+        }
+        Classroom classroom = classroomRepository.findById(classroomId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        classroomTeacherRepository.save(ClassroomTeacher.builder()
+            .id(new ClassroomTeacherId(classroomId, invitee.getId()))
+            .classroom(classroom)
+            .user(invitee)
+            .isOwner(false)
+            .build());
+        return CoTeacherResponse.builder()
+            .userId(invitee.getId().toString())
+            .username(invitee.getUsername())
+            .email(invitee.getEmail())
+            .owner(false)
+            .build();
+    }
+
+    @Transactional
+    public void removeCoTeacher(UUID classroomId, UUID targetUserId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        UUID requesterId = principal.getUserId();
+        boolean requesterIsOwner = classroomTeacherRepository.isOwnerOfClassroom(classroomId, requesterId);
+        boolean removingSelf = requesterId.equals(targetUserId);
+        if (!requesterIsOwner && !removingSelf) {
+            throw new AccessDeniedException("Bare eier kan fjerne andre lærere");
+        }
+        if (requesterIsOwner && removingSelf) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Eier kan ikke forlate klasserommet");
+        }
+        var ct = classroomTeacherRepository.findOneByClassroomIdAndUserId(classroomId, targetUserId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        classroomTeacherRepository.delete(ct);
     }
 
     /**
