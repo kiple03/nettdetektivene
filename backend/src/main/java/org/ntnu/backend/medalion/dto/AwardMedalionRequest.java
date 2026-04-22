@@ -5,15 +5,17 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;                                                                                                           
 import java.util.UUID;
                     
+/**
+ * Request data transfer object for awarding a medalion to a user.
+ */
 @Data
 public class AwardMedalionRequest {
-                                    
-    @NotNull                                                                           
+    @NotNull
     private UUID userId;
-                                                                                        
-    @NotBlank   
+
+    @NotBlank
     private String name;
-                        
+
     @NotBlank
     private String description;
 }     
