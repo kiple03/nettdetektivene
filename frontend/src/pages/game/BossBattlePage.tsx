@@ -4,6 +4,7 @@ import { LayeredAvatar } from "@/components/user/LayeredAvatar";
 import { HealthBar } from "@/components/boss/HealthBar";
 import { BossCharacter } from "@/components/boss/BossCharacter";
 import { IntroCutscene } from "@/components/boss/IntroCutscene";
+import { AttackOrchestrator } from "@/components/boss/AttackOrchestrator";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import styles from "./BossBattlePage.module.css";
 
@@ -74,8 +75,8 @@ export default function BossBattlePage() {
                 </div>
             )}
 
-            {/* BATTLE ARENA (battle | attacking | modal phases) */}
-            {(phase === "battle" || phase === "attacking" || phase === "modal") && (
+            {/* BATTLE ARENA (battle | attacking phases) */}
+            {(phase === "battle" || phase === "attacking") && (
                 <>
                     {/* Boss HP bar — top-left */}
                     <div className={styles.bossHpArea}>
@@ -100,29 +101,10 @@ export default function BossBattlePage() {
                         <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
                     </div>
 
-                    {/* Attack orchestrator */}
+                    {/* Attack orchestrator — manages the full turn loop (pick → animate stub → modal) */}
                     {phase === "battle" && (
                         <div className={styles.attackPrompt}>
-                            {/* TODO task 5: replace with <AttackOrchestrator onAnswer={handleAnswer} playerHp={playerHp} bossHp={bossHp} /> */}
-                            <button className={styles.attackButton} onClick={() => setPhase("modal")}>
-                                Neste angrep
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Question modal */}
-                    {phase === "modal" && (
-                        <div className={styles.modalOverlay}>
-                            {/* TODO task 7: replace with <QuestionModal attackType={currentAttack} onAnswer={handleAnswer} /> */}
-                            <div className={styles.questionModal}>
-                                <p>Svar på angrepet!</p>
-                                <button className={styles.correctBtn} onClick={() => handleAnswer(true)}>
-                                    ✅ Riktig svar
-                                </button>
-                                <button className={styles.wrongBtn} onClick={() => handleAnswer(false)}>
-                                    ❌ Feil svar
-                                </button>
-                            </div>
+                            <AttackOrchestrator onAnswer={handleAnswer} />
                         </div>
                     )}
                 </>

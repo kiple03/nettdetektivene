@@ -72,16 +72,6 @@
     justify-content: center;
 }
 
-.modalOverlay {
-    position: absolute;
-    inset: 0;
-    z-index: 40;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 /* ---- Placeholder styles (replaced by real components in tasks 4–8) ---- */
 
 .playerName {
@@ -125,71 +115,6 @@
 
 .startButton:hover {
     background: #2a7edf;
-}
-
-/* Stub question modal */
-.questionModal {
-    background: #1a2a3a;
-    border: 2px solid #4a9eff;
-    border-radius: 16px;
-    padding: 32px;
-    color: white;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    min-width: 280px;
-}
-
-.correctBtn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    background: #2d7a2d;
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.correctBtn:hover {
-    background: #3a9a3a;
-}
-
-.wrongBtn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    background: #7a2d2d;
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.wrongBtn:hover {
-    background: #9a3a3a;
-}
-
-.attackButton {
-    padding: 12px 28px;
-    border-radius: 10px;
-    border: none;
-    background: #8b3fd8;
-    color: white;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.attackButton:hover {
-    background: #a050f0;
 }
 
 /* Responsive: mobile portrait */
