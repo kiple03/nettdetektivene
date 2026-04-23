@@ -1,6 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import type { EffectiveAttackType } from "./AttackOrchestrator";
+import MatrixCanvas from "./MatrixCanvas";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import sharkNewspaper1 from "@/assets/images/boss/shark-newspaper-1.png";
 import sharkNewspaper2 from "@/assets/images/boss/shark-newspaper-2.png";
@@ -46,6 +47,13 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
     const [showNewspaper, setShowNewspaper] = useState(false);
     const [showFlash, setShowFlash] = useState(false);
     const [showClones, setShowClones] = useState(false);
+    const [showMatrix, setShowMatrix] = useState(false);
+
+    useEffect(() => {
+        if (!showMatrix) return;
+        const timeout = setTimeout(onComplete, 5000);
+        return () => clearTimeout(timeout);
+    }, [showMatrix, onComplete]);
 
     const runTyping = (onDone: () => void) => {
         TYPING_FRAMES.forEach((frame, i) => {
@@ -104,12 +112,8 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
 
             case "PASSORDBANKEN":
                 runTyping(() => {
-                    // 1. Switch boss sprite to shark-matrix.png
-                    // 2. Boss types frantically
-                    // 3. Background switches to Matrix green rain
-                    // 4. Matrix rain plays ~2s then fades out
                     onSpriteChange(sharkBase);
-                    onComplete();
+                    setShowMatrix(true);
                 });
                 break;
 
@@ -193,6 +197,12 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
                         </div>
                     ))}
                 </>,
+                document.body
+            )}
+            {showMatrix && createPortal(
+                <div className={styles.matrixOverlay}>
+                    <MatrixCanvas />
+                </div>,
                 document.body
             )}
         </>
