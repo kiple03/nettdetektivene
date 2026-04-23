@@ -11,6 +11,7 @@ import { VictoryScreen } from "@/components/boss/VictoryScreen";
 import { DefeatScreen } from "@/components/boss/DefeatScreen";
 import { saveBossBattleResult } from "@/api/bossBattleApi";
 import sharkBase from "@/assets/images/boss/shark-base.png";
+import sharkHurt from "@/assets/images/boss/shark-hurt.png";
 import arenaBg from "@/assets/images/boss/arena-bg.png";
 import styles from "./BossBattlePage.module.css";
 
@@ -25,6 +26,7 @@ export default function BossBattlePage() {
     const [phase, setPhase] = useState<Phase>("intro");
     const [playerHp, setPlayerHp] = useState(MAX_HP);
     const [bossHp, setBossHp] = useState(MAX_HP);
+    const [bossHurt, setBossHurt] = useState(false);
     const [finalSeconds, setFinalSeconds] = useState(0);
     const [currentSprite, setCurrentSprite] = useState<string>(sharkBase);
     const [introPlayerRevealed, setIntroPlayerRevealed] = useState(false);
@@ -46,6 +48,8 @@ export default function BossBattlePage() {
         if (correct) {
             const next = bossHp - 1;
             setBossHp(next);
+            setBossHurt(true);
+            setTimeout(() => setBossHurt(false), 500);
             if (next <= 0) {
                 const secs = captureTime();
                 setFinalSeconds(secs);
@@ -82,6 +86,7 @@ export default function BossBattlePage() {
     const showBoss = isIntroPhase || phase === "battle" || phase === "attacking";
     const showPlayer = (!isIntroPhase || introPlayerRevealed) && (phase !== "victory" && phase !== "victory-screen" && phase !== "defeat" && phase !== "defeat-screen");
     const showBattle = phase === "battle" || phase === "attacking";
+    const bossSprite = bossHurt ? sharkHurt : currentSprite;
 
     return (
         <div className={styles.arena}>
@@ -89,7 +94,7 @@ export default function BossBattlePage() {
             {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
             {showBoss && (
                 <div className={styles.bossCharArea}>
-                    <BossCharacter sprite={currentSprite} />
+                    <BossCharacter sprite={bossSprite} isHurt={bossHurt}/>
                     {showBattle && (
                         <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
                     )}

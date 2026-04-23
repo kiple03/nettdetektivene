@@ -16,3 +16,14 @@
     color: #aaa;
     text-align: center;
 }
+
+@keyframes hurtFlash{
+    0% {filter: brightness(1) saturate(1);}
+    25%  { filter: brightness(2) saturate(3) hue-rotate(-30deg) sepia(1); }                        
+    75%  { filter: brightness(2) saturate(3) hue-rotate(-30deg) sepia(1); }                        
+    100% { filter: brightness(1) saturate(1); }       
+}
+
+.hurt{
+    animation: hurtFlash 0.5s ease-out forwards;
+}
