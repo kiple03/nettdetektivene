@@ -1,10 +1,12 @@
 import NyhetsKvartalStation from "@/components/game/station/stations/NyhetsKvartalStation.tsx";
 import {STATION_TYPE, type StationData, type SubmitAnswerResult,} from "@/types/station.ts";
+import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
+
 
 type StationRendererProps = {
   station: StationData;
-  onAnswer: (result: SubmitAnswerResult) => void;
-  disabled?: boolean;
+    onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
+    disabled?: boolean;
 };
 
 function StationRenderer({ station, onAnswer, disabled = false }: StationRendererProps) {
