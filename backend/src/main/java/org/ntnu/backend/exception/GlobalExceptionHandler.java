@@ -1,6 +1,5 @@
 package org.ntnu.backend.exception;
 
-import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;

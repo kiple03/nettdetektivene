@@ -1,6 +1,5 @@
 package org.ntnu.backend.exception;
 
-import java.util.UUID;
 import org.springframework.http.HttpStatus;
 
 /**
