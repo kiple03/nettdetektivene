@@ -14,4 +14,5 @@ public interface UserInventoryItemRepository extends JpaRepository<UserInventory
     List<UserInventoryItem> findByUserIdAndIsEquippedTrue(UUID userId);
     List<UserInventoryItem> findByUserIdInAndIsEquippedTrue(List<UUID> userIds);
     List<UserInventoryItem> findByUserId(UUID userid);
+    List<UserInventoryItem> findByUserIdOrderByAvatarItemNameAsc(UUID userId);
 }
