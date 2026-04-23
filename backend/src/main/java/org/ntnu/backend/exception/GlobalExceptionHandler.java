@@ -1,5 +1,7 @@
 package org.ntnu.backend.exception;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -26,8 +28,23 @@ import org.springframework.web.server.ResponseStatusException;
  *   <li>{@link Exception} (catch-all) → {@code 500} with a generic message</li>
  * </ul>
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    /**
+     * Handles Spring Security's {@link AuthenticationException} (and subclasses like
+     * {@code BadCredentialsException}) thrown during login or other in-controller
+     * authentication attempts. These indicate invalid credentials, not server errors.
+     *
+     * @param ex the authentication exception
+     * @return {@code 401 Unauthorized} with the exception message
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(ErrorResponse.of(ex.getMessage()));
+    }
 
     /**
      * Handles Bean Validation failures ({@code @Valid} on request bodies or parameters).
@@ -135,6 +152,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception ex) {
+        log.error("Unhandled exception", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.of("Something went wrong"));
     }

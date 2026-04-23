@@ -18,4 +18,6 @@ public interface LevelRepository extends JpaRepository<Level, Integer> {
   Optional<Level> findByStopIdAndTitle(int stopId, String title);
 
   Optional<Level> findTopByStopIdAndTitleOrderByIdAsc(int stopId, String title);
+
+  List<Level> findByStopIdOrderByOrderAsc(int stopId);
 }

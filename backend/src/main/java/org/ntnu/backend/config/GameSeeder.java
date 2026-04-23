@@ -26,8 +26,11 @@ import tools.jackson.databind.ObjectMapper;
  * <p>On each startup it:
  * <ol>
  *   <li>Deduplicates stops by name — keeps the lowest-id row, deletes extras with their levels and questions.</li>
- *   <li>Ensures all required stops, levels, and questions exist (upsert by natural key).</li>
+ *   <li>Ensures all required stops, levels, questions, and level-note templates exist (upsert by natural key).</li>
  * </ol>
+ *
+ * <p>Note: {@link LevelNoteTemplate} is now a {@code @OneToOne} with {@link Level},
+ * so each level has at most one template.
  */
 @Component
 @RequiredArgsConstructor
@@ -40,26 +43,16 @@ public class GameSeeder implements CommandLineRunner {
   private final OptionValidator optionValidator;
   private final LevelNoteTemplateRepository levelNoteTemplateRepository;
 
-  /**
-   * Executes automatically when the Spring Boot application starts.
-   * Checks if the database is already seeded by verifying if any Stops exist.
-   * If the database is empty, it triggers the initial seeding process.
-   *
-   * @param args Command line arguments passed to the application.
-   */
   @Override
   public void run(String... args) {
     log.info("GameSeeder: deduplicating and ensuring seed data...");
     deduplicateStops();
     deduplicateLevels();
+    deduplicateLevelNoteTemplates();
     seedNews();
     log.info("GameSeeder: done");
   }
 
-  /**
-   * For each stop name that has more than one row, keep the lowest-id row and
-   * delete the duplicates along with their levels and questions.
-   */
   private void deduplicateStops() {
     List<Stop> allStops = stopRepository.findAll();
     allStops.stream()
@@ -68,7 +61,6 @@ public class GameSeeder implements CommandLineRunner {
         .forEach(name -> {
           List<Stop> duplicates = stopRepository.findAllByNameOrderByIdAsc(name);
           if (duplicates.size() <= 1) return;
-          // keep duplicates.get(0), delete the rest
           for (Stop dup : duplicates.subList(1, duplicates.size())) {
             log.info("GameSeeder: deleting duplicate stop '{}' id={}", name, dup.getId());
             deleteStop(dup);
@@ -84,9 +76,6 @@ public class GameSeeder implements CommandLineRunner {
     stopRepository.delete(stop);
   }
 
-  /**
-   * For each stop, deduplicate levels by title and keep the lowest-id row.
-   */
   private void deduplicateLevels() {
     List<Stop> allStops = stopRepository.findAll();
     for (Stop stop : allStops) {
@@ -95,17 +84,42 @@ public class GameSeeder implements CommandLineRunner {
           .map(Level::getTitle)
           .distinct()
           .forEach(title -> {
-            List<Level> duplicates = levelRepository.findAllByStopIdAndTitleOrderByIdAsc(stop.getId(), title);
+            List<Level> duplicates =
+                levelRepository.findAllByStopIdAndTitleOrderByIdAsc(stop.getId(), title);
             if (duplicates.size() <= 1) return;
             for (Level dup : duplicates.subList(1, duplicates.size())) {
-              log.info("GameSeeder: deleting duplicate level '{}' id={} for stop '{}'", title, dup.getId(), stop.getName());
+              log.info("GameSeeder: deleting duplicate level '{}' id={} for stop '{}'",
+                  title, dup.getId(), stop.getName());
               deleteLevel(dup);
             }
           });
     }
   }
 
+  /**
+   * Since {@link LevelNoteTemplate} is now {@code @OneToOne} with {@link Level},
+   * any level with more than one template row is invalid legacy data.
+   * Keep the lowest-id template per level and delete the rest.
+   */
+  private void deduplicateLevelNoteTemplates() {
+    List<Level> allLevels = levelRepository.findAll();
+    for (Level level : allLevels) {
+      List<LevelNoteTemplate> templates =
+          levelNoteTemplateRepository.findAllByLevelIdOrderByIdAsc(level.getId());
+      if (templates.size() <= 1) continue;
+      for (LevelNoteTemplate dup : templates.subList(1, templates.size())) {
+        log.info("GameSeeder: deleting duplicate level note template id={} for level id={}",
+            dup.getId(), level.getId());
+        levelNoteTemplateRepository.delete(dup);
+      }
+    }
+  }
+
   private void deleteLevel(Level level) {
+    // Templates must go before the level itself (FK on level_id is NOT NULL).
+    levelNoteTemplateRepository.deleteAll(levelNoteTemplateRepository
+        .findAllByLevelIdOrderByIdAsc(level.getId()));
+
     List<Question> questions = questionRepository.findByLevelIdOrderByIdAsc(level.getId());
     questionRepository.deleteAll(questions);
     levelRepository.delete(level);
@@ -119,16 +133,17 @@ public class GameSeeder implements CommandLineRunner {
       return stopRepository.save(s);
     });
 
-    Level level1 = levelRepository.findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt?").orElseGet(() -> {
-
-      Level l = new Level();
-      l.setTitle("Ekte eller falskt? 1");
-      l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
-      l.setLevelType(LevelType.MULTIPLE_CHOICE);
-      l.setStop(stop);
-      l.setOrder(1);
-      return levelRepository.save(l);
-    });
+    Level level1 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 1")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Ekte eller falskt? 1");
+          l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(1);
+          return levelRepository.save(l);
+        });
 
     ensureQuestion(level1,
         "Hvilken NRK-artikkel er ekte?",
@@ -151,15 +166,18 @@ public class GameSeeder implements CommandLineRunner {
         "Sjekk alltid om overskriften virker troverdig og se etter rare skrivefeil eller manglende navn."
     );
 
-    Level level2 = levelRepository.findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 2").orElseGet(() -> {
-      Level l = new Level();
-      l.setTitle("Ekte eller falskt? 2");
-      l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
-      l.setLevelType(LevelType.MULTIPLE_CHOICE);
-      l.setStop(stop);
-      l.setOrder(2);
-      return levelRepository.save(l);
-    });
+
+    Level level2 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 2")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Ekte eller falskt? 2");
+          l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(2);
+          return levelRepository.save(l);
+        });
 
     ensureQuestion(level2,
         "Hvilken nyhetssak fra Bergens tidene er ekte?",
@@ -177,15 +195,17 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
-    Level level3 = levelRepository.findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 3").orElseGet(() -> {
-      Level l = new Level();
-      l.setTitle("Ekte eller falskt? 3");
-      l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
-      l.setLevelType(LevelType.MULTIPLE_CHOICE);
-      l.setStop(stop);
-      l.setOrder(3);
-      return levelRepository.save(l);
-    });
+    Level level3 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 3")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Ekte eller falskt? 3");
+          l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(3);
+          return levelRepository.save(l);
+        });
 
     ensureQuestion(level3,
         "Hvilken adressa-artikkel er ekte?",
@@ -201,6 +221,18 @@ public class GameSeeder implements CommandLineRunner {
             new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-1.png", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
             new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-2.png", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
         )
+    );
+
+    ensureLevelNoteTemplate(level2,
+        NoteCategory.NYHETER,
+        "Dummy notat for nivå 2 — sjekk datoer, klokkeslett og om journalisten har fullt navn."
+    );
+
+    // ... level3 definition and questions ...
+
+    ensureLevelNoteTemplate(level3,
+        NoteCategory.NYHETER,
+        "Dummy notat for nivå 3 — vurder om tallene og alderen i artikkelen gir logisk mening."
     );
   }
 
@@ -219,13 +251,6 @@ public class GameSeeder implements CommandLineRunner {
     questionRepository.save(question);
   }
 
-  /**
-   * Serializes a list of multiple-choice options into a JSON string to be stored in the database.
-   *
-   * @param options The list of options to be converted to JSON.
-   * @return A JSON string representing the provided options.
-   * @throws IllegalStateException If the JSON serialization process fails.
-   */
   private String writeOptions(List<MultipleChoiceOption> options) {
     try {
       return new ObjectMapper().writeValueAsString(options);
@@ -235,20 +260,29 @@ public class GameSeeder implements CommandLineRunner {
     }
   }
 
+  /**
+   * Upserts the single template for a level. Since {@link LevelNoteTemplate} is
+   * {@code @OneToOne} with {@link Level}, we either create one if none exists,
+   * or update the existing one if category/content drifted.
+   */
   private void ensureLevelNoteTemplate(Level level, NoteCategory category, String content) {
-    boolean exists = levelNoteTemplateRepository.findAllByLevelId(level.getId()).stream()
-        .anyMatch(template ->
-            template.getCategory() == category &&
-            template.getContent().equals(content)
+    levelNoteTemplateRepository.findByLevelId(level.getId())
+        .ifPresentOrElse(
+            existing -> {
+              if (existing.getCategory() != category || !existing.getContent().equals(content)) {
+                existing.setCategory(category);
+                existing.setContent(content);
+                levelNoteTemplateRepository.save(existing);
+              }
+            },
+            () -> {
+              LevelNoteTemplate template = LevelNoteTemplate.builder()
+                  .level(level)
+                  .category(category)
+                  .content(content)
+                  .build();
+              levelNoteTemplateRepository.save(template);
+            }
         );
-
-    if (exists) return;
-
-    LevelNoteTemplate template = LevelNoteTemplate.builder()
-        .level(level)
-        .category(category)
-        .content(content)
-        .build();
-    levelNoteTemplateRepository.save(template);
   }
 }

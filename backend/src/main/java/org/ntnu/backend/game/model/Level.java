@@ -48,8 +48,4 @@ public class  Level {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LevelType levelType;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "note_template_id")
-    private LevelNoteTemplate noteTemplate;
 }

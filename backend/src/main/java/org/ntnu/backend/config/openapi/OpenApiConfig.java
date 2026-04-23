@@ -1,11 +1,17 @@
-package org.ntnu.backend.config;
+package org.ntnu.backend.config.openapi;
 
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import java.util.List;
+import org.ntnu.backend.exception.ErrorResponse;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +33,7 @@ public class OpenApiConfig {
 
   @Bean
   public OpenAPI apiInfo() {
-    return new OpenAPI()
+    OpenAPI api = new OpenAPI()
         .info(new Info()
             .title("Nettdetektivene API")
             .description("Backend API for the Nettdetektivene learning game. "
@@ -39,7 +45,18 @@ public class OpenApiConfig {
                 .scheme("bearer")
                 .bearerFormat("JWT")
                 .description("JWT bearer token from /auth/login")))
-        .addSecurityItem(new SecurityRequirement().addList(BEARER_AUTH));
+        .security(List.of(new SecurityRequirement().addList(BEARER_AUTH)));
+
+      // Explicitly register the ErrorResponse schema so global error responses
+      // can reference it via $ref. Normally springdoc only picks up schemas
+      // from controller method signatures, and ErrorResponse is returned from
+      // exception handlers only.
+      ModelConverters.getInstance()
+          .readAllAsResolvedSchema(ErrorResponse.class)
+          .referencedSchemas
+          .forEach((name, schema) -> api.getComponents().addSchemas(name, schema));
+
+      return api;
   }
 
   /**
@@ -49,9 +66,26 @@ public class OpenApiConfig {
   @Bean
   public OperationCustomizer globalResponseCustomizer() {
     return (operation, handlerMethod) -> {
-      operation.getResponses()
-          .addApiResponse("401", new ApiResponse()
-              .description("Authentication required or token invalid"));
+      Content errorContent = new Content()
+          .addMediaType("application/json", new MediaType()
+              .schema(new Schema<>().$ref("#/components/schemas/ErrorResponse")));
+
+      if (!handlerMethod.hasMethodAnnotation(PublicEndpoint.class)) {
+        operation.getResponses()
+            .addApiResponse("401", new ApiResponse()
+                .description("Authentication required or token invalid")
+                .content(errorContent));
+      }
+
+      ApiErrorResponse[] customErrors = handlerMethod.getMethod()
+          .getAnnotationsByType(ApiErrorResponse.class);
+      for (ApiErrorResponse err : customErrors) {
+        operation.getResponses()
+            .addApiResponse(err.responseCode(), new ApiResponse()
+                .description(err.description())
+                .content(errorContent));
+      }
+
       return operation;
     };
   }

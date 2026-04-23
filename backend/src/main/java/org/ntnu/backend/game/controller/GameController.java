@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.config.openapi.ApiErrorResponse;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.OptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
@@ -57,10 +58,7 @@ public class GameController {
           + "Each stop's locked field reflects whether the authenticated user can access it. "
           + "Teachers receive everything unlocked; students see stops up to and including their current stop."
   )
-  @ApiResponses({
-      @ApiResponse(responseCode = "200", description = "List of stops with per-user lock state"),
-      @ApiResponse(responseCode = "401", description = "Not authenticated", content = @io.swagger.v3.oas.annotations.media.Content)
-  })
+  @ApiResponse(responseCode = "200", description = "List of stops with per-user lock state")
   public List<StopResponse> getGameStops(@AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
     return gameService.getStopsForUser(principal.getUserId(), principal.getRole());
 
@@ -70,6 +68,12 @@ public class GameController {
    * Returns all levels for a given stop, ordered by ID.
    * Each level includes its lock state for the current student.
    */
+  @Operation(
+      summary = "Gets all levels for a given stop",
+      description = "Returns all levels in a given stop by its id. "
+          + "Ordered by their display order. The locked field reflects "
+          + "if the user can access this level"
+  )
   @GetMapping("/stops/{stopId}/levels")
   public List<LevelResponse> getLevelsForStop(
       @PathVariable int stopId,
@@ -82,6 +86,10 @@ public class GameController {
    * but answer data (correct flags, explanations) is excluded.
    * The frontend shows these one at a time and controls the flow locally.
    */
+  @Operation(
+      summary = "Gets all questions for a given level",
+      description = "Returns all questions in a given level by the levels id. "
+  )
   @GetMapping("/levels/{levelId}/questions")
   public List<QuestionResponse> getQuestionsForLevel(
       @PathVariable int levelId,
@@ -94,6 +102,10 @@ public class GameController {
    * level type, and lock state. Used for the guidance screen shown
    * before the student starts answering questions.
    */
+  @Operation(
+      summary = "Get a single levels data"
+  )
+  @ApiErrorResponse(responseCode = "404", description = "Level was not found")
   @GetMapping("/levels/{levelId}")
   public LevelResponse getLevel(
       @PathVariable int levelId,
@@ -107,6 +119,10 @@ public class GameController {
    * flags and explanations) is excluded from the response by the
    * sealed {@link OptionResponse} hierarchy.
    */
+  @Operation(
+      summary = "Get a single questions data, with all the answer options"
+  )
+  @ApiErrorResponse(responseCode = "404", description = "Question was not found")
   @GetMapping("/questions/{questionId}")
   public QuestionResponse getQuestion(
       @PathVariable int questionId,
@@ -126,6 +142,12 @@ public class GameController {
    *
    * @return whether the answer is correct, with an explanation
    */
+  @Operation(
+      summary = "Validate if the answer is correct",
+      description = "Validates if the answer to a specific question is correct. "
+          + "Specifies the questions by the id."
+  )
+  @ApiErrorResponse(responseCode = "404", description = "Question was not found")
   @PostMapping("/questions/{questionId}/submit")
   public SubmitAnswerResponse submitAnswer(
       @PathVariable int questionId,
@@ -134,7 +156,16 @@ public class GameController {
     return questionService.submitAnswer(questionId, request);
   }
 
-
+  @Operation(
+      summary = "Validates if all answers in a level is correct",
+      description = "To track progress, a level must be completed. This can only be done "
+          + "with validating all answers to all the levels question is correct. "
+          + "Should only be called when a user has all the right answers to a level"
+  )
+  @ApiResponse(responseCode = "200", description = "All correct answers, user progress is updated")
+  @ApiErrorResponse(responseCode = "400", description = "Malformed list of answers")
+  @ApiErrorResponse(responseCode = "404", description = "Level was not found")
+  @ApiErrorResponse(responseCode = "500", description = "User has no progression relation in db")
   @PostMapping("/levels/{levelId}/submit")
   public ResponseEntity<Void> submitLevel(
       @PathVariable int levelId,
