@@ -70,7 +70,6 @@
 .cloneLeft  { animation: cloneSlideLeft  1.4s ease-out forwards; }
 .cloneRight { animation: cloneSlideRight 1.4s ease-out forwards; }
 
-<<<<<<< HEAD
 @keyframes bubbleShoot {
     0% {
         transform: translate(0, 0) scale(0.6);
@@ -109,7 +108,8 @@
     height: 0;
     border-top: 8px solid var(--bubble-color);
     border-right: 8px solid transparent;
-=======
+}
+
 .matrixOverlay {
     position: fixed;
     inset: 0;
@@ -117,5 +117,4 @@
     height: 100vh;
     z-index: 9999;
     pointer-events: none;
->>>>>>> 169cd9d (feat: added not-working matrix attack)
 }
