@@ -87,14 +87,14 @@ const stops: Stop[] = [
 ];
 
 const ANCHOR_IDS = [
-    "stop-back",
-    "stop-1",
-    "stop-2",
-    "stop-3",
-    "stop-4",
-    "stop-5",
-    "stop-6",
-    "stop-7",
+    "level-back",
+    "level-1",
+    "level-2",
+    "level-3",
+    "level-4",
+    "level-5",
+    "level-6",
+    "level-7",
 ] as const;
 
 type AnchorId = (typeof ANCHOR_IDS)[number];
@@ -119,7 +119,7 @@ export default function MapPage() {
     const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-    const autoStopId = Number(searchParams.get("stopId")) || null;
+    const autoStopId = Number(searchParams.get("levelId")) || null;
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedStopTitle, setLockedStopTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
@@ -269,10 +269,10 @@ export default function MapPage() {
                     type="button"
                     className={styles.hotspot}
                     style={
-                        anchorPos["stop-back"]
+                        anchorPos["level-back"]
                             ? {
-                                  top: anchorPos["stop-back"].top,
-                                  left: anchorPos["stop-back"].left,
+                                  top: anchorPos["level-back"].top,
+                                  left: anchorPos["level-back"].left,
                                   transform: "translate(-50%, -50%)",
                               }
                             : { display: "none" }
@@ -290,7 +290,7 @@ export default function MapPage() {
                 </button>
 
                 {stops.map((stop) => {
-                    const pos = anchorPos[`stop-${stop.id}` as AnchorId];
+                    const pos = anchorPos[`level-${stop.id}` as AnchorId];
                     return (
                         <button
                             key={stop.id}
