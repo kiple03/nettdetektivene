@@ -39,6 +39,8 @@ export interface LevelEntry {
 export interface StudentDetail {
   userId: string;
   username: string;
+  email: string | null;
+  enrolledAt: string | null;
   levelCompletions: LevelEntry[];
   currentStopName: string | null;
   currentLevelOrder: number | null;

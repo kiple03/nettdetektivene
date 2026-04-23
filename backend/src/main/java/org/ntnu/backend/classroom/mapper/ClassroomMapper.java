@@ -122,7 +122,9 @@ public class ClassroomMapper {
       Enrollment enrollment, ProgressSummaryResponse progress) {
 
     StudentDetailResponse.StudentDetailResponseBuilder builder = StudentDetailResponse.builder()
-        .username(enrollment.getUser().getUsername());
+        .username(enrollment.getUser().getUsername())
+        .email(enrollment.getUser().getEmail())
+        .enrolledAt(enrollment.getEnrolledAt());
 
     if (progress != null) {
       builder

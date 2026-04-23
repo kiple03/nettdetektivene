@@ -5,11 +5,15 @@ import type { EquippedItem } from '@/hooks/useUserProfile';
 type StudentDetailHeaderProps = {
     backLink: string;
     username: string;
+    email: string | null;
+    enrolledAt: string | null;
     completedCount: number;
     avatarItems: EquippedItem[];
 };
 
-export function StudentDetailHeader({ backLink, username, completedCount, avatarItems }: StudentDetailHeaderProps) {
+export function StudentDetailHeader({ backLink, username, email, enrolledAt, completedCount, avatarItems }: StudentDetailHeaderProps) {
+    const joinedDate = enrolledAt ? new Date(enrolledAt).toLocaleDateString('no-NO', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
+
     return (
         <header className="student-detail__header student-detail__note">
             <div className="student-detail__note-tape" />
@@ -18,9 +22,22 @@ export function StudentDetailHeader({ backLink, username, completedCount, avatar
             </div>
             <Link to={backLink} className="student-detail__back">← Tilbake</Link>
             <h1 className="student-detail__name">{username}</h1>
-            <p className="student-detail__meta">
-                {completedCount} nivåer fullført
-            </p>
+            <dl className="student-detail__info">
+                {email && (
+                    <>
+                        <dt>E-post</dt>
+                        <dd>{email}</dd>
+                    </>
+                )}
+                {joinedDate && (
+                    <>
+                        <dt>Ble med</dt>
+                        <dd>{joinedDate}</dd>
+                    </>
+                )}
+                <dt>Nivåer fullført</dt>
+                <dd>{completedCount}</dd>
+            </dl>
         </header>
     );
 }
