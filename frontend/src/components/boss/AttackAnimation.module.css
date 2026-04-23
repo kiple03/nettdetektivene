@@ -6,6 +6,14 @@
         transform: translate(-50%, -50%) rotate(-720deg);
     }
 }
+@keyframes letterFly {
+    from {
+        transform: translate(calc(-50% + 18vw), calc(-50% - 33vh));
+    }
+    to {
+        transform: translate(calc(-50% - 30vw), calc(-50% + 50vh));
+    }
+}
 
 .newspaper {
     position: fixed;
@@ -27,4 +35,13 @@
 @keyframes blitz {
     0% {opacity: 1;}
     100% {opacity: 0;}
+}
+
+.letter{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    pointer-events: none;
+    animation: letterFly 1.5s linear forwards;
 }

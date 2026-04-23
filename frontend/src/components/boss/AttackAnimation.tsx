@@ -9,6 +9,11 @@ import sharkCamera1 from "@/assets/images/boss/shark-camera-1.png";
 import sharkCamera2 from "@/assets/images/boss/shark-camera-2.png";
 import sharkType1 from "@/assets/images/boss/shark-type-1.png";
 import sharkType2 from "@/assets/images/boss/shark-type-2.png";
+import letter0 from '@/assets/images/boss/letter-0.png';
+import letter1 from '@/assets/images/boss/letter-1.png';
+import letter2 from '@/assets/images/boss/letter-2.png';
+import letter3 from '@/assets/images/boss/letter-3.png';
+import letter4 from '@/assets/images/boss/letter-4.png';
 import newspaper from "@/assets/images/boss/newspaper.png";
 import styles from "./AttackAnimation.module.css";
 
@@ -38,6 +43,8 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
             }, i * FRAME_MS);
         });
     };
+    const [showLetter, setShowLetter] = useState(false);
+    const [letterFrame, setLetterFrame] = useState(0);
 
     const triggerRef = (el: HTMLDivElement | null) => {
         if (!el || completed.current) return;
@@ -70,15 +77,17 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
                 break;
             }
 
-            case "POSTKONTORET":
-                runTyping(() => {
-                    // 1. Switch boss sprite to shark-email.png
-                    // 2. Glitchy envelope animates toward player
-                    // 3. CSS glitch filter (chromatic aberration) on envelope open
-                    onSpriteChange(sharkBase);
-                    onComplete();
+            case "POSTKONTORET": {
+                setShowLetter(true);
+                const frames = [letter0, letter1,letter2,letter3,letter4, sharkBase];
+                frames.forEach((_, i) => {
+                    setTimeout(() => {
+                        setLetterFrame(i);
+                    }, i*FRAME_MS);
                 });
                 break;
+            }
+                
 
             case "PASSORDBANKEN":
                 runTyping(() => {
@@ -135,6 +144,22 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
             {showFlash && createPortal(
                 <div className={styles.flash} onAnimationEnd={onComplete} />,
                 document.body
+            )}
+            {showLetter && createPortal(
+                <img 
+                    src={[letter0, letter1, letter2, letter3, letter4][letterFrame]}
+                    alt=""
+                    className={styles.letter}
+                    onAnimationEnd={onComplete}
+                />, document.body
+            )}
+            {showLetter && createPortal(
+                <img 
+                    src={[letter0, letter1, letter2, letter3, letter4][letterFrame]}
+                    alt=""
+                    className={styles.letter}
+                    onAnimationEnd={onComplete}
+                />, document.body
             )}
         </>
     );
