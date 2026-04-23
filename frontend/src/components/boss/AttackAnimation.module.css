@@ -1,0 +1,17 @@
+@keyframes newsFly {
+    from {
+        transform: translate(calc(-50% + 18vw), calc(-50% - 33vh)) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(-720deg);
+    }
+}
+
+.newspaper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 43px;
+    pointer-events: none;
+    animation: newsFly 0.8s linear forwards;
+}

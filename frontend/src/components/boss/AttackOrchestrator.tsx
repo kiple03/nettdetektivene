@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { AttackAnimation } from "./AttackAnimation";
 import { QuestionModal } from "./QuestionModal";
 import styles from "./AttackOrchestrator.module.css";
@@ -42,7 +43,6 @@ function pickAttack(): ResolvedAttack {
     let r = Math.random() * totalWeight;
 
     if (r < MYSTERY_BOX_WEIGHT) {
-        // MYSTERY_BOX: resolve to random attack but keep mystery label
         const resolved = BASE_ATTACKS[Math.floor(Math.random() * BASE_ATTACKS.length)];
         return { effectiveType: resolved.type, label: "Mysterieangrep! 📦" };
     }
@@ -58,18 +58,32 @@ function pickAttack(): ResolvedAttack {
     return { effectiveType: last.type, label: last.label };
 }
 
+function resolveAttackType(type: AttackType): ResolvedAttack {
+    if (type === "MYSTERY_BOX") {
+        const resolved = BASE_ATTACKS[Math.floor(Math.random() * BASE_ATTACKS.length)];
+        return { effectiveType: resolved.type, label: "Mysterieangrep! 📦" };
+    }
+    const config = BASE_ATTACKS.find(a => a.type === type)!;
+    return { effectiveType: type, label: config.label };
+}
+
 type InnerPhase = "waiting" | "animating" | "modal";
 
 interface Props {
+    phase: string;
     onAnswer: (correct: boolean) => void;
+    onSpriteChange: (sprite: string) => void;
 }
 
-export function AttackOrchestrator({ onAnswer }: Props) {
+export function AttackOrchestrator({ phase, onAnswer, onSpriteChange }: Props) {
     const [innerPhase, setInnerPhase] = useState<InnerPhase>("waiting");
     const [currentAttack, setCurrentAttack] = useState<ResolvedAttack | null>(null);
 
-    const handleStartAttack = () => {
-        const attack = pickAttack();
+    const isAdmin = new URLSearchParams(window.location.search).get("admin") === "true";
+    const isBattle = phase === "battle";
+    const canTrigger = isBattle && innerPhase === "waiting";
+
+    const startAttack = (attack: ResolvedAttack) => {
         setCurrentAttack(attack);
         setInnerPhase("animating");
     };
@@ -82,18 +96,37 @@ export function AttackOrchestrator({ onAnswer }: Props) {
 
     return (
         <>
-            {innerPhase === "waiting" && (
-                <button className={styles.attackButton} onClick={handleStartAttack}>
+            {canTrigger && !isAdmin && (
+                <button className={styles.attackButton} onClick={() => startAttack(pickAttack())}>
                     Neste angrep
                 </button>
             )}
-            {innerPhase === "animating" && currentAttack && (
+            {isAdmin && createPortal(
+                <div className={styles.adminPanel}>
+                    <p className={styles.adminTitle}>⚙️ Admin — velg angrep</p>
+                    <div className={styles.adminButtons}>
+                        {(["MYSTERY_BOX", ...BASE_ATTACKS.map(a => a.type)] as AttackType[]).map(type => (
+                            <button
+                                key={type}
+                                className={styles.adminButton}
+                                disabled={!canTrigger}
+                                onClick={() => startAttack(resolveAttackType(type))}
+                            >
+                                {type === "MYSTERY_BOX" ? "📦 MYSTERY_BOX" : type}
+                            </button>
+                        ))}
+                    </div>
+                </div>,
+                document.body
+            )}
+            {isBattle && innerPhase === "animating" && currentAttack && (
                 <AttackAnimation
                     attackType={currentAttack.effectiveType}
                     onComplete={() => setInnerPhase("modal")}
+                    onSpriteChange={onSpriteChange}
                 />
             )}
-            {innerPhase === "modal" && currentAttack && (
+            {isBattle && innerPhase === "modal" && currentAttack && (
                 <QuestionModal
                     label={currentAttack.label}
                     onAnswer={handleAnswer}

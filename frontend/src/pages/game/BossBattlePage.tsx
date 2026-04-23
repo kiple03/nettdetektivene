@@ -25,7 +25,8 @@ export default function BossBattlePage() {
     const [playerHp, setPlayerHp] = useState(MAX_HP);
     const [bossHp, setBossHp] = useState(MAX_HP);
     const [finalSeconds, setFinalSeconds] = useState(0);
-    const [currentSprite] = useState<string>(sharkBase);
+    const [currentSprite, setCurrentSprite] = useState<string>(sharkBase);
+    const [introPlayerRevealed, setIntroPlayerRevealed] = useState(false);
     const startTimeRef = useRef<number | null>(null);
 
     const beginFade = () => setPhase("intro-fading");
@@ -72,38 +73,43 @@ export default function BossBattlePage() {
         setBossHp(MAX_HP);
         setFinalSeconds(0);
         startTimeRef.current = null;
+        setIntroPlayerRevealed(false);
         setPhase("intro");
     };
 
-    const showCharacters = phase === "intro" || phase === "intro-fading" || phase === "battle" || phase === "attacking";
+    const isIntroPhase = phase === "intro" || phase === "intro-fading";
+    const showBoss = isIntroPhase || phase === "battle" || phase === "attacking";
+    const showPlayer = (!isIntroPhase || introPlayerRevealed) && (phase !== "victory" && phase !== "victory-screen" && phase !== "defeat" && phase !== "defeat-screen");
     const showBattle = phase === "battle" || phase === "attacking";
 
     return (
         <div className={styles.arena}>
-            {/* Characters + HP bars — always in grid during intro+battle so position never jumps */}
-            {showCharacters && (
-                <>
-                    <div className={styles.bossCharArea}>
-                        <BossCharacter sprite={currentSprite} />
-                        {showBattle && (
-                            <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
-                        )}
-                    </div>
-                    <div className={styles.playerCharArea}>
-                        <LayeredAvatar items={equippedItems} size={120} circular={false} />
-                        {showBattle && (
-                            <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
-                        )}
-                    </div>
-                </>
-            )}
-
-            {/* Attack — only during battle */}
-            {phase === "battle" && (
-                <div className={styles.attackPrompt}>
-                    <AttackOrchestrator onAnswer={handleAnswer} />
+            {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
+            {showBoss && (
+                <div className={styles.bossCharArea}>
+                    <BossCharacter sprite={currentSprite} />
+                    {showBattle && (
+                        <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
+                    )}
                 </div>
             )}
+            {showPlayer && (
+                <div className={styles.playerCharArea}>
+                    <LayeredAvatar items={equippedItems} size={120} circular={false} />
+                    {showBattle && (
+                        <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
+                    )}
+                </div>
+            )}
+
+            {/* Attack orchestrator — always mounted so admin panel is visible from page load */}
+            <div className={styles.attackPrompt}>
+                <AttackOrchestrator
+                    phase={phase}
+                    onAnswer={handleAnswer}
+                    onSpriteChange={setCurrentSprite}
+                />
+            </div>
 
             {/* INTRO — dark overlay + dialog; characters sit above it (z-index: 60) */}
             {phase === "intro" && (
@@ -111,6 +117,7 @@ export default function BossBattlePage() {
                     <IntroCutscene
                         username={profile?.username ?? ""}
                         onComplete={beginFade}
+                        onPlayerReveal={() => setIntroPlayerRevealed(true)}
                     />
                 </div>
             )}

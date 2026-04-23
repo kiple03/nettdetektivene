@@ -4,10 +4,17 @@ import styles from "./IntroCutscene.module.css";
 interface Props {
     username: string;
     onComplete: () => void;
+    onPlayerReveal: () => void;
 }
 
-export function IntroCutscene({ username, onComplete }: Props) {
+export function IntroCutscene({ username, onComplete, onPlayerReveal }: Props) {
     const [step, setStep] = useState(1);
+
+    const advance = () => {
+        const next = step + 1;
+        if (next === 3) onPlayerReveal();
+        setStep(next);
+    };
 
     return (
         <div className={styles.scene}>
@@ -26,7 +33,7 @@ export function IntroCutscene({ username, onComplete }: Props) {
 
                 <div className={styles.btnRow}>
                     {step < 5 ? (
-                        <button className={styles.nesteBtn} onClick={() => setStep(s => s + 1)}>
+                        <button className={styles.nesteBtn} onClick={advance}>
                             Neste →
                         </button>
                     ) : (
