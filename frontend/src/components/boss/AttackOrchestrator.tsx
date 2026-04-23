@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
+import { useQueries } from "@tanstack/react-query";
 import { AttackAnimation } from "./AttackAnimation";
 import { QuestionModal } from "./QuestionModal";
+import { ATTACK_TO_STOP_NAME, getQuestionsForStopByName } from "@/api/bossBattleApi";
+import type { GameQuestion } from "@/api/gameApi";
 import styles from "./AttackOrchestrator.module.css";
 
 export type AttackType =
@@ -67,6 +70,8 @@ function resolveAttackType(type: AttackType): ResolvedAttack {
     return { effectiveType: type, label: config.label };
 }
 
+const STOP_NAMES = Object.values(ATTACK_TO_STOP_NAME);
+
 type InnerPhase = "waiting" | "animating" | "modal";
 
 interface Props {
@@ -78,6 +83,27 @@ interface Props {
 export function AttackOrchestrator({ phase, onAnswer, onSpriteChange }: Props) {
     const [innerPhase, setInnerPhase] = useState<InnerPhase>("waiting");
     const [currentAttack, setCurrentAttack] = useState<ResolvedAttack | null>(null);
+    const [currentQuestion, setCurrentQuestion] = useState<GameQuestion | null>(null);
+
+    const poolResults = useQueries({
+        queries: STOP_NAMES.map(name => ({
+            queryKey: ["bossBattle", "questions", name],
+            queryFn: () => getQuestionsForStopByName(name),
+            staleTime: Infinity,
+        })),
+    });
+
+    const questionPoolByStopName: Record<string, GameQuestion[]> = {};
+    STOP_NAMES.forEach((name, i) => {
+        questionPoolByStopName[name] = poolResults[i].data ?? [];
+    });
+
+    const pickQuestion = (effectiveType: EffectiveAttackType): GameQuestion | null => {
+        const stopName = ATTACK_TO_STOP_NAME[effectiveType];
+        const pool = questionPoolByStopName[stopName];
+        if (!pool || pool.length === 0) return null;
+        return pool[Math.floor(Math.random() * pool.length)];
+    };
 
     const isAdmin = new URLSearchParams(window.location.search).get("admin") === "true";
     const isBattle = phase === "battle";
@@ -85,12 +111,14 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange }: Props) {
 
     const startAttack = (attack: ResolvedAttack) => {
         setCurrentAttack(attack);
+        setCurrentQuestion(pickQuestion(attack.effectiveType));
         setInnerPhase("animating");
     };
 
     const handleAnswer = (correct: boolean) => {
         onAnswer(correct);
         setCurrentAttack(null);
+        setCurrentQuestion(null);
         setInnerPhase("waiting");
     };
 
@@ -145,6 +173,7 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange }: Props) {
             {isBattle && innerPhase === "modal" && currentAttack && (
                 <QuestionModal
                     label={currentAttack.label}
+                    question={currentQuestion}
                     onAnswer={handleAnswer}
                 />
             )}

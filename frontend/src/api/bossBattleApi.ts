@@ -1,4 +1,5 @@
 import client from "./client";
+import { getGameStops, getLevelsForStop, getLevelQuestions, type GameQuestion } from "./gameApi";
 
 export interface BossBattleSaveRequest {
   won: boolean;
@@ -26,3 +27,21 @@ export const getLatestBossBattleResult =
     );
     return response.data || null;
   };
+
+export const ATTACK_TO_STOP_NAME = {
+  NYHETSKVARTALET: "Nyhetskvartalet",
+  FOTOGRAFEN: "Fotografen",
+  POSTKONTORET: "Postkontoret",
+  PASSORDBANKEN: "Passordbanken",
+  MARKEDSPLASSEN: "Markedsplassen",
+  DEN_SOSIALE_MOPLASSEN: "Den sosiale møteplassen",
+} as const;
+
+export async function getQuestionsForStopByName(name: string): Promise<GameQuestion[]> {
+  const stops = await getGameStops();
+  const stop = stops.find(s => s.name === name);
+  if (!stop) return [];
+  const levels = await getLevelsForStop(stop.id);
+  const perLevel = await Promise.all(levels.map(l => getLevelQuestions(l.id)));
+  return perLevel.flat();
+}
