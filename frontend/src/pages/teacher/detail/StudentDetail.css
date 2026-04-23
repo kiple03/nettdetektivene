@@ -194,6 +194,72 @@
   font-weight: 500;
 }
 
+.student-detail__medals {
+  margin-top: 28px;
+}
+
+.student-detail__medals-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #2c1a06;
+  margin: 0 0 16px;
+  letter-spacing: -0.02em;
+}
+
+.student-detail__medals-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.student-detail__medal-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #f8f0dc;
+  border-radius: 6px;
+  padding: 12px;
+  width: 120px;
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.student-detail__medal-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.student-detail__medal-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2c1a06;
+  margin: 0 0 4px;
+}
+
+.student-detail__medal-desc {
+  font-size: 11px;
+  color: #7a5c30;
+  margin: 0 0 4px;
+  font-style: italic;
+}
+
+.student-detail__medal-date {
+  font-size: 11px;
+  color: #9a7a50;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.student-detail__medal-item--locked {
+  opacity: 0.45;
+}
+
+.student-detail__medal-item--locked .student-detail__medal-img {
+  filter: grayscale(100%);
+}
+
 .student-detail__note {
   position: relative;
   background: #f8f0dc;

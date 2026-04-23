@@ -31,6 +31,8 @@ import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
+import org.ntnu.backend.medalion.dto.MedalionResponse;
+import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
@@ -62,6 +64,7 @@ public class TeacherClassroomService {
     private final ProgressService progressService;
     private final ClassroomMapper classroomMapper;
     private final UserInventoryItemRepository userInventoryItemRepository;
+    private final MedalionService medalionService;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -186,6 +189,15 @@ public class TeacherClassroomService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         enrollment.setLeftAt(Instant.now());
         enrollmentRepository.save(enrollment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MedalionResponse> getStudentMedalions(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return medalionService.getAllUsersMedalion(studentId);
     }
 
     @Transactional
