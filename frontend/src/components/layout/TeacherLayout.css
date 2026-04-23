@@ -10,6 +10,7 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
+  background-color: #1c2b1c;
   background-image: url("@/assets/images/chalkboard-background.jpeg");
   background-position: center;
   background-repeat: no-repeat;
