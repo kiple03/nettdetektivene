@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useJoinClassroom } from '@/hooks/student/useJoinClassroom';
 import styles from './JoinWithCodePage.module.css';
+import LogoutButton from '@/components/LogoutButton';
 
 import detectiveImage from '@/assets/images/joinWithCode/detective.png';
 import classroomBackground from '@/assets/images/joinWithCode/bgClassroomCode.png';
@@ -57,6 +58,8 @@ export default function JoinWithCodePage() {
             style={{ backgroundImage: `url(${classroomBackground})` }}
         >
             <div className={styles.overlay} />
+
+            <LogoutButton className={styles.logoutBtn} />
 
             <div className={styles.wrapper}>
                 <div className={styles.topBox}>
