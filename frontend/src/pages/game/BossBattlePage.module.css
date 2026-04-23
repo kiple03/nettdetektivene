@@ -2,10 +2,18 @@
     position: fixed;
     inset: 0;
     overflow: hidden;
-    background: #ffffff !important;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
+}
+
+.arenaBg {
+    position: absolute;
+    inset: -8px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(3px);
+    z-index: 0;
 }
 
 /* Character areas — hold both the sprite and HP bar */
@@ -45,14 +53,14 @@
     position: absolute;
     inset: 0;
     z-index: 50;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 @keyframes fadeOverlayOut {
-    from { background: rgba(0, 0, 0, 0.85); }
+    from { background: rgba(0, 0, 0, 0.35); }
     to   { background: rgba(0, 0, 0, 0); }
 }
 

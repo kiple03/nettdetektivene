@@ -11,6 +11,7 @@ import { VictoryScreen } from "@/components/boss/VictoryScreen";
 import { DefeatScreen } from "@/components/boss/DefeatScreen";
 import { saveBossBattleResult } from "@/api/bossBattleApi";
 import sharkBase from "@/assets/images/boss/shark-base.png";
+import arenaBg from "@/assets/images/boss/arena-bg.png";
 import styles from "./BossBattlePage.module.css";
 
 type Phase = "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
@@ -84,6 +85,7 @@ export default function BossBattlePage() {
 
     return (
         <div className={styles.arena}>
+            <div className={styles.arenaBg} style={{ backgroundImage: `url(${arenaBg})` }} />
             {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
             {showBoss && (
                 <div className={styles.bossCharArea}>
