@@ -61,71 +61,136 @@ public class GameSeeder implements CommandLineRunner {
   private void deduplicateStops() {
     List<Stop> allStops = stopRepository.findAll();
     allStops.stream()
-            .map(Stop::getName)
-            .distinct()
-            .forEach(name -> {
-              List<Stop> duplicates = stopRepository.findAllByNameOrderByIdAsc(name);
-              if (duplicates.size() <= 1) return;
-              // keep duplicates.get(0), delete the rest
-              for (Stop dup : duplicates.subList(1, duplicates.size())) {
-                log.info("GameSeeder: deleting duplicate stop '{}' id={}", name, dup.getId());
-                deleteStop(dup);
-              }
-            });
+        .map(Stop::getName)
+        .distinct()
+        .forEach(name -> {
+          List<Stop> duplicates = stopRepository.findAllByNameOrderByIdAsc(name);
+          if (duplicates.size() <= 1) return;
+          // keep duplicates.get(0), delete the rest
+          for (Stop dup : duplicates.subList(1, duplicates.size())) {
+            log.info("GameSeeder: deleting duplicate stop '{}' id={}", name, dup.getId());
+            deleteStop(dup);
+          }
+        });
   }
 
   private void deleteStop(Stop stop) {
     List<Level> levels = levelRepository.findByStopIdOrderByIdAsc(stop.getId());
     for (Level level : levels) {
-      List<Question> questions = questionRepository.findByLevelIdOrderByIdAsc(level.getId());
-      questionRepository.deleteAll(questions);
-      levelRepository.delete(level);
+      deleteLevel(level);
     }
     stopRepository.delete(stop);
   }
 
+  /**
+   * For each stop, deduplicate levels by title and keep the lowest-id row.
+   */
+  private void deduplicateLevels() {
+    List<Stop> allStops = stopRepository.findAll();
+    for (Stop stop : allStops) {
+      List<Level> levels = levelRepository.findByStopIdOrderByIdAsc(stop.getId());
+      levels.stream()
+          .map(Level::getTitle)
+          .distinct()
+          .forEach(title -> {
+            List<Level> duplicates = levelRepository.findAllByStopIdAndTitleOrderByIdAsc(stop.getId(), title);
+            if (duplicates.size() <= 1) return;
+            for (Level dup : duplicates.subList(1, duplicates.size())) {
+              log.info("GameSeeder: deleting duplicate level '{}' id={} for stop '{}'", title, dup.getId(), stop.getName());
+              deleteLevel(dup);
+            }
+          });
+    }
+  }
+
+  private void deleteLevel(Level level) {
+    List<Question> questions = questionRepository.findByLevelIdOrderByIdAsc(level.getId());
+    questionRepository.deleteAll(questions);
+    levelRepository.delete(level);
+  }
+
   private void seedNews() {
-    Stop stop = stopRepository.findByName("Fotografen").orElseGet(() -> {
+    Stop stop = stopRepository.findByName("Nyhetskvartalet").orElseGet(() -> {
       Stop s = new Stop();
-      s.setName("Fotografen");
+      s.setName("Nyhetskvartalet");
       s.setDisplayOrder(1);
       return stopRepository.save(s);
     });
 
-    Level level = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte eller falskt?").orElseGet(() -> {
+    Level level1 = levelRepository.findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt?").orElseGet(() -> {
+
       Level l = new Level();
-      l.setTitle("Ekte eller falskt?");
+      l.setTitle("Ekte eller falskt? 1");
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
       l.setLevelType(LevelType.MULTIPLE_CHOICE);
       l.setStop(stop);
       return levelRepository.save(l);
     });
 
-    ensureQuestion(level,
-            "Hvilken av disse overskriftene er fra en ekte nyhetssak?",
-            List.of(
-                    new MultipleChoiceOption(1, "SJOKKERENDE: Forskere finner at mobilstråling gjør deg smartere over natten!", "placeholder.jpg", false, "Denne bruker store bokstaver og overdriver. Ekte nyheter er mer nøkterne."),
-                    new MultipleChoiceOption(2, "Ny rapport viser at norske barn bruker mer tid på skjerm enn før", "placeholder.jpg", true, "Denne er saklig og kommer fra en troverdig kilde med redaktøransvar."),
-                    new MultipleChoiceOption(3, "Lærere HATER denne appen – den gjør leksene for deg!!", "placeholder.jpg", false, "Clickbait-overskrift. Seriøse nyheter bruker ikke 'HATER' og utropstegn.")
-            )
+    ensureQuestion(level1,
+        "Hvilken NRK-artikkel er ekte?",
+        List.of(
+            new MultipleChoiceOption(1, "Norge mangler en plan for matberedskap - løsningen er 5000 nye 'Jon Almaas-er'", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-1.png", true, "Den andre artikelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid."),
+            new MultipleChoiceOption(2, "Jon Almaas er den aller beste", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-2.png", false, "Denne artikkelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid.")
+        )
     );
 
-    ensureQuestion(level,
-            "En venn sender deg en nyhet på Snapchat. Hva bør du gjøre først?",
-            List.of(
-                    new MultipleChoiceOption(1, "Dele den videre med en gang så alle får vite det", "placeholder.jpg", false, "Aldri del noe videre uten å sjekke om det er sant først."),
-                    new MultipleChoiceOption(2, "Sjekke om nyheten finnes på NRK, TV2 eller andre kjente medier", "placeholder.jpg", true, "Riktig! Sjekk alltid om troverdige medier har skrevet om det samme."),
-                    new MultipleChoiceOption(3, "Tro på det fordi vennen din er til å stole på", "placeholder.jpg", false, "Selv venner kan dele falske nyheter uten å vite det.")
-            )
+    ensureQuestion(level1,
+        "Hvilken adressa-artikkel er ekte?",
+        List.of(
+            new MultipleChoiceOption(1, "EKSTRA penger til flere ansate i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-1.png", false, "I denne artikelen blir det brukt store bokstavene og Ukjent stortingspolitker"),
+            new MultipleChoiceOption(2, "Ekstra penger til flere ansate i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-2.png", true, "Oppdaget du de store bokstavene og den Ukjente stortingspolitikeren?")
+        )
     );
 
-    ensureQuestion(level,
-            "Hvilket tegn tyder på at en nyhetsartikkel kan være falsk?",
-            List.of(
-                    new MultipleChoiceOption(1, "Artikkelen har dato og navn på journalisten", "placeholder.jpg", false, "Dette er tegn på en seriøs artikkel. Ekte nyheter oppgir alltid forfatter og dato."),
-                    new MultipleChoiceOption(2, "Artikkelen har mange skrivefeil og rare bilder", "placeholder.jpg", true, "Riktig! Falske nyheter har ofte dårlig språk og manipulerte bilder."),
-                    new MultipleChoiceOption(3, "Artikkelen handler om noe du ikke visste fra før", "placeholder.jpg", false, "At noe er nytt for deg betyr ikke at det er falskt. Sjekk kilden i stedet.")
-            )
+    Level level2 = levelRepository.findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 2").orElseGet(() -> {
+      Level l = new Level();
+      l.setTitle("Ekte eller falskt? 2");
+      l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
+      l.setLevelType(LevelType.MULTIPLE_CHOICE);
+      l.setStop(stop);
+      return levelRepository.save(l);
+    });
+
+    ensureQuestion(level2,
+        "Hvilken nyhetssak fra Bergens tidene er ekte?",
+        List.of(
+            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-1.png", true, "Den andre atrikkelen inneholder en ukjent mann og 2600-tallet!"),
+            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-2.png", false, "Denne artikkelen innholder en ukjent mann og 2600-tallet")
+        )
+    );
+
+    ensureQuestion(level2,
+        "Hvilken BT-artikkel er ekte?",
+        List.of(
+            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-1.png", false, "Hvor er etternavnet til næringsminsteren? Nåer er klokken 09:71?"),
+            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-2.png", true, "Flott! Du oppdaget at næringsministeren mangler etternavn og at det var noe rart med klokkeslettet?")
+        )
+    );
+
+    Level level3 = levelRepository.findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 3").orElseGet(() -> {
+      Level l = new Level();
+      l.setTitle("Ekte eller falskt? 3");
+      l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
+      l.setLevelType(LevelType.MULTIPLE_CHOICE);
+      l.setStop(stop);
+      return levelRepository.save(l);
+    });
+
+    ensureQuestion(level3,
+        "Hvilken adressa-artikkel er ekte?",
+        List.of(
+            new MultipleChoiceOption(1, "Har solgt over 40 000 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News5-1.png", true, "Det stemmer! Det er mer logisk riktig å lage artikkel på at 40 000 biletter er solgt! I tilegg fant du kanskje det manglende etternavnet i bildeteksten?"),
+            new MultipleChoiceOption(2, "Har solgt over 20 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News5-2.png", false, "Fornavn brukes sjeldent alene i nyhetsartikler og 20 billetter solgt er ikke logisk å lage artikkel på.")
+        )
+    );
+
+    ensureQuestion(level3,
+        "Hvilken NRK-nyhetssak er ekte?",
+        List.of(
+            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-1.png", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
+            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-2.png", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
+        )
     );
   }
 
@@ -197,8 +262,8 @@ public class GameSeeder implements CommandLineRunner {
 
   private void ensureQuestion(Level level, String questionText, List<MultipleChoiceOption> options) {
     boolean exists = questionRepository
-            .findByLevelIdAndQuestionText(level.getId(), questionText)
-            .isPresent();
+        .findByLevelIdAndQuestionText(level.getId(), questionText)
+        .isPresent();
     if (exists) return;
 
     optionValidator.validate(List.copyOf(options), level.getLevelType());
@@ -208,7 +273,6 @@ public class GameSeeder implements CommandLineRunner {
     question.setLevel(level);
     question.setOptionContent(writeOptions(options));
     questionRepository.save(question);
-
   }
 
   /**

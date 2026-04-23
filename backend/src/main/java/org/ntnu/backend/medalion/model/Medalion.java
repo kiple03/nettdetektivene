@@ -18,6 +18,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entity representing a medalion awarded to a user upon completing an achievement.
+ * Each medalion is tied to a specific user and records when it was earned.
+ */
 @Entity
 @Table(name = "medal")
 @Getter

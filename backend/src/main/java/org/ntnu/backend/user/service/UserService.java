@@ -88,8 +88,8 @@ public class UserService {
 
     //avatar starter for new users
     userAvatarService.starterItems(user);
-
-    medalionService.awardInternalUsage(user.getId(), "Velkommen!", "Logge inn for første gang");
+    
+    medalionService.awardInternalUsage(user.getId(), "Rekruttert detektiv", "Lagde bruker");    
 
     return buildLoginResponse(user);
   }
