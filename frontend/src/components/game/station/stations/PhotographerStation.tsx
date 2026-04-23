@@ -4,7 +4,7 @@ import DetectiveBook from "@/components/game/ui/DetectiveBook";
 import DetectiveTipsNote from "@/components/game/ui/DetectiveTipsNote";
 import PictureGrid from "@/components/game/tasks/PictureGrid";
 
-import {type SubmitAnswerRequest, submitMultiSelectAnswer} from "@/api/gameApi";
+import { type SubmitAnswerRequest, submitMultiSelectAnswer } from "@/api/gameApi";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
 
 import type { StationData, SubmitAnswerResult } from "@/types/station";
@@ -54,17 +54,20 @@ export default function PhotographerStation({
         } catch (error: any) {
             console.error(error);
 
-            onAnswer({
-                correct: false,
-                feedback: "Noe gikk galt",
-            }, request);
+            onAnswer(
+                {
+                    correct: false,
+                    feedback: "Noe gikk galt",
+                },
+                request
+            );
         }
     };
 
     return (
         <DetectiveBook
-            title="Ekte, KI eller manipulert?"
-            subtitle="Ser dette bildet AI generert ut?"
+            title={station.title || "Ekte, KI eller manipulert?"}
+            subtitle={station.questionText}
             tipsSlot={
                 <DetectiveTipsNote
                     title="Detektivtips"
@@ -75,10 +78,10 @@ export default function PhotographerStation({
             <PictureGrid
                 key={station.questionId}
                 questionId={station.questionId}
-                options={station.options.map((option) => ({
+                options={station.options.map((option, index) => ({
                     id: option.id,
                     imageUrl: option.imageUrl ?? "",
-                    altText: option.label ?? `Bilde ${option.id}`,
+                    altText: option.label ?? `Bilde ${index + 1}`,
                 }))}
                 onSubmit={handleSubmit}
                 disabled={disabled || submitted}

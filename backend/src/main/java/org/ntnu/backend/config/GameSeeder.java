@@ -275,7 +275,7 @@ public class GameSeeder implements CommandLineRunner {
 
     ensurePictureQuizQuestion(
             level,
-            "Ser dette bildet AI generert ut?",
+            "Hvilke av bildene ser AI-generert ut?",
             List.of(
                     new PictureQuizOption(1, "Ekte", "/assets/photographer/q1/SantaClauseReal.png", false,
                             "Bildet er ikke ekte. Det har tegn på KI-generering."),
@@ -305,7 +305,7 @@ public class GameSeeder implements CommandLineRunner {
 
     ensurePictureQuizQuestion(
             level,
-            "Finn AI jenta?",
+            "Finn AI jenta",
             List.of(
                     new PictureQuizOption(1, "Ja, fordi hendene og detaljene ser unormale ut", "/assets/photographer/q2/AiGirl2.png", true,
                             "Riktig. Rare detaljer som hender, hår, øredobber eller bakgrunn kan være tegn på KI."),
