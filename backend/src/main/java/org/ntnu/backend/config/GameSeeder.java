@@ -215,34 +215,46 @@ public class GameSeeder implements CommandLineRunner {
 
     ensurePictureQuizQuestion(
             level,
-            "Ser dette bildet ekte ut, eller er det laget med KI?",
+            "Ser dette bildet AI generert ut?",
             List.of(
-                    new PictureQuizOption(1, "Ekte", "/assets/photographer/q1/SantaClauseAi.png", false,
+                    new PictureQuizOption(1, "Ekte", "/assets/photographer/q1/SantaClauseReal.png", false,
                             "Bildet er ikke ekte. Det har tegn på KI-generering."),
                     new PictureQuizOption(2, "KI-generert", "/assets/photographer/q1/SantaClauseAi.png", true,
-                            "Riktig. Ansiktstrekkene og detaljene i bildet tyder på at det er KI-generert.")
+                            "Riktig. Ansiktstrekkene og detaljene i bildet tyder på at det er KI-generert."),
+                    new PictureQuizOption(3, "Ekte", "/assets/photographer/q1/SantaClauseAi.png", true,
+                            "Bildet er ikke ekte. Det har tegn på KI-generering."),
+                    new PictureQuizOption(4, "Ekte", "/assets/photographer/q1/SantaClauseReal.png", false,
+                            "Bildet er ikke ekte. Det har tegn på KI-generering.")
             )
     );
 
     ensurePictureQuizQuestion(
             level,
-            "Hvilken kategori passer best for dette bildet?",
+            "Hvilket bilder er IKKE ekte?",
             List.of(
-                    new PictureQuizOption(1, "KI-generert", "/assets/photographer/q1/FootballFakePic.png", false,
+                    new PictureQuizOption(1, "KI-generert", "/assets/photographer/q1/FootballReal.png", false,
                             "Det er ikke hovedsakelig KI-generert."),
                     new PictureQuizOption(2, "Manipulert", "/assets/photographer/q1/FootballFakePic.png", true,
+                            "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt."),
+                    new PictureQuizOption(3, "Manipulert", "/assets/photographer/q1/FootballReal.png", false,
+                            "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt."),
+                    new PictureQuizOption(4, "Manipulert", "/assets/photographer/q1/FootballReal.png", false,
                             "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt.")
             )
     );
 
     ensurePictureQuizQuestion(
             level,
-            "Er dette bildet KI-generert?",
+            "Finn AI jenta?",
             List.of(
                     new PictureQuizOption(1, "Ja, fordi hendene og detaljene ser unormale ut", "/assets/photographer/q2/AiGirl2.png", true,
                             "Riktig. Rare detaljer som hender, hår, øredobber eller bakgrunn kan være tegn på KI."),
-                    new PictureQuizOption(2, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/q2/AiGirl2.png", false,
-                            "Selv om et bilde ser realistisk ut, kan det fortsatt være KI-generert.")
+                    new PictureQuizOption(2, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/q2/img_1.png", false,
+                            "Feil!, Dette er et helt ekte bilde!"),
+                    new PictureQuizOption(3, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/q2/topHeader.png", false,
+                            "Feil!, Dette er et helt ekte bilde!"),
+                    new PictureQuizOption(4, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/q2/img_2.png", false,
+                            "Feil!, Dette er et helt ekte bilde!")
             )
     );
   }

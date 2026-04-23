@@ -35,6 +35,11 @@ export interface SubmitSingleChoiceAnswerRequest {
   selectedId: number;
 }
 
+export interface SubmitMultiSelectAnswerRequest {
+  shape: "MULTIPLE_CHOICE";
+  selectedIds: number[];
+}
+
 export interface SubmitAnswerResponse {
   correct: boolean;
   feedback: string;
@@ -73,6 +78,13 @@ export const submitSingleChoiceAnswer = async (
     questionId: number, body: SubmitSingleChoiceAnswerRequest): Promise<SubmitAnswerResponse> => {
   const response =
       await client.post(`/game/questions/${questionId}/submit`,body);
+  return response.data;
+};
+
+export const submitMultiSelectAnswer = async (
+    questionId: number,
+    body: SubmitMultiSelectAnswerRequest): Promise<SubmitAnswerResponse> => {
+  const response = await client.post(`/game/questions/${questionId}/submit`, body);
   return response.data;
 };
 

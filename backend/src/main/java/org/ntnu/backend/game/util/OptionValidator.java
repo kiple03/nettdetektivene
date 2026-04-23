@@ -77,13 +77,14 @@ public class OptionValidator {
   }
 
   /**
-   * Checks that exactly one option is marked as correct.
+   * Checks that at least one option is marked as correct.
    *
-   * <p>PICTURE_QUIZ questions always have exactly three options
-   * ("Ekte", "KI-generert", "Manipulert") and exactly one must be correct.
+   * <p>For {@link LevelType#PICTURE_QUIZ}, one or more options may be correct.
+   * This validator therefore ensures that the option list contains at least one
+   * correct answer, but does not require exactly one.
    *
    * @param options the parsed picture quiz options
-   * @throws OptionValidationException if zero or more than one option is correct
+   * @throws OptionValidationException if no option is marked as correct
    */
   private void validatePictureQuiz(List<Option> options) {
     long correctCount = options.stream()

@@ -1,0 +1,84 @@
+.wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.2rem;
+}
+
+.grid {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    align-content: center;
+}
+
+.card {
+    position: relative;
+    width: 100%;
+    border: 3px solid rgba(255, 255, 255, 0.96);
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 10px 20px rgba(33, 21, 52, 0.2);
+    transition:
+            transform 0.15s ease,
+            border-color 0.15s ease,
+            box-shadow 0.15s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 24px rgba(33, 21, 52, 0.24);
+}
+
+.cardSelected {
+    border-width: 6px;
+    border-color: #6449a7;
+    box-shadow:
+            0 0 0 5px rgba(100, 73, 167, 0.18),
+            0 14px 26px rgba(33, 21, 52, 0.24);
+}
+
+.cardCorrect {
+    border-width: 6px;
+    border-color: #2e9b4d;
+    box-shadow:
+            0 0 0 5px rgba(46, 155, 77, 0.18),
+            0 14px 26px rgba(33, 21, 52, 0.24);
+}
+
+.cardWrong {
+    border-width: 6px;
+    border-color: #c43d3d;
+    box-shadow:
+            0 0 0 5px rgba(196, 61, 61, 0.18),
+            0 14px 26px rgba(33, 21, 52, 0.24);
+}
+
+.image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+}
+
+.actions {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 0.15rem;
+}
+
+.submitButton {
+    min-width: 170px;
+    min-height: 54px;
+    border-radius: 999px;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
