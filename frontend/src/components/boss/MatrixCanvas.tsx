@@ -2,7 +2,6 @@ import { PropsWithChildren, useEffect, useRef } from "react";
 
 type MatrixCanvasProps = PropsWithChildren<{
   fontSize?: number;
-  backgroundColor?: string;
   textColor?: string;
   className?: string;
 }>;
@@ -11,8 +10,7 @@ export default function MatrixCanvas(props: MatrixCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const textColor = props.textColor ?? "#00cc00";
-  const backgroundColor = props.backgroundColor ?? "#000000";
-  const fontSize = props.fontSize ?? 20;
+  const fontSize = props.fontSize ?? 80;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -57,9 +55,11 @@ export default function MatrixCanvas(props: MatrixCanvasProps) {
     function draw() {
       if (!canvas || !ctx) return;
       frameCount++;
-      const bgRgb = hexToRgb(backgroundColor);
-      ctx.fillStyle = `rgba(${bgRgb.r}, ${bgRgb.g}, ${bgRgb.b}, 0.6)`;
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
       streams.draw();
       animationFrameId = requestAnimationFrame(draw);
     }
@@ -67,10 +67,11 @@ export default function MatrixCanvas(props: MatrixCanvasProps) {
     function Streams() {
       if (!canvas) return { draw: () => {} };
       const streams: ReturnType<typeof Stream>[] = [];
-      for (let i = 0; i < canvas.width / fontSize; i++) {
-        const x = i * fontSize;
+      const columnSpacing = fontSize * 2;
+      for (let i = 0; i < canvas.width / columnSpacing; i++) {
+        const x = i * columnSpacing;
         const y = round(random(-1000, 0));
-        const speed = 3;
+        const speed = 8;
         const length = round(random(10, canvas.height / fontSize));
         const stream = Stream(x, y, speed, length);
         streams.push(stream);
@@ -88,7 +89,7 @@ export default function MatrixCanvas(props: MatrixCanvasProps) {
     function Stream(x: number, y: number, speed: number, length: number) {
       const symbols: ReturnType<typeof Symbol>[] = [];
       for (let i = 0; i < length; i++) {
-        const changeRate = round(random(20, 40));
+        const changeRate = round(random(5, 15));
         let opacity;
         if (i === 0) {
           opacity = 1.0;
@@ -164,11 +165,18 @@ export default function MatrixCanvas(props: MatrixCanvasProps) {
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
     };
-  }, [fontSize, backgroundColor, textColor]);
+  }, [fontSize, textColor]);
 
   return (
-    <div ref={containerRef} className={props.className ?? "w-full h-full"}>
-      <canvas ref={canvasRef} className="block w-full h-full" />
+    <div
+      ref={containerRef}
+      className={props.className}
+      style={{ width: "100%", height: "100%" }}
+    >
+      <canvas
+        ref={canvasRef}
+        style={{ display: "block", width: "100%", height: "100%" }}
+      />
     </div>
   );
 }

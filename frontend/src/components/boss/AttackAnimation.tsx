@@ -51,7 +51,7 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
 
     useEffect(() => {
         if (!showMatrix) return;
-        const timeout = setTimeout(onComplete, 5000);
+        const timeout = setTimeout(onComplete, 3000);
         return () => clearTimeout(timeout);
     }, [showMatrix, onComplete]);
 
