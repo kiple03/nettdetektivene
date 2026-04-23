@@ -1,4 +1,4 @@
-import { type CSSProperties, useCallback, useMemo, useRef, useState } from "react";
+import {type CSSProperties, useCallback, useMemo, useRef, useState} from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -26,70 +26,62 @@ import { Button } from "@/components/ui/buttons/Button.tsx";
 import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
 import { StopLevelsModal } from "@/components/map/StopLevelsModal";
 
-interface Level {
-    step: string;
+interface Stop {
+    id: number;
     title: string;
     route: string;
     icon: string;
-    unlocked: boolean;
     pathOffset: string;
 }
 
-const levels: Level[] = [
+const stops: Stop[] = [
     {
-        step: "1",
+        id: 1,
         title: "Nyhetskvartalet",
         route: "/game",
         icon: nyhetskvartalet,
-        unlocked: true,
         pathOffset: "23.5%",
     },
     {
-        step: "2",
+        id: 2,
         title: "Fotografen",
-        route: "/levelTwo",
+        route: "/stopTwo",
         icon: fotografen,
-        unlocked: false,
         pathOffset: "31.3%",
     },
     {
-        step: "3",
+        id: 3,
         title: "Postkontoret",
-        route: "/levelThree",
+        route: "/stopThree",
         icon: postkontoret,
-        unlocked: false,
         pathOffset: "35.5%",
     },
     {
-        step: "4",
+        id: 4,
         title: "Passordbanken",
-        route: "/levelFour",
+        route: "/stopFour",
         icon: passordbanken,
-        unlocked: false,
         pathOffset: "47.3%",
     },
     {
-        step: "5",
+        id: 5,
         title: "Markedsplassen",
-        route: "/levelFive",
+        route: "/stopFive",
         icon: markedsplassen,
-        unlocked: false,
         pathOffset: "62.7%",
     },
     {
-        step: "6",
+        id: 6,
         title: "Den sosiale møteplassen",
-        route: "/levelSix",
+        route: "/stopSix",
         icon: moteplassen,
-        unlocked: false,
         pathOffset: "83.6%",
     },
     {
-        step: "7",
+        id: 7,
         title: "Datasenteret",
-        route: "/levelFinal",
+        route: "/stopFinal",
         icon: datasenteret,
-        unlocked: false,
         pathOffset: "91.9%",
     },
 ];
@@ -113,25 +105,35 @@ type ScrollState = { canLeft: boolean; canRight: boolean; canUp: boolean; canDow
 export default function MapPage() {
     const { data: profile } = useUserProfile();
     const { data: backendStops = [] } = useQuery({ queryKey: studentKeys.gameStops, queryFn: getGameStops });
+    const isUnlocked = (title: string) => {
+        if (!backendStops.length) return false;
+
+        const backend = backendStops.find(
+            stop => stop?.name?.toLowerCase() === title.toLowerCase()
+        );
+
+        return backend ? !backend.locked : false;
+    };
+
     const stopIdByTitle = Object.fromEntries(backendStops.map(s => [s.name, s.id]));
     const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-    const autoStopId = Number(searchParams.get("stopId")) || null;
+    const autoStopId = Number(searchParams.get("levelId")) || null;
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
-    const [lockedLevelTitle, setLockedLevelTitle] = useState("");
+    const [lockedStopTitle, setLockedStopTitle] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
     const [scrollState, setScrollState] = useState<ScrollState>({ canLeft: false, canRight: false, canUp: false, canDown: false });
     const [currentPathOffset, setCurrentPathOffset] = useState("5%");
     const [animating, setAnimating] = useState(false);
     const [carReversed, setCarReversed] = useState(false);
     const [carOffsetPath, setCarOffsetPath] = useState<string | null>(null);
-    const [manualPendingStop, setManualPendingStop] = useState<Level | null>(null);
+    const [manualPendingStop, setManualPendingStop] = useState<Stop | null>(null);
     const autoStop = useMemo(() => {
         if (!autoStopId || !backendStops.length) return null;
         const match = backendStops.find(s => s.id === autoStopId);
         if (!match) return null;
-        return levels.find(l => l.title === match.name) ?? null;
+        return stops.find(l => l.title === match.name) ?? null;
     }, [autoStopId, backendStops]);
     const pendingStop = manualPendingStop ?? autoStop;
     const svgNode = useRef<SVGSVGElement | null>(null);
@@ -153,12 +155,12 @@ export default function MapPage() {
         });
     };
 
-    const handleLevelClick = (level: Level) => {
-        animateTo(level.pathOffset, () => {
-            if (level.unlocked) {
-                setManualPendingStop(level);
+    const handleStopClick = (stop: Stop) => {
+        animateTo(stop.pathOffset, () => {
+            if (isUnlocked(stop.title)) {
+                setManualPendingStop(stop);
             } else {
-                setLockedLevelTitle(level.title);
+                setLockedStopTitle(stop.title);
                 setLockedDialogOpen(true);
             }
         });
@@ -203,6 +205,7 @@ export default function MapPage() {
         if (!node) return;
 
         const compute = () => {
+
             const containerRect = node.parentElement!.getBoundingClientRect();
             const result: Partial<Record<AnchorId, HotspotPos>> = {};
             for (const id of ANCHOR_IDS) {
@@ -238,17 +241,18 @@ export default function MapPage() {
         return () => observer.disconnect();
     }, []);
 
+
     return (
         <div className={styles.container} ref={containerRef}>
             <div className={styles.header}>
-                <h1>Velg nivå</h1>
-                <p>Velge neste nivå</p>
+                <h1>Internettbyen</h1>
+                <p>Velg et stop</p>
             </div>
 
             <div className={styles.mapInner}>
             <MapBg ref={svgRef} className={styles.mapBg} preserveAspectRatio="xMidYMid slice" />
 
-            <div className={styles.levelGrid}>
+            <div className={styles.stopGrid}>
                 <div
                     className={`${styles.car} ${animating ? styles.carAnimating : ""}`}
                     style={{
@@ -285,11 +289,11 @@ export default function MapPage() {
                     </div>
                 </button>
 
-                {levels.map((level) => {
-                    const pos = anchorPos[`level-${level.step}` as AnchorId];
+                {stops.map((stop) => {
+                    const pos = anchorPos[`level-${stop.id}` as AnchorId];
                     return (
                         <button
-                            key={level.step}
+                            key={stop.id}
                             type="button"
                             className={styles.hotspot}
                             style={
@@ -301,17 +305,17 @@ export default function MapPage() {
                                       }
                                     : { display: "none" }
                             }
-                            onClick={() => handleLevelClick(level)}
-                            aria-label={level.title}
+                            onClick={() => handleStopClick(stop)}
+                            aria-label={stop.title}
                         >
                             <div className={styles.iconWrapper}>
                                 <img
-                                    src={level.icon}
-                                    alt={level.title}
-                                    className={`${styles.icon} ${!level.unlocked ? styles.lockedIcon : ""}`}
+                                    src={stop.icon}
+                                    alt={stop.title}
+                                    className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.lockedIcon : ""}`}
                                 />
 
-                                {!level.unlocked && <LockBadge />}
+                                {!isUnlocked(stop.title) && <LockBadge />}
                             </div>
                         </button>
                     );
@@ -345,7 +349,7 @@ export default function MapPage() {
                     <AlertDialogTitle>Nivå låst 🔒</AlertDialogTitle>
 
                     <AlertDialogDescription>
-                        {lockedLevelTitle} er ikke åpnet ennå. Du må fullføre de tidligere nivåene først.
+                        {lockedStopTitle} er ikke åpnet ennå. Du må fullføre de tidligere nivåene først.
                     </AlertDialogDescription>
 
                     <div className={styles.dialogActions}>
