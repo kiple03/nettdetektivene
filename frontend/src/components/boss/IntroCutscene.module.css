@@ -13,7 +13,7 @@
     background: #0d1b2a;
     border-top: 2px solid #4a9eff;
     padding: 20px 28px 16px;
-    min-height: 110px;
+    height: 130px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -30,6 +30,7 @@
 .btnRow {
     display: flex;
     justify-content: flex-end;
+    margin-top: auto;
 }
 
 .nesteBtn {

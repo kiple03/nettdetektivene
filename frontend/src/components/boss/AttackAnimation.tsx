@@ -34,6 +34,7 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
     const completed = useRef(false);
     const [showNewspaper, setShowNewspaper] = useState(false);
     const [showFlash, setShowFlash] = useState(false);
+    const [showClones, setShowClones] = useState(false);
 
     const runTyping = (onDone: () => void) => {
         TYPING_FRAMES.forEach((frame, i) => {
@@ -102,11 +103,8 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
 
             case "MARKEDSPLASSEN":
                 runTyping(() => {
-                    // 1. Switch boss sprite to shark-disguise.png (beard + hat)
-                    // 2. Boss rubs hands together
-                    // 3. Fake "tilbud" banner slides in from side
                     onSpriteChange(sharkBase);
-                    onComplete();
+                    setShowClones(true);
                 });
                 break;
 
@@ -143,6 +141,13 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
             )}
             {showFlash && createPortal(
                 <div className={styles.flash} onAnimationEnd={onComplete} />,
+                document.body
+            )}
+            {showClones && createPortal(
+                <>
+                    <img src={sharkBase} alt="" className={styles.cloneLeft} />
+                    <img src={sharkBase} alt="" className={styles.cloneRight} onAnimationEnd={() => setTimeout(onComplete, 1000)} />
+                </>,
                 document.body
             )}
             {showLetter && createPortal(

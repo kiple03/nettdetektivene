@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { createPortal } from "react-dom";
 import styles from "./QuestionModal.module.css";
 
 interface Props {
@@ -15,7 +16,7 @@ export function QuestionModal({ label, onAnswer }: Props) {
         onAnswer(correct);
     };
 
-    return (
+    return createPortal(
         <div className={styles.overlay}>
             <div className={styles.modal}>
                 <p className={styles.label}>{label}</p>
@@ -36,6 +37,7 @@ export function QuestionModal({ label, onAnswer }: Props) {
                     </button>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
