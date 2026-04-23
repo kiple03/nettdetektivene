@@ -12,15 +12,14 @@ import StudentDetail from "@/pages/teacher/detail/StudentDetail.tsx";
 import MysterySubmissions from "@/pages/teacher/MysterySubmissions";
 import Notifications from "@/pages/teacher/Notifications";
 import LeaderboardPage from "@/pages/student/LeaderboardPage.tsx";
-import NotesPage from "@/pages/student/notebook/NotesPage.tsx";
-import BadgesPage from "@/pages/student/BadgesPage";
+import NotesPage from "@/pages/student/notebook/NotesPage";
+import BadgesPage from "@/pages/student/MedalionPage";
 import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
 import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
 import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";
 import AvatarDevPage from "@/pages/student/AvatarDevPage";
 import GamePage from "@/pages/game/GamePage.tsx";
 import CodePage from "@/pages/teacher/CodePage.tsx";
-
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
 import ProfilePage from "@/pages/student/ProfilePage.tsx";

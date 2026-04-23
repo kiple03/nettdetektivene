@@ -25,7 +25,7 @@ function MedalionToast({name, description, imageUrl, duration=4000, onDone}: Med
 
     return (      
       <div className={styles['medalion-toast']}>
-        <img src={imageUrl} alt={name} className="medalion-toast__image" />
+        <img src={imageUrl} alt={name} className={styles['medalion-toast__image']} />
         <div className={styles['medalion-toast__text']}>                             
       <p className={styles['medalion-toast__title']}>🏅 Achievement unlocked!</p>
       <p className={styles['medalion-toast__name']}>{name}</p>                                                                                                                       
