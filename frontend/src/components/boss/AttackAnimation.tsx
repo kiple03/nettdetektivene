@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import type { EffectiveAttackType } from "./AttackOrchestrator";
 import sharkBase from "@/assets/images/boss/shark-base.png";
@@ -18,6 +18,17 @@ import newspaper from "@/assets/images/boss/newspaper.png";
 import styles from "./AttackAnimation.module.css";
 
 const FRAME_MS = 180;
+
+const COMMENT_BUBBLES = [
+    { text: "DEL NÅ!!!",             top: "18%", right: "14%", delay: "0s",    color: "#34C759" },
+    { text: "Er du ikke redd? 😱",   top: "28%", right: "20%", delay: "0.2s",  color: "#007AFF" },
+    { text: "Alle vet det allerede!", top: "22%", right: "8%",  delay: "0.4s",  color: "#007AFF" },
+    { text: "Spred videre!",          top: "15%", right: "18%", delay: "0.6s",  color: "#34C759" },
+    { text: "Ikke ignorer dette!",    top: "32%", right: "12%", delay: "0.8s",  color: "#34C759" },
+    { text: "Gruppa sier del!",       top: "25%", right: "22%", delay: "1.0s",  color: "#007AFF" },
+    { text: "SANT ELLER FALSKT?",     top: "20%", right: "16%", delay: "1.2s",  color: "#34C759" },
+    { text: "Skummelt... 😨",         top: "30%", right: "10%", delay: "1.4s",  color: "#007AFF" },
+] as const;
 
 const TYPING_FRAMES = [
     sharkType1, sharkType2, sharkType1, sharkType2,
@@ -46,6 +57,7 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
     };
     const [showLetter, setShowLetter] = useState(false);
     const [letterFrame, setLetterFrame] = useState(0);
+    const [showComments, setShowComments] = useState(false);
 
     const triggerRef = (el: HTMLDivElement | null) => {
         if (!el || completed.current) return;
@@ -110,11 +122,8 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
 
             case "DEN_SOSIALE_MOPLASSEN":
                 runTyping(() => {
-                    // 1. Switch boss sprite to shark-hood.png (Red Riding Hood costume)
-                    // 2. Boss waves innocently
-                    // 3. Suspicious speech bubble pops up
                     onSpriteChange(sharkBase);
-                    onComplete();
+                    setShowComments(true);
                 });
                 break;
 
@@ -151,7 +160,7 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
                 document.body
             )}
             {showLetter && createPortal(
-                <img 
+                <img
                     src={[letter0, letter1, letter2, letter3, letter4][letterFrame]}
                     alt=""
                     className={styles.letter}
@@ -159,12 +168,32 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
                 />, document.body
             )}
             {showLetter && createPortal(
-                <img 
+                <img
                     src={[letter0, letter1, letter2, letter3, letter4][letterFrame]}
                     alt=""
                     className={styles.letter}
                     onAnimationEnd={onComplete}
                 />, document.body
+            )}
+            {showComments && createPortal(
+                <>
+                    {COMMENT_BUBBLES.map((b, i) => (
+                        <div
+                            key={i}
+                            className={styles.commentBubble}
+                            style={{
+                                top: b.top,
+                                right: b.right,
+                                animationDelay: b.delay,
+                                '--bubble-color': b.color,
+                            } as React.CSSProperties}
+                            onAnimationEnd={i === COMMENT_BUBBLES.length - 1 ? onComplete : undefined}
+                        >
+                            {b.text}
+                        </div>
+                    ))}
+                </>,
+                document.body
             )}
         </>
     );

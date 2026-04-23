@@ -69,3 +69,43 @@
 
 .cloneLeft  { animation: cloneSlideLeft  1.4s ease-out forwards; }
 .cloneRight { animation: cloneSlideRight 1.4s ease-out forwards; }
+
+@keyframes bubbleShoot {
+    0% {
+        transform: translate(0, 0) scale(0.6);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(-58vw, 52vh);
+        opacity: 1;
+    }
+}
+
+.commentBubble {
+    position: fixed;
+    border-radius: 18px 18px 4px 18px;
+    padding: 7px 14px;
+    font-size: clamp(11px, 1.8vw, 14px);
+    font-weight: 600;
+    pointer-events: none;
+    white-space: nowrap;
+    color: white;
+    z-index: 9999;
+    background: var(--bubble-color);
+    animation: bubbleShoot 1.9s ease-in both;
+}
+
+.commentBubble::after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    right: 8px;
+    width: 0;
+    height: 0;
+    border-top: 8px solid var(--bubble-color);
+    border-right: 8px solid transparent;
+}
