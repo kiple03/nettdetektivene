@@ -7,7 +7,6 @@ import sharkNewspaper2 from "@/assets/images/boss/shark-newspaper-2.png";
 import sharkNewspaper3 from "@/assets/images/boss/shark-newspaper-3.png";
 import sharkCamera1 from '@/assets/images/boss/shark-camera-1.png';
 import sharkCamera2 from '@/assets/images/boss/shark-camera-2.png';
-import sharkCamera3 from '@/assets/images/boss/shark-camera-3.png';
 import newspaper from "@/assets/images/boss/newspaper.png";
 import styles from "./AttackAnimation.module.css";
 
@@ -41,11 +40,11 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
             }
 
             case "FOTOGRAFEN":{
-                const frames = [sharkCamera1, sharkCamera2, sharkCamera3, sharkBase];
+                const frames = [sharkCamera1, sharkCamera2, sharkBase];
                 frames.forEach((frame, i) => {
                     setTimeout(() => {
                         onSpriteChange(frame);
-                        if(i === frame.length -1) setShowFlash(true);
+                        if(i === frames.length -1) setShowFlash(true);
                     }, i*FRAME_MS);
                 });
                 break;
