@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import DetectiveBook from "@/components/game/ui/DetectiveBook";
 import DetectiveTipsNote from "@/components/game/ui/DetectiveTipsNote";
@@ -30,6 +30,12 @@ export default function PhotographerStation({
     const [correctIds, setCorrectIds] = useState<number[]>([]);
     const [wrongIds, setWrongIds] = useState<number[]>([]);
     const [submitted, setSubmitted] = useState(false);
+
+    useEffect(() => {
+        setCorrectIds([]);
+        setWrongIds([]);
+        setSubmitted(false);
+    }, [station.questionId]);
 
     const handleSubmit = async (selectedIds: number[]) => {
         try {

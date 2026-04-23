@@ -251,7 +251,7 @@ public class GameSeeder implements CommandLineRunner {
                             "Riktig. Rare detaljer som hender, hår, øredobber eller bakgrunn kan være tegn på KI."),
                     new PictureQuizOption(2, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/q2/img_1.png", false,
                             "Feil!, Dette er et helt ekte bilde!"),
-                    new PictureQuizOption(3, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/q2/topHeader.png", false,
+                    new PictureQuizOption(3, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/q2/img.png", false,
                             "Feil!, Dette er et helt ekte bilde!"),
                     new PictureQuizOption(4, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/q2/img_2.png", false,
                             "Feil!, Dette er et helt ekte bilde!")
