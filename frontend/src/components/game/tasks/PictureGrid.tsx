@@ -13,7 +13,6 @@ type PictureGridProps = {
     options: PictureOption[];
     onSubmit: (selectedIds: number[]) => Promise<void> | void;
     disabled?: boolean;
-
     correctIds?: number[];
     wrongIds?: number[];
 };
@@ -39,7 +38,7 @@ export default function PictureGrid({
 
         setSelectedIds((prev) =>
             prev.includes(id)
-                ? prev.filter((x) => x !== id)
+                ? prev.filter((selectedId) => selectedId !== id)
                 : [...prev, id]
         );
     };
@@ -56,18 +55,9 @@ export default function PictureGrid({
     };
 
     const getCardClass = (optionId: number) => {
-        if (correctIds.includes(optionId)) {
-            return styles.cardCorrect;
-        }
-
-        if (wrongIds.includes(optionId)) {
-            return styles.cardWrong;
-        }
-
-        if (selectedIds.includes(optionId)) {
-            return styles.cardSelected;
-        }
-
+        if (correctIds.includes(optionId)) return styles.cardCorrect;
+        if (wrongIds.includes(optionId)) return styles.cardWrong;
+        if (selectedIds.includes(optionId)) return styles.cardSelected;
         return "";
     };
 
@@ -83,11 +73,13 @@ export default function PictureGrid({
                         onClick={() => toggleSelection(option.id)}
                         className={`${styles.card} ${getCardClass(option.id)}`}
                     >
-                        <img
-                            src={option.imageUrl}
-                            alt={option.altText ?? ""}
-                            className={styles.image}
-                        />
+                        <div className={styles.imageFrame}>
+                            <img
+                                src={option.imageUrl}
+                                alt={option.altText ?? ""}
+                                className={styles.image}
+                            />
+                        </div>
                     </Button>
                 ))}
             </div>
@@ -100,7 +92,7 @@ export default function PictureGrid({
                     disabled={disabled || isSubmitting}
                     className={styles.submitButton}
                 >
-                    Svar
+                    {isSubmitting ? "Sender..." : "Svar"}
                 </Button>
             </div>
         </div>
