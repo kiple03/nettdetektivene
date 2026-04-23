@@ -12,6 +12,9 @@ import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.util.OptionValidator;
+import org.ntnu.backend.notes.model.LevelNoteTemplate;
+import org.ntnu.backend.notes.model.enums.NoteCategory;
+import org.ntnu.backend.notes.repository.LevelNoteTemplateRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import tools.jackson.core.JacksonException;
@@ -35,6 +38,7 @@ public class GameSeeder implements CommandLineRunner {
   private final LevelRepository levelRepository;
   private final QuestionRepository questionRepository;
   private final OptionValidator optionValidator;
+  private final LevelNoteTemplateRepository levelNoteTemplateRepository;
 
   /**
    * Executes automatically when the Spring Boot application starts.
@@ -142,6 +146,11 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    ensureLevelNoteTemplate(level1,
+        NoteCategory.NYHETER,
+        "Sjekk alltid om overskriften virker troverdig og se etter rare skrivefeil eller manglende navn."
+    );
+
     Level level2 = levelRepository.findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 2").orElseGet(() -> {
       Level l = new Level();
       l.setTitle("Ekte eller falskt? 2");
@@ -224,5 +233,22 @@ public class GameSeeder implements CommandLineRunner {
       log.error("Error while writing options json", e);
       throw new IllegalStateException("Failed to serialize options", e);
     }
+  }
+
+  private void ensureLevelNoteTemplate(Level level, NoteCategory category, String content) {
+    boolean exists = levelNoteTemplateRepository.findAllByLevelId(level.getId()).stream()
+        .anyMatch(template ->
+            template.getCategory() == category &&
+            template.getContent().equals(content)
+        );
+
+    if (exists) return;
+
+    LevelNoteTemplate template = LevelNoteTemplate.builder()
+        .level(level)
+        .category(category)
+        .content(content)
+        .build();
+    levelNoteTemplateRepository.save(template);
   }
 }

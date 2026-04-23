@@ -9,6 +9,7 @@ interface AlertDialogProps {
 
 interface AlertDialogContentProps {
     children: ReactNode;
+    icon?: ReactNode;
 }
 
 interface AlertDialogTextProps {
@@ -43,7 +44,7 @@ export function AlertDialog({ open, onOpenChange, children }: AlertDialogProps) 
     );
 }
 
-export function AlertDialogContent({ children }: AlertDialogContentProps) {
+export function AlertDialogContent({ children, icon = "🔒" }: AlertDialogContentProps) {
     return (
         <div className={styles.content}>
             <div className={styles.decorations} aria-hidden="true">
@@ -56,7 +57,7 @@ export function AlertDialogContent({ children }: AlertDialogContentProps) {
             </div>
 
             <div className={styles.heroIcon} aria-hidden="true">
-                🔒
+                {icon}
             </div>
 
             {children}

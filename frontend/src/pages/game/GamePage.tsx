@@ -128,9 +128,9 @@ export default function GamePage() {
             />
 
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <AlertDialogContent>
+                <AlertDialogContent icon={levelPassed ? "🎉" : "💪"}>
                     <AlertDialogTitle>
-                        {levelPassed ? "Gratulerer! 🎉" : "Prøv igjen! 💪"}
+                        {levelPassed ? "Gratulerer!" : "Prøv igjen!"}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         {levelPassed

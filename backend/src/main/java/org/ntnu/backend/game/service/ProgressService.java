@@ -152,14 +152,15 @@ public class ProgressService {
    * @throws UserProgressNotFoundException if the user is a student with no progress row
    */
   @Transactional
-  public void recordCompletionOfLevel(UUID userId, RoleEnum role, Level level) {
-    if (role == RoleEnum.TEACHER) return;
+  public boolean recordCompletionOfLevel(UUID userId, RoleEnum role, Level level) {
+    if (role == RoleEnum.TEACHER) return false;
 
     UserProgress progress = getProgressOrThrow(userId);
 
-    if (!shouldAdvance(progress, level)) return;
+    if (!shouldAdvance(progress, level)) return false;
 
     advanceToNextLevel(progress);
+    return true;
   }
 
   /**
