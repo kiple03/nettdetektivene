@@ -1,22 +1,24 @@
  .medalion-toast {
     position: fixed;
-    bottom: 2rem;                                                                                                                                                                    
-    right: 2rem; 
-    display: flex;                                                                                                                                                                   
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
     align-items: center;
-    gap: 1rem;          
     background: white;
     border: 2px solid gold;
-    border-radius: 12px;                                                                                                                                                             
-    padding: 1rem;      
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);                                                                                                                                      
-    z-index: 999;                              
-    animation: slideIn 0.3s ease;                                                                                                                                                    
-  }                              
-                                                                                                                                                                                     
+    border-radius: 12px;
+    padding: 1rem 1rem 1rem 5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 999;
+    animation: slideIn 0.3s ease;
+  }
+
   .medalion-toast__image {
-    width: 48px;                                                                                                                                                                     
-    height: 48px;
+    position: absolute;
+    left: -10px;
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
   }                                                                                                                                                                                  
                   
   .medalion-toast__title {
