@@ -1,4 +1,4 @@
-package org.ntnu.backend.config;
+package org.ntnu.backend.config.openapi;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

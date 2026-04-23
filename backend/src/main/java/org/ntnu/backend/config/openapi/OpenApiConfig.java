@@ -1,4 +1,4 @@
-package org.ntnu.backend.config;
+package org.ntnu.backend.config.openapi;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.media.Schema;
