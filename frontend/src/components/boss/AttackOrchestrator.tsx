@@ -116,6 +116,22 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange }: Props) {
                             </button>
                         ))}
                     </div>
+                    <div className={styles.adminButtons}>
+                        <button
+                            className={styles.adminButton}
+                            disabled={!canTrigger}
+                            onClick={() => onAnswer(false)}
+                        >
+                            -1 HP spiller
+                        </button>
+                        <button
+                            className={styles.adminButton}
+                            disabled={!canTrigger}
+                            onClick={() => onAnswer(true)}
+                        >
+                            -1 HP shark
+                        </button>
+                    </div>
                 </div>,
                 document.body
             )}
