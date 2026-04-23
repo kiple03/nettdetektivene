@@ -26,6 +26,7 @@ import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.util.OptionValidator;
 import org.ntnu.backend.game.validation.LevelSubmissionValidator;
+import org.ntnu.backend.notes.service.NoteService;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import tools.jackson.databind.ObjectMapper;
 
@@ -37,6 +38,7 @@ class GameServiceTest {
   @Mock private QuestionRepository questionRepository;
   @Mock private LevelSubmissionValidator levelSubmissionValidator;
   @Mock private ProgressService progressService;
+  @Mock private NoteService noteService;
 
   private GameService gameService;
   private final UUID userId = UUID.randomUUID();
@@ -53,7 +55,8 @@ class GameServiceTest {
         questionRepository,
         progressService,
         gameMapper,
-        levelSubmissionValidator
+        levelSubmissionValidator,
+        noteService
     );
   }
 
