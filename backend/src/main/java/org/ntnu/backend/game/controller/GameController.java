@@ -1,6 +1,10 @@
 package org.ntnu.backend.game.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.dto.LevelResponse;
@@ -37,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/game")
+@Tag(name = "Game", description = "Student-facing game flow: map, levels, questions, and submissions.")
 public class GameController {
   private final GameService gameService;
   private final QuestionService questionService;
@@ -46,6 +51,16 @@ public class GameController {
    * Each stop includes its lock state for the current student.
    */
   @GetMapping("/stops")
+  @Operation(
+      summary = "Get all stops with lock state for the current user",
+      description = "Returns every stop in the game, ordered by display position. "
+          + "Each stop's locked field reflects whether the authenticated user can access it. "
+          + "Teachers receive everything unlocked; students see stops up to and including their current stop."
+  )
+  @ApiResponses({
+      @ApiResponse(responseCode = "200", description = "List of stops with per-user lock state"),
+      @ApiResponse(responseCode = "401", description = "Not authenticated", content = @io.swagger.v3.oas.annotations.media.Content)
+  })
   public List<StopResponse> getGameStops(@AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
     return gameService.getStopsForUser(principal.getUserId(), principal.getRole());
 
