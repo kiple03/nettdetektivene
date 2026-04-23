@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.config.openapi.ApiErrorResponse;
+import org.ntnu.backend.config.openapi.ApiErrorResponses;
 import org.ntnu.backend.config.openapi.PublicEndpoint;
 import org.ntnu.backend.user.dto.CreateUserRequest;
 import org.ntnu.backend.user.dto.LoginRequest;
@@ -87,7 +88,7 @@ public class UserController {
    */
   @Operation(summary = "Login with username and password")
   @ApiResponse(responseCode = "200", description = "Login successful")
-  @ApiResponse(responseCode = "401", description = "Login failed")
+  @ApiErrorResponse(responseCode = "401", description = "Login failed")
   @PublicEndpoint
   @SecurityRequirements({})
   @PostMapping("/login")
@@ -111,8 +112,8 @@ public class UserController {
    */
   @Operation(summary = "Refresh the access token")
   @ApiResponse(responseCode = "200", description = "New access token issued")
-  @ApiResponse(responseCode = "400", description = "Missing access token cookie")
-  @ApiResponse(responseCode = "401", description = "Invalid or expired refresh token")
+  @ApiErrorResponse(responseCode = "400", description = "Missing access token cookie")
+  @ApiErrorResponse(responseCode = "401", description = "Invalid or expired refresh token")
   @PostMapping("/refresh")
   public ResponseEntity<LoginResponse> refresh(
       @CookieValue(name = "refreshToken") String refreshToken) {

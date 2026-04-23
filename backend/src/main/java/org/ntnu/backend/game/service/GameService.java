@@ -79,7 +79,7 @@ public class GameService {
 
   @Transactional(readOnly = true)
   public List<LevelResponse> getLevelsForStop(int stopId, UUID userId, RoleEnum role) {
-    return levelRepository.findByStopIdOrderByIdAsc(stopId)
+    return levelRepository.findByStopIdOrderByOrderAsc(stopId)
         .stream()
         .map(level -> gameMapper.toLevelResponse(
             level,
