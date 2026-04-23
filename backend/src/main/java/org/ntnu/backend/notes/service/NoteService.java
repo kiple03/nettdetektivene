@@ -5,13 +5,16 @@ import java.util.Locale;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.notes.dto.NoteResponse;
 import org.ntnu.backend.notes.dto.NotesOverviewResponse;
 import org.ntnu.backend.notes.dto.UpsertNoteRequest;
 import org.ntnu.backend.notes.mapper.NoteMapper;
+import org.ntnu.backend.notes.model.LevelNoteTemplate;
 import org.ntnu.backend.notes.model.Note;
 import org.ntnu.backend.notes.model.StudentLevelNote;
 import org.ntnu.backend.notes.model.enums.NoteCategory;
+import org.ntnu.backend.notes.repository.LevelNoteTemplateRepository;
 import org.ntnu.backend.notes.repository.NoteRepository;
 import org.ntnu.backend.notes.repository.StudentLevelNoteRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -44,10 +47,11 @@ public class NoteService {
     private final StudentLevelNoteRepository studentLevelNoteRepository;
     private final UserRepository userRepository;
     private final NoteMapper noteMapper;
+    private final LevelNoteTemplateRepository levelNoteTemplateRepository;
 
     /**
-     * Returns the full notebook for the authenticated user, including both
-     * personal notes and level-granted notes grouped by category.
+     * Returns the full notebook for the authenticated user, including both personal notes and
+     * level-granted notes grouped by category.
      *
      * @param authentication the current authenticated user
      * @return an overview of the user's notebook content
@@ -56,28 +60,29 @@ public class NoteService {
     public NotesOverviewResponse getMyNotes(Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
         List<Note> ownNotes = noteRepository.findAllByUserOrderByCategoryAsc(user);
-        List<StudentLevelNote> levelNotes = studentLevelNoteRepository.findAllByUserOrderByCategoryAsc(user);
+        List<StudentLevelNote> levelNotes = studentLevelNoteRepository.findAllByUserOrderByCategoryAsc(
+            user);
         return noteMapper.toOverviewResponse(ownNotes, levelNotes);
     }
 
     /**
-     * Creates a new personal note for the authenticated user in the given
-     * category.
+     * Creates a new personal note for the authenticated user in the given category.
      *
      * @param authentication the current authenticated user
-     * @param categoryRaw the category provided by the client
-     * @param request the note content to save
+     * @param categoryRaw    the category provided by the client
+     * @param request        the note content to save
      * @return the saved note as a response DTO
      */
-    public NoteResponse createNote(Authentication authentication, String categoryRaw, UpsertNoteRequest request) {
+    public NoteResponse createNote(Authentication authentication, String categoryRaw,
+        UpsertNoteRequest request) {
         User user = getAuthenticatedUser(authentication);
         NoteCategory category = parseCategory(categoryRaw);
 
         Note note = Note.builder()
-                .user(user)
-                .category(category)
-                .content(request.content().trim())
-                .build();
+            .user(user)
+            .category(category)
+            .content(request.content().trim())
+            .build();
 
         return noteMapper.toResponse(noteRepository.save(note));
     }
@@ -86,7 +91,7 @@ public class NoteService {
      * Deletes one of the authenticated user's personal notes.
      *
      * @param authentication the current authenticated user
-     * @param noteId the id of the note to delete
+     * @param noteId         the id of the note to delete
      */
     public void deleteMyNote(Authentication authentication, UUID noteId) {
         User user = getAuthenticatedUser(authentication);
@@ -94,8 +99,8 @@ public class NoteService {
     }
 
     /**
-     * Resolves the authenticated user from the Spring Security authentication
-     * object and loads the matching user entity from the database.
+     * Resolves the authenticated user from the Spring Security authentication object and loads the
+     * matching user entity from the database.
      *
      * @param authentication the current authentication
      * @return the authenticated user entity
@@ -103,7 +108,7 @@ public class NoteService {
     private User getAuthenticatedUser(Authentication authentication) {
         JwtAuthenticatedPrincipal principal = JwtAuthenticatedPrincipal.from(authentication);
         return userRepository.findById(principal.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     /**
@@ -116,7 +121,33 @@ public class NoteService {
         try {
             return NoteCategory.valueOf(raw.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid note category: " + raw);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Invalid note category: " + raw);
+        }
+    }
+
+    public void saveCompletionTipIfNeeded(UUID userId, Level level) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        List<LevelNoteTemplate> templates = levelNoteTemplateRepository.findAllByLevelId(level.getId());
+
+        for (LevelNoteTemplate template : templates) {
+            boolean alreadyExists = studentLevelNoteRepository.existsByUserAndTemplateId(user,
+                template.getId());
+
+            if (alreadyExists) {
+                continue;
+            }
+
+            StudentLevelNote levelNote = StudentLevelNote.builder()
+                .user(user)
+                .template(template)
+                .category(template.getCategory())
+                .content(template.getContent())
+                .build();
+
+            studentLevelNoteRepository.save(levelNote);
         }
     }
 }
