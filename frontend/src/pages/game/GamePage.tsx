@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
-import { getGameLevelById, getLevelQuestions } from "@/api/gameApi.ts";
 import { studentKeys } from "@/hooks/student/queryKeys";
 import { mapQuestionToStationData } from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
@@ -17,6 +15,11 @@ import {
 } from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getGameLevelById, getLevelQuestions, submitLevel } from "@/api/gameApi.ts";
+import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
+
+
 export default function GamePage() {
     const { levelId } = useParams<{ levelId: string }>();
     const navigate = useNavigate();
@@ -27,6 +30,28 @@ export default function GamePage() {
     const [submitResult, setSubmitResult] = useState<SubmitAnswerResult | null>(null);
     const [levelPassed, setLevelPassed] = useState(true);
     const [dialogOpen, setDialogOpen] = useState(false);
+
+    const [answers, setAnswers] = useState<Record<number, SubmitAnswerRequest>>({});
+    const queryClient = useQueryClient();
+
+    const submitLevelMutation = useMutation({
+        mutationFn: () => submitLevel(levelIdNum, {
+            answers: Object.entries(answers).map(([qid, ans]) => ({
+                questionId: Number(qid),
+                answer: ans,
+            })),
+        }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: studentKeys.gameStops });
+            queryClient.invalidateQueries({ queryKey: ['stopLevels'] });
+            setLevelPassed(true);
+            setDialogOpen(true);
+        },
+        onError: () => {
+            setLevelPassed(false);
+            setDialogOpen(true);
+        },
+    });
 
     const levelIdNum = Number(levelId);
     const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
@@ -51,8 +76,9 @@ export default function GamePage() {
     const currentQuestion = questions[questionIndex];
     const station = mapQuestionToStationData(currentQuestion);
 
-    const handleAnswer = (result: SubmitAnswerResult) => {
+    const handleAnswer = (result: SubmitAnswerResult, request: SubmitAnswerRequest) => {
         setSubmitResult(result);
+        setAnswers((prev) => ({ ...prev, [currentQuestion.id]: request }));
         if (!result.correct) setLevelPassed(false);
     };
 
@@ -61,7 +87,11 @@ export default function GamePage() {
             setQuestionIndex((i) => i + 1);
             setSubmitResult(null);
         } else {
-            setDialogOpen(true);
+            if (levelPassed) {
+                submitLevelMutation.mutate();
+            } else {
+                setDialogOpen(true);
+            }
         }
     };
 
@@ -69,6 +99,7 @@ export default function GamePage() {
         setDialogOpen(false);
         setQuestionIndex(0);
         setSubmitResult(null);
+        setAnswers({});
         setLevelPassed(true);
     };
 

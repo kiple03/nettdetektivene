@@ -122,6 +122,7 @@ public class GameSeeder implements CommandLineRunner {
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
       l.setLevelType(LevelType.MULTIPLE_CHOICE);
       l.setStop(stop);
+      l.setOrder(1);
       return levelRepository.save(l);
     });
 
@@ -147,6 +148,7 @@ public class GameSeeder implements CommandLineRunner {
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
       l.setLevelType(LevelType.MULTIPLE_CHOICE);
       l.setStop(stop);
+      l.setOrder(2);
       return levelRepository.save(l);
     });
 
@@ -172,6 +174,7 @@ public class GameSeeder implements CommandLineRunner {
       l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
       l.setLevelType(LevelType.MULTIPLE_CHOICE);
       l.setStop(stop);
+      l.setOrder(3);
       return levelRepository.save(l);
     });
 

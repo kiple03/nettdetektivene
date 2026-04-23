@@ -4,11 +4,9 @@ import jakarta.validation.Valid;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-
 import org.ntnu.backend.avatar.service.UserAvatarService;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.exception.UserAlreadyExistsException;
-import org.ntnu.backend.game.repository.UserProgressRepository;
 import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.security.JwtService;

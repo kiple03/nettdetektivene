@@ -1,4 +1,4 @@
-package org.ntnu.backend.avatar.config;
+package org.ntnu.backend.config;
 
 import java.util.List;
 import org.ntnu.backend.avatar.model.AvatarItem;

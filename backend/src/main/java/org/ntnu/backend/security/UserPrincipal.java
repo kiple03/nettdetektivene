@@ -3,7 +3,6 @@ package org.ntnu.backend.security;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.ntnu.backend.user.model.User;

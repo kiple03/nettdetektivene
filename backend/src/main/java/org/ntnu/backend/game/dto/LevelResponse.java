@@ -1,10 +1,7 @@
 package org.ntnu.backend.game.dto;
 
 import org.ntnu.backend.game.model.enums.LevelType;
-
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "Data Transfer Object for level in a stop")
 public record LevelResponse(
