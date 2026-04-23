@@ -1,8 +1,12 @@
-import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
-import DetectiveTipsNote from "@/components/game/ui/DetectiveTipsNote.tsx";
+import { useState } from "react";
+
+import DetectiveBook from "@/components/game/ui/DetectiveBook";
+import DetectiveTipsNote from "@/components/game/ui/DetectiveTipsNote";
 import PictureGrid from "@/components/game/tasks/PictureGrid";
+
 import { submitMultiSelectAnswer } from "@/api/gameApi";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
+
 import type { StationData, SubmitAnswerResult } from "@/types/station";
 
 type PhotographerStationProps = {
@@ -12,10 +16,10 @@ type PhotographerStationProps = {
 };
 
 const detectiveTips = [
-    "Les teksten nøye",
-    "Se etter kilder og detaljer",
-    "Sammenlign fakta",
-    "Hva virker troverdig?",
+    "Se etter rare detaljer",
+    "Se på fingre og hender",
+    "Ser lys og skygger ekte ut?",
+    "Er noe for perfekt?",
 ];
 
 export default function PhotographerStation({
@@ -23,22 +27,31 @@ export default function PhotographerStation({
                                                 onAnswer,
                                                 disabled = false,
                                             }: PhotographerStationProps) {
+    const [correctIds, setCorrectIds] = useState<number[]>([]);
+    const [wrongIds, setWrongIds] = useState<number[]>([]);
+    const [submitted, setSubmitted] = useState(false);
+
     const handleSubmit = async (selectedIds: number[]) => {
         try {
-            const response = await submitMultiSelectAnswer(station.questionId, {
-                shape: "MULTIPLE_CHOICE",
-                selectedIds,
-            });
+            const response = await submitMultiSelectAnswer(
+                station.questionId,
+                {
+                    shape: "MULTIPLE_CHOICE",
+                    selectedIds,
+                }
+            );
+
+            setCorrectIds(response.correctOptionIds ?? []);
+            setWrongIds(response.wrongSelectedOptionIds ?? []);
+            setSubmitted(true);
 
             onAnswer(mapSubmitResponseToSubmitAnswer(response));
         } catch (error: any) {
-            console.error("Feil ved innsending", error);
+            console.error(error);
 
             onAnswer({
                 correct: false,
-                feedback:
-                    error?.response?.data?.message ??
-                    "Noe gikk galt ved innsending",
+                feedback: "Noe gikk galt",
             });
         }
     };
@@ -63,7 +76,9 @@ export default function PhotographerStation({
                     altText: option.label ?? `Bilde ${option.id}`,
                 }))}
                 onSubmit={handleSubmit}
-                disabled={disabled}
+                disabled={disabled || submitted}
+                correctIds={correctIds}
+                wrongIds={wrongIds}
             />
         </DetectiveBook>
     );

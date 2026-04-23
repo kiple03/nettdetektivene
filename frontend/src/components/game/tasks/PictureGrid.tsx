@@ -13,6 +13,9 @@ type PictureGridProps = {
     options: PictureOption[];
     onSubmit: (selectedIds: number[]) => Promise<void> | void;
     disabled?: boolean;
+
+    correctIds?: number[];
+    wrongIds?: number[];
 };
 
 export default function PictureGrid({
@@ -20,6 +23,8 @@ export default function PictureGrid({
                                         options,
                                         onSubmit,
                                         disabled = false,
+                                        correctIds = [],
+                                        wrongIds = [],
                                     }: PictureGridProps) {
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,8 +39,8 @@ export default function PictureGrid({
 
         setSelectedIds((prev) =>
             prev.includes(id)
-                ? prev.filter((selectedId) => selectedId !== id)
-                : [...prev, id],
+                ? prev.filter((x) => x !== id)
+                : [...prev, id]
         );
     };
 
@@ -50,31 +55,41 @@ export default function PictureGrid({
         }
     };
 
+    const getCardClass = (optionId: number) => {
+        if (correctIds.includes(optionId)) {
+            return styles.cardCorrect;
+        }
+
+        if (wrongIds.includes(optionId)) {
+            return styles.cardWrong;
+        }
+
+        if (selectedIds.includes(optionId)) {
+            return styles.cardSelected;
+        }
+
+        return "";
+    };
+
     return (
         <div className={styles.wrapper}>
             <div className={styles.grid}>
-                {options.map((option) => {
-                    const isSelected = selectedIds.includes(option.id);
-
-                    return (
-                        <Button
-                            key={option.id}
-                            type="button"
-                            variant="unstyled"
-                            onClick={() => toggleSelection(option.id)}
-                            disabled={disabled || isSubmitting}
-                            aria-pressed={isSelected}
-                            aria-label={option.altText ?? `Bilde ${option.id}`}
-                            className={`${styles.card} ${isSelected ? styles.cardSelected : ""}`}
-                        >
-                            <img
-                                src={option.imageUrl}
-                                alt={option.altText ?? `Valgalternativ ${option.id}`}
-                                className={styles.image}
-                            />
-                        </Button>
-                    );
-                })}
+                {options.map((option) => (
+                    <Button
+                        key={option.id}
+                        type="button"
+                        variant="unstyled"
+                        disabled={disabled || isSubmitting}
+                        onClick={() => toggleSelection(option.id)}
+                        className={`${styles.card} ${getCardClass(option.id)}`}
+                    >
+                        <img
+                            src={option.imageUrl}
+                            alt={option.altText ?? ""}
+                            className={styles.image}
+                        />
+                    </Button>
+                ))}
             </div>
 
             <div className={styles.actions}>
@@ -85,7 +100,7 @@ export default function PictureGrid({
                     disabled={disabled || isSubmitting}
                     className={styles.submitButton}
                 >
-                    {isSubmitting ? "Sender..." : "Svar"}
+                    Svar
                 </Button>
             </div>
         </div>

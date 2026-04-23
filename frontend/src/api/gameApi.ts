@@ -43,6 +43,8 @@ export interface SubmitMultiSelectAnswerRequest {
 export interface SubmitAnswerResponse {
   correct: boolean;
   feedback: string;
+  correctOptionIds: number[];
+  wrongSelectedOptionIds: number[];
 }
 
 export const getGameStops = async (): Promise<GameStop[]> => {

@@ -73,12 +73,18 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
             }
         }
 
-        Set<Integer> correctIds = pq.stream()
+        List<Integer> correctOptionIds = pq.stream()
                 .filter(PictureQuizOption::isCorrect)
                 .map(PictureQuizOption::getId)
-                .collect(Collectors.toSet());
+                .toList();
 
-        boolean isCorrect = selectedIds.equals(correctIds);
+        Set<Integer> correctIdSet = Set.copyOf(correctOptionIds);
+
+        List<Integer> wrongSelectedOptionIds = selectedIds.stream()
+                .filter(selectedId -> !correctIdSet.contains(selectedId))
+                .toList();
+
+        boolean isCorrect = selectedIds.equals(correctIdSet);
 
         String explanation = pq.stream()
                 .filter(PictureQuizOption::isCorrect)
@@ -87,6 +93,11 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
                 .findFirst()
                 .orElse(null);
 
-        return new ValidationResult(isCorrect, explanation);
+        return new ValidationResult(
+                isCorrect,
+                explanation,
+                correctOptionIds,
+                wrongSelectedOptionIds
+        );
     }
 }
