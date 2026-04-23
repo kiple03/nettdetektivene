@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
@@ -30,7 +29,6 @@ import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.repository.LevelRepository;
-import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
@@ -61,7 +59,6 @@ public class TeacherClassroomService {
     private final LevelRepository levelRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final UserRepository userRepository;
-    private final StopRepository stopRepository;
     private final ProgressService progressService;
     private final ClassroomMapper classroomMapper;
     private final UserInventoryItemRepository userInventoryItemRepository;

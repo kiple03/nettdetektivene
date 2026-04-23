@@ -10,10 +10,10 @@ import {
     type TabId,
     type NotesMap,
 } from "@/api/notesService";
-import { useUserProfile } from "@/hooks/useUserProfile";
+import { LayeredAvatar } from "@/components/user/LayeredAvatar.tsx";
 
-import detectiveImg from "@/assets/images/joinWithCode/detective.png";
 import backgroundImg from "@/assets/detective_room_interior.png";
+import {useUserProfile} from "@/hooks/useUserProfile.ts";
 
 interface TabConfig {
     id: TabId;
@@ -242,8 +242,6 @@ export default function NotesPage() {
                 backgroundPosition: "center",
             }}
         >
-            <h1 className={styles.sceneTitle}>🔍 Nettdetektivene</h1>
-
             {!isOpen && (
                 <div className={styles.notebookScene}>
                     <div
@@ -274,11 +272,11 @@ export default function NotesPage() {
 
                             <div className={styles.coverMascotWrap}>
                                 <div className={styles.coverMagnifierAccent} />
-                                <img
-                                    src={detectiveImg}
-                                    alt="Nettdetektiv"
-                                    className={styles.coverMascot}
-                                />
+                                <div className={styles.coverAvatar}>
+                                    <LayeredAvatar items={userProfile?.equippedItems ?? []}
+                                                   size={180}
+                                    />
+                                </div>
                             </div>
 
                             <div className={styles.coverStamp}>Top Secret</div>
@@ -313,7 +311,9 @@ export default function NotesPage() {
 
                             <div className={styles.pageContent}>
                                 <div className={styles.pageHeader}>
-                                    <span className={styles.pageHeaderIcon}>🕵️</span>
+                                    <LayeredAvatar items={userProfile?.equippedItems?? []}
+                                                   size={55}
+                                    />
                                     <div>
                                         <h2 className={styles.pageHeaderTitle}>{notebookTitle}</h2>
                                         <p className={styles.pageHeaderSub}>

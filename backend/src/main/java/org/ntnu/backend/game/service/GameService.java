@@ -14,6 +14,7 @@ import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.validation.LevelSubmissionValidator;
+import org.ntnu.backend.notes.service.NoteService;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ public class GameService {
   private final ProgressService progressService;
   private final GameMapper gameMapper;
   private final LevelSubmissionValidator levelSubmissionValidator;
+  private final NoteService noteService;
 
 
   /**
@@ -79,7 +81,7 @@ public class GameService {
 
   @Transactional(readOnly = true)
   public List<LevelResponse> getLevelsForStop(int stopId, UUID userId, RoleEnum role) {
-    return levelRepository.findByStopIdOrderByIdAsc(stopId)
+    return levelRepository.findByStopIdOrderByOrderAsc(stopId)
         .stream()
         .map(level -> gameMapper.toLevelResponse(
             level,
@@ -94,6 +96,11 @@ public class GameService {
     List<Question> questions = questionRepository.findByLevelIdOrderByIdAsc(levelId);
 
     levelSubmissionValidator.validate(questions, request.answers());
-    progressService.recordCompletionOfLevel(userId, role, level);
+
+    boolean newlyCompleted = progressService.recordCompletionOfLevel(userId, role, level);
+
+    if(newlyCompleted) {
+      noteService.saveCompletionTipIfNeeded(userId, level);
+    }
   }
 }

@@ -1,5 +1,6 @@
 package org.ntnu.backend.notes.repository;
 
+import java.util.Optional;
 import org.ntnu.backend.notes.model.LevelNoteTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -23,4 +24,8 @@ public interface LevelNoteTemplateRepository extends JpaRepository<LevelNoteTemp
      * @return all note templates for the level
      */
     List<LevelNoteTemplate> findAllByLevelId(int levelId);
+
+  Optional<LevelNoteTemplate> findByLevelId(int id);
+
+  List<LevelNoteTemplate> findAllByLevelIdOrderByIdAsc(int id);
 }

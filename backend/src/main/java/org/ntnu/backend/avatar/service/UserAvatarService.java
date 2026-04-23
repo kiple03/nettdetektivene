@@ -82,8 +82,8 @@ public class UserAvatarService {
      * @return a list of all the avatar items accociated with the user.
      */
     public List<EquippedItemDto> getUserInventory(UUID userId) {
-        List<UserInventoryItem> inventory = inventoryRepository.findByUserId(userId);
-        
+        List<UserInventoryItem> inventory = inventoryRepository.findByUserIdOrderByAvatarItemNameAsc(userId);
+
         return inventory.stream()
             .map(item -> EquippedItemDto.builder()
                 .id(item.getAvatarItem().getId())

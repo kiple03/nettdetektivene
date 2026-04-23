@@ -11,8 +11,8 @@ export const studentBoardItems: DashboardItem[] = [
     id: 'map',
     label: 'Kart',
     to: '/map',
-    top: '50%',
-    left: '50%',
+    top: '39%',
+    left: '51%',
     image: mapImg,
     size: 'large'
   },
@@ -21,7 +21,7 @@ export const studentBoardItems: DashboardItem[] = [
     label: 'Medaljer',
     to: '/badges',
     top: '70%',
-    left: '25%',
+    left: '49%',
     image: badgeImg,
     size: 'small'
   },
@@ -29,15 +29,15 @@ export const studentBoardItems: DashboardItem[] = [
     id: 'leaderBoard',
     label: 'Ledertavle',
     to: '/leaderboard',
-    top: '90%',
-    left: '40%'
+    top: '80%',
+    left: '33%'
   },
   {
     id: 'notebook',
     label: 'Viktige notater!',
     to: '/notes',
-    top: '75%',
-    left: '70%',
+    top: '68%',
+    left: '66%',
     image: noteImg,
     size: 'medium'
   },
@@ -45,8 +45,8 @@ export const studentBoardItems: DashboardItem[] = [
     id: 'mystery',
     label: 'Ukens mysterium',
     to: '/weekly-mystery',
-    top: '35%',
-    left: '70%',
+    top: '34%',
+    left: '69%',
     image: mysteryImg,
     size: 'small'
   },
@@ -54,8 +54,8 @@ export const studentBoardItems: DashboardItem[] = [
     id: 'profile',
     label: 'Profil',
     to: '/profile',
-    top: '35%',
-    left: '28%',
+    top: '34%',
+    left: '31%',
     image: profileImg,
     size: 'medium'
   }

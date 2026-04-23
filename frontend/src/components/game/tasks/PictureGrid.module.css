@@ -53,9 +53,9 @@
 .card::after {
     content: "";
     position: absolute;
-    top: -0.42rem;
-    width: 28%;
-    height: 0.95rem;
+    top: -0.85rem;
+    width: 24%;
+    height: 0.8rem;
     background: linear-gradient(
             180deg,
             rgba(255, 234, 150, 0.96) 0%,
@@ -65,20 +65,18 @@
             0 3px 8px rgba(90, 70, 22, 0.18),
             inset 0 1px 0 rgba(255,255,255,0.45);
     opacity: 0.98;
-    z-index: 5;
+    z-index: 6;
     border-radius: 4px;
 }
 
-/* venstre hjørne */
 .card::before {
-    left: 8%;
-    transform: rotate(-9deg);
+    left: 10%;
+    transform: rotate(-8deg);
 }
 
-/* høyre hjørne */
 .card::after {
-    right: 8%;
-    transform: rotate(9deg);
+    right: 10%;
+    transform: rotate(8deg);
 }
 
 /* mye tydeligere valgt state */

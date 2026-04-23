@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidator;
+import org.ntnu.backend.notes.model.LevelNoteTemplate;
 
 /**
  * A level within a {@link Stop}. Each stop has multiple levels with
@@ -47,5 +48,4 @@ public class  Level {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LevelType levelType;
-
 }

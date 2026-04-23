@@ -19,10 +19,11 @@
 .bookBase {
     position: absolute;
     inset: 0;
-    border-radius: 38px;
+    border-radius: 42px;
     background: linear-gradient(180deg, #f6edd7 0%, #efe0bf 100%);
     box-shadow:
-            0 26px 52px rgba(43, 29, 64, 0.24),
+            0 30px 60px rgba(43, 29, 64, 0.22),
+            0 10px 18px rgba(43, 29, 64, 0.12),
             inset 0 0 0 2px rgba(126, 95, 55, 0.08);
     overflow: visible;
 }
@@ -30,52 +31,55 @@
 .bookBase::before {
     content: "";
     position: absolute;
-    inset: 1rem;
-    border-radius: 30px;
+    inset: 0.9rem;
+    border-radius: 34px;
     background:
-            radial-gradient(circle at 20% 18%, rgba(255,255,255,0.45), transparent 32%),
-            linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.04));
+            linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0.06)),
+            radial-gradient(circle at 18% 14%, rgba(255,255,255,0.4), transparent 26%);
     pointer-events: none;
 }
 
 .bookBase::after {
     content: "";
     position: absolute;
-    top: 10%;
-    bottom: 10%;
+    top: 9%;
+    bottom: 8%;
     left: 50%;
-    width: 3px;
+    width: 4px;
     transform: translateX(-50%);
     background: linear-gradient(
             180deg,
             rgba(150, 118, 71, 0.08),
-            rgba(116, 86, 43, 0.28),
+            rgba(116, 86, 43, 0.32),
             rgba(150, 118, 71, 0.08)
     );
     border-radius: 999px;
     pointer-events: none;
+    box-shadow:
+            0 0 10px rgba(104, 74, 39, 0.08);
 }
 
+/* flere lag bak boka */
 .paperStackLeft,
 .paperStackRight {
     position: absolute;
     top: 2%;
     bottom: 2%;
-    width: 8%;
-    border-radius: 26px;
+    width: 10%;
+    border-radius: 28px;
     background: linear-gradient(180deg, #e8d2a7 0%, #dcc093 100%);
     z-index: -1;
     box-shadow:
-            inset 0 0 0 1px rgba(122, 86, 43, 0.1),
-            0 10px 22px rgba(53, 36, 28, 0.15);
+            inset 0 0 0 1px rgba(122, 86, 43, 0.12),
+            0 10px 24px rgba(53, 36, 28, 0.14);
 }
 
 .paperStackLeft {
-    left: -1.2%;
+    left: -2%;
 }
 
 .paperStackRight {
-    right: -1.2%;
+    right: -2%;
 }
 
 .paperStackLeft::before,
@@ -84,22 +88,44 @@
 .paperStackRight::after {
     content: "";
     position: absolute;
-    inset: 0;
-    border-radius: 26px;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    border-radius: 28px;
     background: inherit;
     box-shadow: inherit;
 }
 
-.paperStackLeft::before,
-.paperStackRight::before {
-    transform: translateX(8px);
+.paperStackLeft::before {
+    left: 10px;
     opacity: 0.82;
 }
 
-.paperStackLeft::after,
+.paperStackLeft::after {
+    left: 20px;
+    opacity: 0.62;
+}
+
+.paperStackRight::before {
+    right: 10px;
+    opacity: 0.82;
+}
+
 .paperStackRight::after {
-    transform: translateX(16px);
-    opacity: 0.64;
+    right: 20px;
+    opacity: 0.62;
+}
+
+/* ekstra synlige sidekanter */
+.bookBase .pageEdgeLeft,
+.bookBase .pageEdgeRight {
+    position: absolute;
+    top: 3%;
+    bottom: 3%;
+    width: 1.2%;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #e8d2a7 0%, #d9bb87 100%);
+    opacity: 0.8;
 }
 
 .headerWrap {
@@ -117,7 +143,7 @@
     border-radius: 14px 14px 24px 24px;
     background: linear-gradient(180deg, #fbf2df 0%, #f0e0c2 100%);
     box-shadow:
-            0 18px 26px rgba(42, 28, 62, 0.18),
+            0 20px 30px rgba(42, 28, 62, 0.18),
             inset 0 0 0 1px rgba(135, 102, 61, 0.1);
 }
 
@@ -162,9 +188,9 @@
 
 .tipsArea {
     position: absolute;
-    left: -2%;
-    top: 13%;
-    width: 18%;
+    left: -4.5%;
+    top: 12%;
+    width: 15%;
     z-index: 6;
 }
 
@@ -184,80 +210,5 @@
 }
 
 .answerDock {
-    position: absolute;
-    left: 50%;
-    bottom: -1.6%;
-    transform: translateX(-50%);
-    width: 26%;
-    height: 7.4%;
-    min-height: 58px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #4d3372 0%, #34224d 100%);
-    box-shadow:
-            0 14px 24px rgba(42, 28, 62, 0.24),
-            inset 0 0 0 3px #c8a05c,
-            inset 0 0 0 8px rgba(255,255,255,0.03);
-}
-
-@media (max-width: 1100px) {
-    .bookShell {
-        width: min(calc(100vw - 1rem), calc((100dvh - 1rem) * 1.55));
-        aspect-ratio: 1.55 / 1;
-    }
-
-    .tipsArea {
-        left: 1%;
-        top: 21%;
-        width: 18%;
-    }
-
-    .content {
-        left: 19%;
-        right: 7%;
-        top: 32%;
-        bottom: 14%;
-    }
-}
-
-@media (max-width: 820px) {
-    .viewport {
-        padding: 0.5rem;
-        overflow: auto;
-    }
-
-    .bookShell {
-        width: min(calc(100vw - 1rem), 1150px);
-        aspect-ratio: auto;
-        min-height: 760px;
-    }
-
-    .bookBase {
-        min-height: 760px;
-    }
-
-    .bookBase::after {
-        display: none;
-    }
-
-    .headerWrap {
-        width: 74%;
-        top: -2%;
-    }
-
-    .tipsArea {
-        left: 4%;
-        top: 18%;
-        width: 24%;
-    }
-
-    .content {
-        left: 10%;
-        right: 10%;
-        top: 35%;
-        bottom: 15%;
-    }
-
-    .answerDock {
-        width: 42%;
-    }
+    display: none;
 }
