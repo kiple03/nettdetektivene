@@ -4,14 +4,14 @@ import DetectiveBook from "@/components/game/ui/DetectiveBook";
 import DetectiveTipsNote from "@/components/game/ui/DetectiveTipsNote";
 import PictureGrid from "@/components/game/tasks/PictureGrid";
 
-import { submitMultiSelectAnswer } from "@/api/gameApi";
+import {type SubmitAnswerRequest, submitMultiSelectAnswer} from "@/api/gameApi";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
 
 import type { StationData, SubmitAnswerResult } from "@/types/station";
 
 type PhotographerStationProps = {
     station: StationData;
-    onAnswer: (result: SubmitAnswerResult) => void;
+    onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
 };
 
@@ -38,27 +38,26 @@ export default function PhotographerStation({
     }, [station.questionId]);
 
     const handleSubmit = async (selectedIds: number[]) => {
+        const request: SubmitAnswerRequest = {
+            shape: "MULTIPLE_CHOICE",
+            selectedIds,
+        };
+
         try {
-            const response = await submitMultiSelectAnswer(
-                station.questionId,
-                {
-                    shape: "MULTIPLE_CHOICE",
-                    selectedIds,
-                }
-            );
+            const response = await submitMultiSelectAnswer(station.questionId, request);
 
             setCorrectIds(response.correctOptionIds ?? []);
             setWrongIds(response.wrongSelectedOptionIds ?? []);
             setSubmitted(true);
 
-            onAnswer(mapSubmitResponseToSubmitAnswer(response));
+            onAnswer(mapSubmitResponseToSubmitAnswer(response), request);
         } catch (error: any) {
             console.error(error);
 
             onAnswer({
                 correct: false,
                 feedback: "Noe gikk galt",
-            });
+            }, request);
         }
     };
 

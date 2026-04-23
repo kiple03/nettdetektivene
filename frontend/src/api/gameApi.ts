@@ -4,6 +4,7 @@ export type LevelType = "MULTIPLE_CHOICE"| "PICTURE_QUIZ" // legge til flere opp
 
 export type SubmitAnswerRequest =
     | SubmitSingleChoiceAnswerRequest
+    | SubmitMultiSelectAnswerRequest
 
 
 export interface GameStop {

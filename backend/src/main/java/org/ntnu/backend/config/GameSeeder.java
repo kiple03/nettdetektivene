@@ -257,9 +257,9 @@ public class GameSeeder implements CommandLineRunner {
   }
 
   private void seedPhoto() {
-    Stop stop = stopRepository.findByName("Nyhetskvartalet").orElseGet(() -> {
+    Stop stop = stopRepository.findByName("Fotografen").orElseGet(() -> {
       Stop s = new Stop();
-      s.setName("Nyhetskvartalet");
+      s.setName("Fotografen");
       s.setDisplayOrder(2);
       return stopRepository.save(s);
     });
