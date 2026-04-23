@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import java.util.List;
 import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,7 @@ public class OpenApiConfig {
                 .scheme("bearer")
                 .bearerFormat("JWT")
                 .description("JWT bearer token from /auth/login")))
-        .addSecurityItem(new SecurityRequirement().addList(BEARER_AUTH));
+        .security(List.of(new SecurityRequirement().addList(BEARER_AUTH)));
   }
 
   /**
@@ -49,6 +50,9 @@ public class OpenApiConfig {
   @Bean
   public OperationCustomizer globalResponseCustomizer() {
     return (operation, handlerMethod) -> {
+      if (handlerMethod.hasMethodAnnotation(PublicEndpoint.class)) {
+        return operation;
+      }
       operation.getResponses()
           .addApiResponse("401", new ApiResponse()
               .description("Authentication required or token invalid"));
