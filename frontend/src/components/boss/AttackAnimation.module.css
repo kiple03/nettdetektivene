@@ -15,3 +15,16 @@
     pointer-events: none;
     animation: newsFly 0.8s linear forwards;
 }
+
+.flash{
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 9999;
+    animation: blitz 2s ease-out forwards;
+    pointer-events: none;
+}
+@keyframes blitz {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+}

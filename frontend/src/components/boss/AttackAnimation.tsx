@@ -5,6 +5,9 @@ import sharkBase from "@/assets/images/boss/shark-base.png";
 import sharkNewspaper1 from "@/assets/images/boss/shark-newspaper-1.png";
 import sharkNewspaper2 from "@/assets/images/boss/shark-newspaper-2.png";
 import sharkNewspaper3 from "@/assets/images/boss/shark-newspaper-3.png";
+import sharkCamera1 from '@/assets/images/boss/shark-camera-1.png';
+import sharkCamera2 from '@/assets/images/boss/shark-camera-2.png';
+import sharkCamera3 from '@/assets/images/boss/shark-camera-3.png';
 import newspaper from "@/assets/images/boss/newspaper.png";
 import styles from "./AttackAnimation.module.css";
 
@@ -19,6 +22,7 @@ interface Props {
 export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Props) {
     const completed = useRef(false);
     const [showNewspaper, setShowNewspaper] = useState(false);
+    const [showFlash, setShowFlash] = useState(false);
 
     const triggerRef = (el: HTMLDivElement | null) => {
         if (!el || completed.current) return;
@@ -36,11 +40,16 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
                 break;
             }
 
-            case "FOTOGRAFEN":
-                // 1. Switch boss sprite to shark-camera.png
-                // 2. Flash effect fires at player (white screen flash)
-                onComplete();
+            case "FOTOGRAFEN":{
+                const frames = [sharkCamera1, sharkCamera2, sharkCamera3, sharkBase];
+                frames.forEach((frame, i) => {
+                    setTimeout(() => {
+                        onSpriteChange(frame);
+                        if(i === frame.length -1) setShowFlash(true);
+                    }, i*FRAME_MS);
+                });
                 break;
+            }
 
             case "POSTKONTORET":
                 // 1. Switch boss sprite to shark-email.png
@@ -88,6 +97,10 @@ export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Prop
                     onAnimationEnd={onComplete}
                 />,
                 document.body
+            )}
+            {showFlash && createPortal(
+                <div className={styles.flash} onAnimationEnd={onComplete}
+                />, document.body
             )}
         </>
     );
