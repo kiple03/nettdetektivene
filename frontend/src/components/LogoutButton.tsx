@@ -8,6 +8,7 @@ function LogoutButton({ className }: { className?: string }) {
 
   const handleClick = async () => {
     await logout();
+    localStorage.removeItem("hasSeenWelcomeDialog")
     navigate('/', { replace: true });
   };
 
