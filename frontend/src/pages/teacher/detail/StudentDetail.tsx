@@ -21,7 +21,7 @@ export default function StudentDetail() {
         );
     }
 
-    const { username, levelCompletions } = studentDetail;
+    const { username, email, enrolledAt, levelCompletions } = studentDetail;
     const completedCount = studentDetail.totalLevelsCompleted ?? levelCompletions.length;
 
     return (
@@ -31,6 +31,8 @@ export default function StudentDetail() {
                     <StudentDetailHeader
                         backLink={backLink}
                         username={username}
+                        email={email}
+                        enrolledAt={enrolledAt}
                         completedCount={completedCount}
                         avatarItems={studentProfile?.equippedItems ?? []}
                     />

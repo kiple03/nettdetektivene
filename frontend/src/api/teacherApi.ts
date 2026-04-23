@@ -77,6 +77,8 @@ interface RawLevelCompletionEntry {
 
 interface RawStudentDetail {
   username: string;
+  email?: string;
+  enrolledAt?: string;
   completions?: RawLevelCompletionEntry[];
   currentStopName?: string;
   currentLevelOrder?: number;
@@ -139,6 +141,8 @@ function mapStudentDetail(raw: RawStudentDetail, userId: string): StudentDetail 
   return {
     userId,
     username: raw.username,
+    email: raw.email ?? null,
+    enrolledAt: raw.enrolledAt ?? null,
     levelCompletions: completions.map(mapLevelEntry),
     currentStopName: raw.currentStopName ?? null,
     currentLevelOrder: raw.currentLevelOrder ?? null,
