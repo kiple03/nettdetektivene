@@ -16,6 +16,7 @@ import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
+import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -95,6 +96,15 @@ public class TeacherClassroomController {
             @PathVariable UUID studentId,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         teacherClassroomService.removeStudent(id, studentId, principal);
+    }
+
+    @GetMapping("/{id}/students/{studentId}/medalions")
+    @PreAuthorize("hasRole('TEACHER')")
+    public List<MedalionResponse> getStudentMedalions(
+            @PathVariable UUID id,
+            @PathVariable UUID studentId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.getStudentMedalions(id, studentId, principal);
     }
 
     @PatchMapping("/{id}/students/{studentId}")
