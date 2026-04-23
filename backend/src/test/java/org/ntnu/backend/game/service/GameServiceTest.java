@@ -161,7 +161,7 @@ class GameServiceTest {
     level2.setLevelType(LevelType.MULTIPLE_CHOICE);
     level2.setStop(stop);
 
-    when(levelRepository.findByStopIdOrderByIdAsc(1))
+    when(levelRepository.findByStopIdOrderByOrderAsc(1))
         .thenReturn(List.of(level1, level2));
 
     List<LevelResponse> result = gameService.getLevelsForStop(1, userId, RoleEnum.STUDENT);
@@ -173,7 +173,7 @@ class GameServiceTest {
 
   @Test
   void getLevelsForStop_noLevels_returnsEmptyList() {
-    when(levelRepository.findByStopIdOrderByIdAsc(99))
+    when(levelRepository.findByStopIdOrderByOrderAsc(99))
         .thenReturn(List.of());
 
     List<LevelResponse> result = gameService.getLevelsForStop(99, userId, RoleEnum.STUDENT);
