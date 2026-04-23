@@ -1,8 +1,11 @@
 package org.ntnu.backend.game.validation;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
-import org.ntnu.backend.game.dto.subtypes.SingleChoiceAnswer;
+import org.ntnu.backend.game.dto.subtypes.MultiSelectAnswer;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -11,10 +14,19 @@ import org.springframework.stereotype.Component;
 /**
  * Validates student submissions for {@link LevelType#PICTURE_QUIZ} questions.
  *
- * <p>Expects a {@link SingleChoiceAnswer} where {@code selectedId} is the ID
- * of the category option the student chose (e.g. "Ekte", "KI-generert",
- * or "Manipulert"). Finds the matching {@link PictureQuizOption} and returns
- * whether it is correct along with its explanation.
+ * <p>Expects a {@link MultiSelectAnswer} where {@code selectedIds} contains
+ * the IDs of all options the student selected. A submission is considered
+ * correct only if:
+ *
+ * <ul>
+ *   <li>all selected option IDs are correct, and</li>
+ *   <li>all correct option IDs are included in the submission.</li>
+ * </ul>
+ *
+ * <p>In other words, the selected option IDs must exactly match the set of
+ * correct option IDs. The validator returns whether the submission is correct,
+ * along with an explanation taken from one of the correct
+ * {@link PictureQuizOption} entries.
  */
 @Component
 public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
@@ -25,26 +37,56 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
     }
 
     /**
-     * @param options    the question's parsed options including correct flags
-     * @param submission must be a {@link SingleChoiceAnswer}
-     * @return correct/incorrect with the chosen option's explanation
-     * @throws IllegalArgumentException if submission is not a {@link SingleChoiceAnswer}
-     *                                  or the selected option ID does not exist
+     * Validates a submitted answer for a picture quiz question.
+     *
+     * @param options the question's parsed options including correct flags
+     * @param submission must be a {@link MultiSelectAnswer}
+     * @return a {@link ValidationResult} indicating whether the selected option IDs
+     *         exactly match the correct option IDs, along with an explanation from
+     *         one of the correct options
+     * @throws IllegalArgumentException if submission is not a {@link MultiSelectAnswer}
+     *                                  or if any selected option ID does not exist
      */
     @Override
     public ValidationResult validate(List<Option> options, SubmitAnswerRequest submission) {
-        if (!(submission instanceof SingleChoiceAnswer choice)) {
+        if (!(submission instanceof MultiSelectAnswer choice)) {
             throw new IllegalArgumentException(
-                    "PICTURE_QUIZ requires SingleChoiceAnswer, got "
+                    "PICTURE_QUIZ requires MultiSelectAnswer, got "
                             + submission.getClass().getSimpleName());
         }
 
-        return options.stream()
-                .filter(o -> o instanceof PictureQuizOption pq && pq.getId() == choice.getSelectedId())
+        Set<Integer> selectedIds = choice.getSelectedIds() == null
+                ? Set.of()
+                : Set.copyOf(choice.getSelectedIds());
+
+        List<PictureQuizOption> pq = options.stream()
                 .map(o -> (PictureQuizOption) o)
+                .toList();
+
+        Set<Integer> validOptionIds = pq.stream()
+                .map(PictureQuizOption::getId)
+                .collect(Collectors.toSet());
+
+        for (Integer selectedId : selectedIds) {
+            if (!validOptionIds.contains(selectedId)) {
+                throw new IllegalArgumentException("Option not found " + selectedId);
+            }
+        }
+
+        Set<Integer> correctIds = pq.stream()
+                .filter(PictureQuizOption::isCorrect)
+                .map(PictureQuizOption::getId)
+                .collect(Collectors.toSet());
+
+        boolean isCorrect = selectedIds.equals(correctIds);
+
+        String explanation = pq.stream()
+                .filter(PictureQuizOption::isCorrect)
+                .map(PictureQuizOption::getExplanation)
+                .filter(explanationText -> explanationText != null && !explanationText.isBlank())
                 .findFirst()
-                .map(pq -> new ValidationResult(pq.isCorrect(), pq.getExplanation()))
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Option not found: " + choice.getSelectedId()));
+                .orElse(null);
+
+        return new ValidationResult(isCorrect, explanation);
     }
 }

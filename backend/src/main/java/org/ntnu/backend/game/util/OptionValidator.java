@@ -91,8 +91,8 @@ public class OptionValidator {
             .filter(PictureQuizOption::isCorrect)
             .count();
 
-    if (correctCount != 1) {
-      throw new OptionValidationException("Picture quiz must have exactly one correct answer");
+    if (correctCount < 1) {
+      throw new OptionValidationException("Må velge minst ett svar!");
     }
   }
 }
