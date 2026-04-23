@@ -66,24 +66,25 @@ public class OpenApiConfig {
   @Bean
   public OperationCustomizer globalResponseCustomizer() {
     return (operation, handlerMethod) -> {
-      if (handlerMethod.hasMethodAnnotation(PublicEndpoint.class)) {
-        return operation;
-      }
-
       Content errorContent = new Content()
           .addMediaType("application/json", new MediaType()
               .schema(new Schema<>().$ref("#/components/schemas/ErrorResponse")));
 
-      operation.getResponses()
-          .addApiResponse("400", new ApiResponse()
-              .description("Bad request — validation or input error")
-              .content(errorContent))
-          .addApiResponse("401", new ApiResponse()
-              .description("Authentication required or token invalid")
-              .content(errorContent))
-          .addApiResponse("500", new ApiResponse()
-              .description("Unexpected server error")
-              .content(errorContent));
+      if (!handlerMethod.hasMethodAnnotation(PublicEndpoint.class)) {
+        operation.getResponses()
+            .addApiResponse("401", new ApiResponse()
+                .description("Authentication required or token invalid")
+                .content(errorContent));
+      }
+
+      ApiErrorResponse[] customErrors = handlerMethod.getMethod()
+          .getAnnotationsByType(ApiErrorResponse.class);
+      for (ApiErrorResponse err : customErrors) {
+        operation.getResponses()
+            .addApiResponse(err.responseCode(), new ApiResponse()
+                .description(err.description())
+                .content(errorContent));
+      }
 
       return operation;
     };

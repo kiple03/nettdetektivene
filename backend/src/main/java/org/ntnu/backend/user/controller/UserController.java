@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.config.openapi.ApiErrorResponse;
 import org.ntnu.backend.config.openapi.PublicEndpoint;
 import org.ntnu.backend.user.dto.CreateUserRequest;
 import org.ntnu.backend.user.dto.LoginRequest;
@@ -62,7 +63,7 @@ public class UserController {
   @Operation(summary = "Register a new user", description = "Creates a new user. Returns access "
       + "token and refresh token in HttpOnly cookie.")
   @ApiResponse(responseCode = "200", description = "Registration successful")
-  @ApiResponse(responseCode = "409", description = "Email already in use")
+  @ApiErrorResponse(responseCode = "409", description = "Email already in use")
   @SecurityRequirements({})
   @PublicEndpoint
   @PostMapping("/register")
