@@ -81,7 +81,7 @@ export function ClassroomDetailStudentCard({
                                                     if (event.key === 'Enter') onSaveUsername(student);
                                                     if (event.key === 'Escape') onCancelEditUsername();
                                                 }}
-                                                maxLength={20}
+                                                maxLength={30}
                                                 autoFocus
                                             />
                                             <button

@@ -167,7 +167,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   const handleSave = () => {
     const trimmed = username.trim();
     if (trimmed.length < 3 || trimmed.length > 20) {
-      setUsernameError('Brukernavn må være mellom 3 og 20 tegn');
+      setUsernameError('Brukernavn må være mellom 3 og 30 tegn');
       return;
     }
     setUsernameError('');
@@ -296,7 +296,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
                 placeholder="Ditt detektivnavn"
                 required
                 minLength={3}
-                maxLength={20}
+                maxLength={30}
               />
             </div>
             <div className={styles.usernameErrorSlot}>
