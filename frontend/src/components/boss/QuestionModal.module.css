@@ -188,3 +188,95 @@
     margin: 0;
     text-align: center;
 }
+
+   
+/****************** Override from old modal styles (question) ******************/
+.modal {                                                                                           
+      background: #0d1a2a;
+      border: 2px solid #4a9eff;                                                                     
+      border-radius: 14px;                                                                           
+      padding: clamp(20px, 3vw, 32px);      
+      color: white;                                                                                  
+      text-align: center;
+      display: flex;                                                                                 
+      flex-direction: column;
+      align-items: stretch;  
+      gap: 12px;                                                            
+                                                                                                     
+      width: max-content;                                              
+      min-width: 280px;                            
+      max-width: min(92vw, 800px);                                          
+      box-sizing: border-box;                                            
+  }  
+
+.stationWrap {                                                                                     
+    width: 100%;                                                                                   
+}                                                                                                  
+                                                                                                    
+.stationWrap :global(.station-container) {
+    min-height: 0;                
+    background: transparent;                                                                       
+    font-family: inherit;
+    gap: 12px;                                                                                     
+}               
+                                                                                                    
+.stationWrap :global(.station-container::before) {
+    display: none;                 
+}                                                                                                  
+
+.stationWrap :global(.station-title),                                                              
+.stationWrap :global(.task-header) {
+    background: #0a1524;                                                      
+    color: #e6eefc;
+    border: 1px solid #1e3a5f;                                                                     
+    border-radius: 8px;                                                                            
+    padding: 0.5rem 0.75rem;                                                                       
+    font-size: 1rem;                                                                               
+}                                                                                                  
+
+.stationWrap :global(.station-content) {                                                           
+    color: #e6eefc;
+}
+
+.stationWrap :global(.feedback-wrapper) {                                                          
+    flex: none;
+    margin-top: 8px;                                                                               
+}                                                                                                  
+
+.stationWrap :global(.feedback-box) {                                                              
+    background: #0a1524;         
+    color: #e6eefc;
+    width: 100%;                                                                  
+    max-width: 100%;
+    padding: 0.75rem;                                                                              
+    border-radius: 10px;                                                                           
+}
+                                                                                                    
+.stationWrap :global(.feedback-box__correct) {                                                     
+    border: 2px solid #2d7a2d;
+}                                                                                                  
+                
+.stationWrap :global(.feedback-box__wrong) {                                                       
+    border: 2px solid #7a2d2d;
+}                                                                                                  
+                
+.stationWrap :global(.nextButton) {
+    margin-top: 10px;
+    padding: 10px 18px;                                                                            
+    border: none;
+    border-radius: 8px;                                                                            
+    background: #1e3a5f;            
+    color: white;                                                                                  
+    font-weight: bold;
+    cursor: pointer;                                                                               
+    transition: background 0.15s;                                                                  
+}
+                                                                                                    
+.stationWrap :global(.nextButton):hover {
+    background: #2a4f82;
+}                                                                                                  
+
+/* Any station-specific background images (e.g. .station-news) leak through — kill them */         
+.stationWrap :global([class*="station-"]) {
+    background-image: none;                                                                        
+}   
