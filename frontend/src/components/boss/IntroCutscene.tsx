@@ -7,7 +7,7 @@ interface Props {
     onPlayerReveal: () => void;
 }
 
-export function IntroCutscene({ username, onComplete, onPlayerReveal }: Props) {
+export function IntroCutscene({ onComplete, onPlayerReveal }: Props) {
     const [step, setStep] = useState(1);
 
     const advance = () => {
