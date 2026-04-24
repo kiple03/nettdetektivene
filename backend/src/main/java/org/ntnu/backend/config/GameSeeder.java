@@ -277,13 +277,13 @@ public class GameSeeder implements CommandLineRunner {
             level,
             "Hvilke bilder er AI-generert?",
             List.of(
-                    new PictureQuizOption(1, "Ekte", "/assets/photographer/lvl_1/q1/SantaClauseReal.png", false,
+                    new PictureQuizOption(1, "Ekte", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseReal.png", false,
                             "Bildet er ikke ekte. Det har tegn på KI-generering."),
-                    new PictureQuizOption(2, "KI-generert", "/assets/photographer/lvl_1/q1/SantaClauseAi.png", true,
+                    new PictureQuizOption(2, "KI-generert", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseAi.png", true,
                             "Riktig. Ansiktstrekkene og detaljene i bildet tyder på at det er KI-generert."),
-                    new PictureQuizOption(3, "Ekte", "/assets/photographer/lvl_1/q1/aiFake.png", true,
+                    new PictureQuizOption(3, "Ekte", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aiFake.png", true,
                             "Bildet er ikke ekte. Det har tegn på KI-generering."),
-                    new PictureQuizOption(4, "Ekte", "/assets/photographer/lvl_1/q1/img_2.png", false,
+                    new PictureQuizOption(4, "Ekte", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_2.png", false,
                             "Bildet er ikke ekte. Det har tegn på KI-generering.")
             )
     );
@@ -292,13 +292,13 @@ public class GameSeeder implements CommandLineRunner {
             level,
             "Hvilket bilder er IKKE ekte?",
             List.of(
-                    new PictureQuizOption(1, "KI-generert", "/assets/photographer/lvl_1/q2/robben.png", false,
+                    new PictureQuizOption(1, "KI-generert", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/robben.png", false,
                             "Bildet er Helt ekte!"),
-                    new PictureQuizOption(2, "Manipulert", "/assets/photographer/lvl_1/q2/FootballFakePic.png", true,
+                    new PictureQuizOption(2, "Manipulert", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/FootballFakePic.png", true,
                             "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt."),
-                    new PictureQuizOption(3, "Manipulert", "/assets/photographer/lvl_1/q2/FootballReal.png", false,
+                    new PictureQuizOption(3, "Manipulert", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/FootballReal.png", false,
                             "Bildet er Helt ekte!"),
-                    new PictureQuizOption(4, "Manipulert", "/assets/photographer/lvl_1/q2/crouch.png", false,
+                    new PictureQuizOption(4, "Manipulert", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/crouch.png", false,
                             "Bildet er Helt ekte!")
             )
     );
@@ -307,13 +307,13 @@ public class GameSeeder implements CommandLineRunner {
             level,
             "Marker alle ekte mennesker",
             List.of(
-                    new PictureQuizOption(1, "Ja, fordi hendene og detaljene ser unormale ut", "/assets/photographer/lvl_1/q3/girlAI.png", false,
+                    new PictureQuizOption(1, "Ja, fordi hendene og detaljene ser unormale ut", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/manAI.png", false,
                             "Riktig. Rare detaljer som hender, hår, øredobber eller bakgrunn kan være tegn på KI."),
-                    new PictureQuizOption(2, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/lvl_1/q3/img_1.png", true,
+                    new PictureQuizOption(2, "Nei, fordi bildet ser fint og realistisk ut", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_1.png", true,
                             "Feil!, Dette er et helt ekte bilde!"),
-                    new PictureQuizOption(3, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/lvl_1/q3/beetle.png", true,
+                    new PictureQuizOption(3, "Nei, fordi bildet ser fint og realistisk ut", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/beetle.png", true,
                             "Feil!, Dette er et helt ekte bilde!"),
-                    new PictureQuizOption(4, "Nei, fordi bildet ser fint og realistisk ut", "/assets/photographer/lvl_1/q3/john.png", true,
+                    new PictureQuizOption(4, "Nei, fordi bildet ser fint og realistisk ut", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/john.png", true,
                             "Feil!, Dette er et helt ekte bilde!")
             )
     );
@@ -334,9 +334,9 @@ public class GameSeeder implements CommandLineRunner {
             level2,
             "Hvilket er et bilde av ekte natur?",
             List.of(
-                    new PictureQuizOption(1, "", "/assets/photographer/lvl_2/q1/fakeAI.png", false,
+                    new PictureQuizOption(1, "", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png", false,
                             "Helt riktig, hvem natur ser slik ut? ellrhva"),
-                    new PictureQuizOption(2, "", "/assets/photographer/lvl_2/q1/norsknatur.png", true,
+                    new PictureQuizOption(2, "", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png", true,
                             "Feil, dette er helt nydelig norsk natur!")
             )
     );
@@ -346,7 +346,7 @@ public class GameSeeder implements CommandLineRunner {
             "Hva er riktig påstand?",
             List.of(
                     new PictureQuizOption(1, "Bildet er ikke ekte fordi mange rare ting skjer samtidig," +
-                            "som et stort øye på himmelen og en bil som står på en hånd, og sånt finnes ikke i virkeligheten.",
+                            " og sånt finnes ikke i virkeligheten.",
                             null, true, "Helt riktig!"),
                     new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, false, "Helt feil!"),
                     new PictureQuizOption(3, "Jeg vet ikke", null, false, "Helt feil!"),
@@ -370,9 +370,9 @@ public class GameSeeder implements CommandLineRunner {
             level3,
             "Hvilket bilde er AI?",
             List.of(
-                    new PictureQuizOption(1, null, "/assets/photographer/lvl_3/q1/zebra.jpg",
+                    new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/zebra.jpg",
                             false, "Feil! Det er et ekte zebra"),
-                    new PictureQuizOption(2, null, "/assets/photographer/lvl_3/q1/zebraFake.png",
+                    new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/zebraFake.png",
                             true, "Riktig! dette bildet er faktisk generert av AI")
             )
     );
@@ -381,9 +381,9 @@ public class GameSeeder implements CommandLineRunner {
             level3,
             "Hvilket bilde er ekte",
             List.of(
-                    new PictureQuizOption(1, null, "/assets/photographer/lvl_3/q2/fotballai.png",
+                    new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fotballai.png",
                             false, "Feil! Det er et AI generert bilde!"),
-                    new PictureQuizOption(2, null, "/assets/photographer/lvl_3/q2/fotballnotai.png",
+                    new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fotballnotai.png",
                             true, "Riktig! dette bildet er faktisk ikke generert av AI")
             )
     );
