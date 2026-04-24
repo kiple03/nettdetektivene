@@ -77,7 +77,7 @@ public class LeaderboardService {
         ));
 
     for (Enrollment e : enrollments) {
-      int score = progressById.get(e.getUser().getId());
+      int score = progressById.getOrDefault(e.getUser().getId(), 0);
       scoresByClassroom.computeIfAbsent(e.getClassroom(), k -> new ArrayList<>()).add(score);
     }
     return scoresByClassroom;
