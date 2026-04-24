@@ -1,19 +1,24 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { TeacherNotification, TeacherNotificationType } from '@/api/notificationApi';
 import { useClassroomSummaries } from '@/hooks/teacher/useTeacherQueries';
 import { useDeleteNotification, useMarkAsRead, useNotifications } from '@/hooks/teacher/useNotifications';
 import './Notifications.css';
 
 const TYPE_LABELS: Record<TeacherNotificationType, string> = {
-  AREA_COMPLETED: 'Omrade fullfort',
-  GAME_COMPLETED: 'Spill fullfort',
+  AREA_COMPLETED: 'Område fullført',
+  GAME_COMPLETED: 'Spill fullført',
   STUDENT_STUCK: 'Elev sitter fast',
+  INAPPROPRIATE_USERNAME: 'Upassende brukernavn',
+  INAPPROPRIATE_NOTE: 'Upassende notat',
 };
 
 const TYPE_ICONS: Record<TeacherNotificationType, string> = {
   AREA_COMPLETED: '🧭',
   GAME_COMPLETED: '🏆',
   STUDENT_STUCK: '⚠️',
+  INAPPROPRIATE_USERNAME: '🚫',
+  INAPPROPRIATE_NOTE: '📝',
 };
 
 type DateGroup = {
@@ -36,6 +41,7 @@ function formatDayKey(dateString: string): string {
 }
 
 export default function Notifications() {
+  const navigate = useNavigate();
   const [classroomFilter, setClassroomFilter] = useState<string>('all');
 
   const selectedClassroomId = classroomFilter === 'all' ? undefined : classroomFilter;
@@ -83,6 +89,9 @@ export default function Notifications() {
         <div className="teacher-corkboard__pin" />
 
         <header className="notifs__header">
+          <button className="notifs__back-btn" onClick={() => navigate(-1)}>
+            ← Tilbake
+          </button>
           <div className="notifs__title-row">
             <h1 className="notifs__title">Varsler</h1>
             {unreadCount > 0 && <span className="notifs__unread-badge">{unreadCount}</span>}
