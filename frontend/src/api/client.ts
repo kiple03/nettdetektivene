@@ -74,6 +74,7 @@ apiClient.interceptors.response.use(
       original._retry = true;
       const newToken = await sharedRefresh();
       if (newToken) {
+        window.dispatchEvent(new Event('auth-changed'));
         original.headers.Authorization = `Bearer ${newToken}`;
         return apiClient(original);
       }
