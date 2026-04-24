@@ -77,13 +77,13 @@
 
 /* ? button inside .station-container */
 .tutorial-help-btn {
-  width: 2rem;
-  height: 2rem;
+  width: 4rem;
+  height: 4rem;
   border-radius: 50%;
   border: 2px solid var(--accent);
   background: var(--white);
   color: var(--accent);
-  font-size: 1rem;
+  font-size: 2rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
