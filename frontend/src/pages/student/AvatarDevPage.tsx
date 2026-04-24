@@ -133,8 +133,8 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
 
           <p className={styles.equippedText}>Trying on: {equipped.length} items</p>
 
-          <div className="mt-4">
-            <label className="block font-semibold mb-1">Detektiv navn</label>
+          <div className={styles.usernameSection}>
+            <label className={styles.usernameLabel}>Detektiv navn</label>
             <input
               type="text"
               value={username}
@@ -142,22 +142,22 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
                 setUsername(e.target.value);
                 if (usernameError) setUsernameError('');
               }}
-              className="w-full px-3 py-2 border rounded-lg"
+              className={styles.usernameInput}
               required
               minLength={3}
               maxLength={20}
             />
             {usernameError && (
-              <p style={{ color: '#dc2626', marginTop: 4, fontSize: 14 }}>{usernameError}</p>
+              <p className={styles.usernameError}>{usernameError}</p>
             )}
           </div>
 
           <button
             onClick={handleSave}
             disabled={isSaving || username.trim().length < 3}
-            className="mt-6 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-md transition-colors disabled:bg-gray-400"
+            className={styles.saveButton}
           >
-            {isSaving ? "Lagrer..." : "Lagre anntrett"}
+            {isSaving ? "Lagrer..." : "Lagre avatar"}
           </button>
         </div>
 
