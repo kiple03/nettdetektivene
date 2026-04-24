@@ -66,6 +66,10 @@ export default function CodePage() {
                         </div>
                     </div>
                 </div>
+
+                <button className={styles.dashboardLink} onClick={() => navigate(`/teacher/classrooms/${classroomId}`)}>
+                    Gå til klasserom →
+                </button>
             </div>
         </div>
     );
