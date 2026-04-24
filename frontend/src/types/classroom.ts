@@ -28,6 +28,7 @@ export interface StudentSummary {
   username: string;
   medalsEarned: number;
   levelsCompleted: number;
+  score: number;
   equippedItems: EquippedItem[];
 }
 

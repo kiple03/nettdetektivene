@@ -3,9 +3,9 @@ package org.ntnu.backend.classroom.controller;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardClassroomResponse;
 import org.ntnu.backend.classroom.dto.leaderboard.RankedClassroomResponse;
 import org.ntnu.backend.classroom.dto.leaderboard.RankedStudentResponse;
-import org.ntnu.backend.classroom.service.ClassroomService;
 import org.ntnu.backend.classroom.service.LeaderboardService;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -39,6 +39,14 @@ public class LeaderboardController {
     return leaderboardService.getRankedStudentLeaderboard(classroomId);
   }
 
-//  @GetMapping("classr")
+  @GetMapping("teachers/{teacherId}")
+  @PreAuthorize("hasRole('TEACHER')")
+  public List<LeaderboardClassroomResponse> getTeacherClassroomScores(
+      @PathVariable UUID teacherId,
+      @AuthenticationPrincipal JwtAuthenticatedPrincipal principal
+  ) {
+    // verify access
+    return leaderboardService.getTeacherClassroomScores(teacherId);
+  }
 
 }
