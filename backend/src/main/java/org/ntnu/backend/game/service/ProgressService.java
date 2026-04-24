@@ -1,13 +1,11 @@
 package org.ntnu.backend.game.service;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import org.ntnu.backend.classroom.service.NotificationService;
+import lombok.AllArgsConstructor;
 import org.ntnu.backend.exception.UserProgressNotFoundException;
 import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.mapper.ProgressMapper;
@@ -22,8 +20,6 @@ import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.AllArgsConstructor;
 
 /**
  * Manages student progression through the game's stops and levels.
@@ -52,7 +48,6 @@ public class ProgressService {
   private final LevelRepository levelRepository;
   private final StopRepository stopRepository;
   private final ProgressMapper progressMapper;
-  private final NotificationService notificationService;
   
   /**
    * Creates the initial {@link UserProgress} row for a newly registered student,
@@ -162,21 +157,10 @@ public class ProgressService {
 
     UserProgress progress = getProgressOrThrow(userId);
 
-    if (!shouldAdvance(progress, level)) return;
-
-    Stop completedStop = progress.getCurrentStop();
-    long levelsInStop = levelRepository.countByStopId(completedStop.getId());
-    boolean completedArea = progress.getCurrentLevelOrder() == levelsInStop;
+    if (!shouldAdvance(progress, level)) return false;
 
     advanceToNextLevel(progress);
-    progress.setLastProgressAt(Instant.now());
-
-    if (completedArea) {
-      notificationService.notifyAreaCompleted(progress.getUser(), completedStop);
-    }
-    if (progress.isGameCompleted()) {
-      notificationService.notifyGameCompleted(progress.getUser());
-    }
+    return true;
   }
 
   /**
