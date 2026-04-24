@@ -44,6 +44,7 @@ export default function GamePage() {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: studentKeys.gameStops });
             queryClient.invalidateQueries({ queryKey: ['stopLevels'] });
+            queryClient.invalidateQueries({ queryKey: ['medalions'] });
             setLevelPassed(true);
             setDialogOpen(true);
         },
