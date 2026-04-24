@@ -20,6 +20,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.ntnu.backend.classroom.dto.NotificationResponse;
+import org.ntnu.backend.classroom.mapper.NotificationMapper;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.model.Notification;
@@ -43,6 +44,8 @@ class NotificationServiceTest {
     @Mock private ClassroomTeacherRepository classroomTeacherRepository;
     @Mock private UserProgressRepository userProgressRepository;
 
+    private final NotificationMapper notificationMapper = new NotificationMapper();
+
     private NotificationService notificationService;
 
     private final UUID teacherId = UUID.randomUUID();
@@ -56,8 +59,9 @@ class NotificationServiceTest {
             notificationRepository,
             enrollmentRepository,
             classroomTeacherRepository,
-            userProgressRepository
-        );
+            userProgressRepository,
+            notificationMapper);
+        
     }
 
     private Notification buildNotification(UUID id, boolean read) {

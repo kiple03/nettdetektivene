@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.ntnu.backend.classroom.dto.NotificationResponse;
+import org.ntnu.backend.classroom.mapper.NotificationMapper;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.model.Notification;
 import org.ntnu.backend.classroom.model.enums.NotificationType;
@@ -38,6 +39,7 @@ public class NotificationService {
     private final EnrollmentRepository enrollmentRepository;
     private final ClassroomTeacherRepository classroomTeacherRepository;
     private final UserProgressRepository userProgressRepository;
+    private final NotificationMapper notificationMapper;
 
     @Transactional
     public NotificationResponse createNotification(
@@ -46,22 +48,16 @@ public class NotificationService {
             UUID studentId,
             NotificationType type,
             String message) {
-        Notification notification = notificationRepository.save(Notification.builder()
-                .teacherId(teacherId)
-                .classroomId(classroomId)
-                .studentId(studentId)
-                .type(type)
-                .message(message)
-                .read(false)
-                .build());
-        return toResponse(notification);
+        Notification notification = notificationRepository.save(
+                notificationMapper.toEntity(teacherId, classroomId, studentId, type, message));
+        return notificationMapper.toResponse(notification);
     }
 
     @Transactional(readOnly = true)
     public List<NotificationResponse> getNotificationsForTeacher(UUID teacherId) {
         return notificationRepository.findByTeacherIdOrderByCreatedAtDesc(teacherId)
                 .stream()
-                .map(this::toResponse)
+                .map(notificationMapper::toResponse)
                 .toList();
     }
 
@@ -69,7 +65,7 @@ public class NotificationService {
     public List<NotificationResponse> getNotificationsForTeacher(UUID teacherId, UUID classroomId) {
         return notificationRepository.findByTeacherIdAndClassroomIdOrderByCreatedAtDesc(teacherId, classroomId)
                 .stream()
-                .map(this::toResponse)
+                .map(notificationMapper::toResponse)
                 .toList();
     }
 
@@ -78,7 +74,7 @@ public class NotificationService {
         Notification notification = notificationRepository.findByIdAndTeacherId(notificationId, teacherId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         notification.setRead(true);
-        return toResponse(notification);
+        return notificationMapper.toResponse(notification);
     }
 
     @Transactional
@@ -175,16 +171,4 @@ public class NotificationService {
         }
     }
 
-    private NotificationResponse toResponse(Notification notification) {
-        return NotificationResponse.builder()
-                .id(notification.getId())
-                .teacherId(notification.getTeacherId())
-                .classroomId(notification.getClassroomId())
-                .studentId(notification.getStudentId())
-                .type(notification.getType())
-                .message(notification.getMessage())
-                .read(notification.isRead())
-                .createdAt(notification.getCreatedAt())
-                .build();
-    }
 }
