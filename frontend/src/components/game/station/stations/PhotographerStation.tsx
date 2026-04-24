@@ -81,8 +81,9 @@ export default function PhotographerStation({
                     questionId={station.questionId}
                     options={station.options.map((option, index) => ({
                         id: option.id,
-                        imageUrl: option.imageUrl ?? "",
-                        altText: option.label ?? `Bilde ${index + 1}`,
+                        imageUrl: option.imageUrl ?? null,
+                        text: option.label ?? "",
+                        altText: option.label ?? `Alternativ ${index + 1}`,
                     }))}
                     onSubmit={handleSubmit}
                     disabled={disabled || submitted}

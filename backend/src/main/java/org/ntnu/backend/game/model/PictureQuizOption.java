@@ -31,10 +31,8 @@ public record PictureQuizOption(
         @NotNull
         int id,
 
-        @NotBlank
         String text,
 
-        @NotBlank
         String imageUrl,
 
         @NotNull
