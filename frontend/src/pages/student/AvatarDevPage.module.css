@@ -79,6 +79,89 @@
   margin: 0;
 }
 
+.genderRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 4px;
+}
+
+.genderButton {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 4px;
+  border: 2px solid #c8a96e;
+  background: transparent;
+  color: #3b2a10;
+  font-family: 'Georgia', serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.genderButton:hover {
+  border-color: #8b6914;
+  background: rgba(200, 169, 110, 0.2);
+}
+
+.genderButtonActive {
+  border-color: #8b6914;
+  background: rgba(139, 105, 20, 0.18);
+}
+
+.skinRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  margin-bottom: 10px;
+}
+
+.skinLabel {
+  font-family: 'Georgia', serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #3b2a10;
+  white-space: nowrap;
+}
+
+.skinButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.nameField {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.nameLabel {
+  display: block;
+  font-family: 'Georgia', serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #3b2a10;
+  margin-bottom: 4px;
+}
+
+.nameInput {
+  width: 100%;
+  padding: 4px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #8b6914;
+  border-radius: 0;
+  outline: none;
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  color: #3b2a10;
+  box-sizing: border-box;
+}
+
+.nameInput:focus {
+  border-bottom-color: #2563eb;
+}
+
 .wardrobeSection {
   flex: 1 1 0%;
   display: flex;
