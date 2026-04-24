@@ -21,11 +21,8 @@
   z-index: 1;
 }
 
-.station-photographer {
-  background-image: url("@/assets/images/map/fotografen.svg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+.station-news {
+  background-image: url("@/assets/images/game/news.png");
 }
 
 .station-title,

@@ -10,15 +10,14 @@
     box-sizing: border-box;
 }
 
-
-
+/* white boxes behind picture */
 .grid {
     width: 100%;
     flex: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 1.15rem 1.25rem;
+    gap: 2rem 5rem;
     min-height: 0;
     overflow: visible; /* viktig: ikke klipp teipen */
     padding-top: 0.9rem; /* gir plass til teipen */
@@ -32,7 +31,6 @@
     min-height: 0;
     padding: 0.35rem;
     border: 3px solid rgba(255, 252, 244, 0.95);
-    border-radius: 14px;
     overflow: visible; /* viktig */
     background: linear-gradient(180deg, #fffdf7 0%, #f6eedf 100%);
     box-shadow:
@@ -67,36 +65,35 @@
             0 28px 46px rgba(71, 48, 27, 0.18);
 }
 
+/* teipbitene */
 .card::before,
 .card::after {
     content: "";
     position: absolute;
-    top: -0.65rem;
-    width: 25%;
-    height: 0.7rem;
-    background:
-            linear-gradient(
-                    180deg,
-                    rgba(255, 235, 145, 0.98) 0%,
-                    rgba(244, 210, 98, 0.96) 100%
-            );
-    box-shadow:
-            0 5px 8px rgba(74, 53, 20, 0.22),
-            inset 0 1px 0 rgba(255, 255, 255, 0.55),
-            inset 0 -1px 0 rgba(156, 123, 41, 0.16);
-    opacity: 0.98;
+    top: -8px;
+
+    width: 60px;
+    height: 18px;
+
+    background: rgba(255, 186, 59, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+
     z-index: 8;
-    border-radius: 4px;
+    border-radius: 2px;
+
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
 }
 
+/* left tape */
 .card::before {
-    left: 9%;
-    transform: rotate(-7deg);
+    left: -20px;
+    transform: rotate(-20deg);
 }
 
+/* right tape */
 .card::after {
-    right: 9%;
-    transform: rotate(7deg);
+    right: -20px;
+    transform: rotate(20deg);
 }
 
 .cardSelected {
