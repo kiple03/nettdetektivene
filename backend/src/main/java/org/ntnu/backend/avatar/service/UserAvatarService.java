@@ -2,7 +2,9 @@ package org.ntnu.backend.avatar.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.dto.UpdateUserProfileRequest;
@@ -81,7 +83,10 @@ public class UserAvatarService {
      * @param userId user identification.
      * @return a list of all the avatar items accociated with the user.
      */
+    @Transactional
     public List<EquippedItemDto> getUserInventory(UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        starterItems(user);
         List<UserInventoryItem> inventory = inventoryRepository.findByUserIdOrderByAvatarItemNameAsc(userId);
 
         return inventory.stream()
@@ -94,26 +99,44 @@ public class UserAvatarService {
             .toList();
     }
 
+    private static final List<String> STARTER_ITEM_NAMES = List.of(
+        "detective_hat", "detective_suit", "face_1", "face_2", "face_3",
+        "magnifying_glass", "police_hat", "police_uniform", "sheriff_hat",
+        "sheriff_star", "sheriff_suit", "stop_sign",
+        "tone_light", "tone_medium", "tone_dark", "tone_wacky",
+        "boy_hair", "girl_hair"
+    );
+
+    private static final Set<String> DEFAULT_EQUIPPED = Set.of(
+        "detective_hat", "detective_suit", "face_1", "tone_light"
+    );
+
     /**
-     * Assigns starter items for a new user. This comes from the Avatar data Seeder in config-folder.
-     * @param user the user instance. 
+     * Assigns any missing starter items to a user. Safe to call multiple times.
+     * @param user the user instance.
      */
     @Transactional
     public void starterItems(User user){
-        List<AvatarItem> starterItems = avatarItemRepository.findAll().stream()
-            .filter(item -> List.of("detective_hat", "detective_suit", "face_1", "face_2", "face_3", "magnifying_glass", "police_hat", "police_uniform", "sheriff_hat", "sheriff_star", "sheriff_suit", "stop_sign", "tone_light", "tone_medium", "tone_dark", "tone_wacky", "boy_hair", "girl_hair").contains(item.getName()))
+        Set<String> existing = inventoryRepository.findByUserId(user.getId()).stream()
+            .map(i -> i.getAvatarItem().getName())
+            .collect(Collectors.toSet());
+
+        List<AvatarItem> missing = avatarItemRepository.findAll().stream()
+            .filter(item -> STARTER_ITEM_NAMES.contains(item.getName()) && !existing.contains(item.getName()))
             .toList();
 
-        List<UserInventoryItem> startingInventory = starterItems.stream().map(item -> 
+        if (missing.isEmpty()) return;
+
+        List<UserInventoryItem> toAdd = missing.stream().map(item ->
             UserInventoryItem.builder()
                 .user(user)
                 .avatarItem(item)
                 .unlockedAt(LocalDateTime.now())
-                .isEquipped(List.of("detective_hat", "detective_suit", "face_1", "tone_light").contains(item.getName()))
+                .isEquipped(DEFAULT_EQUIPPED.contains(item.getName()))
                 .build()
         ).toList();
 
-        inventoryRepository.saveAll(startingInventory);
+        inventoryRepository.saveAll(toAdd);
     }
 
     @Transactional
