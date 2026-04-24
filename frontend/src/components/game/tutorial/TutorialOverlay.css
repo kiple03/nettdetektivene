@@ -77,9 +77,6 @@
 
 /* ? button inside .station-container */
 .tutorial-help-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
@@ -94,7 +91,6 @@
   justify-content: center;
   line-height: 1;
   transition: background 0.15s, color 0.15s;
-  z-index: 10;
 }
 
 .tutorial-help-btn:hover {

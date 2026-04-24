@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import type { StationType } from "@/types/station";
 import {
   hasSeenTutorial,
@@ -42,7 +43,7 @@ function TutorialOverlay({ type, steps, isOpen, onClose }: Props) {
     setCurrentStep(0);
   };
 
-  return (
+  return createPortal(
     <div className="tutorial-overlay" role="dialog" aria-modal="true" aria-labelledby="tutorial-dialog-title">
       <div className="tutorial-card">
         <button
@@ -64,7 +65,8 @@ function TutorialOverlay({ type, steps, isOpen, onClose }: Props) {
           {isLast ? "Ferdig" : "Neste →"}
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
