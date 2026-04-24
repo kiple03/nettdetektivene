@@ -1,18 +1,22 @@
 package org.ntnu.backend.classroom.dto;
 
 import java.time.Instant;
+import java.util.UUID;
+
+import org.ntnu.backend.classroom.model.enums.NotificationType;
+
 import lombok.Builder;
 import lombok.Value;
 
-/**
- * Data Transfer Object for notifaction of classroom. 
- */
 @Value
 @Builder
 public class NotificationResponse {
-    String type;
+    UUID id;
+    UUID teacherId;
+    UUID classroomId;
+    UUID studentId;
+    NotificationType type;
     String message;
-    String classroomId;
-    String studentUsername;
-    Instant timestamp;
+    boolean read;
+    Instant createdAt;
 }

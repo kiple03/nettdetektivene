@@ -3,9 +3,11 @@ package org.ntnu.backend.classroom.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -23,6 +25,9 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
   List<Enrollment> findByClassroomIdAndLeftAtIsNull(UUID classroomId);
 
   Optional<Enrollment> findByClassroomIdAndUserIdAndLeftAtIsNull(UUID classroomId, UUID userId);
+
+  @Query("SELECT e FROM Enrollment e JOIN FETCH e.user JOIN FETCH e.classroom WHERE e.leftAt IS NULL")
+  List<Enrollment> findAllActiveWithUserAndClassroom();
 
   void deleteByClassroomId(UUID classroomId);
 
