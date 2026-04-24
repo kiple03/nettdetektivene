@@ -131,8 +131,8 @@ public class NotificationService {
         }
         Enrollment enrollment = enrollmentOpt.get();
         UUID classroomId = enrollment.getClassroom().getId();
-        String message = student.getUsername() + " forsøkte å bruke brukernavnet \"" + attemptedUsername
-                + "\" som inneholder upassende innhold i " + enrollment.getClassroom().getTitle() + ".";
+        String message = student.getUsername() + " (" + student.getEmail() + ") forsøkte å bruke brukernavnet \""
+                + attemptedUsername + "\" som inneholder upassende innhold i " + enrollment.getClassroom().getTitle() + ".";
         classroomTeacherRepository.findWithUsersByClassroomId(classroomId).forEach(teacher ->
                 createNotification(teacher.getUser().getId(), classroomId, student.getId(),
                         NotificationType.INAPPROPRIATE_USERNAME, message));
@@ -146,7 +146,7 @@ public class NotificationService {
         }
         Enrollment enrollment = enrollmentOpt.get();
         UUID classroomId = enrollment.getClassroom().getId();
-        String message = student.getUsername() + " lagret et notat med upassende innhold i "
+        String message = student.getUsername() + " (" + student.getEmail() + ") lagret et notat med upassende innhold i "
                 + enrollment.getClassroom().getTitle() + ".";
         classroomTeacherRepository.findWithUsersByClassroomId(classroomId).forEach(teacher ->
                 createNotification(teacher.getUser().getId(), classroomId, student.getId(),
