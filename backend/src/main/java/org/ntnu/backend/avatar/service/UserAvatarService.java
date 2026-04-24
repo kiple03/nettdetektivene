@@ -13,12 +13,15 @@ import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.model.UserInventoryItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
+import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -32,6 +35,8 @@ public class UserAvatarService {
     private final UserInventoryItemRepository inventoryRepository;
     private final AvatarItemRepository avatarItemRepository;
     private final UserRepository userRepository;
+    private final ProfanityFilterService profanityFilter;
+    private final NotificationService notificationService;
 
     private String imageUrl(AvatarItem item) {
         String file = item.getImageFile();
@@ -152,9 +157,9 @@ public class UserAvatarService {
 
         String newUsername = request.username().trim();
 
-        if (!newUsername.equals(user.getUsername())
-            && userRepository.existsByUsername(newUsername)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Brukernavnet er allerede tatt");
+        if (profanityFilter.containsProfanity(newUsername)) {
+            notificationService.notifyInappropriateUsername(user, newUsername);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukernavnet inneholder upassende innhold");
         }
 
         user.setUsername(newUsername);
@@ -164,5 +169,5 @@ public class UserAvatarService {
         userRepository.save(user);
         return getUserProfile(userId);
     }
-
 }
+

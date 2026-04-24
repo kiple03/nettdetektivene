@@ -37,6 +37,7 @@ import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,7 @@ public class TeacherClassroomService {
     private final ClassroomMapper classroomMapper;
     private final UserInventoryItemRepository userInventoryItemRepository;
     private final MedalionService medalionService;
+    private final ProfanityFilterService profanityFilter;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -209,8 +211,8 @@ public class TeacherClassroomService {
         var user = userRepository.findById(studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         String newUsername = request.username().trim();
-        if (!newUsername.equals(user.getUsername()) && userRepository.existsByUsername(newUsername)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Brukernavnet er allerede tatt");
+        if (profanityFilter.containsProfanity(newUsername)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukernavnet inneholder upassende innhold");
         }
         user.setUsername(newUsername);
         userRepository.save(user);

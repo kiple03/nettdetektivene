@@ -32,6 +32,7 @@ export function useStudentProgress(classroomId: string) {
         queryKey: teacherKeys.students(classroomId),
         queryFn: () => getStudentProgress(classroomId),
         enabled: !!classroomId,
+        refetchInterval: 30_000,
     });
 }
 

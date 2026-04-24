@@ -24,6 +24,7 @@ import org.ntnu.backend.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -120,6 +121,36 @@ public class NotificationService {
 
         classroomTeacherRepository.findWithUsersByClassroomId(classroomId).forEach(teacher ->
                 createNotification(teacher.getUser().getId(), classroomId, student.getId(), NotificationType.GAME_COMPLETED, message));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void notifyInappropriateUsername(User student, String attemptedUsername) {
+        Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
+        if (enrollmentOpt.isEmpty()) {
+            return;
+        }
+        Enrollment enrollment = enrollmentOpt.get();
+        UUID classroomId = enrollment.getClassroom().getId();
+        String message = student.getUsername() + " (" + student.getEmail() + ") forsøkte å bruke brukernavnet \""
+                + attemptedUsername + "\" som inneholder upassende innhold i " + enrollment.getClassroom().getTitle() + ".";
+        classroomTeacherRepository.findWithUsersByClassroomId(classroomId).forEach(teacher ->
+                createNotification(teacher.getUser().getId(), classroomId, student.getId(),
+                        NotificationType.INAPPROPRIATE_USERNAME, message));
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void notifyInappropriateNote(User student) {
+        Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
+        if (enrollmentOpt.isEmpty()) {
+            return;
+        }
+        Enrollment enrollment = enrollmentOpt.get();
+        UUID classroomId = enrollment.getClassroom().getId();
+        String message = student.getUsername() + " (" + student.getEmail() + ") lagret et notat med upassende innhold i "
+                + enrollment.getClassroom().getTitle() + ".";
+        classroomTeacherRepository.findWithUsersByClassroomId(classroomId).forEach(teacher ->
+                createNotification(teacher.getUser().getId(), classroomId, student.getId(),
+                        NotificationType.INAPPROPRIATE_NOTE, message));
     }
 
     @Scheduled(cron = "0 0 6 * * *")

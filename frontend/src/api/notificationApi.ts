@@ -1,6 +1,6 @@
 import apiClient from './client';
 
-export type TeacherNotificationType = 'AREA_COMPLETED' | 'GAME_COMPLETED' | 'STUDENT_STUCK';
+export type TeacherNotificationType = 'AREA_COMPLETED' | 'GAME_COMPLETED' | 'STUDENT_STUCK' | 'INAPPROPRIATE_USERNAME' | 'INAPPROPRIATE_NOTE';
 
 export interface TeacherNotification {
   id: string;
