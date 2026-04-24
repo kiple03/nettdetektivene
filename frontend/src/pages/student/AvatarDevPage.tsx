@@ -7,7 +7,6 @@ import {
   useUserProfile,
   type EquippedItem,
   useUpdateUserProfile,
-  useUpdateUserProfile,
 } from '@/hooks/useUserProfile';
 import { refreshToken } from '@/api/authApi';
 import { getClassroomId } from '@/stores/authStore';
@@ -182,10 +181,6 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
         navigate(getClassroomId() ? '/home' : '/join-with-code');
       },
       onError: (err) => {
-        const axiosErr = err as AxiosError<{ message?: string }>;
-        const status = axiosErr.response?.status;
-        if (status === 400) {
-          setUsernameError(axiosErr.response?.data?.message ?? 'Ugyldig brukernavn');
         const axiosErr = err as AxiosError<{ message?: string }>;
         const status = axiosErr.response?.status;
         if (status === 400) {
