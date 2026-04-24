@@ -33,6 +33,11 @@ public class UserAvatarService {
     private final AvatarItemRepository avatarItemRepository;
     private final UserRepository userRepository;
 
+    private String imageUrl(AvatarItem item) {
+        String file = item.getImageFile();
+        return "/assets/" + (file != null ? file : item.getName() + ".svg");
+    }
+
     /**
      * Service-method that gets the user by id, and retrieves only the items the user has equipped.
      * @param userid the users id
@@ -48,7 +53,7 @@ public class UserAvatarService {
                                             .id(inventoryItem.getAvatarItem().getId())
                                             .name(inventoryItem.getAvatarItem().getName())
                                             .category(inventoryItem.getAvatarItem().getCategory())
-                                            .imageUrl("/assets/" + inventoryItem.getAvatarItem().getName() + ".svg")
+                                            .imageUrl(imageUrl(inventoryItem.getAvatarItem()))
                                             .build())
                                         .toList();
         
@@ -94,7 +99,7 @@ public class UserAvatarService {
                 .id(item.getAvatarItem().getId())
                 .name(item.getAvatarItem().getName())
                 .category(item.getAvatarItem().getCategory()) // Make sure EquippedItemDto has a category field!
-                .imageUrl("/assets/" + item.getAvatarItem().getName() + ".svg")
+                .imageUrl(imageUrl(item.getAvatarItem()))
                 .build())
             .toList();
     }
@@ -104,7 +109,7 @@ public class UserAvatarService {
         "magnifying_glass", "police_hat", "police_uniform", "sheriff_hat",
         "sheriff_star", "sheriff_suit", "stop_sign",
         "tone_light", "tone_medium", "tone_dark", "tone_wacky",
-        "boy_hair", "girl_hair"
+        "boy_hair", "girl_hair", "face_girl"
     );
 
     private static final Set<String> DEFAULT_EQUIPPED = Set.of(

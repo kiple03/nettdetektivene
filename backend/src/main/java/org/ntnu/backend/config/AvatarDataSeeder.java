@@ -46,7 +46,8 @@ public class AvatarDataSeeder implements CommandLineRunner{
             AvatarItem.builder().name("tone_dark").category("skin_tone").build(),
             AvatarItem.builder().name("tone_wacky").category("skin_tone").build(),
             AvatarItem.builder().name("boy_hair").category("hair").build(),
-            AvatarItem.builder().name("girl_hair").category("hair").build()
+            AvatarItem.builder().name("girl_hair").category("hair").build(),
+            AvatarItem.builder().name("face_girl").category("face").imageFile("face_girl.png").build()
         );
 
         List<AvatarItem> toSave = allItems.stream()
