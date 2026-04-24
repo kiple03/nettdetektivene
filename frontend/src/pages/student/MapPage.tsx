@@ -9,6 +9,7 @@ import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
 import { CarWithAvatar } from "@/components/map/CarWithAvatar";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
+import sharkBase from "@/assets/images/boss/shark-base.png";
 import detektivkontoret from "@/assets/images/map/detektivkontoret.svg";
 import fotografen from "@/assets/images/map/fotografen.svg";
 import markedsplassen from "@/assets/images/map/markedsplassen.svg";
@@ -122,6 +123,7 @@ export default function MapPage() {
     const autoStopId = Number(searchParams.get("levelId")) || null;
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedStopTitle, setLockedStopTitle] = useState("");
+    const [adminBypassInput, setAdminBypassInput] = useState("");
     const [anchorPos, setAnchorPos] = useState<Partial<Record<AnchorId, HotspotPos>>>({});
     const [scrollState, setScrollState] = useState<ScrollState>({ canLeft: false, canRight: false, canUp: false, canDown: false });
     const [currentPathOffset, setCurrentPathOffset] = useState("5%");
@@ -141,6 +143,10 @@ export default function MapPage() {
 
     const animateTo = (offset: string, onDone: () => void) => {
         if (animating) return;
+        if (offset === currentPathOffset) {
+            onDone();
+            return;
+        }
         setCarReversed(parseFloat(offset) < parseFloat(currentPathOffset));
         setAnimating(true);
         requestAnimationFrame(() => {
@@ -153,6 +159,15 @@ export default function MapPage() {
                 }, 1200);
             });
         });
+    };
+
+    const handleAdminBypassInput = (value: string) => {
+        setAdminBypassInput(value);
+        if (value === "admin") {
+            setLockedDialogOpen(false);
+            setAdminBypassInput("");
+            navigate("/boss");
+        }
     };
 
     const handleStopClick = (stop: Stop) => {
@@ -309,13 +324,27 @@ export default function MapPage() {
                             aria-label={stop.title}
                         >
                             <div className={styles.iconWrapper}>
-                                <img
-                                    src={stop.icon}
-                                    alt={stop.title}
-                                    className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.lockedIcon : ""}`}
-                                />
-
-                                {!isUnlocked(stop.title) && <LockBadge />}
+                                {stop.title === "Datasenteret" && !isUnlocked(stop.title) ? (
+                                    <>
+                                        <div className={styles.datasenteretIcons}>
+                                            <img src={datasenteret} alt="Datasenteret" className={`${styles.icon} ${styles.lockedIcon}`} />
+                                            <div className={styles.sharkWrapper}>
+                                                <img src={sharkBase} alt="Shark" className={`${styles.icon} ${styles.sharkSilhouette}`} />
+                                                <span className={styles.sharkQuestionMark}>?</span>
+                                            </div>
+                                        </div>
+                                        <LockBadge />
+                                    </>
+                                ) : (
+                                    <>
+                                        <img
+                                            src={stop.icon}
+                                            alt={stop.title}
+                                            className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.lockedIcon : ""}`}
+                                        />
+                                        {!isUnlocked(stop.title) && <LockBadge />}
+                                    </>
+                                )}
                             </div>
                         </button>
                     );
@@ -344,13 +373,24 @@ export default function MapPage() {
                 }}
             />
 
-            <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
+            <AlertDialog open={lockedDialogOpen} onOpenChange={(open) => { setLockedDialogOpen(open); if (!open) setAdminBypassInput(""); }}>
                 <AlertDialogContent>
                     <AlertDialogTitle>Nivå låst 🔒</AlertDialogTitle>
 
                     <AlertDialogDescription>
                         {lockedStopTitle} er ikke åpnet ennå. Du må fullføre de tidligere nivåene først.
                     </AlertDialogDescription>
+
+                    {lockedStopTitle === "Datasenteret" && (
+                        <input
+                            type="text"
+                            className={styles.adminBypassInput}
+                            value={adminBypassInput}
+                            onChange={(e) => handleAdminBypassInput(e.target.value)}
+                            autoComplete="off"
+                            aria-label="admin"
+                        />
+                    )}
 
                     <div className={styles.dialogActions}>
                         <Button

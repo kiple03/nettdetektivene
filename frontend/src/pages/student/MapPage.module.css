@@ -148,6 +148,66 @@
   justify-content: flex-end;
 }
 
+.datasenteretIcons {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.sharkWrapper {
+  position: relative;
+  display: inline-block;
+  margin-left: -50px;
+  animation: sharkBob 2.4s ease-in-out infinite;
+}
+
+@keyframes sharkBob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+.sharkWrapper .icon {
+  max-width: 87px;
+  max-height: 87px;
+}
+
+.sharkSilhouette {
+  filter: brightness(0);
+  animation: sharkSpin 5s linear infinite;
+  transform-origin: center;
+  border-radius: 20%;
+}
+
+@keyframes sharkSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.sharkQuestionMark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 3rem;
+  font-weight: 900;
+  pointer-events: none;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.adminBypassInput {
+  width: 100%;
+  margin-top: 10px;
+  padding: 2px 4px;
+  font-size: 0.6rem;
+  color: rgba(0, 0, 0, 0.2);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  outline: none;
+  caret-color: rgba(0, 0, 0, 0.2);
+}
+
 @media (orientation: portrait) {
   .container {
     overflow-x: hidden;

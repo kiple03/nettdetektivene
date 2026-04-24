@@ -1,0 +1,120 @@
+@keyframes newsFly {
+    from {
+        transform: translate(calc(-50% + 18vw), calc(-50% - 33vh)) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(-720deg);
+    }
+}
+@keyframes letterFly {
+    from {
+        transform: translate(calc(-50% + 18vw), calc(-50% - 33vh));
+    }
+    to {
+        transform: translate(calc(-50% - 30vw), calc(-50% + 50vh));
+    }
+}
+
+.newspaper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 43px;
+    pointer-events: none;
+    animation: newsFly 0.8s linear forwards;
+}
+
+.flash{
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 9999;
+    animation: blitz 2s ease-out forwards;
+    pointer-events: none;
+}
+@keyframes blitz {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+.letter{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    pointer-events: none;
+    animation: letterFly 1.5s linear forwards;
+}
+
+@keyframes cloneSlideLeft {
+    from { transform: translate(-50%, -50%); }
+    to   { transform: translate(calc(-50% - 18vw), -50%); }
+}
+
+@keyframes cloneSlideRight {
+    from { transform: translate(-50%, -50%); }
+    to   { transform: translate(calc(-50% + 18vw), -50%); }
+}
+
+.cloneLeft,
+.cloneRight {
+    position: fixed;
+    top: 25%;
+    left: 75%;
+    width: clamp(120px, 25vw, 220px);
+    height: auto;
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.cloneLeft  { animation: cloneSlideLeft  1.4s ease-out forwards; }
+.cloneRight { animation: cloneSlideRight 1.4s ease-out forwards; }
+
+@keyframes bubbleShoot {
+    0% {
+        transform: translate(0, 0) scale(0.6);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(-58vw, 52vh);
+        opacity: 1;
+    }
+}
+
+.commentBubble {
+    position: fixed;
+    border-radius: 18px 18px 4px 18px;
+    padding: 7px 14px;
+    font-size: clamp(11px, 1.8vw, 14px);
+    font-weight: 600;
+    pointer-events: none;
+    white-space: nowrap;
+    color: white;
+    z-index: 9999;
+    background: var(--bubble-color);
+    animation: bubbleShoot 1.9s ease-in both;
+}
+
+.commentBubble::after {
+    content: '';
+    position: absolute;
+    bottom: -7px;
+    right: 8px;
+    width: 0;
+    height: 0;
+    border-top: 8px solid var(--bubble-color);
+    border-right: 8px solid transparent;
+}
+
+.matrixOverlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    pointer-events: none;
+}
