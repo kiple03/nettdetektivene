@@ -15,6 +15,8 @@ import org.ntnu.backend.classroom.dto.leaderboard.RankedStudentResponse;
 import org.ntnu.backend.classroom.mapper.LeaderboardMapper;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.Enrollment;
+import org.ntnu.backend.classroom.repository.ClassroomRepository;
+import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.model.UserProgress;
 import org.ntnu.backend.game.repository.StopLevelCount;
@@ -30,6 +32,7 @@ public class LeaderboardService {
   private final UserProgressRepository userProgressRepository;
   private final StopRepository stopRepository;
   private final LeaderboardMapper leaderboardMapper;
+  private final ClassroomTeacherRepository classroomTeacherRepository;
 
   public List<RankedStudentResponse> getRankedStudentLeaderboard(UUID classroomId) {
     List<Enrollment> enrollments = enrollmentRepository.findAllByClassroomIdAndLeftAtIsNull(classroomId);
@@ -46,6 +49,15 @@ public class LeaderboardService {
     return leaderboardMapper.toRankedStudentList(sorted);
   }
 
+  public List<LeaderboardClassroomResponse> getTeacherClassroomScores(UUID teacherId) {
+    List<UUID> classroomIds = classroomTeacherRepository.findClassroomsByTeacherId(teacherId)
+        .stream().map(Classroom::getId).toList();
+
+    List<Enrollment> enrollments = enrollmentRepository.findAllByClassroomIdInAndLeftAtIsNull(classroomIds);
+    Map<UUID, Integer> scores = computeScores(enrollments);
+    Map<Classroom, List<Integer>> byClassroom = groupScoresByClassroom(enrollments, scores);
+    return buildSortedLeaderboard(byClassroom);
+  }
 
   public List<RankedClassroomResponse> getGlobalLeaderboard() {
     List<Enrollment> enrollments = enrollmentRepository.findAllByLeftAtIsNull();
@@ -53,11 +65,6 @@ public class LeaderboardService {
     Map<Classroom, List<Integer>> byClassroom = groupScoresByClassroom(enrollments, scores);
     List<LeaderboardClassroomResponse> sorted = buildSortedLeaderboard(byClassroom);
     return leaderboardMapper.toRankedList(sorted);
-  }
-
-  private Map<Integer, Long> getLevelsPerStop() {
-    return stopRepository.findAllWithLevelCounts().stream()
-        .collect(Collectors.toMap(StopLevelCount::getDisplayOrder, StopLevelCount::getLevelCount));
   }
 
   private Map<UUID, Integer> computeScores(List<Enrollment> enrollments) {

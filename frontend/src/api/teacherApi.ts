@@ -11,6 +11,7 @@ import type {
 } from '../types/classroom';
 import apiClient from '../api/client';
 import axios from 'axios';
+import type { RankedStudent } from '@/types/leaderboard';
 
 // --- Raw response types (internal, not exported) ---
 
@@ -324,4 +325,9 @@ export async function inviteCoTeacher(classroomId: string, email: string): Promi
 
 export async function removeCoTeacher(classroomId: string, userId: string): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}/teachers/${userId}`);
+}
+
+export async function getClassroomLeaderboard(classroomId: string): Promise<RankedStudent[]> {
+  const res = await apiClient.get<RankedStudent[]>(`/leaderboard/classroom/${classroomId}`);
+  return res.data;
 }
