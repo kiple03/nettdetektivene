@@ -13,21 +13,29 @@ interface Props {
 function RequireAuth({ role, children }: Props) {
   const { isLoggedIn, role: currentRole } = useAuth();
   const location = useLocation();
-  const [checking, setChecking] = useState(() => !isLoggedIn);
+  // 'pending' while we're waiting for a refresh attempt to complete.
+  const [status, setStatus] = useState<'pending' | 'done'>(() =>
+    isLoggedIn ? 'done' : 'pending',
+  );
 
   useEffect(() => {
-    if (isLoggedIn) return;
+    if (isLoggedIn) {
+      setStatus('done');
+      return;
+    }
+    // Token is absent or expired — attempt a silent refresh before redirecting.
+    setStatus('pending');
     let cancelled = false;
     sharedRefresh().then((token) => {
       if (!cancelled) {
         if (token) window.dispatchEvent(new Event('auth-changed'));
-        setChecking(false);
+        setStatus('done');
       }
     });
     return () => { cancelled = true; };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isLoggedIn]);
 
-  if (checking) return null;
+  if (status === 'pending') return null;
 
   if (!isLoggedIn) {
     const loginPath = role === 'TEACHER' ? '/laerer/login' : '/';
