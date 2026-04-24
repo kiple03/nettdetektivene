@@ -11,12 +11,16 @@ type ClassroomDetailBoardProps = {
     didCopyCode: boolean;
     onCopyJoinCode: () => void;
     teachers: CoTeacher[];
+    currentUserId: string;
     inviteEmail: string;
     inviting: boolean;
     inviteError: string | null;
     isOwner: boolean;
+    leaving: boolean;
+    leaveError: string | null;
     onInviteEmailChange: (value: string) => void;
     onInviteTeacher: (event: React.FormEvent) => void;
+    onLeaveClassroom: () => void;
     students: StudentSummary[];
     totalStops: number;
     editingStudentId: string | null;
@@ -41,12 +45,16 @@ export function ClassroomDetailBoard({
     didCopyCode,
     onCopyJoinCode,
     teachers,
+    currentUserId,
     inviteEmail,
     inviting,
     inviteError,
     isOwner,
+    leaving,
+    leaveError,
     onInviteEmailChange,
     onInviteTeacher,
+    onLeaveClassroom,
     students,
     totalStops,
     editingStudentId,
@@ -118,12 +126,16 @@ export function ClassroomDetailBoard({
 
                     <ClassroomDetailTeacherCard
                         teachers={teachers}
+                        currentUserId={currentUserId}
                         inviteEmail={inviteEmail}
                         inviting={inviting}
                         inviteError={inviteError}
                         isOwner={isOwner}
+                        leaving={leaving}
+                        leaveError={leaveError}
                         onInviteEmailChange={onInviteEmailChange}
                         onInviteTeacher={onInviteTeacher}
+                        onLeaveClassroom={onLeaveClassroom}
                     />
                 </div>
 
