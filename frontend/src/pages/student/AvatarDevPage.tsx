@@ -6,7 +6,6 @@ import {
   useUserInventory,
   useUserProfile,
   type EquippedItem,
-  useUpdateUserProfile
 } from '@/hooks/useUserProfile';
 import { refreshToken } from '@/api/authApi';
 import { getClassroomId } from '@/stores/authStore';
@@ -58,8 +57,6 @@ export default function AvatarDevPage() {
 function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], inventory: EquippedItem[] }) {
   const navigate = useNavigate();
 
-  const { data: userProfile } = useUserProfile();
-  const { mutate: updateUserProfile } = useUpdateUserProfile();
   const {mutate: saveOutfit, isPending: isSaving} = useSaveAvatarOutfit();
 
   const [equipped, setEquipped] = useState<EquippedItem[]>(() => {
@@ -165,13 +162,6 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   };
 
   const handleSave = () => {
-    const trimmed = username.trim();
-    if (trimmed.length < 3 || trimmed.length > 20) {
-      setUsernameError('Brukernavn må være mellom 3 og 20 tegn');
-      return;
-    }
-    setUsernameError('');
-
     const itemIds = equipped.map(item => item.id);
     saveOutfit(itemIds);
 
@@ -179,14 +169,6 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
       onSuccess: async () => {
         await refreshToken();
         navigate(getClassroomId() ? '/home' : '/join-with-code');
-      },
-      onError: (err) => {
-        const status = (err as AxiosError).response?.status;
-        if (status === 409) {
-          setUsernameError('Brukernavnet er allerede tatt');
-        } else {
-          setUsernameError('Kunne ikke lagre brukernavn. Prøv igjen.');
-        }
       },
     });
   };

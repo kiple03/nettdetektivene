@@ -43,7 +43,7 @@ public class Notification {
     private UUID studentId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(50)")
     private NotificationType type;
 
     @Column(nullable = false, length = 512)
