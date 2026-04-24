@@ -210,7 +210,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
           <div className={styles.previewTop}>
             <h2 className={styles.sectionTitle}>Din profil</h2>
             <div className={styles.avatarWrapper}>
-              <LayeredAvatar items={equipped} size={200} skinToneBase={colors.base} skinToneShadowDark={colors.shadowDark} skinToneShadowLight={colors.shadowLight} hairColor={hairColorHex} />
+              <LayeredAvatar items={equipped} size={160} skinToneBase={colors.base} skinToneShadowDark={colors.shadowDark} skinToneShadowLight={colors.shadowLight} hairColor={hairColorHex} />
             </div>
             </div>
 
@@ -298,9 +298,9 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
                 minLength={3}
                 maxLength={20}
               />
-              {usernameError && (
-                <p style={{ color: '#dc2626', marginTop: 4, fontSize: 14 }}>{usernameError}</p>
-              )}
+            </div>
+            <div className={styles.usernameErrorSlot}>
+              {usernameError && <p className={styles.usernameError}>{usernameError}</p>}
             </div>
 
             <button
