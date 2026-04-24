@@ -223,7 +223,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
           <button
             onClick={handleSave}
             disabled={isSaving || username.trim().length < 3}
-            className="mt-6 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-md transition-colors disabled:bg-gray-400"
+            className={styles.saveButton}
           >
             {isSaving ? "Lagrer..." : "Lagre antrekk"}
           </button>

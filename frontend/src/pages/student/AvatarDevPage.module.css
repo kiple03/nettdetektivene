@@ -88,7 +88,7 @@
 
 .genderButton {
   flex: 1;
-  padding: 8px 0;
+  padding: 14px 0;
   border-radius: 4px;
   border: 2px solid #c8a96e;
   background: transparent;
@@ -131,17 +131,19 @@
 }
 
 .nameField {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
   margin-top: 16px;
 }
 
 .nameLabel {
-  display: block;
   font-family: 'Georgia', serif;
   font-weight: 600;
   font-size: 0.85rem;
   color: #3b2a10;
-  margin-bottom: 4px;
+  white-space: nowrap;
 }
 
 .nameInput {
@@ -239,6 +241,35 @@
   color: #7a5c30;
   text-transform: capitalize;
   margin-bottom: 4px;
+}
+
+.saveButton {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px 0;
+  background: #8b6914;
+  color: #fdf3dc;
+  border: 2px solid #6b4f0e;
+  border-radius: 4px;
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.saveButton:hover:not(:disabled) {
+  background: #7a5c10;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.saveButton:disabled {
+  background: #b0a080;
+  border-color: #908060;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .equippedBadge {
