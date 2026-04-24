@@ -80,7 +80,7 @@ export function LayeredAvatar({
     const sortedItems = [...items]
         .filter(i => i.category !== 'skin_tone')
         .sort((a,b) => {
-            const order = {'body': 1, 'face': 2, 'head': 3, 'accessories': 4};
+            const order = {'body': 1, 'face': 2, 'hair': 3, 'head': 4, 'accessories': 5};
             // @ts-expect-error category string might not exist in order object
             return (order[a.category] || 99) - (order[b.category] || 99);
         });
