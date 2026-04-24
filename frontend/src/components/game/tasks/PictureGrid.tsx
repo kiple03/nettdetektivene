@@ -38,9 +38,7 @@ export default function PictureGrid({
         if (disabled || isSubmitting) return;
 
         setSelectedIds((prev) =>
-            prev.includes(id)
-                ? prev.filter((x) => x !== id)
-                : [...prev, id]
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
         );
     };
 
@@ -62,17 +60,15 @@ export default function PictureGrid({
         return "";
     };
 
+    const gridSizeClass =
+        options.length <= 2 ? styles.gridTwoOptions : styles.gridFourOptions;
+
     return (
         <div className={styles.wrapper}>
-            <div className={styles.grid}>
+            <div className={`${styles.grid} ${gridSizeClass}`}>
                 {options.map((option) => {
-                    const hasImage =
-                        option.imageUrl &&
-                        option.imageUrl.trim() !== "";
-
-                    const hasText =
-                        option.text &&
-                        option.text.trim() !== "";
+                    const hasImage = Boolean(option.imageUrl?.trim());
+                    const hasText = Boolean(option.text?.trim());
 
                     return (
                         <Button
@@ -84,26 +80,17 @@ export default function PictureGrid({
                             className={`${styles.card} ${getCardClass(option.id)}`}
                         >
                             {hasImage && (
-                                <img
-                                    src={option.imageUrl!}
-                                    alt={option.altText ?? ""}
-                                    className={styles.image}
-                                />
+                                <div className={styles.imageFrame}>
+                                    <img
+                                        src={option.imageUrl!}
+                                        alt={option.altText ?? option.text ?? ""}
+                                        className={styles.image}
+                                    />
+                                </div>
                             )}
 
                             {hasText && (
-                                <div
-                                    style={{
-                                        padding: "1rem",
-                                        fontSize: "clamp(1rem,1.4vw,1.35rem)",
-                                        lineHeight: "1.35",
-                                        textAlign: "center",
-                                        fontWeight: 700,
-                                        color: "#2d1b0f",
-                                        maxWidth: "95%",
-                                        margin: "0 auto",
-                                    }}
-                                >
+                                <div className={styles.textBox}>
                                     {option.text}
                                 </div>
                             )}
