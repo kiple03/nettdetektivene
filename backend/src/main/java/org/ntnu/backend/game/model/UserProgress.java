@@ -1,5 +1,10 @@
 package org.ntnu.backend.game.model;
 
+import java.time.Instant;
+import java.util.UUID;
+
+import org.ntnu.backend.user.model.User;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,10 +14,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-import org.ntnu.backend.user.model.User;
 
 @Entity
 @Getter
@@ -38,6 +41,9 @@ public class UserProgress {
   @Column(nullable = false)
   private boolean gameCompleted;
 
+  @Column
+  private Instant lastProgressAt;
+
 
   public static UserProgress createInitial(User student, Stop firstStop) {
     UserProgress progress = new UserProgress();
@@ -45,6 +51,7 @@ public class UserProgress {
     progress.setCurrentStop(firstStop);
     progress.setCurrentLevelOrder(1);
     progress.setGameCompleted(false);
+    progress.setLastProgressAt(Instant.now());
     return progress;
   }
 }
