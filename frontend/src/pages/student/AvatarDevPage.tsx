@@ -83,9 +83,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
       onError: (err) => {
         const axiosErr = err as AxiosError<{ message?: string }>;
         const status = axiosErr.response?.status;
-        if (status === 409) {
-          setUsernameError('Brukernavnet er allerede tatt');
-        } else if (status === 400) {
+        if (status === 400) {
           setUsernameError(axiosErr.response?.data?.message ?? 'Ugyldig brukernavn');
         } else {
           setUsernameError('Kunne ikke lagre brukernavn. Prøv igjen.');
