@@ -13,6 +13,7 @@ import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ public class UserAvatarService {
     private final UserInventoryItemRepository inventoryRepository;
     private final AvatarItemRepository avatarItemRepository;
     private final UserRepository userRepository;
+    private final ProfanityFilterService profanityFilter;
 
     /**
      * Service-method that gets the user by id, and retrieves only the items the user has equipped.
@@ -122,6 +124,10 @@ public class UserAvatarService {
             .orElseThrow(() -> new RuntimeException("User not found"));
 
         String newUsername = request.username().trim();
+
+        if (profanityFilter.containsProfanity(newUsername)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukernavnet inneholder upassende innhold");
+        }
 
         if (!newUsername.equals(user.getUsername())
             && userRepository.existsByUsername(newUsername)) {
