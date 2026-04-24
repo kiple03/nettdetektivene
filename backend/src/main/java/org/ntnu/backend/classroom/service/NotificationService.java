@@ -24,6 +24,7 @@ import org.ntnu.backend.user.model.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -122,7 +123,7 @@ public class NotificationService {
                 createNotification(teacher.getUser().getId(), classroomId, student.getId(), NotificationType.GAME_COMPLETED, message));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyInappropriateUsername(User student, String attemptedUsername) {
         Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
         if (enrollmentOpt.isEmpty()) {
@@ -137,7 +138,7 @@ public class NotificationService {
                         NotificationType.INAPPROPRIATE_USERNAME, message));
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyInappropriateNote(User student) {
         Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
         if (enrollmentOpt.isEmpty()) {
