@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { AxiosError } from 'axios';
 import { LayeredAvatar, SKIN_TONES } from '@/components/user/LayeredAvatar';
 import {
@@ -91,6 +91,44 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   });
   const hairColorHex = HAIR_COLORS.find(c => c.name === hairColor)?.color;
 
+  const [saveButtonVisible, setSaveButtonVisible] = useState(false);
+  const scrollableRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const saveButtonRef = useCallback((node: HTMLButtonElement | null) => {
+    observerRef.current?.disconnect();
+    observerRef.current = null;
+    if (!node) return;
+    observerRef.current = new IntersectionObserver(
+      ([entry]) => setSaveButtonVisible(entry.isIntersecting),
+      { root: scrollableRef.current, threshold: 0.1 }
+    );
+    observerRef.current.observe(node);
+  }, []);
+
+  // Derive initial equipped for edit detection (props don't change across renders)
+  const initEquipped: EquippedItem[] = (() => {
+    const hasSkinTone = initialItems.some(i => i.category === 'skin_tone');
+    if (hasSkinTone) return initialItems;
+    const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
+    return defaultTone ? [...initialItems, defaultTone] : initialItems;
+  })();
+  const initEquippedIds = new Set(initEquipped.map(i => i.id));
+  const initGender: Gender = (() => {
+    const hair = initEquipped.find(i => i.category === 'hair');
+    return (hair && ITEM_GENDER[hair.name] === 'girl') ? 'girl' : 'boy';
+  })();
+  const initHairColor = HAIR_COLORS.find(c => c.color === userProfile?.hairColor)?.name ?? HAIR_COLORS[0].name;
+  const initSkinTone = initEquipped.find(i => i.category === 'skin_tone')?.name || 'tone_dark';
+  const initUsername = userProfile?.username?.replace("Detektiv ", "") || "";
+
+  const hasEdited =
+    username !== initUsername ||
+    gender !== initGender ||
+    hairColor !== initHairColor ||
+    skinToneKey !== initSkinTone ||
+    equipped.length !== initEquippedIds.size ||
+    equipped.some(i => !initEquippedIds.has(i.id));
+
   const toggleItem = (item: EquippedItem) => {
     setEquipped((prev) => {
       const isAlreadyEquipped = prev.find((i) => i.id === item.id);
@@ -107,14 +145,12 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     setEquipped((prev) => {
       let next = [...prev];
 
-      // Swap hair
       const hairItem = inventory.find(i => i.name === DEFAULT_HAIR[newGender]);
       if (hairItem) {
         next = next.filter(i => i.category !== 'hair');
         next.push(hairItem);
       }
 
-      // Swap face only if current face belongs to the other gender
       const currentFace = next.find(i => i.category === 'face');
       if (currentFace && ITEM_GENDER[currentFace.name] && ITEM_GENDER[currentFace.name] !== newGender) {
         const newFace = inventory.find(i => i.name === DEFAULT_FACE[newGender]);
@@ -165,111 +201,119 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     <div className={styles.page}>
       <img src={detectiveRoom} alt="" className={styles.bg}/>
       <div className={styles.container}>
+
+        {/* Left column */}
         <div className={styles.previewSection}>
-          <h2 className={styles.sectionTitle}>Din profil</h2>
-          <div className={styles.avatarWrapper}>
-            <LayeredAvatar items={equipped} size={256} skinToneBase={colors.base} skinToneShadowDark={colors.shadowDark} skinToneShadowLight={colors.shadowLight} hairColor={hairColorHex} />
-          </div>
-
-          {/* Gender selection */}
-          <div className={styles.genderRow}>
-            <button
-              className={`${styles.genderButton} ${gender === 'boy' ? styles.genderButtonActive : ''}`}
-              onClick={() => handleGenderChange('boy')}
-            >
-              Gutt
-            </button>
-            <button
-              className={`${styles.genderButton} ${gender === 'girl' ? styles.genderButtonActive : ''}`}
-              onClick={() => handleGenderChange('girl')}
-            >
-              Jente
-            </button>
-          </div>
-
-          {/* Hair color */}
-          <div className={styles.hairColorRow}>
-            <span className={styles.hairColorLabel}>Hårfarge</span>
-            <div className={styles.hairColorButtons}>
-              {HAIR_COLORS.map(({ name, color }) => (
-                <button
-                  key={name}
-                  onClick={() => setHairColor(name)}
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    backgroundColor: color,
-                    border: hairColor === name ? '3px solid #2563eb' : '2px solid transparent',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                  }}
-                  title={name}
-                  aria-label={`Velg hårfarge ${name}`}
-                />
-              ))}
+          {hasEdited && !saveButtonVisible && <div className={styles.bouncingArrow}>▼</div>}
+          {/* Sticky top: title + avatar */}
+          <div className={styles.previewTop}>
+            <h2 className={styles.sectionTitle}>Din profil</h2>
+            <div className={styles.avatarWrapper}>
+              <LayeredAvatar items={equipped} size={200} skinToneBase={colors.base} skinToneShadowDark={colors.shadowDark} skinToneShadowLight={colors.shadowLight} hairColor={hairColorHex} />
             </div>
-          </div>
-
-          {/* Skin tone */}
-          <div className={styles.skinRow}>
-            <span className={styles.skinLabel}>Hudfarge</span>
-            <div className={styles.skinButtons}>
-              {Object.entries(SKIN_TONES).map(([toneName, toneColors]) => (
-                <button
-                  key={toneName}
-                  onClick={() => {
-                    setSkinToneKey(toneName);
-                    const newToneItem = inventory.find(i => i.name === toneName && i.category === 'skin_tone');
-                    if (newToneItem) {
-                      setEquipped(prev => [...prev.filter(i => i.category !== 'skin_tone'), newToneItem]);
-                    }
-                  }}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    borderRadius: '50%',
-                    backgroundColor: toneColors.base,
-                    border: skinToneKey === toneName ? '3px solid #2563eb' : '2px solid transparent',
-                    cursor: 'pointer',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                  }}
-                  title={`Select ${toneName}`}
-                  aria-label={`Select ${toneName}`}
-                />
-              ))}
             </div>
-          </div>
 
-          <div className={styles.nameField}>
-            <label className={styles.nameLabel}>Detektiv navn</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                if (usernameError) setUsernameError('');
-              }}
-              className={styles.nameInput}
-              placeholder="Ditt detektivnavn"
-              required
-              minLength={3}
-              maxLength={20}
-            />
-            {usernameError && (
-              <p style={{ color: '#dc2626', marginTop: 4, fontSize: 14 }}>{usernameError}</p>
-            )}
-          </div>
+          {/* Scrollable controls */}
+          <div className={styles.previewScrollable} ref={scrollableRef}>
+            <div className={styles.genderRow}>
+              <button
+                className={`${styles.genderButton} ${gender === 'boy' ? styles.genderButtonActive : ''}`}
+                onClick={() => handleGenderChange('boy')}
+              >
+                Gutt
+              </button>
+              <button
+                className={`${styles.genderButton} ${gender === 'girl' ? styles.genderButtonActive : ''}`}
+                onClick={() => handleGenderChange('girl')}
+              >
+                Jente
+              </button>
+            </div>
 
-          <button
-            onClick={handleSave}
-            disabled={isSaving || username.trim().length < 3}
-            className={styles.saveButton}
-          >
-            {isSaving ? "Lagrer..." : "Lagre antrekk"}
-          </button>
+            <div className={styles.hairColorRow}>
+              <span className={styles.hairColorLabel}>Hårfarge</span>
+              <div className={styles.hairColorButtons}>
+                {HAIR_COLORS.map(({ name, color }) => (
+                  <button
+                    key={name}
+                    onClick={() => setHairColor(name)}
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      backgroundColor: color,
+                      border: hairColor === name ? '3px solid #2563eb' : '2px solid transparent',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    }}
+                    title={name}
+                    aria-label={`Velg hårfarge ${name}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.skinRow}>
+              <span className={styles.skinLabel}>Hudfarge</span>
+              <div className={styles.skinButtons}>
+                {Object.entries(SKIN_TONES).map(([toneName, toneColors]) => (
+                  <button
+                    key={toneName}
+                    onClick={() => {
+                      setSkinToneKey(toneName);
+                      const newToneItem = inventory.find(i => i.name === toneName && i.category === 'skin_tone');
+                      if (newToneItem) {
+                        setEquipped(prev => [...prev.filter(i => i.category !== 'skin_tone'), newToneItem]);
+                      }
+                    }}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      backgroundColor: toneColors.base,
+                      border: skinToneKey === toneName ? '3px solid #2563eb' : '2px solid transparent',
+                      cursor: 'pointer',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}
+                    title={`Select ${toneName}`}
+                    aria-label={`Select ${toneName}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.nameField}>
+              <label className={styles.nameLabel}>Detektiv navn</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (usernameError) setUsernameError('');
+                }}
+                className={styles.nameInput}
+                placeholder="Ditt detektivnavn"
+                required
+                minLength={3}
+                maxLength={20}
+              />
+              {usernameError && (
+                <p style={{ color: '#dc2626', marginTop: 4, fontSize: 14 }}>{usernameError}</p>
+              )}
+            </div>
+
+            <button
+              onClick={handleSave}
+              ref={saveButtonRef}
+              disabled={isSaving || username.trim().length < 3}
+              className={styles.saveButton}
+            >
+              {isSaving ? "Lagrer..." : "Lagre antrekk"}
+            </button>
+          </div>
         </div>
 
+        {/* Right column: wardrobe */}
         <div className={styles.wardrobeSection}>
           <h2 className={styles.sectionTitle}>Din garderobe</h2>
           <div className={styles.gridContainer}>
@@ -295,6 +339,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
             })}
           </div>
         </div>
+
       </div>
     </div>
   );
