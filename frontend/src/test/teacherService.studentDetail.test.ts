@@ -36,6 +36,8 @@ describe('getStudentDetail', () => {
     expect(result).toEqual({
       userId: 'student-uuid-1',
       username: 'alice',
+      email: null,
+      enrolledAt: null,
       levelCompletions: [
         { levelId: 1, completedAt: '2024-01-01T10:00:00Z' },
         { levelId: 2, completedAt: '2024-02-15T12:00:00Z' },
@@ -64,6 +66,8 @@ describe('getStudentDetail', () => {
     expect(result).toEqual({
       userId: 'student-uuid-2',
       username: 'bob',
+      email: null,
+      enrolledAt: null,
       levelCompletions: [],
       currentStopName: null,
       currentLevelOrder: null,
@@ -88,6 +92,8 @@ describe('getStudentDetail', () => {
     expect(result).toEqual({
       userId: 'student-uuid-3',
       username: 'charlie',
+      email: null,
+      enrolledAt: null,
       levelCompletions: [],
       currentStopName: 'Stopp 2',
       currentLevelOrder: 3,
