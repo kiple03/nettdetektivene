@@ -47,6 +47,7 @@ public class GameMapper {
         level.getTitle(),
         level.getDescription(),
         level.getLevelType(),
+        level.getOrder(),
         locked
     );
   }

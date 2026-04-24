@@ -733,6 +733,15 @@
   border-color: rgba(90, 62, 27, 0.5);
 }
 
+.classroom-detail__student-score {
+    margin-left: auto;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #5a4a3a;
+    white-space: nowrap;
+    padding-right: 0.75rem;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1000px) {
   .classroom-detail__top-notes {

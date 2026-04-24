@@ -21,12 +21,9 @@ export function useStudentManagement(classroomId: string) {
     const leaderboard = useMemo(
         () =>
             [...studentList]
-                .sort((a, b) => {
-                    if (b.medalsEarned !== a.medalsEarned) return b.medalsEarned - a.medalsEarned;
-                    return b.levelsCompleted - a.levelsCompleted;
-                })
+                .sort((a, b) => b.score - a.score)
                 .map((student, index) => ({ userId: student.userId, rank: index + 1 })),
-        [studentList],
+        [studentList],  
     );
 
     function getLeaderboardRank(userId: string) {

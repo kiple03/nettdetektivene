@@ -9,6 +9,7 @@ import {
     getMysterySubmissions,
     getStops,
     getNotifications,
+    getClassroomLeaderboard
 } from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
 
@@ -80,4 +81,12 @@ export function useNotifications() {
         queryKey: teacherKeys.notifications,
         queryFn: getNotifications,
     });
+}
+
+export function useClassroomLeaderboard(classroomId: string) {
+  return useQuery({
+    queryKey: teacherKeys.leaderboard(classroomId),
+    queryFn: () => getClassroomLeaderboard(classroomId),
+    enabled: !!classroomId,
+  });
 }

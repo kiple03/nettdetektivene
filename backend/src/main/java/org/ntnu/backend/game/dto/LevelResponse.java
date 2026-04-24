@@ -16,5 +16,9 @@ public record LevelResponse(
     @Schema(description = "The structure of the level")
     LevelType levelType,
 
+    @Schema(description = "The order of the level")
+    int order,
+
+    @Schema(description = "If the user is able to play this level")
     boolean locked
 ) {}
