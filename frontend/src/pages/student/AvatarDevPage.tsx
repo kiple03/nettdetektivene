@@ -35,6 +35,16 @@ const DEFAULT_HAIR: Record<Gender, string> = {
   girl: 'girl_hair',
 };
 
+const HAIR_COLORS: { name: string; color: string }[] = [
+  { name: 'black',       color: '#1a1008' },
+  { name: 'dark-brown',  color: '#3b1f0a' },
+  { name: 'brown',       color: '#7b4a1e' },
+  { name: 'auburn',      color: '#c47b2b' },
+  { name: 'blonde',      color: '#d4a84b' },
+  { name: 'red',         color: '#b53a1a' },
+  { name: 'grey',        color: '#888888' },
+];
+
 export default function AvatarDevPage() {
   const {data: userProfile, isLoading: isProfileLoading} = useUserProfile();
   const {data: inventory, isLoading: isInventoryLoading } = useUserInventory();
@@ -74,6 +84,8 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     const equippedHair = initialItems.find(i => i.category === 'hair');
     return (equippedHair && ITEM_GENDER[equippedHair.name] === 'girl') ? 'girl' : 'boy';
   });
+
+  const [hairColor, setHairColor] = useState(HAIR_COLORS[0].name);
 
   const toggleItem = (item: EquippedItem) => {
     setEquipped((prev) => {
@@ -171,6 +183,30 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
             </button>
           </div>
 
+          {/* Hair color */}
+          <div className={styles.hairColorRow}>
+            <span className={styles.hairColorLabel}>Hårfarge</span>
+            <div className={styles.hairColorButtons}>
+              {HAIR_COLORS.map(({ name, color }) => (
+                <button
+                  key={name}
+                  onClick={() => setHairColor(name)}
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    backgroundColor: color,
+                    border: hairColor === name ? '3px solid #2563eb' : '2px solid transparent',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  }}
+                  title={name}
+                  aria-label={`Velg hårfarge ${name}`}
+                />
+              ))}
+            </div>
+          </div>
+
           {/* Skin tone */}
           <div className={styles.skinRow}>
             <span className={styles.skinLabel}>Hudfarge</span>
@@ -211,6 +247,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
                 if (usernameError) setUsernameError('');
               }}
               className={styles.nameInput}
+              placeholder="Ditt detektivnavn"
               required
               minLength={3}
               maxLength={20}

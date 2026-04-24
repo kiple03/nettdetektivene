@@ -88,7 +88,7 @@
 
 .genderButton {
   flex: 1;
-  padding: 14px 0;
+  padding: 14px 24px;
   border-radius: 4px;
   border: 2px solid #c8a96e;
   background: transparent;
@@ -107,6 +107,28 @@
 .genderButtonActive {
   border-color: #8b6914;
   background: rgba(139, 105, 20, 0.18);
+}
+
+.hairColorRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+
+.hairColorLabel {
+  font-family: 'Georgia', serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #3b2a10;
+  white-space: nowrap;
+}
+
+.hairColorButtons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .skinRow {
@@ -158,6 +180,11 @@
   font-size: 1rem;
   color: #3b2a10;
   box-sizing: border-box;
+}
+
+.nameInput::placeholder {
+  color: #b09060;
+  font-style: italic;
 }
 
 .nameInput:focus {
