@@ -46,11 +46,28 @@
 
 .notifs__header {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 14px;
+  flex-direction: column;
+  gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 20px;
+}
+
+.notifs__back-btn {
+  align-self: flex-start;
+  padding: 6px 14px;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #3f2a12;
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px solid #7a4e2a;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.notifs__back-btn:hover {
+  background: rgba(255, 255, 255, 0.45);
 }
 
 .notifs__title-row {
