@@ -4,6 +4,7 @@ import { getLevelsForStop } from "@/api/gameApi";
 import { Button } from "@/components/ui/buttons/Button";
 import styles from "./StopLevelsModal.module.css";
 import { studentKeys } from "@/hooks/student/queryKeys";
+import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
 
 export interface StopInfo {
     title: string;
@@ -57,13 +58,21 @@ export function StopLevelsModal({ stop, onClose }: StopLevelsModalProps) {
                             <li key={level.id}>
                                 <button
                                     type="button"
-                                    className={styles.levelButton}
-                                    onClick={() => navigate(`/game/${level.id}?stopId=${stop!.stopId}`)}
+                                    className={`${styles.levelButton} ${level.locked ? styles.levelLocked : ""}`}
+                                    disabled={level.locked}
+                                    onClick={() => {
+                                        if (!level.locked) {
+                                            navigate(`/game/${level.id}?stopId=${stop!.stopId}`);
+                                        }
+                                    }}
                                 >
                                     <span className={styles.levelTitle}>{level.title}</span>
+
                                     {level.description && (
                                         <span className={styles.levelDesc}>{level.description}</span>
                                     )}
+
+                                    {level.locked && <LockBadge />}
                                 </button>
                             </li>
                         ))}

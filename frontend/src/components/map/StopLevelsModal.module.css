@@ -83,6 +83,7 @@
     cursor: pointer;
     text-align: left;
     transition: background 0.15s, transform 0.1s;
+    position: relative;
 }
 
 .levelButton:hover {
@@ -110,4 +111,13 @@
 .actions {
     display: flex;
     justify-content: center;
+}
+
+.levelLocked {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.levelLocked .levelTitle {
+    color: #999;
 }
