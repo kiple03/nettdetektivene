@@ -25,5 +25,6 @@ public class SchemaFixRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) {
     jdbc.execute("ALTER TABLE app_user MODIFY username VARCHAR(255) NULL");
+    jdbc.execute("ALTER TABLE notification MODIFY COLUMN type VARCHAR(50) NOT NULL");
   }
 }
