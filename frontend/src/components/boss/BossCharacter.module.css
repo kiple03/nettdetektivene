@@ -1,0 +1,29 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.sprite {
+    width: clamp(120px, 25vw, 220px);
+    height: auto;
+    object-fit: contain;
+}
+
+.name {
+    font-size: 0.7rem;
+    color: #aaa;
+    text-align: center;
+}
+
+@keyframes hurtFlash{
+    0% {filter: brightness(1) saturate(1);}
+    25%  { filter: brightness(2) saturate(3) hue-rotate(-30deg) sepia(1); }                        
+    75%  { filter: brightness(2) saturate(3) hue-rotate(-30deg) sepia(1); }                        
+    100% { filter: brightness(1) saturate(1); }       
+}
+
+.hurt{
+    animation: hurtFlash 0.5s ease-out forwards;
+}

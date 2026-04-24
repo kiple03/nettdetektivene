@@ -33,7 +33,8 @@ export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (username: string) => updateUserProfile(username),
+    mutationFn: ({ username, hairColor }: { username: string; hairColor?: string }) =>
+      updateUserProfile(username, hairColor),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentKeys.userProfile });
     }

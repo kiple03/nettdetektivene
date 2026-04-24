@@ -57,10 +57,7 @@ public class User {
   @Column(nullable = false)
   private RoleEnum role;
 
-  /**
-   * Optional display name chosen by the user. Must be unique across all accounts when set.
-   */
-  @Column(nullable = true, unique = true)
+  @Column(nullable = true)
   private String username;
 
   /**
@@ -83,4 +80,7 @@ public class User {
   @CreationTimestamp
   @Column(nullable = false, updatable = false)
   private Instant createdAt;
+
+  @Column(nullable = true)
+  private String hairColor;
 }

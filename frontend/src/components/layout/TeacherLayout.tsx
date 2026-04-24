@@ -1,10 +1,13 @@
 import { Link, Outlet } from 'react-router-dom';
 import LogoutButton from '@/components/LogoutButton';
 import { decodeToken } from '@/stores/authStore';
+import { useNotifications } from '@/hooks/teacher/useNotifications';
 import './TeacherLayout.css';
 
 export default function TeacherLayout() {
     const username = decodeToken()?.username ?? null;
+    const { data: notifications = [] } = useNotifications();
+    const unreadCount = notifications.filter((notification) => !notification.read).length;
 
     return (
         <div className="teacher-layout">
@@ -15,6 +18,11 @@ export default function TeacherLayout() {
                     aria-label="Varsler"
                 >
                     <BellIcon />
+                    {unreadCount > 0 && (
+                        <span className="teacher-layout__bell-badge" aria-label={`${unreadCount} uleste varsler`}>
+                            {unreadCount}
+                        </span>
+                    )}
                 </Link>
 
                 <details className="teacher-layout__profile-menu">

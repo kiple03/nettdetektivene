@@ -32,6 +32,7 @@ function ProfilePage() {
           <LayeredAvatar
             items={profile?.equippedItems ?? []}
             size={180}
+            hairColor={profile?.hairColor}
           />
         </div>
 

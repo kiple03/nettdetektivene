@@ -4,6 +4,7 @@ import {
     getClassroom,
     getStudentProgress,
     getStudentDetail,
+    getStudentMedalions,
     getCoTeachers,
     getMysterySubmissions,
     getStops,
@@ -32,6 +33,7 @@ export function useStudentProgress(classroomId: string) {
         queryKey: teacherKeys.students(classroomId),
         queryFn: () => getStudentProgress(classroomId),
         enabled: !!classroomId,
+        refetchInterval: 30_000,
     });
 }
 
@@ -39,6 +41,14 @@ export function useStudentDetail(classroomId: string, studentId: string) {
     return useQuery({
         queryKey: teacherKeys.studentDetail(classroomId, studentId),
         queryFn: () => getStudentDetail(classroomId, studentId),
+        enabled: !!classroomId && !!studentId,
+    });
+}
+
+export function useStudentMedalions(classroomId: string, studentId: string) {
+    return useQuery({
+        queryKey: teacherKeys.studentMedalions(classroomId, studentId),
+        queryFn: () => getStudentMedalions(classroomId, studentId),
         enabled: !!classroomId && !!studentId,
     });
 }

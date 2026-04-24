@@ -9,9 +9,12 @@ import type {
   StopSummary,
   CoTeacher,
 } from '../types/classroom';
+import type { MedalionResponse } from './medalionApi';
 import apiClient from '../api/client';
 import axios from 'axios';
 import type { RankedStudent } from '@/types/leaderboard';
+
+export type { MedalionResponse };
 
 // --- Raw response types (internal, not exported) ---
 
@@ -79,6 +82,8 @@ interface RawLevelCompletionEntry {
 
 interface RawStudentDetail {
   username: string;
+  email?: string;
+  enrolledAt?: string;
   completions?: RawLevelCompletionEntry[];
   currentStopName?: string;
   currentLevelOrder?: number;
@@ -142,6 +147,8 @@ function mapStudentDetail(raw: RawStudentDetail, userId: string): StudentDetail 
   return {
     userId,
     username: raw.username,
+    email: raw.email ?? null,
+    enrolledAt: raw.enrolledAt ?? null,
     levelCompletions: completions.map(mapLevelEntry),
     currentStopName: raw.currentStopName ?? null,
     currentLevelOrder: raw.currentLevelOrder ?? null,
@@ -313,6 +320,11 @@ export async function removeStudent(classroomId: string, studentId: string): Pro
 
 export async function updateStudentUsername(classroomId: string, studentId: string, username: string): Promise<void> {
   await apiClient.patch(`/teacher/classrooms/${classroomId}/students/${studentId}`, { username });
+}
+
+export async function getStudentMedalions(classroomId: string, studentId: string): Promise<MedalionResponse[]> {
+  const res = await apiClient.get<MedalionResponse[]>(`/teacher/classrooms/${classroomId}/students/${studentId}/medalions`);
+  return res.data;
 }
 
 export async function getCoTeachers(classroomId: string): Promise<CoTeacher[]> {

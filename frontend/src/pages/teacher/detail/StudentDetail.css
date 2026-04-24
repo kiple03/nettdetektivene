@@ -75,6 +75,191 @@
   text-transform: uppercase;
 }
 
+.student-detail__username-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.student-detail__edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 2px 4px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+
+.student-detail__edit-btn:hover {
+  opacity: 1;
+}
+
+.student-detail__username-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.student-detail__username-input {
+  font-size: 28px;
+  font-weight: 800;
+  color: #2c1a06;
+  border: 2px solid #8b6914;
+  border-radius: 6px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+  outline: none;
+  font-family: inherit;
+}
+
+.student-detail__username-input:focus {
+  border-color: #5a3218;
+  box-shadow: 0 0 0 3px rgba(90, 50, 24, 0.15);
+}
+
+.student-detail__username-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.student-detail__btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.student-detail__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.student-detail__btn--save {
+  background: #5a3218;
+  color: #fdf6e3;
+}
+
+.student-detail__btn--save:hover:not(:disabled) {
+  background: #3d2010;
+}
+
+.student-detail__btn--cancel {
+  background: #e2d5bf;
+  color: #3b1a0a;
+}
+
+.student-detail__btn--cancel:hover:not(:disabled) {
+  background: #c9b99a;
+}
+
+.student-detail__username-error {
+  font-size: 13px;
+  color: #dc2626;
+  font-weight: 600;
+  margin: 0;
+}
+
+.student-detail__info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 12px;
+  row-gap: 4px;
+  margin: 4px 0 0;
+  font-family: sans-serif;
+  font-size: 14px;
+  text-align: left;
+}
+
+.student-detail__info dt {
+  font-weight: 700;
+  color: #7a5c30;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.student-detail__info dd {
+  margin: 0;
+  color: #2c1a06;
+  font-weight: 500;
+}
+
+.student-detail__medals {
+  margin-top: 28px;
+}
+
+.student-detail__medals-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #2c1a06;
+  margin: 0 0 16px;
+  letter-spacing: -0.02em;
+}
+
+.student-detail__medals-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.student-detail__medal-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #f8f0dc;
+  border-radius: 6px;
+  padding: 12px;
+  width: 120px;
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.student-detail__medal-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.student-detail__medal-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2c1a06;
+  margin: 0 0 4px;
+}
+
+.student-detail__medal-desc {
+  font-size: 11px;
+  color: #7a5c30;
+  margin: 0 0 4px;
+  font-style: italic;
+}
+
+.student-detail__medal-date {
+  font-size: 11px;
+  color: #9a7a50;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.student-detail__medal-item--locked {
+  opacity: 0.45;
+}
+
+.student-detail__medal-item--locked .student-detail__medal-img {
+  filter: grayscale(100%);
+}
+
 .student-detail__note {
   position: relative;
   background: #f8f0dc;
@@ -90,12 +275,29 @@
   position: absolute;
   top: -12px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) rotate(1deg);
   width: 64px;
   height: 22px;
-  background: rgba(255, 228, 80, 0.78);
-  border-radius: 3px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(255, 255, 255, 0.14) 1px,
+      rgba(255, 255, 255, 0.14) 2px
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 245, 120, 0.68) 0%,
+      rgba(255, 232, 72, 0.92) 30%,
+      rgba(255, 242, 98, 0.86) 65%,
+      rgba(242, 218, 58, 0.74) 100%
+    );
+  border-radius: 3px 2px 2px 3px;
+  box-shadow:
+    0 2px 7px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.07);
   pointer-events: none;
 }
 

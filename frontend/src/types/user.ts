@@ -32,4 +32,5 @@ export interface EquippedItem {
 export interface UserProfile {
   username: string;
   equippedItems: EquippedItem[];
+  hairColor?: string;
 }
