@@ -174,10 +174,10 @@
 
 .content {
     position: absolute;
-    left: 8%;
-    right: 8%;
-    top: 28%;
-    bottom: 10%;
+    left: 7%;
+    right: 7%;
+    top: 24%;
+    bottom: 2%;
     z-index: 3;
     min-width: 0;
     min-height: 0;

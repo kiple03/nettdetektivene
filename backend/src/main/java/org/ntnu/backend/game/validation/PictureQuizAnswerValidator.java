@@ -86,12 +86,20 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
 
         boolean isCorrect = selectedIds.equals(correctIdSet);
 
-        String explanation = pq.stream()
-                .filter(PictureQuizOption::isCorrect)
-                .map(PictureQuizOption::getExplanation)
-                .filter(explanationText -> explanationText != null && !explanationText.isBlank())
-                .findFirst()
-                .orElse(null);
+        String explanation = isCorrect
+                ? pq.stream()
+                  .filter(PictureQuizOption::isCorrect)
+                  .map(PictureQuizOption::getExplanation)
+                  .filter(explanationText -> explanationText != null && !explanationText.isBlank())
+                  .findFirst()
+                  .orElse(null)
+                : pq.stream()
+                  .filter(option -> selectedIds.contains(option.getId()))
+                  .filter(option -> !option.isCorrect())
+                  .map(PictureQuizOption::getExplanation)
+                  .filter(explanationText -> explanationText != null && !explanationText.isBlank())
+                  .findFirst()
+                  .orElse(null);
 
         return new ValidationResult(
                 isCorrect,
