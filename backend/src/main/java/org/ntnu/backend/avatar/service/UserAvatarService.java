@@ -161,11 +161,6 @@ public class UserAvatarService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukernavnet inneholder upassende innhold");
         }
 
-        if (!newUsername.equals(user.getUsername())
-            && userRepository.existsByUsername(newUsername)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Brukernavnet er allerede tatt");
-        }
-
         user.setUsername(newUsername);
         if (request.hairColor() != null) {
             user.setHairColor(request.hairColor());
