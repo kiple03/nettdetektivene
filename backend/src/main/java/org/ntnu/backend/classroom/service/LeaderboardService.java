@@ -67,7 +67,7 @@ public class LeaderboardService {
     return leaderboardMapper.toRankedList(sorted);
   }
 
-  private Map<UUID, Integer> computeScores(List<Enrollment> enrollments) {
+  public Map<UUID, Integer> computeScores(List<Enrollment> enrollments) {
     Map<Integer, Long> levelsPerStop = stopRepository.findAllWithLevelCounts().stream()
         .collect(Collectors.toMap(StopLevelCount::getDisplayOrder, StopLevelCount::getLevelCount));
 

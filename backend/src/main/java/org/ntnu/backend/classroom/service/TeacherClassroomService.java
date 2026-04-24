@@ -20,6 +20,7 @@ import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
+import org.ntnu.backend.classroom.mapper.LeaderboardMapper;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
@@ -62,6 +63,7 @@ public class TeacherClassroomService {
     private final ProgressService progressService;
     private final ClassroomMapper classroomMapper;
     private final UserInventoryItemRepository userInventoryItemRepository;
+    private final LeaderboardService leaderboardService;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -170,12 +172,15 @@ public class TeacherClassroomService {
                         Collectors.toList())
                 ));
 
+        Map<UUID, Integer> scores = leaderboardService.computeScores(enrollments);
+
         return enrollments.stream()
             .map(e -> classroomMapper.toStudentProgress(
                 e,
                 progressByStudent.get(e.getUser().getId()),
-                equippedItemsByStudent.getOrDefault(e.getUser().getId(), List.of())))
-            .toList();
+                scores.getOrDefault(e.getUser().getId(), 0),
+                equippedItemsByStudent.getOrDefault(e.getUser().getId(), List.of())
+            )).toList();
     }
 
     @Transactional
