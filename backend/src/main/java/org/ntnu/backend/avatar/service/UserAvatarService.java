@@ -14,8 +14,10 @@ import org.ntnu.backend.avatar.model.UserInventoryItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
+import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -156,6 +158,9 @@ public class UserAvatarService {
 
         String newUsername = request.username().trim();
 
+        if (profanityFilter.containsProfanity(newUsername)) {
+            notificationService.notifyInappropriateUsername(user, newUsername);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukernavnet inneholder upassende innhold");
         if (profanityFilter.containsProfanity(newUsername)) {
             notificationService.notifyInappropriateUsername(user, newUsername);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukernavnet inneholder upassende innhold");
