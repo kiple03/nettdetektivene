@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { AxiosError } from 'axios';
 import { LayeredAvatar, SKIN_TONES } from '@/components/user/LayeredAvatar';
 import {
   useSaveAvatarOutfit,
   useUserInventory,
   useUserProfile,
   type EquippedItem,
-  useUpdateUserProfile
 } from '@/hooks/useUserProfile';
 import { refreshToken } from '@/api/authApi';
 import { getClassroomId } from '@/stores/authStore';
@@ -29,22 +27,16 @@ export default function AvatarDevPage() {
 function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], inventory: EquippedItem[] }) {
   const navigate = useNavigate();
 
-  const { data: userProfile } = useUserProfile();
-  const { mutate: updateUserProfile } = useUpdateUserProfile();
   const {mutate: saveOutfit, isPending: isSaving} = useSaveAvatarOutfit();
 
   //Save backend items to local state, ensuring a skin tone is always present
   const [equipped, setEquipped] = useState<EquippedItem[]>(() => {
     const hasSkinTone = initialItems.some(i => i.category === 'skin_tone');
     if (hasSkinTone) return initialItems;
-    
+
     const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
     return defaultTone ? [...initialItems, defaultTone] : initialItems;
   });
-  const [username, setUsername] = useState(
-    userProfile?.username?.replace("Detektiv ", "") || ""
-  );
-  const [usernameError, setUsernameError] = useState('');
 
   //SKIN color
   const [skinToneKey, setSkinToneKey] = useState<string>(() => {
@@ -65,28 +57,11 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
 
   // Save to backend
   const handleSave = () => {
-    const trimmed = username.trim();
-    if (trimmed.length < 3 || trimmed.length > 20) {
-      setUsernameError('Brukernavn må være mellom 3 og 20 tegn');
-      return;
-    }
-    setUsernameError('');
-
     const itemIds = equipped.map(item => item.id);
-    saveOutfit(itemIds);
-
-    updateUserProfile(`Detektiv ${trimmed}`, {
+    saveOutfit(itemIds, {
       onSuccess: async () => {
         await refreshToken();
         navigate(getClassroomId() ? '/home' : '/join-with-code');
-      },
-      onError: (err) => {
-        const status = (err as AxiosError).response?.status;
-        if (status === 409) {
-          setUsernameError('Brukernavnet er allerede tatt');
-        } else {
-          setUsernameError('Kunne ikke lagre brukernavn. Prøv igjen.');
-        }
       },
     });
   };
@@ -129,29 +104,10 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
           </div>
 
           <p className={styles.equippedText}>Trying on: {equipped.length} items</p>
-          
-          <div className="mt-4">
-              <label className="block font-semibold mb-1">Detektiv navn</label>
-              <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => {
-                    setUsername(e.target.value);
-                    if (usernameError) setUsernameError('');
-                  }}
-                  className="w-full px-3 py-2 border rounded-lg"
-                  required
-                  minLength={3}
-                  maxLength={20}
-              />
-              {usernameError && (
-                <p style={{ color: '#dc2626', marginTop: 4, fontSize: 14 }}>{usernameError}</p>
-              )}
-            </div>
 
           <button
             onClick={handleSave}
-            disabled={isSaving || username.trim().length < 3}
+            disabled={isSaving}
             className="mt-6 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold shadow-md transition-colors disabled:bg-gray-400"
           >
             {isSaving ? "Lagrer..." : "Lagre anntrett"}

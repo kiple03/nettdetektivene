@@ -122,6 +122,36 @@ public class NotificationService {
                 createNotification(teacher.getUser().getId(), classroomId, student.getId(), NotificationType.GAME_COMPLETED, message));
     }
 
+    @Transactional
+    public void notifyInappropriateUsername(User student, String attemptedUsername) {
+        Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
+        if (enrollmentOpt.isEmpty()) {
+            return;
+        }
+        Enrollment enrollment = enrollmentOpt.get();
+        UUID classroomId = enrollment.getClassroom().getId();
+        String message = student.getUsername() + " forsøkte å bruke brukernavnet \"" + attemptedUsername
+                + "\" som inneholder upassende innhold i " + enrollment.getClassroom().getTitle() + ".";
+        classroomTeacherRepository.findWithUsersByClassroomId(classroomId).forEach(teacher ->
+                createNotification(teacher.getUser().getId(), classroomId, student.getId(),
+                        NotificationType.INAPPROPRIATE_USERNAME, message));
+    }
+
+    @Transactional
+    public void notifyInappropriateNote(User student) {
+        Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
+        if (enrollmentOpt.isEmpty()) {
+            return;
+        }
+        Enrollment enrollment = enrollmentOpt.get();
+        UUID classroomId = enrollment.getClassroom().getId();
+        String message = student.getUsername() + " lagret et notat med upassende innhold i "
+                + enrollment.getClassroom().getTitle() + ".";
+        classroomTeacherRepository.findWithUsersByClassroomId(classroomId).forEach(teacher ->
+                createNotification(teacher.getUser().getId(), classroomId, student.getId(),
+                        NotificationType.INAPPROPRIATE_NOTE, message));
+    }
+
     @Scheduled(cron = "0 0 6 * * *")
     @Transactional
     public void createStuckStudentNotifications() {
