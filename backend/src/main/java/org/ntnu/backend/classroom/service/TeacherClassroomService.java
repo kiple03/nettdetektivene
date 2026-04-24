@@ -294,9 +294,24 @@ public class TeacherClassroomService {
         if (!requesterIsOwner && !removingSelf) {
             throw new AccessDeniedException("Bare eier kan fjerne andre lærere");
         }
-        if (requesterIsOwner && removingSelf) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Eier kan ikke forlate klasserommet");
+
+        List<ClassroomTeacher> allTeachers = classroomTeacherRepository.findWithUsersByClassroomId(classroomId);
+        if (allTeachers.size() == 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                "Du er eneste lærer i klasserommet. Slett klasserommet i stedet.");
         }
+
+        boolean targetIsOwner = classroomTeacherRepository.isOwnerOfClassroom(classroomId, targetUserId);
+        if (targetIsOwner) {
+            allTeachers.stream()
+                .filter(ct -> !ct.getId().getUserId().equals(targetUserId))
+                .findFirst()
+                .ifPresent(ct -> {
+                    ct.setOwner(true);
+                    classroomTeacherRepository.save(ct);
+                });
+        }
+
         var ct = classroomTeacherRepository.findOneByClassroomIdAndUserId(classroomId, targetUserId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         classroomTeacherRepository.delete(ct);

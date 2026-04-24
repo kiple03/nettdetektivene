@@ -705,6 +705,25 @@
   flex-shrink: 0;
 }
 
+.classroom-detail__leave-note {
+  font-size: 0.82rem;
+  color: #7a5230;
+  margin: 0 0 10px;
+}
+
+.classroom-detail__confirm-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.classroom-detail__confirm-label {
+  font-size: 13px;
+  color: #5a3e1b;
+  white-space: nowrap;
+}
+
 .classroom-detail__invite-form {
   display: flex;
   flex-direction: column;

@@ -131,12 +131,31 @@ export function useFeatureMysterySubmission(classroomId: string) {
     });
 }
 
+export function useLeaveClassroom(classroomId: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (userId: string) => removeCoTeacher(classroomId, userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: teacherKeys.classrooms });
+            queryClient.removeQueries({ queryKey: teacherKeys.classroom(classroomId) });
+        },
+    });
+}
+
 export function useInviteCoTeacherError(error: unknown): string | null {
     if (!error) return null;
     if (axios.isAxiosError(error)) {
         if (error.response?.status === 404) return 'Ingen lærer med den e-postadressen ble funnet.';
         if (error.response?.status === 409) return 'Læreren er allerede lagt til i klassen.';
         if (error.response?.status === 400) return 'Den angitte brukeren er ikke registrert som lærer.';
+    }
+    return 'Noe gikk galt. Prøv igjen.';
+}
+
+export function useLeaveClassroomError(error: unknown): string | null {
+    if (!error) return null;
+    if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) return 'Du er eneste lærer i klasserommet. Slett klasserommet i stedet.';
     }
     return 'Noe gikk galt. Prøv igjen.';
 }
