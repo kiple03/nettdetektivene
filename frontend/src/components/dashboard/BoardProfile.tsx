@@ -9,7 +9,7 @@ export function Header(){
     
     return (
         <div>
-            <LayeredAvatar items={userProfile?.equippedItems || []} size={120}/>
+            <LayeredAvatar items={userProfile?.equippedItems || []} size={120} hairColor={userProfile?.hairColor}/>
             <span style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#1e293b', backgroundColor: '#f6f6f6', opacity: 0.8 }}>{userProfile?.username}</span>
         </div>
     );

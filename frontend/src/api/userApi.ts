@@ -18,6 +18,7 @@ interface RawInventoryItem {
 interface RawUserProfile {
   username: string;
   equippedItems: RawEquippedItem[];
+  hairColor?: string;
 }
 
 
@@ -34,6 +35,7 @@ function mapUserProfile(raw: RawUserProfile): UserProfile {
   return {
     username: raw.username,
     equippedItems: raw.equippedItems.map(mapEquippedItem),
+    hairColor: raw.hairColor,
   };
 }
 
@@ -47,7 +49,7 @@ export const saveAvatarOutfit = async (itemIds: string[]) => {
   return response.data;
 }
 
-export const updateUserProfile = async (username: string) => {
-  const response = await clientApi.put('/user/profile', { username });
+export const updateUserProfile = async (username: string, hairColor?: string) => {
+  const response = await clientApi.put('/user/profile', { username, hairColor });
   return response.data;
 };

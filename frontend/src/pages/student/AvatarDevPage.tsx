@@ -85,7 +85,11 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     return (equippedHair && ITEM_GENDER[equippedHair.name] === 'girl') ? 'girl' : 'boy';
   });
 
-  const [hairColor, setHairColor] = useState(HAIR_COLORS[0].name);
+  const [hairColor, setHairColor] = useState(() => {
+    const savedHex = userProfile?.hairColor;
+    return HAIR_COLORS.find(c => c.color === savedHex)?.name ?? HAIR_COLORS[0].name;
+  });
+  const hairColorHex = HAIR_COLORS.find(c => c.name === hairColor)?.color;
 
   const toggleItem = (item: EquippedItem) => {
     setEquipped((prev) => {
@@ -135,7 +139,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     const itemIds = equipped.map(item => item.id);
     saveOutfit(itemIds);
 
-    updateUserProfile(`Detektiv ${trimmed}`, {
+    updateUserProfile({ username: `Detektiv ${trimmed}`, hairColor: hairColorHex }, {
       onSuccess: async () => {
         await refreshToken();
         navigate(getClassroomId() ? '/home' : '/join-with-code');
@@ -164,7 +168,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
         <div className={styles.previewSection}>
           <h2 className={styles.sectionTitle}>Din profil</h2>
           <div className={styles.avatarWrapper}>
-            <LayeredAvatar items={equipped} size={256} skinToneBase={colors.base} skinToneShadowDark={colors.shadowDark} skinToneShadowLight={colors.shadowLight} />
+            <LayeredAvatar items={equipped} size={256} skinToneBase={colors.base} skinToneShadowDark={colors.shadowDark} skinToneShadowLight={colors.shadowLight} hairColor={hairColorHex} />
           </div>
 
           {/* Gender selection */}

@@ -83,4 +83,7 @@ public class User {
   @CreationTimestamp
   @Column(nullable = false, updatable = false)
   private Instant createdAt;
+
+  @Column(nullable = true)
+  private String hairColor;
 }

@@ -1,4 +1,5 @@
 import type { EquippedItem } from '@/hooks/useUserProfile';
+import { useColoredHairSvg } from '@/hooks/useColoredHairSvg';
 
 export const SKIN_TONES: Record<string, {base: string, shadowDark: string, shadowLight: string}> = {
   'tone_light': { base: "#f8c09b", shadowDark: "#da7e61", shadowLight: "#eba482" },
@@ -16,6 +17,39 @@ interface LayeredAvatarProps{
     skinToneBase?: string;
     skinToneShadowDark?: string;
     skinToneShadowLight?: string;
+    hairColor?: string;
+}
+
+interface HairSvgLayerProps {
+    item: EquippedItem;
+    zIndex: number;
+    hairColorHex: string;
+    maskStyle: React.CSSProperties;
+}
+
+function HairSvgLayer({ item, zIndex, hairColorHex, maskStyle }: HairSvgLayerProps) {
+    const { coloredSvg } = useColoredHairSvg(item.imageUrl, item.name, hairColorHex);
+
+    const containerStyle: React.CSSProperties = {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex,
+        ...maskStyle,
+    };
+
+    if (!coloredSvg) {
+        return <div style={containerStyle} />;
+    }
+
+    return (
+        <div
+            style={containerStyle}
+            dangerouslySetInnerHTML={{ __html: coloredSvg }}
+        />
+    );
 }
 
 function BaseAvatarSVG(props: React.SVGProps<SVGSVGElement>){
@@ -72,7 +106,8 @@ export function LayeredAvatar({
     circular = true,
     skinToneBase,
     skinToneShadowDark,
-    skinToneShadowLight
+    skinToneShadowLight,
+    hairColor,
 }: LayeredAvatarProps){
     const skinToneItem = items.find(i => i.category === 'skin_tone');
     const detectedTone = (skinToneItem && SKIN_TONES[skinToneItem.name]) || DEFAULT_TONE;
@@ -123,6 +158,18 @@ export function LayeredAvatar({
                         WebkitMaskRepeat: 'no-repeat',
                       } as React.CSSProperties
                     : {};
+
+                if (item.category === 'hair' && hairColor) {
+                    return (
+                        <HairSvgLayer
+                            key={item.id}
+                            item={item}
+                            zIndex={index + 1}
+                            hairColorHex={hairColor}
+                            maskStyle={maskStyle}
+                        />
+                    );
+                }
 
                 return (
                     <img

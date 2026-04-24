@@ -60,6 +60,7 @@ public class UserAvatarService {
         return UserProfileResponse.builder()
             .username(user.getUsername())
             .equippedItems(itemDtos)
+            .hairColor(user.getHairColor())
             .build();
     }
 
@@ -157,6 +158,9 @@ public class UserAvatarService {
         }
 
         user.setUsername(newUsername);
+        if (request.hairColor() != null) {
+            user.setHairColor(request.hairColor());
+        }
         userRepository.save(user);
         return getUserProfile(userId);
     }

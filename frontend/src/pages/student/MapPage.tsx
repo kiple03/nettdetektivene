@@ -261,7 +261,7 @@ export default function MapPage() {
                     } as CSSProperties}
                 >
                     <div className={carReversed ? styles.carFlipped : undefined}>
-                        <CarWithAvatar items={equippedItems} size={140} />
+                        <CarWithAvatar items={equippedItems} size={140} hairColor={profile?.hairColor} />
                     </div>
                 </div>
 
