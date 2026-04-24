@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import DetectiveBook from "@/components/game/ui/DetectiveBook";
-import DetectiveTipsNote from "@/components/game/ui/DetectiveTipsNote";
 import PictureGrid from "@/components/game/tasks/PictureGrid";
+import BgImg from '@/assets/images/game/photographer/bg.png'
 
 import { type SubmitAnswerRequest, submitMultiSelectAnswer } from "@/api/gameApi";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
@@ -14,13 +14,6 @@ type PhotographerStationProps = {
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
 };
-
-const detectiveTips = [
-    "Se etter rare detaljer",
-    "Se på fingre og hender",
-    "Ser lys og skygger ekte ut?",
-    "Er noe for perfekt?",
-];
 
 export default function PhotographerStation({
                                                 station,
@@ -65,29 +58,38 @@ export default function PhotographerStation({
     };
 
     return (
-        <DetectiveBook
-            title={station.title || "Ekte, KI eller manipulert?"}
-            subtitle={station.questionText}
-            tipsSlot={
-                <DetectiveTipsNote
-                    title="Detektivtips"
-                    tips={detectiveTips}
-                />
-            }
+        <div
+            style={{
+                width: "100%",
+                minHeight: "100vh",
+                backgroundImage: `url(${BgImg})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                overflow: "visible",
+            }}
         >
-            <PictureGrid
-                key={station.questionId}
-                questionId={station.questionId}
-                options={station.options.map((option, index) => ({
-                    id: option.id,
-                    imageUrl: option.imageUrl ?? "",
-                    altText: option.label ?? `Bilde ${index + 1}`,
-                }))}
-                onSubmit={handleSubmit}
-                disabled={disabled || submitted}
-                correctIds={correctIds}
-                wrongIds={wrongIds}
-            />
-        </DetectiveBook>
+            <DetectiveBook
+                title={station.title || "Ekte, KI eller manipulert?"}
+                subtitle={station.questionText}
+            >
+                <PictureGrid
+                    key={station.questionId}
+                    questionId={station.questionId}
+                    options={station.options.map((option, index) => ({
+                        id: option.id,
+                        imageUrl: option.imageUrl ?? "",
+                        altText: option.label ?? `Bilde ${index + 1}`,
+                    }))}
+                    onSubmit={handleSubmit}
+                    disabled={disabled || submitted}
+                    correctIds={correctIds}
+                    wrongIds={wrongIds}
+                />
+            </DetectiveBook>
+        </div>
     );
 }

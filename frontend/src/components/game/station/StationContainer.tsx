@@ -1,5 +1,6 @@
 import type {StationType, SubmitAnswerResult} from "@/types/station.ts";
 import FeedbackBox from "@/components/game/ui/FeedbackBox.tsx";
+import { Button } from '@/components/ui/buttons/Button.tsx'
 
 type Props = {
   title: string;
@@ -27,9 +28,9 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
                   text={submitResult.feedback}
               />
 
-              <button className="nextButton" onClick={onNext}>
-                Neste
-              </button>
+              <Button variant={'fun'} onClick={onNext}>
+                Neste →
+              </Button>
             </div>
         )}
       </div>

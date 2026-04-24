@@ -293,13 +293,13 @@ public class GameSeeder implements CommandLineRunner {
             "Hvilket bilder er IKKE ekte?",
             List.of(
                     new PictureQuizOption(1, "KI-generert", "/assets/photographer/q1/FootballReal.png", false,
-                            "Det er ikke hovedsakelig KI-generert."),
+                            "Bildet er Helt ekte!"),
                     new PictureQuizOption(2, "Manipulert", "/assets/photographer/q1/FootballFakePic.png", true,
                             "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt."),
                     new PictureQuizOption(3, "Manipulert", "/assets/photographer/q1/FootballReal.png", false,
-                            "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt."),
+                            "Bildet er Helt ekte!"),
                     new PictureQuizOption(4, "Manipulert", "/assets/photographer/q1/FootballReal.png", false,
-                            "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt.")
+                            "Bildet er Helt ekte!")
             )
     );
 
