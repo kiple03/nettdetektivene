@@ -1,5 +1,14 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useGameLevel, useLevelQuestions } from '@/hooks/teacher/useTeacherQueries';
+import {
+    useCreateQuestion,
+    useUpdateQuestion,
+    useQuestionMutationError,
+} from '@/hooks/teacher/useTeacherMutations';
+import { QuestionEditorModal } from '@/components/teacher/questionEditor/QuestionEditorModal';
+import type { MultipleChoiceQuestionDraft } from '@/components/teacher/questionEditor/types';
+import type { TeacherQuestion } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
 
 const LEVEL_TYPE_LABELS: Record<string, string> = {
@@ -12,6 +21,19 @@ const LEVEL_TYPE_LABELS: Record<string, string> = {
     TUTORIAL: 'Opplæring',
 };
 
+function questionToInitialDraft(q: TeacherQuestion): MultipleChoiceQuestionDraft {
+    return {
+        questionText: q.questionText,
+        options: (q.options ?? []).map(o => ({
+            id: o.id.toString(),
+            text: o.text ?? '',
+            isCorrect: o.isCorrect,
+            explanation: o.explanation ?? '',
+            imageUrl: o.imageUrl,
+        })),
+    };
+}
+
 export default function LevelQuestionsPage() {
     const { classroomId = '', levelId: levelIdStr = '' } = useParams<{ classroomId: string; levelId: string }>();
     const levelId = parseInt(levelIdStr, 10);
@@ -19,7 +41,58 @@ export default function LevelQuestionsPage() {
     const { data: level, isLoading: levelLoading, isError: levelError } = useGameLevel(levelId);
     const { data: questions = [], isLoading: questionsLoading, isError: questionsError } = useLevelQuestions(classroomId, levelId);
 
+    const createMutation = useCreateQuestion(classroomId, levelId);
+    const updateMutation = useUpdateQuestion(classroomId, levelId);
+
+    const [createOpen, setCreateOpen] = useState(false);
+    const [createKey, setCreateKey] = useState(0);
+    const [editingQuestion, setEditingQuestion] = useState<TeacherQuestion | null>(null);
+
+    const createError = useQuestionMutationError(createMutation.error);
+    const updateError = useQuestionMutationError(updateMutation.error);
+
     const isMultipleChoice = level?.levelType === 'MULTIPLE_CHOICE';
+    const modalOpen = createOpen || !!editingQuestion;
+    const modalMode: 'create' | 'edit' = editingQuestion ? 'edit' : 'create';
+    const modalSaving = createMutation.isPending || updateMutation.isPending;
+    const modalError = editingQuestion ? updateError : createError;
+
+    const handleCloseModal = () => {
+        setCreateOpen(false);
+        setEditingQuestion(null);
+    };
+
+    const handleSave = async (draft: MultipleChoiceQuestionDraft) => {
+        const options = draft.options.map(o => ({
+            text: o.text,
+            imageUrl: o.imageUrl,
+            isCorrect: o.isCorrect,
+            explanation: o.explanation,
+        }));
+
+        if (editingQuestion) {
+            try {
+                await updateMutation.mutateAsync({
+                    questionId: editingQuestion.id,
+                    payload: { questionText: draft.questionText, options },
+                });
+                setEditingQuestion(null);
+            } catch {
+                // error shown via updateError
+            }
+        } else {
+            try {
+                await createMutation.mutateAsync({
+                    questionText: draft.questionText,
+                    levelType: 'MULTIPLE_CHOICE',
+                    options,
+                });
+                setCreateOpen(false);
+            } catch {
+                // error shown via createError
+            }
+        }
+    };
 
     if (isNaN(levelId) || !classroomId) {
         return (
@@ -73,6 +146,7 @@ export default function LevelQuestionsPage() {
                             className="level-questions__add-btn"
                             disabled={!isMultipleChoice}
                             title={isMultipleChoice ? 'Legg til spørsmål' : 'Kun mulig for flervalg-nivåer'}
+                            onClick={() => { setCreateOpen(true); setCreateKey(k => k + 1); }}
                         >
                             + Legg til spørsmål
                         </button>
@@ -107,7 +181,11 @@ export default function LevelQuestionsPage() {
                                             <span className="level-questions__locked-badge">Låst</span>
                                         ) : (
                                             <>
-                                                <button type="button" className="level-questions__edit-btn">
+                                                <button
+                                                    type="button"
+                                                    className="level-questions__edit-btn"
+                                                    onClick={() => setEditingQuestion(q)}
+                                                >
                                                     Rediger
                                                 </button>
                                                 <button type="button" className="level-questions__delete-btn">
@@ -122,6 +200,19 @@ export default function LevelQuestionsPage() {
                     )}
                 </div>
             </div>
+
+            {modalOpen && (
+                <QuestionEditorModal
+                    key={editingQuestion?.id ?? `create-${createKey}`}
+                    mode={modalMode}
+                    levelType={level?.levelType ?? ''}
+                    initialValue={editingQuestion ? questionToInitialDraft(editingQuestion) : undefined}
+                    saving={modalSaving}
+                    error={modalError}
+                    onClose={handleCloseModal}
+                    onSave={handleSave}
+                />
+            )}
         </div>
     );
 }

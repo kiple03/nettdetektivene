@@ -405,3 +405,41 @@ export async function listLevelQuestions(classroomId: string, levelId: number): 
   const res = await apiClient.get<TeacherQuestion[]>(`/teacher/classrooms/${classroomId}/levels/${levelId}/questions`);
   return res.data;
 }
+
+export interface QuestionOptionPayload {
+  text: string;
+  imageUrl: string | null;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+export interface CreateQuestionPayload {
+  questionText: string;
+  levelType: 'MULTIPLE_CHOICE';
+  options: QuestionOptionPayload[];
+}
+
+export interface UpdateQuestionPayload {
+  questionText: string;
+  options: QuestionOptionPayload[];
+}
+
+export async function createQuestion(classroomId: string, levelId: number, payload: CreateQuestionPayload): Promise<TeacherQuestion> {
+  const res = await apiClient.post<TeacherQuestion>(
+    `/teacher/classrooms/${classroomId}/levels/${levelId}/questions`,
+    payload,
+  );
+  return res.data;
+}
+
+export async function updateQuestion(classroomId: string, levelId: number, questionId: number, payload: UpdateQuestionPayload): Promise<TeacherQuestion> {
+  const res = await apiClient.put<TeacherQuestion>(
+    `/teacher/classrooms/${classroomId}/levels/${levelId}/questions/${questionId}`,
+    payload,
+  );
+  return res.data;
+}
+
+export async function deleteQuestion(classroomId: string, levelId: number, questionId: number): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}/levels/${levelId}/questions/${questionId}`);
+}
