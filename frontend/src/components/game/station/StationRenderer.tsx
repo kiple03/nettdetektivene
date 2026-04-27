@@ -3,6 +3,8 @@ import {STATION_TYPE, type StationData, type SubmitAnswerResult,} from "@/types/
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import PhotographerStation from "@/components/game/station/stations/PhotographerStation.tsx";
 import PassordBankenStation from "@/components/game/station/stations/PassordBankenStation";
+import PostkontoretStation from "@/components/game/station/stations/PostkontoretStation.tsx";
+
 
 type StationRendererProps = {
   station: StationData;
@@ -29,6 +31,10 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
               disabled={disabled}
           />
       );
+    case STATION_TYPE.POST:
+      return <PostkontoretStation
+          station={station}
+          onAnswer={onAnswer} />;
 
     case STATION_TYPE.PASSWORD:
       return (

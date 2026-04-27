@@ -1,12 +1,13 @@
 import client from "./client"
+import type {EmailContent} from "@/types/email.ts";
 
-export type LevelType = "MULTIPLE_CHOICE" | "PICTURE_QUIZ"| "PASSWORD_STRENGTH" // legge til flere oppgavetyper senere
+export type LevelType = "PICTURE_QUIZ" | "POST_OFFICE" | "MULTIPLE_CHOICE" | "PASSWORD_STRENGTH"// legge til flere oppgavetyper senere
 
 export type SubmitAnswerRequest =
     | SubmitSingleChoiceAnswerRequest
     | SubmitMultiSelectAnswerRequest
     | SubmitPasswordStrengthAnswerRequest
-
+    | SubmitMultiChoiceAnswerRequest;
 
 export interface GameStop {
   id: number;
@@ -33,6 +34,7 @@ export interface GameQuestion {
   levelType: LevelType;
   questionText: string;
   options: QuestionOption[];
+  email?: EmailContent;
 }
 
 export interface GameLevel {
@@ -130,3 +132,15 @@ export const submitPasswordStrengthAnswer = async (
     return response.data;
   }
 
+export interface SubmitMultiChoiceAnswerRequest {
+  shape: "MULTI";
+  selectedIds: string[];
+}
+
+export async function submitMultiChoiceAnswer(
+    questionId: number,
+    request: SubmitMultiChoiceAnswerRequest
+) {
+  const response = await client.post(`/game/questions/${questionId}/submit`, request);
+  return response.data;
+}

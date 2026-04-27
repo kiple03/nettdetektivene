@@ -50,9 +50,11 @@ interface RawStudentProgress {
   studentId?: string;
   id?: string;
   username: string;
-  levelsCompleted: number;
+  email?: string | null;
+  currentStopDisplayOrder: number;
+  totalStops: number;
   medalsEarned: number;
-    score: number; 
+  score: number;
   equippedItems?: RawEquippedItem[] | null;
 }
 
@@ -63,8 +65,8 @@ interface RawClassroomSummary {
   joinCode: string;
   createdAt: string;
   studentCount: number;
-  assignmentCount: number;
-  completedCount: number;
+  totalStops: number;
+  avgStopPosition: number;
   progressPercent: number;
   avgScore: number;
   teacherUsernames: string[];
@@ -119,9 +121,11 @@ function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
   return {
     userId: resolvedUserId,
     username: raw.username,
-    levelsCompleted: raw.levelsCompleted,
+    email: raw.email ?? null,
+    currentStopDisplayOrder: raw.currentStopDisplayOrder ?? 0,
+    totalStops: raw.totalStops ?? 0,
     medalsEarned: raw.medalsEarned,
-      score: raw.score, 
+    score: raw.score,
     equippedItems: raw.equippedItems ?? [],
   };
 }
@@ -134,8 +138,8 @@ function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
     joinCode: raw.joinCode,
     createdAt: raw.createdAt,
     studentCount: raw.studentCount,
-    assignmentCount: raw.assignmentCount,
-    completedCount: raw.completedCount,
+    totalStops: raw.totalStops,
+    avgStopPosition: raw.avgStopPosition,
     progressPercent: raw.progressPercent,
     avgScore: raw.avgScore ?? 0,
     teacherUsernames: raw.teacherUsernames ?? [],

@@ -6,7 +6,6 @@ import type { StudentSummary } from '@/types/classroom.ts';
 type ClassroomDetailStudentCardProps = {
     classroomId: string;
     students: StudentSummary[];
-    totalStops: number;
     editingStudentId: string | null;
     editUsernameValue: string;
     savingUsername: boolean;
@@ -25,7 +24,6 @@ type ClassroomDetailStudentCardProps = {
 export function ClassroomDetailStudentCard({
     classroomId,
     students,
-    totalStops,
     editingStudentId,
     editUsernameValue,
     savingUsername,
@@ -52,7 +50,7 @@ export function ClassroomDetailStudentCard({
             ) : (
                 <ul className="classroom-detail__student-list">
                     {students.map((student) => {
-                        const { userId, username, levelsCompleted, medalsEarned, score, equippedItems } = student;
+                        const { userId, username, email, currentStopDisplayOrder, totalStops: studentTotalStops, medalsEarned, score, equippedItems } = student;
                         const rank = getLeaderboardRank(userId);
                         const isEditing = editingStudentId === userId;
                         const isConfirmingRemove = confirmRemoveId === userId;
@@ -100,15 +98,18 @@ export function ClassroomDetailStudentCard({
                                             </button>
                                         </div>
                                     ) : (
-                                        <Link
-                                            to={`/teacher/classrooms/${classroomId}/students/${userId}`}
-                                            className="classroom-detail__student-name"
-                                        >
-                                            {username}
-                                        </Link>
+                                        <div className="classroom-detail__student-name-row">
+                                            <Link
+                                                to={`/teacher/classrooms/${classroomId}/students/${userId}`}
+                                                className="classroom-detail__student-name"
+                                            >
+                                                {username}
+                                            </Link>
+                                            {email && <span className="classroom-detail__student-email">{email}</span>}
+                                        </div>
                                     )}
                                     <span className="classroom-detail__student-meta">
-                                        #{rank} · {levelsCompleted}/{totalStops} stopp · {medalsEarned} medaljer
+                                        #{rank} · {currentStopDisplayOrder}/{studentTotalStops} stopp · {medalsEarned} medaljer
                                     </span>
                                 </div>
 
