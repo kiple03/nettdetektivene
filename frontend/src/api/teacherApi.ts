@@ -64,6 +64,7 @@ interface RawClassroomSummary {
   assignmentCount: number;
   completedCount: number;
   progressPercent: number;
+  avgScore: number;
   teacherUsernames: string[];
 }
 
@@ -134,6 +135,7 @@ function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
     assignmentCount: raw.assignmentCount,
     completedCount: raw.completedCount,
     progressPercent: raw.progressPercent,
+    avgScore: raw.avgScore ?? 0,
     teacherUsernames: raw.teacherUsernames ?? [],
   };
 }

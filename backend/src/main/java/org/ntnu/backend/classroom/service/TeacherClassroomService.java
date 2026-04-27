@@ -19,6 +19,7 @@ import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
+import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardClassroomResponse;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
 import org.ntnu.backend.classroom.mapper.LeaderboardMapper;
 import org.ntnu.backend.classroom.model.Classroom;
@@ -93,18 +94,25 @@ public class TeacherClassroomService {
             .map(e -> e.getUser().getId())
             .toList();
 
+
         Map<UUID, ProgressSummaryResponse> progressByStudent =
             progressService.getProgressForStudents(allStudentIds);
 
+        Map<String, Integer> avgScoreByClassroom = leaderboardService.getTeacherClassroomScores(teacherId)
+            .stream()
+            .collect(Collectors.toMap(LeaderboardClassroomResponse::id, LeaderboardClassroomResponse::avgScore));
+
         return classrooms.stream()
-            .map(classroom -> summarizeClassroom(classroom, progressByStudent, totalLevelsInGame))
+            .map(classroom -> summarizeClassroom(classroom, progressByStudent, totalLevelsInGame,
+                avgScoreByClassroom.getOrDefault(classroom.getId().toString(), 0)))
             .toList();
     }
 
     private ClassroomSummaryResponse summarizeClassroom(
         Classroom classroom,
         Map<UUID, ProgressSummaryResponse> progressByStudent,
-        int totalLevelsInGame) {
+        int totalLevelsInGame,
+        int avgScore) {
 
         List<Enrollment> activeEnrollments =
             enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroom.getId());
@@ -116,7 +124,7 @@ public class TeacherClassroomService {
             .sum();
 
         return classroomMapper.toSummary(
-            classroom, activeEnrollments.size(), totalLevelsInGame, completedCount);
+            classroom, activeEnrollments.size(), totalLevelsInGame, completedCount, avgScore);
     }
 
     /**
