@@ -369,7 +369,7 @@ export default function MapPage() {
                 stop={pendingStop ? { title: pendingStop.title, stopId: stopIdByTitle[pendingStop.title] ?? null } : null}
                 onClose={() => {
                     setManualPendingStop(null);
-                    if (searchParams.has("stopId")) setSearchParams({});
+                    if (searchParams.has("levelId")) setSearchParams({});
                 }}
             />
 

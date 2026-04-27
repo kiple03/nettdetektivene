@@ -22,7 +22,10 @@ export default function BackgroundMusic(){
         const audio = audioRef.current;
         if(!audio) return;
         if(isLoggedIn && role === 'STUDENT'){
-            audio.play().catch(() => {});
+            audio.play().catch(() => {
+                const resume = () => audio.play().catch(() => {});
+                document.addEventListener('click', resume, {once: true});
+            });
         } else{
             audio.pause();
         }
