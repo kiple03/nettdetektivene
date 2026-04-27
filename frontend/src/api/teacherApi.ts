@@ -9,6 +9,23 @@ import type {
   StopSummary,
   CoTeacher,
 } from '../types/classroom';
+
+export interface TeacherQuestionOption {
+  id: number;
+  text: string | null;
+  imageUrl: string | null;
+  isCorrect: boolean;
+  explanation: string | null;
+}
+
+export interface TeacherQuestion {
+  id: number;
+  levelType: string;
+  questionText: string;
+  options: TeacherQuestionOption[];
+  isDefault: boolean;
+  classroomId: string | null;
+}
 import type { MedalionResponse } from './medalionApi';
 import { toNotesMap } from './notesService';
 import type { NotesData } from './notesService';
@@ -382,4 +399,9 @@ export async function addCensorWord(classroomId: string, word: string): Promise<
 
 export async function deleteCensorWord(classroomId: string, wordId: string): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}/censor-words/${wordId}`);
+}
+
+export async function listLevelQuestions(classroomId: string, levelId: number): Promise<TeacherQuestion[]> {
+  const res = await apiClient.get<TeacherQuestion[]>(`/teacher/classrooms/${classroomId}/levels/${levelId}/questions`);
+  return res.data;
 }

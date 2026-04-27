@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy } from "react";
-
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
@@ -13,6 +12,7 @@ const FeideFake = lazy(() => import("@/pages/auth/FeideFake"));
 const StudentHomePage = lazy(() => import("@/pages/student/StudentHomePage"));
 const ClassroomDetail = lazy(() => import("@/pages/teacher/detail/ClassroomDetail"));
 const StudentDetail = lazy(() => import("@/pages/teacher/detail/StudentDetail"));
+const LevelQuestionsPage = lazy(() => import("@/pages/teacher/detail/LevelQuestionsPage"));
 const MysterySubmissions = lazy(() => import("@/pages/teacher/MysterySubmissions"));
 const Notifications = lazy(() => import("@/pages/teacher/Notifications"));
 const LeaderboardPage = lazy(() => import("@/pages/student/LeaderboardPage"));
@@ -128,6 +128,10 @@ export const router = createBrowserRouter([
             {
                 path: '/teacher/classrooms/:id/mystery-submissions',
                 element: <MysterySubmissions />,
+            },
+            {
+                path: '/teacher/classrooms/:classroomId/levels/:levelId/questions',
+                element: <LevelQuestionsPage />,
             },
             {
                 path: '/teacher/notifications',

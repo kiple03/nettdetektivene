@@ -12,7 +12,9 @@ import {
     getNotifications,
     getClassroomLeaderboard,
     getCensorWords,
+    listLevelQuestions,
 } from '@/api/teacherApi';
+import { getGameStops, getLevelsForStop, getGameLevelById } from '@/api/gameApi';
 import { teacherKeys } from './queryKeys';
 
 export function useClassroomSummaries() {
@@ -107,4 +109,35 @@ export function useCensorWords(classroomId: string) {
         queryFn: () => getCensorWords(classroomId),
         enabled: !!classroomId,
     });
+}
+
+export function useLevelQuestions(classroomId: string, levelId: number) {
+  return useQuery({
+    queryKey: teacherKeys.levelQuestions(classroomId, levelId),
+    queryFn: () => listLevelQuestions(classroomId, levelId),
+    enabled: !!classroomId && levelId > 0,
+  });
+}
+
+export function useGameStops() {
+  return useQuery({
+    queryKey: ['game', 'stops'],
+    queryFn: getGameStops,
+  });
+}
+
+export function useGameLevelsForStop(stopId: number | null) {
+  return useQuery({
+    queryKey: ['game', 'stops', stopId, 'levels'],
+    queryFn: () => getLevelsForStop(stopId!),
+    enabled: stopId !== null && stopId > 0,
+  });
+}
+
+export function useGameLevel(levelId: number) {
+  return useQuery({
+    queryKey: ['game', 'levels', levelId],
+    queryFn: () => getGameLevelById(levelId),
+    enabled: levelId > 0,
+  });
 }
