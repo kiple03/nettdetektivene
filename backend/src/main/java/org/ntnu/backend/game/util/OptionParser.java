@@ -75,7 +75,13 @@ public class OptionParser {
           List<PasswordStrengthOption> list = mapper.readValue(json, new TypeReference<>() {});
           yield new ArrayList<>(list);
         }
+        case TEXT_QUIZ -> null;
+        case MINIGAME -> null;
+        case BOSS_BATTLE -> null;
+        case TUTORIAL   -> null;
+        case CLASSIFY_ITEMS -> null;
         default -> null;
+
       };
     } catch (JacksonException e) {
       throw new InvalidOptionFormatException("Invalid JSON for " + type + ": " + e.getMessage());

@@ -18,11 +18,11 @@ type Props = {
 
 function StationContainer({ title, type, children, submitResult, onNext }: Props) {
   const [tutorialOpen, setTutorialOpen] = useState(() => !hasSeenTutorial(type));
-  
+
   const [playCorrect] = useSound(CorrectFx);
   const [playWomp] = useSound(IncorrectFx)
   useEffect(() => {
-    if(submitResult?.correct) playCorrect(); 
+    if(submitResult?.correct) playCorrect();
     else if(submitResult?.feedback) playWomp();
   }, [submitResult]);
 
@@ -57,19 +57,20 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
             <div className="feedback-wrapper">
               <FeedbackBox
                   isCorrect={submitResult.correct}
-                  title={submitResult.correct ? "Riktig!" : "Feil"}
                   text={submitResult.feedback}
               />
-              <Button 
-                variant={'fun'} onClick={onNext}
-                aria-label="Gå videre"
+
+              <Button
+                  variant="next"
+                  onClick={onNext}
+                  aria-label="Gå videre"
               >
                 Neste →
               </Button>
             </div>
         )}
       </div>
-  );
+  )
 }
 
 export default StationContainer;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import BackButton from "@/components/ui/buttons/BackButton";
 import { studentKeys } from "@/hooks/student/queryKeys";
@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/buttons/Button.tsx";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getGameLevelById, getLevelQuestions, submitLevel } from "@/api/gameApi.ts";
+import { getGameLevelById, getLevelQuestions, submitLevel, getLevelsForStop } from "@/api/gameApi.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import ConfettiComp from "@/components/ConfettiComp";
 import useSound from "use-sound";
@@ -35,7 +35,7 @@ export default function GamePage() {
     const [answers, setAnswers] = useState<Record<number, SubmitAnswerRequest>>({});
     const queryClient = useQueryClient();
     const [playVictory] = useSound(victorySound);
-    
+
     const submitLevelMutation = useMutation({
         mutationFn: () => submitLevel(levelIdNum, {
             answers: Object.entries(answers).map(([qid, ans]) => ({
@@ -59,6 +59,14 @@ export default function GamePage() {
     const levelIdNum = Number(levelId);
     const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
 
+    useEffect(() => {
+        setQuestionIndex(0);
+        setSubmitResult(null);
+        setAnswers({});
+        setLevelPassed(true);
+        setDialogOpen(false);
+    }, [levelIdNum]);
+
     const { data: level, isError: levelError } = useQuery({
         queryKey: studentKeys.gameLevel(levelIdNum),
         queryFn: () => getGameLevelById(levelIdNum),
@@ -69,6 +77,12 @@ export default function GamePage() {
         queryKey: studentKeys.levelQuestions(levelIdNum),
         queryFn: () => getLevelQuestions(levelIdNum),
         enabled: validId,
+    });
+
+    const { data: stopLevels = [] } = useQuery({
+        queryKey: ["stopLevels", stopId],
+        queryFn: () => getLevelsForStop(stopId!),
+        enabled: !!stopId,
     });
 
     if (!validId) {
@@ -104,6 +118,11 @@ export default function GamePage() {
     }
 
     const currentQuestion = questions[questionIndex];
+
+    if (!currentQuestion) {
+        return <div>Fant ikke spørsmål for dette nivået</div>;
+    }
+
     const station = mapQuestionToStationData(currentQuestion);
 
     const handleAnswer = (result: SubmitAnswerResult, request: SubmitAnswerRequest) => {
@@ -135,13 +154,32 @@ export default function GamePage() {
     };
 
     const handleBackToMap = () => {
-        navigate(stopId ? `/map?levelId=${stopId}` : "/map");
+        navigate(stopId ? `/map?stopId=${stopId}` : "/map");
+    };
+
+    const handleNextLevel = () => {
+        const sortedLevels = [...stopLevels].sort(
+            (a, b) => a.id - b.id
+        );
+
+        const currentLevelIndex = sortedLevels.findIndex(
+            (level) => level.id === levelIdNum
+        );
+
+        const nextLevel = sortedLevels[currentLevelIndex + 1];
+
+        if (nextLevel) {
+            setDialogOpen(false);
+            navigate(`/game/${nextLevel.id}?stopId=${stopId}`);
+        } else {
+            handleBackToMap();
+        }
     };
 
     return (
         <div>
             <StationContainer
-                key={station.type}
+                key={currentQuestion.id}
                 title={level?.title ?? station.title}
                 type={station.type}
                 submitResult={submitResult}
@@ -182,6 +220,11 @@ export default function GamePage() {
                         <Button variant="fun" type="button" onClick={handleBackToMap}>
                             Tilbake til kartet
                         </Button>
+                        {levelPassed && (
+                            <Button variant="fun" type="button" onClick={handleNextLevel}>
+                                Neste nivå →
+                            </Button>
+                        )}
                     </div>
                 </AlertDialogContent>
             </AlertDialog>
