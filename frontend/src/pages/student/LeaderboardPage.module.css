@@ -1,0 +1,121 @@
+.page {
+  width: 100%;
+  min-height: 100dvh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.board {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  background-size: cover;
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.backBtn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}
+
+.note {
+  background: #fdf6e3;
+  border-radius: 6px;
+  padding: 1.5rem;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.tape {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 12px;
+  background: rgba(200, 180, 120, 0.5);
+  border-radius: 2px;
+}
+
+.title {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #5a4a3a;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  color: #8a7a6a;
+  padding: 1rem 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.row:first-child {
+  background: rgba(255, 215, 0, 0.15);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.row:nth-child(2) {
+  background: rgba(192, 192, 192, 0.15);
+  border: 1px solid rgba(192, 192, 192, 0.3);
+}
+
+.row:nth-child(3) {
+  background: rgba(205, 127, 50, 0.12);
+  border: 1px solid rgba(205, 127, 50, 0.25);
+}
+
+.rank {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #5a4a3a;
+  min-width: 3rem;
+}
+
+.name {
+  flex: 1;
+  font-size: 1rem;
+  color: #3a3a3a;
+  font-weight: 500;
+}
+
+.score {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #5a4a3a;
+  white-space: nowrap;
+}
+.row.myClassroom {
+  border: 2px solid #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.3);
+}

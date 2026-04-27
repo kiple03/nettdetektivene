@@ -95,6 +95,7 @@ public class LeaderboardService {
   ) {
     return scoresByClassroom.entrySet().stream()
         .map(e -> new LeaderboardClassroomResponse(
+            e.getKey().getId().toString(),
             e.getKey().getTitle(),
             e.getValue().stream().mapToInt(Integer::intValue).sum(),
             (int) e.getValue().stream().mapToInt(Integer::intValue).average().orElse(0)

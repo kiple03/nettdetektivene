@@ -50,6 +50,10 @@ export function ClassroomSummaryCard({ summary, accentColor, didCopy, onOpen, on
                     <span className="classroom-card__stat-value">{summary.completedCount}</span>
                     <span className="classroom-card__stat-label">Fullført</span>
                 </div>
+                <div className="classroom-card__stat">
+                    <span className="classroom-card__stat-value">{summary.avgScore}</span>
+                    <span className="classroom-card__stat-label">Snittpoeng</span>
+                </div>
             </div>
 
             <div className="classroom-card__progress-wrap">

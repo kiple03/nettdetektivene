@@ -19,6 +19,7 @@ import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
+import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardClassroomResponse;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
 import org.ntnu.backend.classroom.mapper.LeaderboardMapper;
 import org.ntnu.backend.classroom.model.Classroom;
@@ -34,6 +35,8 @@ import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.medalion.service.MedalionService;
+import org.ntnu.backend.notes.dto.NotesOverviewResponse;
+import org.ntnu.backend.notes.service.NoteService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
@@ -69,6 +72,7 @@ public class TeacherClassroomService {
     private final LeaderboardService leaderboardService;
     private final MedalionService medalionService;
     private final ProfanityFilterService profanityFilter;
+    private final NoteService noteService;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -93,18 +97,25 @@ public class TeacherClassroomService {
             .map(e -> e.getUser().getId())
             .toList();
 
+
         Map<UUID, ProgressSummaryResponse> progressByStudent =
             progressService.getProgressForStudents(allStudentIds);
 
+        Map<String, Integer> avgScoreByClassroom = leaderboardService.getTeacherClassroomScores(teacherId)
+            .stream()
+            .collect(Collectors.toMap(LeaderboardClassroomResponse::id, LeaderboardClassroomResponse::avgScore));
+
         return classrooms.stream()
-            .map(classroom -> summarizeClassroom(classroom, progressByStudent, totalLevelsInGame))
+            .map(classroom -> summarizeClassroom(classroom, progressByStudent, totalLevelsInGame,
+                avgScoreByClassroom.getOrDefault(classroom.getId().toString(), 0)))
             .toList();
     }
 
     private ClassroomSummaryResponse summarizeClassroom(
         Classroom classroom,
         Map<UUID, ProgressSummaryResponse> progressByStudent,
-        int totalLevelsInGame) {
+        int totalLevelsInGame,
+        int avgScore) {
 
         List<Enrollment> activeEnrollments =
             enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroom.getId());
@@ -116,7 +127,7 @@ public class TeacherClassroomService {
             .sum();
 
         return classroomMapper.toSummary(
-            classroom, activeEnrollments.size(), totalLevelsInGame, completedCount);
+            classroom, activeEnrollments.size(), totalLevelsInGame, completedCount, avgScore);
     }
 
     /**
@@ -205,6 +216,15 @@ public class TeacherClassroomService {
             .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return medalionService.getAllUsersMedalion(studentId);
+    }
+
+    @Transactional(readOnly = true)
+    public NotesOverviewResponse getStudentNotebook(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return noteService.getNotesForUser(studentId, classroomId);
     }
 
     @Transactional

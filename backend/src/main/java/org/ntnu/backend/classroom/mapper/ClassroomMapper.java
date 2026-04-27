@@ -76,7 +76,9 @@ public class ClassroomMapper {
       Classroom classroom,
       long studentCount,
       int totalLevelsInGame,
-      int completedCount) {
+      int completedCount,
+      int avgScore
+  ) {
 
     long possible = (long) totalLevelsInGame * studentCount;
     int progressPercent = possible > 0 ? (int) (completedCount * 100L / possible) : 0;
@@ -90,6 +92,7 @@ public class ClassroomMapper {
         .studentCount(studentCount)
         .assignmentCount(totalLevelsInGame)
         .completedCount(completedCount)
+        .avgScore(avgScore)
         .progressPercent(progressPercent)
         .build();
   }
