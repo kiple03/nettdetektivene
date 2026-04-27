@@ -74,6 +74,7 @@ public class OptionParser {
         case MINIGAME -> null;
         case BOSS_BATTLE -> null;
         case TUTORIAL   -> null;
+        case CLASSIFY_ITEMS -> null;
         case POST_OFFICE -> null;
       };
     } catch (JacksonException e) {
