@@ -16,12 +16,14 @@ import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.classroom.service.CensorWordService;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.config.SecurityConfig;
 import org.ntnu.backend.mystery.model.enums.MysteryStatusEnum;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.security.JwtAuthenticationEntryPoint;
 import org.ntnu.backend.security.JwtAuthenticationToken;
+import org.ntnu.backend.security.JwtService;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -46,6 +48,12 @@ class TeacherClassroomControllerTest {
 
     @MockitoBean
     private TeacherClassroomService teacherClassroomService;
+
+    @MockitoBean
+    private CensorWordService censorWordService;
+
+    @MockitoBean
+    private JwtService jwtService;
 
 
     private JwtAuthenticationToken teacherAuth(UUID userId) {
