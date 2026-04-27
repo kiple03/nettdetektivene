@@ -9,7 +9,8 @@ import {
     getMysterySubmissions,
     getStops,
     getNotifications,
-    getClassroomLeaderboard
+    getClassroomLeaderboard,
+    getCensorWords,
 } from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
 
@@ -89,4 +90,12 @@ export function useClassroomLeaderboard(classroomId: string) {
     queryFn: () => getClassroomLeaderboard(classroomId),
     enabled: !!classroomId,
   });
+}
+
+export function useCensorWords(classroomId: string) {
+    return useQuery({
+        queryKey: teacherKeys.censorWords(classroomId),
+        queryFn: () => getCensorWords(classroomId),
+        enabled: !!classroomId,
+    });
 }

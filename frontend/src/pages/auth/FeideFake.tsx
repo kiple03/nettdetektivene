@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, Plus } from 'lucide-react';
 import { AxiosError } from 'axios';
+import { useQueryClient } from '@tanstack/react-query';
 import { login } from '@/api/authApi';
 import { decodeToken, setToken } from '@/stores/authStore';
 import type { Role } from '@/types/user';
@@ -25,6 +26,7 @@ function FeideFake() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleBack = () => {
     navigate(-1);
@@ -46,6 +48,7 @@ function FeideFake() {
     setSubmitting(true);
     try {
       const res = await login({ email, password, portalRole });
+      queryClient.clear();
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
       const payload = decodeToken(res.accessToken);

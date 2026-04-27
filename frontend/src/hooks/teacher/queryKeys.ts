@@ -11,5 +11,5 @@ export const teacherKeys = {
     leaderboard: (classroomId: string) => ['teacher', 'leaderboard', classroomId] as const,
     stops: ['teacher', 'stops'] as const,
     notifications: ['teacher', 'notifications'] as const,
-    
+    censorWords: (classroomId: string) => ['teacher', 'classrooms', classroomId, 'censor-words'] as const,
 };

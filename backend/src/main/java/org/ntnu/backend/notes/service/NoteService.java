@@ -82,10 +82,11 @@ public class NoteService {
         User user = getAuthenticatedUser(authentication);
         NoteCategory category = parseCategory(categoryRaw);
 
+        UUID classroomId = JwtAuthenticatedPrincipal.from(authentication).getClassroomId();
         String content = request.content().trim();
-        boolean hasProfanity = profanityFilter.containsProfanity(content);
+        boolean hasProfanity = profanityFilter.containsProfanity(content, classroomId);
         if (hasProfanity) {
-            content = profanityFilter.censor(content);
+            content = profanityFilter.censor(content, classroomId);
         }
 
         Note note = Note.builder()

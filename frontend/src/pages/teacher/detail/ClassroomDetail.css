@@ -368,6 +368,159 @@
   color: #2c1a06;
 }
 
+/* ─── Censor word note card ─── */
+.classroom-detail__censor-desc {
+  font-size: 13px;
+  color: #6b4c28;
+  margin: -8px 0 16px;
+  line-height: 1.5;
+}
+
+.classroom-detail__censor-open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #2c1a06;
+  color: #f5edd8;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.classroom-detail__censor-open-btn:hover {
+  background: #4a2e10;
+}
+
+.classroom-detail__censor-badge {
+  background: #c0392b;
+  color: #fff;
+  border-radius: 99px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 800;
+  margin-left: 2px;
+}
+
+/* ─── Censor word modal ─── */
+.censor-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.censor-modal {
+  background: #fffdf5;
+  border-radius: 12px;
+  padding: 28px 28px 24px;
+  width: min(480px, 92vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.censor-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.censor-modal__title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #2c1a06;
+  margin: 0;
+}
+
+.censor-modal__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b4c28;
+  padding: 2px;
+  display: flex;
+  flex-shrink: 0;
+}
+
+.censor-modal__close:hover {
+  color: #2c1a06;
+}
+
+.censor-modal__info {
+  font-size: 13px;
+  color: #6b4c28;
+  margin: 0;
+  line-height: 1.5;
+  background: #f5edd8;
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.censor-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.censor-modal__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5edd8;
+  border-radius: 6px;
+  padding: 7px 10px;
+}
+
+.censor-modal__word {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c1a06;
+}
+
+.censor-modal__remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9a7040;
+  display: flex;
+  padding: 2px;
+}
+
+.censor-modal__remove:hover {
+  color: #c0392b;
+}
+
+.censor-modal__empty {
+  font-size: 13px;
+  color: #9a7040;
+  font-style: italic;
+}
+
+.censor-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.censor-modal__input-row {
+  display: flex;
+  gap: 8px;
+}
+
 .classroom-detail__count {
   font-weight: 500;
   color: #9a7040;
@@ -703,6 +856,25 @@
   border-radius: 4px;
   padding: 2px 6px;
   flex-shrink: 0;
+}
+
+.classroom-detail__leave-note {
+  font-size: 0.82rem;
+  color: #7a5230;
+  margin: 0 0 10px;
+}
+
+.classroom-detail__confirm-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.classroom-detail__confirm-label {
+  font-size: 13px;
+  color: #5a3e1b;
+  white-space: nowrap;
 }
 
 .classroom-detail__invite-form {
