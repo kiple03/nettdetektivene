@@ -1,4 +1,4 @@
-import { submitPasswordStrengthAnswer, type SubmitAnswerRequest } from "@/api/gameApi";
+import { submitPasswordStrengthAnswer, type SubmitAnswerRequest, type SubmitPasswordStrengthAnswerRequest } from "@/api/gameApi";
 import type { StationData, SubmitAnswerResult } from "@/types/station"
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
 import TaskHeader from "../../ui/TaskHeader";
