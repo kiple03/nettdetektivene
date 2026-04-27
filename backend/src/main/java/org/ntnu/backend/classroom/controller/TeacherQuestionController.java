@@ -12,6 +12,7 @@ import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +56,15 @@ public class TeacherQuestionController {
             @RequestBody @Valid UpdateTeacherQuestionRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherQuestionService.updateQuestion(classroomId, levelId, questionId, request, principal);
+    }
+
+    @DeleteMapping("/{questionId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteQuestion(
+            @PathVariable UUID classroomId,
+            @PathVariable int levelId,
+            @PathVariable int questionId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        teacherQuestionService.deleteQuestion(classroomId, levelId, questionId, principal);
     }
 }

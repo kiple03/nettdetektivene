@@ -2,8 +2,11 @@ package org.ntnu.backend.classroom.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -440,5 +443,99 @@ class TeacherQuestionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
             .andExpect(status().isNotFound());
+    }
+
+    // DELETE /{questionId} tests
+
+    @Test
+    void deleteQuestion_returnsNoContent() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 1;
+        int questionId = 99;
+
+        doNothing().when(teacherQuestionService).deleteQuestion(eq(classroomId), eq(levelId), eq(questionId), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions/" + questionId)
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteQuestion_noAuth_returns401() throws Exception {
+        mockMvc.perform(delete("/teacher/classrooms/" + UUID.randomUUID() + "/levels/1/questions/1"))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deleteQuestion_studentRole_returns403() throws Exception {
+        mockMvc.perform(delete("/teacher/classrooms/" + UUID.randomUUID() + "/levels/1/questions/1")
+                .with(authentication(studentAuth())))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void deleteQuestion_defaultQuestion_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        doThrow(new IllegalArgumentException("Cannot delete a default (seeded) question"))
+            .when(teacherQuestionService).deleteQuestion(eq(classroomId), eq(1), eq(1), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/levels/1/questions/1")
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deleteQuestion_wrongClassroom_returns403() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        doThrow(new AccessDeniedException("Question does not belong to this classroom"))
+            .when(teacherQuestionService).deleteQuestion(eq(classroomId), eq(1), eq(5), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/levels/1/questions/5")
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void deleteQuestion_notFound_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        doThrow(new QuestionNotFoundException(999))
+            .when(teacherQuestionService).deleteQuestion(eq(classroomId), eq(1), eq(999), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/levels/1/questions/999")
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteQuestion_wrongLevelId_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        doThrow(new QuestionNotFoundException(1))
+            .when(teacherQuestionService).deleteQuestion(eq(classroomId), eq(999), eq(1), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/levels/999/questions/1")
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteQuestion_notOwnedByTeacher_returns403() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        doThrow(new AccessDeniedException("You do not have permission to access this classroom"))
+            .when(teacherQuestionService).deleteQuestion(eq(classroomId), eq(1), eq(1), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/levels/1/questions/1")
+                .with(authentication(teacherAuth(teacherId))))
+            .andExpect(status().isForbidden());
     }
 }

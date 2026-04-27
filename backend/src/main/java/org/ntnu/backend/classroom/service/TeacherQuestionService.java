@@ -134,6 +134,33 @@ public class TeacherQuestionService {
         return toTeacherResponse(questionRepository.save(question));
     }
 
+    /**
+     * Deletes a teacher-added question. Rejects default questions (400) and
+     * questions not belonging to the given classroom (403).
+     */
+    public void deleteQuestion(
+            UUID classroomId, int levelId, int questionId,
+            JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+
+        Question question = questionRepository.findById(questionId)
+            .orElseThrow(() -> new QuestionNotFoundException(questionId));
+
+        if (question.getLevel().getId() != levelId) {
+            throw new QuestionNotFoundException(questionId);
+        }
+
+        if (question.isDefault()) {
+            throw new IllegalArgumentException("Cannot delete a default (seeded) question");
+        }
+
+        if (!classroomId.equals(question.getClassroomId())) {
+            throw new AccessDeniedException("Question does not belong to this classroom");
+        }
+
+        questionRepository.delete(question);
+    }
+
     private List<Option> buildMcOptions(List<CreateMultipleChoiceOptionRequest> dtos) {
         List<Option> options = new ArrayList<>();
         for (int i = 0; i < dtos.size(); i++) {
