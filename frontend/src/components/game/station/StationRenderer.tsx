@@ -3,6 +3,7 @@ import {STATION_TYPE, type StationData, type SubmitAnswerResult,} from "@/types/
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import PhotographerStation from "@/components/game/station/stations/PhotographerStation.tsx";
 import PassordBankenStation from "@/components/game/station/stations/PassordBankenStation";
+import MarkedsplassenStation from "./stations/MarkedsPlassenStation";
 
 
 type StationRendererProps = {
@@ -37,6 +38,15 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
               station={station}
               onAnswer={onAnswer}
               disabled={disabled}
+          />
+      );
+
+    case STATION_TYPE.MARKETPLACE:
+        return (
+          <MarkedsplassenStation
+                station={station} 
+                onAnswer={onAnswer} 
+                disabled={disabled} 
           />
       );
 

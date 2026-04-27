@@ -67,6 +67,20 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
         "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
     },
   ],
+  [STATION_TYPE.MARKETPLACE]: [
+    {
+        title: "Markedsplassen 🛒",
+        description: "Her skal du vurdere nettbutikker! Se nøye på hvert element og avgjør hva du synes om det.",
+    },
+    {
+        title: "Slik svarer du",
+        description: "Noen oppgaver har vanlige valg, andre ber deg vurdere flere ting hver for seg. Les nøye og velg det du mener passer best.",
+    },
+    {
+        title: "Lurt å vite",
+        description: "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
+    },
+],
 };
 
 const storageKey = (type: StationType) => `nettdetektivene_tutorial_${type}`;

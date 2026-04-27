@@ -6,6 +6,7 @@ export type SubmitAnswerRequest =
     | SubmitSingleChoiceAnswerRequest
     | SubmitMultiSelectAnswerRequest
     | SubmitPasswordStrengthAnswerRequest
+    | SubmitPerItemAnswerRequest
 
 
 export interface GameStop {
@@ -42,6 +43,7 @@ export interface GameLevel {
   id: number;
   title: string;
   description: string;
+  stopName: string;
   levelType: LevelType;
   locked: boolean;
 }
@@ -76,6 +78,18 @@ export interface SubmitPasswordStrengthAnswerRequest{
   shape: "PASSWORD";
   password: string;
 }
+
+export interface SubmitPerItemAnswerRequest {
+    shape: "PER_ITEM";
+    answers: Record<string, string>;
+}
+
+export const submitPerItemAnswer = async (
+    questionId: number, body: SubmitPerItemAnswerRequest
+): Promise<SubmitAnswerResponse> => {
+    const response = await client.post(`/game/questions/${questionId}/submit`, body);
+    return response.data;
+};
 
 export const submitLevel = async (
   levelId: number,

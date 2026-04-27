@@ -53,6 +53,6 @@ public class ClassifyItemsAnswerValidator implements SubmittedAnswerValidator {
         ? "Riktig! Du klassifiserte alt rett!"
         : String.join(" | ", wrongFeedback);
 
-    return new ValidationResult(correct, feedback);
+    return new ValidationResult(correct, feedback, List.of(), List.of());
   }
 }

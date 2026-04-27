@@ -5,7 +5,7 @@ import { studentKeys } from "@/hooks/student/queryKeys";
 import { mapQuestionToStationData } from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
 import StationRenderer from "@/components/game/station/StationRenderer.tsx";
-import type { SubmitAnswerResult, StationType } from "@/types/station";
+import { STATION_TYPE, type SubmitAnswerResult, type StationType } from "@/types/station";
 import "@/components/game/ui/game.css";
 import {
     AlertDialog,
@@ -20,13 +20,18 @@ import { getGameLevelById, getLevelQuestions, submitLevel } from "@/api/gameApi.
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import ConfettiComp from "@/components/ConfettiComp";
 
+const STOP_TO_TYPE: Record<string, StationType> = {
+    "Nyhetskvartalet": STATION_TYPE.NEWS,
+    "Fotografen": STATION_TYPE.PHOTO,
+    "Passordbanken": STATION_TYPE.PASSWORD,
+    "Markedsplassen": STATION_TYPE.MARKETPLACE,
+};
 
 export default function GamePage() {
     const { levelId } = useParams<{ levelId: string }>();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const stopId = Number(searchParams.get("stopId")) || null;
-    const stationType = searchParams.get("type") as StationType;
 
     const [questionIndex, setQuestionIndex] = useState(0);
     const [submitResult, setSubmitResult] = useState<SubmitAnswerResult | null>(null);
@@ -73,8 +78,11 @@ export default function GamePage() {
 
     if (!validId) return <div>Ugyldig nivå-ID.</div>;
     if (levelError || questionsError) return <div>Noe gikk galt. Prøv igjen.</div>;
-    if (isPending) return <div>Laster...</div>;
+    if (isPending || !level) return <div>Laster...</div>;
     if (questions.length === 0) return <div>Ingen spørsmål funnet.</div>;
+
+    const stationType = STOP_TO_TYPE[level.stopName];
+    if (!stationType) throw new Error(`No station type for stop: "${level.stopName}"`);
 
     const currentQuestion = questions[questionIndex];
     const station = mapQuestionToStationData(currentQuestion, stationType);
@@ -114,7 +122,7 @@ export default function GamePage() {
         <div>
             <StationContainer
                 key={station.type}
-                title={level?.title ?? station.title}
+                title={level.title ?? station.title}
                 type={station.type}
                 submitResult={submitResult}
                 onNext={handleNext}

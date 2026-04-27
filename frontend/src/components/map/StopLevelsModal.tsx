@@ -5,14 +5,6 @@ import { Button } from "@/components/ui/buttons/Button";
 import styles from "./StopLevelsModal.module.css";
 import { studentKeys } from "@/hooks/student/queryKeys";
 import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
-import { STATION_TYPE, type StationType } from "@/types/station";
-
-const STOP_TO_TYPE: Record<string, StationType> = {
-    "Nyhetskvartalet": STATION_TYPE.NEWS,
-    "Fotografen": STATION_TYPE.PHOTO,
-    "Passordbanken": STATION_TYPE.PASSWORD,
-    "Markedsplassen": STATION_TYPE.MARKETPLACE,
-};
 
 export interface StopInfo {
     title: string;
@@ -70,11 +62,7 @@ export function StopLevelsModal({ stop, onClose }: StopLevelsModalProps) {
                                     disabled={level.locked}
                                     onClick={() => {
                                         if (!level.locked) {
-                                            const type = STOP_TO_TYPE[stop!.title];
-                                            if (!type) {
-                                                throw new Error(`No station type mapped for stop: "${stop!.title}"`);
-                                            }
-                                            navigate(`/game/${level.id}?stopId=${stop!.stopId}&type=${type}`);
+                                            navigate(`/game/${level.id}?stopId=${stop!.stopId}`);
                                         }
                                     }}
                                 >
