@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
@@ -53,6 +54,8 @@ public class OptionValidator {
 
     switch (type) {
       case MULTIPLE_CHOICE -> validateMultipleChoice(options);
+      case PASSWORD_STRENGTH -> validatePasswordStrength(options);
+      default -> {/* No rules */}
     }
   }
   /**
@@ -69,6 +72,12 @@ public class OptionValidator {
 
     if (correctCount != 1) {
       throw new OptionValidationException("Multiple choice must have exactly one correct answer");
+    }
+  }
+
+  private void validatePasswordStrength(List<Option> options){
+    if(options.size() != 1 || !(options.get(0) instanceof PasswordStrengthOption)){
+      throw new OptionValidationException("PASSWORD_STRENGTH must have exactly one PasswordStrengthOption type");
     }
   }
 }

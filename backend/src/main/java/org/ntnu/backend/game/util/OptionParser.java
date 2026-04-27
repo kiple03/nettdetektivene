@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.InvalidOptionFormatException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
@@ -52,6 +53,10 @@ public class OptionParser {
           List<MultipleChoiceOption> list =
               mapper.readValue(json, new TypeReference<>() {
               });
+          yield new ArrayList<>(list);
+        }
+        case PASSWORD_STRENGTH -> {
+          List<PasswordStrengthOption> list = mapper.readValue(json, new TypeReference<>() {});
           yield new ArrayList<>(list);
         }
         case TEXT_QUIZ -> null;

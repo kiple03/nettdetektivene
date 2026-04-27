@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
+import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -50,6 +52,7 @@ public class GameSeeder implements CommandLineRunner {
     deduplicateLevels();
     deduplicateLevelNoteTemplates();
     seedNews();
+    seedPasswords(); 
     log.info("GameSeeder: done");
   }
 
@@ -236,7 +239,7 @@ public class GameSeeder implements CommandLineRunner {
     );
   }
 
-  private void ensureQuestion(Level level, String questionText, List<MultipleChoiceOption> options) {
+  private void ensureQuestion(Level level, String questionText, List<Option> options) {
     boolean exists = questionRepository
         .findByLevelIdAndQuestionText(level.getId(), questionText)
         .isPresent();
@@ -251,7 +254,7 @@ public class GameSeeder implements CommandLineRunner {
     questionRepository.save(question);
   }
 
-  private String writeOptions(List<MultipleChoiceOption> options) {
+  private String writeOptions(List<Option> options) {
     try {
       return new ObjectMapper().writeValueAsString(options);
     } catch (JacksonException e) {
@@ -285,4 +288,137 @@ public class GameSeeder implements CommandLineRunner {
             }
         );
   }
+                                                                                                                
+  private void seedPasswords() {                                                                     
+      Stop stop = stopRepository.findByName("Passordbanken").orElseGet(() -> {
+          Stop s = new Stop();                                                                       
+          s.setName("Passordbanken");
+          s.setDisplayOrder(2);                     
+          return stopRepository.save(s);                                                             
+      });
+                                                                                                     
+      // ---------- LEVEL 1 — password strength (new type) ----------                                
+      Level l1 = levelRepository
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Lag et sterkt passord")                
+          .orElseGet(() -> {                                                                         
+              Level l = new Level();                                                                 
+              l.setTitle("Lag et sterkt passord");                                                   
+              l.setDescription("Skriv inn et passord. Systemet sier fra hvor sterkt det er.");       
+              l.setLevelType(LevelType.PASSWORD_STRENGTH);                                           
+              l.setStop(stop);                                                                       
+              l.setOrder(1);                                                                         
+              return levelRepository.save(l);
+          });                                                                                        
+   
+      ensureQuestion(l1,                                                                             
+          "Lag et passord på minst 8 tegn med tall og stor bokstav.",
+          List.of(new PasswordStrengthOption(                                                        
+              1, 8, true, true, false, false,                                                        
+              "Bra! Passordet oppfyller kravene.",                                                   
+              "Passordet ditt er ikke sterkt nok."                                                   
+          ))                                                                                         
+      );                                                                                             
+                                                                                                     
+      ensureQuestion(l1,
+          "Nå skjerper vi kravene: minst 12 tegn, med tall, stor bokstav OG symbol.",
+          List.of(new PasswordStrengthOption(                                                        
+              1, 12, true, true, false, true,
+              "Utmerket — dette er et robust passord!",                                              
+              "Passordet ditt er ikke sterkt nok."                                                   
+          ))
+      );                                                                                             
+                  
+      ensureLevelNoteTemplate(l1, NoteCategory.PASSORD,                                              
+          "Lange passord med blanding av store/små bokstaver, tall og symboler er vanskelige å gjette.");                                                                                         
+                  
+      // ---------- LEVEL 2 — multiple choice: what makes a good password ----------                 
+      Level l2 = levelRepository
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Hva er et godt passord?")              
+          .orElseGet(() -> {
+              Level l = new Level();
+              l.setTitle("Hva er et godt passord?");
+              l.setDescription("Velg alternativet som beskriver et godt passord.");
+              l.setLevelType(LevelType.MULTIPLE_CHOICE);                                             
+              l.setStop(stop);
+              l.setOrder(2);                                                                         
+              return levelRepository.save(l);
+          });
+
+      ensureQuestion(l2,
+          "Hvilket av passordene er tryggest?",
+          List.of(                                                                                   
+              new MultipleChoiceOption(1, "fotball2010",          "", false,
+                  "Et ord fra ordboka pluss et årstall er lett å gjette."),                          
+              new MultipleChoiceOption(2, "Kj0leskap!Blå_Sky12",  "", true,                          
+                  "Riktig! Langt, variert og uten ordbokord."),                                      
+              new MultipleChoiceOption(3, "12345678",             "", false,                         
+                  "Et av verdens vanligste passord — gjettes på sekunder."),                         
+              new MultipleChoiceOption(4, "passord",              "", false,                         
+                  "Direkte ordet 'passord' er det første noen prøver.")                              
+          )                                                                                          
+      );                                                                                             
+                                                                                                     
+      ensureQuestion(l2,
+          "Hvilken regel er VIKTIGST for et sterkt passord?",                                        
+          List.of(                                                                                   
+              new MultipleChoiceOption(1, "At det er kort og lett å huske",                "", false,
+                  "Korte passord gir angripere et lite søkerom."),                                   
+              new MultipleChoiceOption(2, "At det inneholder kjælenavnet ditt",            "", false,
+                  "Personlig info er lett å finne i sosiale medier."),                               
+              new MultipleChoiceOption(3, "At det er langt og variert, og bare brukes ett sted", "", 
+  true,                                                                                              
+                  "Riktig — lengde + unikhet per konto er det som betyr mest."),                     
+              new MultipleChoiceOption(4, "At det bare består av tall",                    "", false,
+                  "Uten bokstaver og symboler blir søkerommet for lite.")                            
+          )                                                                                          
+      );                                                                                             
+                                                                                                     
+      ensureLevelNoteTemplate(l2, NoteCategory.PASSORD,
+          "Bruk unike passord per tjeneste, og vurder en passordbehandler.");                        
+                                                                                                     
+      // ---------- LEVEL 3 — multiple choice: what to do on a leak ----------                       
+      Level l3 = levelRepository                                                                     
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Passordlekkasje — hva gjør du?")       
+          .orElseGet(() -> {                                                                         
+              Level l = new Level();
+              l.setTitle("Passordlekkasje — hva gjør du?");                                          
+              l.setDescription("Velg riktig handling hvis passordet ditt er lekket.");
+              l.setLevelType(LevelType.MULTIPLE_CHOICE);                                             
+              l.setStop(stop);                                                                       
+              l.setOrder(3);                                                                         
+              return levelRepository.save(l);                                                        
+          });     
+
+      ensureQuestion(l3,
+          "Du ser at passordet ditt er lekket på haveibeenpwned. Hva gjør du først?",
+          List.of(                                                                                   
+              new MultipleChoiceOption(1, "Ignorerer det, det går nok over",         "", false,
+                  "Lekkede passord testes av angripere i løpet av få timer."),                       
+              new MultipleChoiceOption(2, "Bytter passordet på den lekkede tjenesten og alle steder det gjenbrukes", "", true,                                                                         
+                  "Riktig — stopp gjenbruk først."),                                                 
+              new MultipleChoiceOption(3, "Skriver passordet på en post-it",         "", false,      
+                  "Dette løser ikke lekkasjen og øker fysisk risiko."),                              
+              new MultipleChoiceOption(4, "Sender det til en venn for råd",          "", false,      
+                  "Du sprer eksponeringen uten å løse problemet.")                                   
+          )                                                                                          
+      );                                                                                             
+                                                                                                     
+      ensureQuestion(l3,
+          "Hvilket tiltak reduserer skaden av fremtidige lekkasjer mest?",
+          List.of(                                                                                   
+              new MultipleChoiceOption(1, "Aldri bruke nettet",                      "", false,
+                  "Urealistisk og unødvendig."),                                                     
+              new MultipleChoiceOption(2, "Slå på to-faktor-autentisering",          "", true,       
+                  "Riktig — selv om passordet lekkes, mangler angriperen andre faktor."),            
+              new MultipleChoiceOption(3, "Bruke samme passord overalt for enkelhet","", false,      
+                  "Motsatt — én lekkasje kompromitterer da alle kontoer."),                          
+              new MultipleChoiceOption(4, "Skrive alle passord i en tekstfil på skrivebordet", "",   
+  false,                                                                                             
+                  "Malware leser slike filer trivielt.")                                             
+          )                                                                                          
+      );          
+                                                                                                     
+      ensureLevelNoteTemplate(l3, NoteCategory.PASSORD,                                              
+          "Bytt passord og skru på 2FA så fort du oppdager lekkasje.");
+  }   
 }

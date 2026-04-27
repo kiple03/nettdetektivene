@@ -203,8 +203,8 @@ public class ProgressService {
   private void awardStopCompletionMedal(UUID userId, Stop completedStop){
     var medal = switch(completedStop.getName()){
       case "Nyhetskvartalet" -> Map.entry("Breaking news", "Du avslørte alle falske nyheter");
-      case "Bildegaten" -> Map.entry("Fanget på kamera", "Du gjennomskuet bildene!");
-      case "E-postsmuget" -> Map.entry("Ikke klikk!", "Du gjennomskuet falske eposter");
+      case "Fotografen" -> Map.entry("Fanget på kamera", "Du gjennomskuet bildene!");
+      case "Postkontoret" -> Map.entry("Ikke klikk!", "Du gjennomskuet falske eposter");
       default -> null;
     };
     if(medal != null){

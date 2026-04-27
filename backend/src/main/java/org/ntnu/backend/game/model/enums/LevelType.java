@@ -6,5 +6,6 @@ public enum LevelType {
     PICTURE_QUIZ,
     MINIGAME,
     BOSS_BATTLE,
-    TUTORIAL
+    TUTORIAL,
+    PASSWORD_STRENGTH
 }
