@@ -8,4 +8,5 @@ public enum LevelType {
     BOSS_BATTLE,
     TUTORIAL,
     POST_OFFICE,
+    PASSWORD_STRENGTH
 }
