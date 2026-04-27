@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
  * fetch stops for the map, then gets the levels to the stop, and then the user can
  * view a question, and submit an answer for feedback.
  *
- * <p>All endpoints require authentication. Stops and levels are global
- * no classroom scoping. Questions are both global and classroom specific (not implemented).
+ * <p>All endpoints require authentication. Stops and levels are global.
+ * Questions are classroom-aware: students receive defaults plus their classroom's added questions.
  *
  * @see GameService
  * @see QuestionService
@@ -94,7 +94,7 @@ public class GameController {
   public List<QuestionResponse> getQuestionsForLevel(
       @PathVariable int levelId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return questionService.getQuestionsForLevel(levelId);
+    return questionService.getQuestionsForLevel(levelId, principal);
   }
 
   /**
