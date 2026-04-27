@@ -1,10 +1,11 @@
 import client from "./client"
 
-export type LevelType = "MULTIPLE_CHOICE"| "PICTURE_QUIZ" // legge til flere oppgavetyper senere
+export type LevelType = "MULTIPLE_CHOICE" | "PASSWORD_STRENGTH"// legge til flere oppgavetyper senere
 
 export type SubmitAnswerRequest =
     | SubmitSingleChoiceAnswerRequest
     | SubmitMultiSelectAnswerRequest
+    | SubmitPasswordStrengthAnswerRequest
 
 
 export interface GameStop {
@@ -18,6 +19,13 @@ export interface QuestionOption {
   id: number;
   text?: string
   imageUrl?: string;
+
+  //For PASSWORD
+  minLength?: number;
+  requireDigit?: boolean;
+  requireUpper?: boolean;
+  requireLower?: boolean;
+  requireSymbol?: boolean;
 }
 
 export interface GameQuestion {
@@ -59,6 +67,11 @@ export interface QuestionAnswer {
 
 export interface SubmitLevelRequest {
   answers: QuestionAnswer[];
+}
+
+export interface SubmitPasswordStrengthAnswerRequest{
+  shape: "PASSWORD";
+  password: string;
 }
 
 export const submitLevel = async (
@@ -110,4 +123,10 @@ export const submitMultiSelectAnswer = async (
   const response = await client.post(`/game/questions/${questionId}/submit`, body);
   return response.data;
 };
+
+export const submitPasswordStrengthAnswer = async (
+  questionId: number, body: SubmitPasswordStrengthAnswerRequest): Promise<SubmitAnswerResponse> => {
+    const response = await client.post(`/game/questions/${questionId}/submit`, body);
+    return response.data;
+  }
 

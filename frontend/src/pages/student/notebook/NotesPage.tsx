@@ -275,6 +275,7 @@ export default function NotesPage() {
                                 <div className={styles.coverAvatar}>
                                     <LayeredAvatar items={userProfile?.equippedItems ?? []}
                                                    size={180}
+                                                   hairColor={userProfile?.hairColor}
                                     />
                                 </div>
                             </div>
@@ -311,8 +312,9 @@ export default function NotesPage() {
 
                             <div className={styles.pageContent}>
                                 <div className={styles.pageHeader}>
-                                    <LayeredAvatar items={userProfile?.equippedItems?? []}
+                                    <LayeredAvatar items={userProfile?.equippedItems ?? []}
                                                    size={55}
+                                                   hairColor={userProfile?.hairColor}
                                     />
                                     <div>
                                         <h2 className={styles.pageHeaderTitle}>{notebookTitle}</h2>

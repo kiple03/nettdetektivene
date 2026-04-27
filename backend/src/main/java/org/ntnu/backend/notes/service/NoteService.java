@@ -2,10 +2,14 @@ package org.ntnu.backend.notes.service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.game.model.Level;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.ntnu.backend.notes.dto.NoteResponse;
 import org.ntnu.backend.notes.dto.NotesOverviewResponse;
 import org.ntnu.backend.notes.dto.UpsertNoteRequest;
@@ -48,6 +52,8 @@ public class NoteService {
     private final UserRepository userRepository;
     private final NoteMapper noteMapper;
     private final LevelNoteTemplateRepository levelNoteTemplateRepository;
+    private final ProfanityFilterService profanityFilter;
+    private final NotificationService notificationService;
 
     /**
      * Returns the full notebook for the authenticated user, including both personal notes and
@@ -78,13 +84,24 @@ public class NoteService {
         User user = getAuthenticatedUser(authentication);
         NoteCategory category = parseCategory(categoryRaw);
 
+        UUID classroomId = JwtAuthenticatedPrincipal.from(authentication).getClassroomId();
+        String content = request.content().trim();
+        boolean hasProfanity = profanityFilter.containsProfanity(content, classroomId);
+        if (hasProfanity) {
+            content = profanityFilter.censor(content, classroomId);
+        }
+
         Note note = Note.builder()
             .user(user)
             .category(category)
-            .content(request.content().trim())
+            .content(content)
             .build();
 
-        return noteMapper.toResponse(noteRepository.save(note));
+        NoteResponse response = noteMapper.toResponse(noteRepository.save(note));
+        if (hasProfanity) {
+            notificationService.notifyInappropriateNote(user);
+        }
+        return response;
     }
 
     /**
@@ -124,6 +141,41 @@ public class NoteService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "Invalid note category: " + raw);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public NotesOverviewResponse getNotesForUser(UUID userId, UUID classroomId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        List<Note> ownNotes = noteRepository.findAllByUserOrderByCategoryAsc(user);
+        List<StudentLevelNote> levelNotes = studentLevelNoteRepository.findAllByUserOrderByCategoryAsc(user);
+        NotesOverviewResponse raw = noteMapper.toOverviewResponse(ownNotes, levelNotes);
+        return applyCensoring(raw, classroomId);
+    }
+
+    private NotesOverviewResponse applyCensoring(NotesOverviewResponse response, UUID classroomId) {
+        return new NotesOverviewResponse(
+            censorMap(response.reflections(), classroomId),
+            censorMap(response.levelNotes(), classroomId)
+        );
+    }
+
+    private Map<String, List<NoteResponse>> censorMap(Map<String, List<NoteResponse>> map, UUID classroomId) {
+        return map.entrySet().stream()
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                e -> e.getValue().stream()
+                    .map(note -> new NoteResponse(
+                        note.id(),
+                        note.category(),
+                        profanityFilter.containsProfanity(note.content(), classroomId)
+                            ? profanityFilter.censor(note.content(), classroomId)
+                            : note.content(),
+                        note.createdAt(),
+                        note.updatedAt()
+                    ))
+                    .toList()
+            ));
     }
 
     public void saveCompletionTipIfNeeded(UUID userId, Level level) {

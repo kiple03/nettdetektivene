@@ -37,4 +37,7 @@ public class AvatarItem {
 
     @Column(name = "unlock_condition", length = 255)
     private String unlockCondition;
+
+    @Column(name = "image_file", length = 100)
+    private String imageFile;
 }

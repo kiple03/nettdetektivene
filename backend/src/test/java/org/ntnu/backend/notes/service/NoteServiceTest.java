@@ -26,10 +26,12 @@ import org.ntnu.backend.notes.model.StudentLevelNote;
 import org.ntnu.backend.notes.model.enums.NoteCategory;
 import org.ntnu.backend.notes.repository.NoteRepository;
 import org.ntnu.backend.notes.repository.StudentLevelNoteRepository;
+import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,6 +48,10 @@ class NoteServiceTest {
     private UserRepository userRepository;
     @Mock
     private NoteMapper noteMapper;
+    @Mock
+    private ProfanityFilterService profanityFilter;
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private NoteService noteService;

@@ -35,10 +35,13 @@ export default function ClassroomDetailPage() {
 
     const {
         teacherList,
+        currentUserId,
+        isOwner,
         inviteEmail, setInviteEmail,
         inviting, inviteError,
         handleInviteTeacher,
-        isOwner,
+        leaving, leaveError,
+        handleLeaveClassroom,
     } = useTeacherInvite(classroomId);
 
     if (!classroom) {
@@ -74,12 +77,16 @@ export default function ClassroomDetailPage() {
                 didCopyCode={didCopyCode}
                 onCopyJoinCode={handleCopyJoinCode}
                 teachers={teacherList}
+                currentUserId={currentUserId}
                 inviteEmail={inviteEmail}
                 inviting={inviting}
                 inviteError={inviteError}
                 isOwner={isOwner}
+                leaving={leaving}
+                leaveError={leaveError}
                 onInviteEmailChange={setInviteEmail}
                 onInviteTeacher={handleInviteTeacher}
+                onLeaveClassroom={handleLeaveClassroom}
                 students={studentList}
                 totalStops={totalStops}
                 editingStudentId={editingStudentId}

@@ -20,6 +20,7 @@ import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.ntnu.backend.medalion.service.MedalionService;
 
 /**
  * Manages student progression through the game's stops and levels.
@@ -48,6 +49,7 @@ public class ProgressService {
   private final LevelRepository levelRepository;
   private final StopRepository stopRepository;
   private final ProgressMapper progressMapper;
+  private final MedalionService medalionService;
   
   /**
    * Creates the initial {@link UserProgress} row for a newly registered student,
@@ -159,7 +161,16 @@ public class ProgressService {
 
     if (!shouldAdvance(progress, level)) return false;
 
+    Stop completedStop = progress.getCurrentStop();
     advanceToNextLevel(progress);
+
+    //Medalion progress
+    if(progress.isGameCompleted()){
+      medalionService.awardInternalUsage(userId, "platinum", "Du fanget skurken");
+    } else if(progress.getCurrentStop().getId() != completedStop.getId()){
+      awardStopCompletionMedal(userId, completedStop);
+    }
+
     return true;
   }
 
@@ -186,6 +197,19 @@ public class ProgressService {
               },
               () -> progress.setGameCompleted(true)
           );
+    }
+  }
+
+  private void awardStopCompletionMedal(UUID userId, Stop completedStop){
+    var medal = switch(completedStop.getName()){
+      case "Nyhetskvartalet" -> Map.entry("Breaking news", "Du avslørte alle falske nyheter");
+      case "Fotografen" -> Map.entry("Fanget på kamera", "Du gjennomskuet bildene!");
+      case "Postkontoret" -> Map.entry("Ikke klikk!", "Du gjennomskuet falske eposter");
+      case "PassordBanken" -> Map.entry("Passordvokter", "Du bygde passord som holder skurker ute!");
+      default -> null;
+    };
+    if(medal != null){
+      medalionService.awardInternalUsage(userId, medal.getKey(), medal.getValue());
     }
   }
 

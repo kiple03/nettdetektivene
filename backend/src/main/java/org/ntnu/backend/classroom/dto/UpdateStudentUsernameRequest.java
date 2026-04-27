@@ -5,6 +5,6 @@ import jakarta.validation.constraints.Size;
 
 public record UpdateStudentUsernameRequest(
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 3, max = 30)
     String username
 ) {}

@@ -8,9 +8,11 @@ import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.OptionResponse;
+import org.ntnu.backend.game.dto.PasswordStrengthOptionResponse;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
@@ -45,11 +47,12 @@ public class GameMapper {
    */
   public LevelResponse toLevelResponse(Level level, boolean locked) {
     return new LevelResponse(
-            level.getId(),
-            level.getTitle(),
-            level.getDescription(),
-            level.getLevelType(),
-            locked
+        level.getId(),
+        level.getTitle(),
+        level.getDescription(),
+        level.getLevelType(),
+        level.getOrder(),
+        locked
     );
   }
 
@@ -85,6 +88,8 @@ public class GameMapper {
               pq.getText(),
               pq.getImageUrl()
       );
+      case PasswordStrengthOption p -> new PasswordStrengthOptionResponse(
+        p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol());
     };
   }
 }

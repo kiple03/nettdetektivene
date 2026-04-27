@@ -18,4 +18,5 @@ import lombok.NoArgsConstructor;
 public class UserProfileResponse {
     private String username;
     private List<EquippedItemDto> equippedItems;
+    private String hairColor;
 }

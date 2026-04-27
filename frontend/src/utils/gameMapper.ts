@@ -13,6 +13,8 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
       return STATION_TYPE.NEWS;
     case "PICTURE_QUIZ":
       return STATION_TYPE.PHOTO;
+    case "PASSWORD_STRENGTH":
+      return STATION_TYPE.PASSWORD;
     default:
       return STATION_TYPE.NEWS;
   }
@@ -24,6 +26,8 @@ function mapQuestionToStationTitle(levelType: GameQuestion["levelType"]): string
       return "Nyhetskvartal";
     case "PICTURE_QUIZ":
       return "Fotografen";
+    case "PASSWORD_STRENGTH":
+      return "Passordbanken";
     default:
       return "Stasjon";
   }
@@ -34,6 +38,11 @@ export function mapOptionToStation(option: QuestionOption): StationOption {
     id: option.id,
     label: option.text ?? "",
     imageUrl: option.imageUrl,
+    minLength: option.minLength,
+    requireDigit:  option.requireDigit,
+    requireUpper:  option.requireUpper,
+    requireLower:  option.requireLower,
+    requireSymbol: option.requireSymbol,
   };
 }
 

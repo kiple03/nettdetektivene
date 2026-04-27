@@ -1,4 +1,5 @@
 import NyhetsKvartalStation from "@/components/game/station/stations/NyhetsKvartalStation.tsx";
+import PassordbankenStation from "@/components/game/station/stations/PassordBankenStation";
 import {STATION_TYPE, type StationData, type SubmitAnswerResult,} from "@/types/station.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import PhotographerStation from "@/components/game/station/stations/PhotographerStation.tsx";
@@ -23,6 +24,15 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
     case STATION_TYPE.PHOTO:
       return (
           <PhotographerStation
+              station={station}
+              onAnswer={onAnswer}
+              disabled={disabled}
+          />
+      );
+
+    case STATION_TYPE.PASSWORD:
+      return (
+          <PassordBankenStation
               station={station}
               onAnswer={onAnswer}
               disabled={disabled}

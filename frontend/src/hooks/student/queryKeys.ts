@@ -5,4 +5,5 @@ export const studentKeys = {
     stopLevels: (stopId: number | null) => ['stopLevels', stopId] as const,
     gameLevel: (levelId: number) => ['level', levelId] as const,
     levelQuestions: (levelId: number) => ['levelQuestions', levelId] as const,
+    globalLeaderboard: ['leaderboard', 'classrooms'] as const,
 };

@@ -1,0 +1,92 @@
+.arena {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.arenaBg {
+    position: absolute;
+    inset: -8px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(3px);
+    z-index: 0;
+}
+
+/* Character areas — hold both the sprite and HP bar */
+.bossCharArea {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 60;
+}
+
+.playerCharArea {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    z-index: 60;
+}
+
+/* Attack prompt — centered bottom */
+.attackPrompt {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+}
+
+/* Full-screen overlays */
+.cutsceneOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeOverlayOut {
+    from { background: rgba(0, 0, 0, 0.35); }
+    to   { background: rgba(0, 0, 0, 0); }
+}
+
+.cutsceneFadeOut {
+    animation: fadeOverlayOut 0.6s ease forwards;
+}
+
+.playerName {
+    font-size: 0.8rem;
+    color: #555;
+}
+
+/* Responsive: mobile portrait */
+@media (orientation: portrait) and (max-width: 767px) {
+    .arena {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
+
+    .bossCharArea {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .playerCharArea {
+        grid-column: 1;
+        grid-row: 2;
+    }
+}

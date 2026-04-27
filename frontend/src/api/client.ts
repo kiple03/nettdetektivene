@@ -42,6 +42,16 @@ async function performRefresh(): Promise<string | null> {
   }
 }
 
+/** Starts a refresh if none is in flight, otherwise joins the existing one. */
+export function sharedRefresh(): Promise<string | null> {
+  if (!refreshInFlight) {
+    refreshInFlight = performRefresh().finally(() => {
+      refreshInFlight = null;
+    });
+  }
+  return refreshInFlight;
+}
+
 /** Returns the login page for the current path so unauthenticated redirects land on the right portal. */
 function loginPathForCurrentRoute(): string {
   if (typeof window === 'undefined') return '/';
@@ -62,13 +72,9 @@ apiClient.interceptors.response.use(
 
     if (status === 401 && original && !original._retry && !isAuthCall) {
       original._retry = true;
-      if (!refreshInFlight) {
-        refreshInFlight = performRefresh().finally(() => {
-          refreshInFlight = null;
-        });
-      }
-      const newToken = await refreshInFlight;
+      const newToken = await sharedRefresh();
       if (newToken) {
+        window.dispatchEvent(new Event('auth-changed'));
         original.headers.Authorization = `Bearer ${newToken}`;
         return apiClient(original);
       }

@@ -1,0 +1,99 @@
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.tutorial-card {
+  position: relative;
+  background: var(--white);
+  border-radius: 1.25rem;
+  padding: 2rem 2rem 1.5rem;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.tutorial-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--gray-400);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.25rem;
+}
+
+.tutorial-close:hover {
+  color: var(--gray-700);
+}
+
+.tutorial-step-counter {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  letter-spacing: 0.05em;
+}
+
+.tutorial-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.tutorial-description {
+  font-size: 1rem;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+
+.tutorial-next-btn {
+  margin-top: 0.5rem;
+  align-self: center;
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  border-radius: 2rem;
+  padding: 0.6rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.tutorial-next-btn:hover {
+  opacity: 0.85;
+}
+
+/* ? button inside .station-container */
+.tutorial-help-btn {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--white);
+  color: var(--accent);
+  font-size: 2rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tutorial-help-btn:hover {
+  background: var(--accent);
+  color: var(--white);
+}

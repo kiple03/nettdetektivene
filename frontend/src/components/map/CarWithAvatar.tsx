@@ -5,16 +5,17 @@ interface CarWithAvatarProps {
     items: EquippedItem[];
     size?: number;
     avatarScale?: number;
+    hairColor?: string;
 }
 
-export function CarWithAvatar({ items, size = 100, avatarScale = 0.7 }: CarWithAvatarProps) {
+export function CarWithAvatar({ items, size = 100, avatarScale = 0.7, hairColor }: CarWithAvatarProps) {
     const avatarSize = size * avatarScale;
     const avatarLeft = (size - avatarSize) / 2;
     const avatarTop = (size - avatarSize) / 2 - size * 0.42;
     return (
         <div style={{ position: 'relative', width: size, height: size }}>
             <div style={{ position: 'absolute', top: avatarTop, left: avatarLeft }}>
-                <LayeredAvatar items={items} size={avatarSize} circular={false} />
+                <LayeredAvatar items={items} size={avatarSize} circular={false} hairColor={hairColor} />
             </div>
             <img
                 src="/assets/car-for-map-page.png"

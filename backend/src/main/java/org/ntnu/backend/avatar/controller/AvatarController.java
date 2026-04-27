@@ -65,7 +65,7 @@ public class AvatarController {
     public ResponseEntity<UserProfileResponse> updateUserProfile(
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal,
         @Valid @RequestBody UpdateUserProfileRequest request) {
-        UserProfileResponse updated = userAvatarService.updateUserProfile(principal.getUserId(), request);
+        UserProfileResponse updated = userAvatarService.updateUserProfile(principal.getUserId(), principal.getClassroomId(), request);
         return ResponseEntity.ok(updated);
     }
 

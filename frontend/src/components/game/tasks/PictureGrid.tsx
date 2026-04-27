@@ -105,7 +105,7 @@ export default function PictureGrid({
                                 </div>
                             )}
 
-                            {hasText && !hasImage && (
+                            {hasText && (
                                 <div className={styles.textBox}>
                                     {option.text}
                                 </div>

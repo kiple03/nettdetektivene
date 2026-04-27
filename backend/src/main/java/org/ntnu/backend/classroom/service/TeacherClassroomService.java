@@ -19,7 +19,9 @@ import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
+import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardClassroomResponse;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
+import org.ntnu.backend.classroom.mapper.LeaderboardMapper;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
@@ -31,10 +33,15 @@ import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
+import org.ntnu.backend.medalion.dto.MedalionResponse;
+import org.ntnu.backend.medalion.service.MedalionService;
+import org.ntnu.backend.notes.dto.NotesOverviewResponse;
+import org.ntnu.backend.notes.service.NoteService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -62,6 +69,10 @@ public class TeacherClassroomService {
     private final ProgressService progressService;
     private final ClassroomMapper classroomMapper;
     private final UserInventoryItemRepository userInventoryItemRepository;
+    private final LeaderboardService leaderboardService;
+    private final MedalionService medalionService;
+    private final ProfanityFilterService profanityFilter;
+    private final NoteService noteService;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -86,18 +97,25 @@ public class TeacherClassroomService {
             .map(e -> e.getUser().getId())
             .toList();
 
+
         Map<UUID, ProgressSummaryResponse> progressByStudent =
             progressService.getProgressForStudents(allStudentIds);
 
+        Map<String, Integer> avgScoreByClassroom = leaderboardService.getTeacherClassroomScores(teacherId)
+            .stream()
+            .collect(Collectors.toMap(LeaderboardClassroomResponse::id, LeaderboardClassroomResponse::avgScore));
+
         return classrooms.stream()
-            .map(classroom -> summarizeClassroom(classroom, progressByStudent, totalLevelsInGame))
+            .map(classroom -> summarizeClassroom(classroom, progressByStudent, totalLevelsInGame,
+                avgScoreByClassroom.getOrDefault(classroom.getId().toString(), 0)))
             .toList();
     }
 
     private ClassroomSummaryResponse summarizeClassroom(
         Classroom classroom,
         Map<UUID, ProgressSummaryResponse> progressByStudent,
-        int totalLevelsInGame) {
+        int totalLevelsInGame,
+        int avgScore) {
 
         List<Enrollment> activeEnrollments =
             enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroom.getId());
@@ -109,7 +127,7 @@ public class TeacherClassroomService {
             .sum();
 
         return classroomMapper.toSummary(
-            classroom, activeEnrollments.size(), totalLevelsInGame, completedCount);
+            classroom, activeEnrollments.size(), totalLevelsInGame, completedCount, avgScore);
     }
 
     /**
@@ -170,12 +188,15 @@ public class TeacherClassroomService {
                         Collectors.toList())
                 ));
 
+        Map<UUID, Integer> scores = leaderboardService.computeScores(enrollments);
+
         return enrollments.stream()
             .map(e -> classroomMapper.toStudentProgress(
                 e,
                 progressByStudent.get(e.getUser().getId()),
-                equippedItemsByStudent.getOrDefault(e.getUser().getId(), List.of())))
-            .toList();
+                scores.getOrDefault(e.getUser().getId(), 0),
+                equippedItemsByStudent.getOrDefault(e.getUser().getId(), List.of())
+            )).toList();
     }
 
     @Transactional
@@ -188,6 +209,24 @@ public class TeacherClassroomService {
         enrollmentRepository.save(enrollment);
     }
 
+    @Transactional(readOnly = true)
+    public List<MedalionResponse> getStudentMedalions(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return medalionService.getAllUsersMedalion(studentId);
+    }
+
+    @Transactional(readOnly = true)
+    public NotesOverviewResponse getStudentNotebook(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return noteService.getNotesForUser(studentId, classroomId);
+    }
+
     @Transactional
     public void updateStudentUsername(UUID classroomId, UUID studentId, UpdateStudentUsernameRequest request, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
@@ -197,8 +236,8 @@ public class TeacherClassroomService {
         var user = userRepository.findById(studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         String newUsername = request.username().trim();
-        if (!newUsername.equals(user.getUsername()) && userRepository.existsByUsername(newUsername)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Brukernavnet er allerede tatt");
+        if (profanityFilter.containsProfanity(newUsername)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukernavnet inneholder upassende innhold");
         }
         user.setUsername(newUsername);
         userRepository.save(user);
@@ -280,9 +319,24 @@ public class TeacherClassroomService {
         if (!requesterIsOwner && !removingSelf) {
             throw new AccessDeniedException("Bare eier kan fjerne andre lærere");
         }
-        if (requesterIsOwner && removingSelf) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Eier kan ikke forlate klasserommet");
+
+        List<ClassroomTeacher> allTeachers = classroomTeacherRepository.findWithUsersByClassroomId(classroomId);
+        if (allTeachers.size() == 1) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                "Du er eneste lærer i klasserommet. Slett klasserommet i stedet.");
         }
+
+        boolean targetIsOwner = classroomTeacherRepository.isOwnerOfClassroom(classroomId, targetUserId);
+        if (targetIsOwner) {
+            allTeachers.stream()
+                .filter(ct -> !ct.getId().getUserId().equals(targetUserId))
+                .findFirst()
+                .ifPresent(ct -> {
+                    ct.setOwner(true);
+                    classroomTeacherRepository.save(ct);
+                });
+        }
+
         var ct = classroomTeacherRepository.findOneByClassroomIdAndUserId(classroomId, targetUserId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         classroomTeacherRepository.delete(ct);

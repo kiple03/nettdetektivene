@@ -34,7 +34,7 @@ export type NotesData = {
     levelNotes: NotesMap;
 };
 
-const EMPTY_NOTES_MAP = (): NotesMap => ({
+export const EMPTY_NOTES_MAP = (): NotesMap => ({
     nyheter: [],
     bilder: [],
     epost: [],
@@ -44,7 +44,7 @@ const EMPTY_NOTES_MAP = (): NotesMap => ({
     egne: [],
 });
 
-function toNotesMap(raw: Partial<Record<TabId, NoteResponse[]>> | undefined): NotesMap {
+export function toNotesMap(raw: Partial<Record<TabId, NoteResponse[]>> | undefined): NotesMap {
     const base = EMPTY_NOTES_MAP();
     if (!raw) return base;
 
