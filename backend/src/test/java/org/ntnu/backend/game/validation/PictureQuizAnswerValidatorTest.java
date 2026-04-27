@@ -36,7 +36,7 @@ public class PictureQuizAnswerValidatorTest {
     // Helper
     // -------------------------------------------------------------------------
 
-    private MultiSelectAnswer answer(Integer... ids) {
+    private MultiSelectAnswer answer(String... ids) {
         MultiSelectAnswer a = new MultiSelectAnswer();
         a.setSelectedIds(List.of(ids));
         return a;
@@ -48,25 +48,25 @@ public class PictureQuizAnswerValidatorTest {
 
     @Test
     void correctAnswer_returnsCorrectTrue() {
-        ValidationResult result = validator.validate(options, answer(1));
+        ValidationResult result = validator.validate(options, answer("1"));
         assertTrue(result.correct());
     }
 
     @Test
     void correctAnswer_returnsCorrectOptionIds() {
-        ValidationResult result = validator.validate(options, answer(1));
+        ValidationResult result = validator.validate(options, answer("1"));
         assertEquals(List.of(1), result.correctOptionIds());
     }
 
     @Test
     void correctAnswer_returnsEmptyWrongSelectedIds() {
-        ValidationResult result = validator.validate(options, answer(1));
+        ValidationResult result = validator.validate(options, answer("1"));
         assertTrue(result.wrongSelectedOptionIds().isEmpty());
     }
 
     @Test
     void correctAnswer_feedbackIsFromCorrectOption() {
-        ValidationResult result = validator.validate(options, answer(1));
+        ValidationResult result = validator.validate(options, answer("1"));
         assertEquals("Dette er et ekte bilde.", result.feedback());
     }
 
@@ -76,31 +76,31 @@ public class PictureQuizAnswerValidatorTest {
 
     @Test
     void wrongAnswer_returnsCorrectFalse() {
-        ValidationResult result = validator.validate(options, answer(2));
+        ValidationResult result = validator.validate(options, answer("2"));
         assertFalse(result.correct());
     }
 
     @Test
     void wrongAnswer_feedbackIsFromSelectedWrongOption() {
-        ValidationResult result = validator.validate(options, answer(2));
+        ValidationResult result = validator.validate(options, answer("2"));
         assertEquals("Dette er faktisk KI-generert.", result.feedback());
     }
 
     @Test
     void wrongAnswer_wrongSelectedIdsContainsSelectedId() {
-        ValidationResult result = validator.validate(options, answer(2));
+        ValidationResult result = validator.validate(options, answer("2"));
         assertTrue(result.wrongSelectedOptionIds().contains(2));
     }
 
     @Test
     void wrongAnswer_correctOptionIdsStillReturned() {
-        ValidationResult result = validator.validate(options, answer(2));
+        ValidationResult result = validator.validate(options, answer("2"));
         assertEquals(List.of(1), result.correctOptionIds());
     }
 
     @Test
     void differentWrongOption_feedbackIsFromThatOption() {
-        ValidationResult result = validator.validate(options, answer(3));
+        ValidationResult result = validator.validate(options, answer("3"));
         assertEquals("Bildet er digitalt manipulert.", result.feedback());
     }
 
@@ -116,7 +116,7 @@ public class PictureQuizAnswerValidatorTest {
                 new PictureQuizOption(3, "Mani", "http://img.test/2.jpg", false, "Feil.")
         );
 
-        ValidationResult result = validator.validate(multiCorrect, answer(1, 2));
+        ValidationResult result = validator.validate(multiCorrect, answer("1", "2"));
         assertTrue(result.correct());
     }
 
@@ -128,7 +128,7 @@ public class PictureQuizAnswerValidatorTest {
                 new PictureQuizOption(3, "Mani", "http://img.test/2.jpg", false, "Feil.")
         );
 
-        ValidationResult result = validator.validate(multiCorrect, answer(1));
+        ValidationResult result = validator.validate(multiCorrect, answer("1"));
         assertFalse(result.correct());
     }
 
@@ -154,7 +154,7 @@ public class PictureQuizAnswerValidatorTest {
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     void unknownOptionId_throwsIllegalArgumentException() {
-        validator.validate(options, answer(99));
+        validator.validate(options, answer("99"));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)

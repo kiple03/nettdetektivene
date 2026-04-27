@@ -10,5 +10,5 @@ import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 @Getter
 @Setter
 public class MultiSelectAnswer extends SubmitAnswerRequest {
-  private List<Integer> selectedIds;
+  private List<String> selectedIds;
 }

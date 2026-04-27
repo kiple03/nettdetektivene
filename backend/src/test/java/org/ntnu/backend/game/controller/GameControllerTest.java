@@ -135,7 +135,7 @@ class GameControllerTest {
     );
 
     when(questionService.getQuestionsForLevel(anyInt())).thenReturn(List.of(
-            new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which is real?", options)
+            new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which is real?", options, null)
     ));
 
     mockMvc.perform(get("/game/levels/1/questions").with(authentication(studentAuth)))
@@ -152,7 +152,7 @@ class GameControllerTest {
     );
 
     when(questionService.getQuestionsForLevel(anyInt())).thenReturn(List.of(
-            new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Test?", options)
+            new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Test?", options, null)
     ));
 
     mockMvc.perform(get("/game/levels/1/questions").with(authentication(studentAuth)))
@@ -169,7 +169,7 @@ class GameControllerTest {
     );
 
     when(questionService.getQuestionById(anyInt())).thenReturn(
-            new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which?", options));
+            new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which?", options, null));
 
     mockMvc.perform(get("/game/questions/1").with(authentication(studentAuth)))
             .andExpect(status().isOk())
