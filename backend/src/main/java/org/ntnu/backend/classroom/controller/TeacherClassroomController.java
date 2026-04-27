@@ -183,4 +183,32 @@ public class TeacherClassroomController {
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         teacherClassroomService.removeCoTeacher(id, userId, principal);
     }
+
+    @GetMapping("/{id}/censor-words")
+    @PreAuthorize("hasRole('TEACHER')")
+    public List<CensorWordResponse> listCensorWords(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return censorWordService.listWords(id, principal);
+    }
+
+    @PostMapping("/{id}/censor-words")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('TEACHER')")
+    public CensorWordResponse addCensorWord(
+            @PathVariable UUID id,
+            @Valid @RequestBody AddCensorWordRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return censorWordService.addWord(id, request, principal);
+    }
+
+    @DeleteMapping("/{id}/censor-words/{wordId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('TEACHER')")
+    public void deleteCensorWord(
+            @PathVariable UUID id,
+            @PathVariable UUID wordId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        censorWordService.deleteWord(id, wordId, principal);
+    }
 }
