@@ -27,6 +27,7 @@ const BossBattlePage = lazy(() => import("@/pages/game/BossBattlePage"));
 const CodePage = lazy(() => import("@/pages/teacher/CodePage"));
 const ProfilePage = lazy(() => import("@/pages/student/ProfilePage"));
 const TeacherMapPage = lazy(() => import("@/pages/teacher/TeacherMapPage"));
+const TeacherLevelPreviewPage = lazy(() => import("@/pages/teacher/detail/TeacherLevelPreviewPage"));
 
 export const router = createBrowserRouter([
     // Auth routes (public)
@@ -133,6 +134,10 @@ export const router = createBrowserRouter([
             {
                 path: '/teacher/classrooms/:classroomId/levels/:levelId/questions',
                 element: <LevelQuestionsPage />,
+            },
+            {
+                path: '/teacher/classrooms/:classroomId/levels/:levelId/preview',
+                element: <TeacherLevelPreviewPage />,
             },
             {
                 path: '/teacher/notifications',
