@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import BackButton from "@/components/ui/buttons/BackButton";
 import mapStyles from "@/pages/student/MapPage.module.css";
 import styles from "@/pages/student/ProfilePage.module.css";
 import { useUserProfile } from "@/hooks/useUserProfile";

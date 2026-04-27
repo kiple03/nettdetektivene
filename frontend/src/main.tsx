@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {router} from './routes/index.tsx'
 import './index.css'
 import MedalionWatcher from './components/MedalionWatcher.tsx'
+import BackgroundMusic from './components/BackgroundMusic.tsx'
 
 //Create client 
 const queryClient = new QueryClient({
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <MedalionWatcher />
+      <BackgroundMusic />
       <RouterProvider router={router} />
     </QueryClientProvider>
   </StrictMode>,

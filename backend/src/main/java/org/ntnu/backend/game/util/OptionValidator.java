@@ -45,6 +45,7 @@ public class OptionValidator {
    * @throws OptionValidationException if any field constraint or business rule fails
    */
   public void validate(List<Option> options, LevelType type) {
+    if(options == null) throw new OptionValidationException("Option list is null!");
     for (Option option : options) {
       Set<ConstraintViolation<Option>> violations = validator.validate(option);
       if (!violations.isEmpty()) {
