@@ -171,7 +171,7 @@ public class GameController {
       @PathVariable int levelId,
       @RequestBody SubmitLevelRequest request,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    gameService.submitLevel(levelId, request, principal.getUserId(), principal.getRole());
+    gameService.submitLevel(levelId, request, principal);
     return ResponseEntity.noContent().build();
   }
 }
