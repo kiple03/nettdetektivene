@@ -284,11 +284,14 @@ public class GameSeeder implements CommandLineRunner {
                 "Hilsen Skoleklubben"
             ),
             List.of(
-                new PostOfficeOption("senderEmail", "senderEmail", true, "Avsenderadressen er ikke fra en kjent organisasjon."),
-                new PostOfficeOption("signup",      "link",        true, "Lenken peker til et ukjent nettsted."),
-                new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut.")
+                new PostOfficeOption("senderEmail", "senderEmail", true,  "Avsenderadressen er ikke fra en kjent organisasjon."),
+                new PostOfficeOption("signup",      "link",        true,  "Lenken peker til et ukjent nettsted."),
+                new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
+                new PostOfficeOption("body",        "body",        false, "Innholdet ser normalt ut."),
+                new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
+                new PostOfficeOption("signature",   "signature",   false, "Signaturen ser normalt ut.")
             ),
-            List.of("senderEmail", "signup"),
+            List.of("senderEmail", "signup"), // correctSuspicious unchanged
             "Spør en voksen"
         )
     );

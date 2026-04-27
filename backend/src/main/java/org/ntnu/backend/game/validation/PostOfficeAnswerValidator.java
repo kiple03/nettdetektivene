@@ -44,7 +44,6 @@ public class PostOfficeAnswerValidator implements SubmittedAnswerValidator {
         .map(o -> (PostOfficeOption) o)
         .toList();
 
-    // Validate that every submitted ID actually exists
     Set<String> validIds = postOfficeOptions.stream()
         .map(PostOfficeOption::getId)
         .collect(Collectors.toSet());

@@ -1,5 +1,6 @@
 package org.ntnu.backend.game.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.PostOfficeQuestion;
 import tools.jackson.core.JacksonException;
@@ -59,11 +60,7 @@ public class OptionParser {
           PostOfficeQuestion question = mapper.readValue(json, PostOfficeQuestion.class);
           yield new ArrayList<>(question.getOptions());
         }
-        case TEXT_QUIZ -> null;
-        case PICTURE_QUIZ -> null;
-        case MINIGAME -> null;
-        case BOSS_BATTLE -> null;
-        case TUTORIAL -> null;
+        default -> null;
       };
     } catch (JacksonException e) {
       throw new InvalidOptionFormatException("Invalid JSON for " + type + ": " + e.getMessage());
@@ -73,5 +70,8 @@ public class OptionParser {
     return options;
   }
 
+  public PostOfficeQuestion parsePostOfficeQuestion(String json) {
+    return mapper.readValue(json, PostOfficeQuestion.class);
+  }
 }
 
