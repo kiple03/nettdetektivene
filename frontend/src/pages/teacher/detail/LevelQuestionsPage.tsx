@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useGameLevel, useLevelQuestions } from '@/hooks/teacher/useTeacherQueries';
 import {
     useCreateQuestion,
@@ -39,6 +39,7 @@ function questionToInitialDraft(q: TeacherQuestion): MultipleChoiceQuestionDraft
 export default function LevelQuestionsPage() {
     const { classroomId = '', levelId: levelIdStr = '' } = useParams<{ classroomId: string; levelId: string }>();
     const levelId = parseInt(levelIdStr, 10);
+    const navigate = useNavigate();
 
     const { data: level, isLoading: levelLoading, isError: levelError } = useGameLevel(levelId);
     const { data: questions = [], isLoading: questionsLoading, isError: questionsError } = useLevelQuestions(classroomId, levelId);
@@ -156,6 +157,15 @@ export default function LevelQuestionsPage() {
                     <div className="level-questions__board-pin" />
 
                     <div className="level-questions__toolbar">
+                        <button
+                            type="button"
+                            className="level-questions__preview-btn"
+                            disabled={!isMultipleChoice}
+                            title={isMultipleChoice ? 'Forhåndsvis som elev' : 'Kun mulig for flervalg-nivåer'}
+                            onClick={() => navigate(`/teacher/classrooms/${classroomId}/levels/${levelId}/preview`)}
+                        >
+                            Forhåndsvis som elev
+                        </button>
                         <button
                             type="button"
                             className="level-questions__add-btn"

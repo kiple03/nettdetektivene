@@ -120,7 +120,32 @@
 .level-questions__toolbar {
     display: flex;
     justify-content: flex-end;
+    gap: 10px;
     margin-bottom: 20px;
+}
+
+.level-questions__preview-btn {
+    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(229, 242, 217, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(229, 242, 217, 0.9);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.level-questions__preview-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(229, 242, 217, 0.55);
+}
+
+.level-questions__preview-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .level-questions__add-btn {
