@@ -1,16 +1,15 @@
 package org.ntnu.backend.game.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.ntnu.backend.exception.OptionValidationException;
-import org.ntnu.backend.game.model.PostOfficeQuestion;
+import org.ntnu.backend.game.model.PictureQuizOption;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
+import org.ntnu.backend.game.model.PostOfficeQuestion;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.ntnu.backend.exception.InvalidOptionFormatException;
-import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
@@ -59,8 +58,12 @@ public class OptionParser {
       options = switch (type) {
         case MULTIPLE_CHOICE -> {
           List<MultipleChoiceOption> list =
-              mapper.readValue(json, new TypeReference<>() {
-              });
+                  mapper.readValue(json, new TypeReference<>() {});
+          yield new ArrayList<>(list);
+        }
+        case PICTURE_QUIZ -> {
+          List<PictureQuizOption> list =
+                  mapper.readValue(json, new TypeReference<>() {});
           yield new ArrayList<>(list);
         }
         case POST_OFFICE -> {
@@ -86,4 +89,3 @@ public class OptionParser {
     return mapper.readValue(json, PostOfficeQuestion.class);
   }
 }
-

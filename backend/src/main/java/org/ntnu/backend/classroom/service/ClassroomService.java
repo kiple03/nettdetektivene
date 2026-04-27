@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -152,6 +153,18 @@ public class ClassroomService {
      */
     public ClassroomResponse getClassroom(UUID id) {
         return classroomMapper.toResponse(findOrThrow(id));
+    }
+
+    /**
+     * Returns the classroom the student is currently enrolled in, or empty if not enrolled.
+     *
+     * @param userId The student's user ID.
+     * @return An Optional containing the classroom response, or empty if not enrolled.
+     */
+    @Transactional(readOnly = true)
+    public Optional<ClassroomResponse> getMyClassroom(UUID userId) {
+        return enrollmentRepository.findByUserIdAndLeftAtIsNull(userId)
+            .map(e -> classroomMapper.toResponse(e.getClassroom()));
     }
 
     /**

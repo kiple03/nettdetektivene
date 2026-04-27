@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import BackButton from "@/components/ui/buttons/BackButton";
 import mapStyles from "@/pages/student/MapPage.module.css";
 import styles from "@/pages/student/ProfilePage.module.css";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useAuth } from "@/hooks/useAuth";
+import { useMyClassroom } from "@/hooks/student/useMyClassroom";
 import { LayeredAvatar } from "@/components/user/LayeredAvatar";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 
@@ -11,6 +12,7 @@ function ProfilePage() {
   const navigate = useNavigate();
   const { data: profile } = useUserProfile();
   const { email } = useAuth();
+  const { data: classroom, isLoading: classroomLoading, isError: classroomError } = useMyClassroom();
 
   return (
     <div className={styles.page}>
@@ -39,6 +41,15 @@ function ProfilePage() {
         <div className={styles.info}>
           <p className={styles.username}>{profile?.username ?? "…"}</p>
           {email && <p className={styles.email}>{email}</p>}
+          <p className={styles.classroom}>
+            {classroomLoading
+              ? "…"
+              : classroomError
+                ? "Kunne ikke laste klasserom"
+                : classroom
+                  ? `Du er i klasserom: ${classroom.title}`
+                  : "Ikke i et klasserom"}
+          </p>
         </div>
 
         <button className={styles.editBtn} onClick={() => navigate("/avatar")}>

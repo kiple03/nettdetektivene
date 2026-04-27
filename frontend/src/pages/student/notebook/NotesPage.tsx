@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./NotesPage.module.css";
 import { Button } from "@/components/ui/buttons/Button.tsx";
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import BackButton from "@/components/ui/buttons/BackButton";
 import TextArea from "@/components/ui/textArea/TextArea.tsx";
 import {
     getMyNotes,

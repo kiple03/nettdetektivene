@@ -121,7 +121,7 @@ public class UserAvatarService {
     );
 
     private static final Set<String> DEFAULT_EQUIPPED = Set.of(
-        "detective_hat", "detective_suit", "face_1", "tone_light"
+        "detective_hat", "detective_suit", "face_1", "tone_light", "boy_hair"
     );
 
     /**

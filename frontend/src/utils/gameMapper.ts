@@ -1,5 +1,11 @@
-import type {GameQuestion, QuestionOption, SubmitAnswerResponse} from "@/api/gameApi.ts";
-import {STATION_TYPE, type StationData, type StationOption, type StationType, type SubmitAnswerResult} from "@/types/station.ts";
+import type { GameQuestion, QuestionOption, SubmitAnswerResponse } from "@/api/gameApi.ts";
+import {
+  STATION_TYPE,
+  type StationData,
+  type StationOption,
+  type StationType,
+  type SubmitAnswerResult,
+} from "@/types/station.ts";
 
 function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationType {
   switch (levelType) {
@@ -7,8 +13,13 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
       return STATION_TYPE.NEWS; //legge til flere etter hvert
     case "POST_OFFICE":
       return STATION_TYPE.POST;
+    case "PICTURE_QUIZ":
+      return STATION_TYPE.PHOTO;
     case "PASSWORD_STRENGTH":
       return STATION_TYPE.PASSWORD;
+
+    default:
+      return STATION_TYPE.NEWS;
   }
 }
 
@@ -18,16 +29,19 @@ function mapQuestionToStationTitle(levelType: GameQuestion["levelType"]): string
       return "Nyhetskvartal";
     case "POST_OFFICE":
       return "Postkontoret"
+    case "PICTURE_QUIZ":
+      return "Fotografen";
     case "PASSWORD_STRENGTH":
       return "Passordbanken";
-      //legge til flere etter hvert
+    default:
+      return "Stasjon";
   }
 }
 
-export function mapOptionToStation(option: QuestionOption) : StationOption {
+export function mapOptionToStation(option: QuestionOption): StationOption {
   return {
     id: option.id,
-    label: option.text ?? "Velg",
+    label: option.text ?? "",
     imageUrl: option.imageUrl,
     minLength: option.minLength,
     requireDigit:  option.requireDigit,
@@ -37,7 +51,7 @@ export function mapOptionToStation(option: QuestionOption) : StationOption {
   };
 }
 
-export function mapQuestionToStationData(question: GameQuestion) : StationData {
+export function mapQuestionToStationData(question: GameQuestion): StationData {
   return {
     questionId: question.id,
     type: mapLevelToStationType(question.levelType),
@@ -48,7 +62,9 @@ export function mapQuestionToStationData(question: GameQuestion) : StationData {
   }
 }
 
-export function mapSubmitResponseToSubmitAnswer(response: SubmitAnswerResponse) : SubmitAnswerResult {
+export function mapSubmitResponseToSubmitAnswer(
+    response: SubmitAnswerResponse,
+): SubmitAnswerResult {
   return {
     correct: response.correct,
     feedback: response.feedback,

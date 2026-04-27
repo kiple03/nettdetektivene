@@ -20,6 +20,7 @@ import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.service.CensorWordService;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
+import org.ntnu.backend.notes.dto.NotesOverviewResponse;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -100,6 +101,15 @@ public class TeacherClassroomController {
             @PathVariable UUID studentId,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         teacherClassroomService.removeStudent(id, studentId, principal);
+    }
+
+    @GetMapping("/{id}/students/{studentId}/notebook")
+    @PreAuthorize("hasRole('TEACHER')")
+    public NotesOverviewResponse getStudentNotebook(
+            @PathVariable UUID id,
+            @PathVariable UUID studentId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherClassroomService.getStudentNotebook(id, studentId, principal);
     }
 
     @GetMapping("/{id}/students/{studentId}/medalions")

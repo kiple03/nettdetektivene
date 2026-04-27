@@ -67,6 +67,6 @@ public class PostOfficeAnswerValidator implements SubmittedAnswerValidator {
         .map(PostOfficeOption::getExplanation)
         .collect(Collectors.joining(" "));
 
-    return new ValidationResult(isCorrect, feedback);
+    return ValidationResult.of(isCorrect, feedback);
   }
 }

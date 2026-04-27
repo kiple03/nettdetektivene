@@ -1,5 +1,5 @@
 import { Link, Outlet } from 'react-router-dom';
-import LogoutButton from '@/components/LogoutButton';
+import LogoutButton from '@/components/ui/buttons/LogoutButton';
 import { decodeToken } from '@/stores/authStore';
 import { useNotifications } from '@/hooks/teacher/useNotifications';
 import './TeacherLayout.css';

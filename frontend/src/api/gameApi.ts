@@ -1,10 +1,11 @@
 import client from "./client"
 import type {EmailContent} from "@/types/email.ts";
 
-export type LevelType = "MULTIPLE_CHOICE" | "POST_OFFICE" | "PASSWORD_STRENGTH"; // legge til flere oppgavetyper senere
+export type LevelType = "PICTURE_QUIZ" | "POST_OFFICE" | "MULTIPLE_CHOICE" | "PASSWORD_STRENGTH"// legge til flere oppgavetyper senere
 
 export type SubmitAnswerRequest =
     | SubmitSingleChoiceAnswerRequest
+    | SubmitMultiSelectAnswerRequest
     | SubmitPasswordStrengthAnswerRequest
     | SubmitMultiChoiceAnswerRequest;
 
@@ -49,9 +50,16 @@ export interface SubmitSingleChoiceAnswerRequest {
   selectedId: number;
 }
 
+export interface SubmitMultiSelectAnswerRequest {
+  shape: "MULTIPLE_CHOICE";
+  selectedIds: number[];
+}
+
 export interface SubmitAnswerResponse {
   correct: boolean;
   feedback: string;
+  correctOptionIds: number[];
+  wrongSelectedOptionIds: number[];
 }
 
 export interface QuestionAnswer {
@@ -108,6 +116,13 @@ export const submitSingleChoiceAnswer = async (
     questionId: number, body: SubmitSingleChoiceAnswerRequest): Promise<SubmitAnswerResponse> => {
   const response =
       await client.post(`/game/questions/${questionId}/submit`,body);
+  return response.data;
+};
+
+export const submitMultiSelectAnswer = async (
+    questionId: number,
+    body: SubmitMultiSelectAnswerRequest): Promise<SubmitAnswerResponse> => {
+  const response = await client.post(`/game/questions/${questionId}/submit`, body);
   return response.data;
 };
 

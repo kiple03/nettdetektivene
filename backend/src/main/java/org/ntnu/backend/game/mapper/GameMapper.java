@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
+import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.OptionResponse;
@@ -15,6 +16,7 @@ import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PostOfficeOption;
 import org.ntnu.backend.game.model.PostOfficeQuestion;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
+import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -37,9 +39,9 @@ public class GameMapper {
    */
   public StopResponse toStopOverviewResponse(Stop stop, boolean locked) {
     return new StopResponse(
-        stop.getId(),
-        stop.getName(),
-        locked
+            stop.getId(),
+            stop.getName(),
+            locked
     );
   }
 
@@ -64,9 +66,10 @@ public class GameMapper {
   public QuestionResponse toQuestionResponse(Question question) {
     LevelType type = question.getLevel().getLevelType();
     List<Option> options = optionParser.parse(question.getOptionContent(), type);
+
     List<OptionResponse> optionResponses = options.stream()
-        .map(this::toOptionResponse)
-        .toList();
+            .map(this::toOptionResponse)
+            .toList();
 
     PostOfficeQuestion.Email email = null;
     if (type == LevelType.POST_OFFICE) {
@@ -85,12 +88,17 @@ public class GameMapper {
   private OptionResponse toOptionResponse(Option option) {
     return switch (option) {
       case MultipleChoiceOption mc -> new MultipleChoiceOptionResponse(
-          mc.getId(),
-          mc.getText(),
-          mc.getImageUrl()
+              mc.getId(),
+              mc.getText(),
+              mc.getImageUrl()
       );
       case PostOfficeOption o -> new PostOfficeOptionResponse(o.getId(), o.getType());
 
+      case PictureQuizOption pq -> new PictureQuizOptionResponse(
+              pq.getId(),
+              pq.getText(),
+              pq.getImageUrl()
+      );
       case PasswordStrengthOption p -> new PasswordStrengthOptionResponse(
         p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol());
     };

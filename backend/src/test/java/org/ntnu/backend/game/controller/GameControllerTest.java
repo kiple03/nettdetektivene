@@ -2,9 +2,8 @@ package org.ntnu.backend.game.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,7 +15,6 @@ import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.OptionResponse;
@@ -39,8 +37,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 
 @WebMvcTest(GameController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -66,9 +62,9 @@ class GameControllerTest {
   @BeforeEach
   void setUp() {
     Collection<SimpleGrantedAuthority> authorities =
-        List.of(new SimpleGrantedAuthority("ROLE_STUDENT"));
+            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"));
     JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-        "student@test.no", UUID.randomUUID(), RoleEnum.STUDENT, null, authorities);
+            "student@test.no", UUID.randomUUID(), RoleEnum.STUDENT, null, authorities);
     studentAuth = new JwtAuthenticationToken(principal, authorities);
   }
 
@@ -82,15 +78,15 @@ class GameControllerTest {
   @Test
   void getStops_returnsListOfStops() throws Exception {
     when(gameService.getStopsForUser(any(), any())).thenReturn(List.of(
-        new StopResponse(1, "Nyhetskvartalet", false),
-        new StopResponse(2, "Fotografen", false)
+            new StopResponse(1, "Nyhetskvartalet", false),
+            new StopResponse(2, "Fotografen", false)
     ));
 
     mockMvc.perform(get("/game/stops").with(authentication(studentAuth)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(2))
-        .andExpect(jsonPath("$[0].name").value("Nyhetskvartalet"))
-        .andExpect(jsonPath("$[1].name").value("Fotografen"));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$[0].name").value("Nyhetskvartalet"))
+            .andExpect(jsonPath("$[1].name").value("Fotografen"));
   }
 
   @Test
@@ -98,8 +94,8 @@ class GameControllerTest {
     when(gameService.getStopsForUser(any(), any())).thenReturn(List.of());
 
     mockMvc.perform(get("/game/stops").with(authentication(studentAuth)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(0));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(0));
   }
 
   @Test
@@ -111,12 +107,11 @@ class GameControllerTest {
             new LevelResponse(2, "Clickbait-detektiven", "Spot clickbait",
                 LevelType.MULTIPLE_CHOICE, 2, false)
         ));
-
     mockMvc.perform(get("/game/stops/1/levels").with(authentication(studentAuth)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(2))
-        .andExpect(jsonPath("$[0].title").value("Ekte eller falskt?"))
-        .andExpect(jsonPath("$[1].title").value("Clickbait-detektiven"));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$[0].title").value("Ekte eller falskt?"))
+            .andExpect(jsonPath("$[1].title").value("Clickbait-detektiven"));
   }
 
   @Test
@@ -126,96 +121,110 @@ class GameControllerTest {
             LevelType.MULTIPLE_CHOICE, 1, false));
 
     mockMvc.perform(get("/game/levels/1").with(authentication(studentAuth)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.title").value("Ekte eller falskt?"))
-        .andExpect(jsonPath("$.levelType").value("MULTIPLE_CHOICE"))
-        .andExpect(jsonPath("$.locked").value(false));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.title").value("Ekte eller falskt?"))
+            .andExpect(jsonPath("$.levelType").value("MULTIPLE_CHOICE"))
+            .andExpect(jsonPath("$.locked").value(false));
   }
 
   @Test
   void getQuestionsForLevel_returnsQuestions() throws Exception {
     List<OptionResponse> options = List.of(
-        new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg"),
-        new MultipleChoiceOptionResponse(2, "Option B", "img2.jpg")
+            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg"),
+            new MultipleChoiceOptionResponse(2, "Option B", "img2.jpg")
     );
 
     when(questionService.getQuestionsForLevel(anyInt())).thenReturn(List.of(
-        new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which is real?", options, null)
+            new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which is real?", options, null)
     ));
 
     mockMvc.perform(get("/game/levels/1/questions").with(authentication(studentAuth)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(1))
-        .andExpect(jsonPath("$[0].questionText").value("Which is real?"))
-        .andExpect(jsonPath("$[0].options.length()").value(2));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].questionText").value("Which is real?"))
+            .andExpect(jsonPath("$[0].options.length()").value(2));
   }
 
   @Test
   void getQuestionsForLevel_optionsDontContainAnswers() throws Exception {
     List<OptionResponse> options = List.of(
-        new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg")
+            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg")
     );
 
     when(questionService.getQuestionsForLevel(anyInt())).thenReturn(List.of(
-        new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Test?", options, null)
+            new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Test?", options, null)
     ));
 
     mockMvc.perform(get("/game/levels/1/questions").with(authentication(studentAuth)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].options[0].isCorrect").doesNotExist())
-        .andExpect(jsonPath("$[0].options[0].explanation").doesNotExist());
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].options[0].isCorrect").doesNotExist())
+            .andExpect(jsonPath("$[0].options[0].explanation").doesNotExist());
   }
 
   @Test
   void getQuestion_returnsSingleQuestion() throws Exception {
     List<OptionResponse> options = List.of(
-        new MultipleChoiceOptionResponse(1, "A", "img.jpg"),
-        new MultipleChoiceOptionResponse(2, "B", "img.jpg")
+            new MultipleChoiceOptionResponse(1, "A", "img.jpg"),
+            new MultipleChoiceOptionResponse(2, "B", "img.jpg")
     );
 
     when(questionService.getQuestionById(anyInt())).thenReturn(
-        new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which?", options, null));
+            new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which?", options, null));
 
     mockMvc.perform(get("/game/questions/1").with(authentication(studentAuth)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(1))
-        .andExpect(jsonPath("$.questionText").value("Which?"))
-        .andExpect(jsonPath("$.options.length()").value(2));
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.questionText").value("Which?"))
+            .andExpect(jsonPath("$.options.length()").value(2));
   }
 
   @Test
   void submitAnswer_correctAnswer_returnsTrue() throws Exception {
     when(questionService.submitAnswer(anyInt(), any()))
-        .thenReturn(new SubmitAnswerResponse(true, "Correct!"));
+            .thenReturn(new SubmitAnswerResponse(
+                    true,
+                    "Correct!",
+                    List.of(2),
+                    List.of()
+            ));
 
     mockMvc.perform(post("/game/questions/1/submit")
-            .with(authentication(studentAuth))
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"shape\": \"SINGLE\", \"selectedId\": 2}"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.correct").value(true))
-        .andExpect(jsonPath("$.feedback").value("Correct!"));
+                    .with(authentication(studentAuth))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"shape\": \"SINGLE\", \"selectedId\": 2}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.correct").value(true))
+            .andExpect(jsonPath("$.feedback").value("Correct!"))
+            .andExpect(jsonPath("$.correctOptionIds[0]").value(2))
+            .andExpect(jsonPath("$.wrongSelectedOptionIds.length()").value(0));
   }
 
   @Test
   void submitAnswer_wrongAnswer_returnsFalse() throws Exception {
     when(questionService.submitAnswer(anyInt(), any()))
-        .thenReturn(new SubmitAnswerResponse(false, "Wrong!"));
+            .thenReturn(new SubmitAnswerResponse(
+                    false,
+                    "Wrong!",
+                    List.of(2),
+                    List.of(1)
+            ));
 
     mockMvc.perform(post("/game/questions/1/submit")
-            .with(authentication(studentAuth))
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"shape\": \"SINGLE\", \"selectedId\": 1}"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.correct").value(false))
-        .andExpect(jsonPath("$.feedback").value("Wrong!"));
+                    .with(authentication(studentAuth))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"shape\": \"SINGLE\", \"selectedId\": 1}"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.correct").value(false))
+            .andExpect(jsonPath("$.feedback").value("Wrong!"))
+            .andExpect(jsonPath("$.correctOptionIds[0]").value(2))
+            .andExpect(jsonPath("$.wrongSelectedOptionIds[0]").value(1));
   }
 
   @Test
   void submitAnswer_missingBody_returnsError() throws Exception {
     mockMvc.perform(post("/game/questions/1/submit")
-            .with(authentication(studentAuth))
-            .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().is5xxServerError());
+                    .with(authentication(studentAuth))
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().is5xxServerError());
   }
 }
