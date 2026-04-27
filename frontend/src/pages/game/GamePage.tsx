@@ -19,6 +19,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getGameLevelById, getLevelQuestions, submitLevel } from "@/api/gameApi.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import ConfettiComp from "@/components/ConfettiComp";
+import useSound from "use-sound";
+import victorySound from "@/assets/sounds/victorySound.mp3";
 
 
 export default function GamePage() {
@@ -26,15 +28,14 @@ export default function GamePage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const stopId = Number(searchParams.get("stopId")) || null;
-
     const [questionIndex, setQuestionIndex] = useState(0);
     const [submitResult, setSubmitResult] = useState<SubmitAnswerResult | null>(null);
     const [levelPassed, setLevelPassed] = useState(true);
     const [dialogOpen, setDialogOpen] = useState(false);
-
     const [answers, setAnswers] = useState<Record<number, SubmitAnswerRequest>>({});
     const queryClient = useQueryClient();
-
+    const [playVictory] = useSound(victorySound);
+    
     const submitLevelMutation = useMutation({
         mutationFn: () => submitLevel(levelIdNum, {
             answers: Object.entries(answers).map(([qid, ans]) => ({
@@ -70,10 +71,37 @@ export default function GamePage() {
         enabled: validId,
     });
 
-    if (!validId) return <div>Ugyldig nivå-ID.</div>;
-    if (levelError || questionsError) return <div>Noe gikk galt. Prøv igjen.</div>;
-    if (isPending) return <div>Laster...</div>;
-    if (questions.length === 0) return <div>Ingen spørsmål funnet.</div>;
+    if (!validId) {
+        return (
+            <div role="alert" aria-live="assertive">
+                Ugyldig nivå-ID.
+            </div>
+        );
+    }
+
+    if (levelError || questionsError) {
+        return (
+            <div role="alert" aria-live="assertive">
+                Noe gikk galt. Prøv igjen.
+            </div>
+        );
+    }
+
+    if (isPending) {
+        return (
+            <div role="status" aria-live="polite">
+                Laster...
+            </div>
+        );
+    }
+
+    if (questions.length === 0) {
+        return (
+            <div role="status" aria-live="polite">
+                Ingen spørsmål funnet.
+            </div>
+        );
+    }
 
     const currentQuestion = questions[questionIndex];
     const station = mapQuestionToStationData(currentQuestion);
@@ -90,6 +118,7 @@ export default function GamePage() {
             setSubmitResult(null);
         } else {
             if (levelPassed) {
+                playVictory();
                 submitLevelMutation.mutate();
             } else {
                 setDialogOpen(true);
@@ -106,7 +135,7 @@ export default function GamePage() {
     };
 
     const handleBackToMap = () => {
-        navigate(stopId ? `/map?stopId=${stopId}` : "/map");
+        navigate(stopId ? `/map?levelId=${stopId}` : "/map");
     };
 
     return (
