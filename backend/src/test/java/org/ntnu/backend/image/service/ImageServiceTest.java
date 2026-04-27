@@ -22,7 +22,9 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,7 +62,8 @@ class ImageServiceTest {
             return image;
         });
 
-        ImageEntity result = imageService.uploadImage(file);
+        UUID uploaderId = UUID.randomUUID();
+        ImageEntity result = imageService.uploadImage(file, uploaderId);
 
         assertNotNull(result);
         assertEquals(1L, result.getId());
@@ -71,6 +74,7 @@ class ImageServiceTest {
         assertNotNull(result.getObjectKey());
         assertTrue(result.getObjectKey().startsWith("images/"));
         assertTrue(result.getObjectKey().endsWith(".png"));
+        assertEquals(uploaderId, result.getUploadedByUserId());
 
         verify(s3Client).headBucket(any(HeadBucketRequest.class));
         verify(s3Client).putObject(any(PutObjectRequest.class), any(software.amazon.awssdk.core.sync.RequestBody.class));
@@ -91,7 +95,7 @@ class ImageServiceTest {
 
         when(imageRepository.save(any(ImageEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        imageService.uploadImage(file);
+        imageService.uploadImage(file, UUID.randomUUID());
 
         verify(s3Client).headBucket(any(HeadBucketRequest.class));
         verify(s3Client).createBucket(any(CreateBucketRequest.class));
@@ -109,7 +113,7 @@ class ImageServiceTest {
         );
 
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> imageService.uploadImage(file));
+                () -> imageService.uploadImage(file, UUID.randomUUID()));
 
         assertEquals("Image file is empty", exception.getMessage());
         verifyNoInteractions(imageRepository);
@@ -126,7 +130,7 @@ class ImageServiceTest {
         );
 
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> imageService.uploadImage(file));
+                () -> imageService.uploadImage(file, UUID.randomUUID()));
 
         assertEquals("Only JPEG, PNG, and WEBP are allowed", exception.getMessage());
         verifyNoInteractions(imageRepository);
@@ -145,7 +149,7 @@ class ImageServiceTest {
         );
 
         RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> imageService.uploadImage(file));
+                () -> imageService.uploadImage(file, UUID.randomUUID()));
 
         assertEquals("Image file is too large", exception.getMessage());
         verifyNoInteractions(imageRepository);
@@ -218,5 +222,33 @@ class ImageServiceTest {
 
         assertEquals("Image not found", exception.getMessage());
         verify(s3Client, never()).getObject(any(GetObjectRequest.class));
+    }
+
+    @Test
+    void getTeacherImages_returnsImagesNewestFirst() {
+        UUID teacherId = UUID.randomUUID();
+
+        ImageEntity img1 = new ImageEntity();
+        img1.setId(1L);
+        img1.setOriginalFilename("a.png");
+        img1.setUploadedAt(LocalDateTime.now().minusDays(1));
+        img1.setUploadedByUserId(teacherId);
+
+        ImageEntity img2 = new ImageEntity();
+        img2.setId(2L);
+        img2.setOriginalFilename("b.png");
+        img2.setUploadedAt(LocalDateTime.now());
+        img2.setUploadedByUserId(teacherId);
+
+        when(imageRepository.findByUploadedByUserIdOrderByUploadedAtDesc(teacherId))
+                .thenReturn(List.of(img2, img1));
+
+        var result = imageService.getTeacherImages(teacherId);
+
+        assertEquals(2, result.size());
+        assertEquals(2L, result.get(0).id());
+        assertEquals("/images/2", result.get(0).url());
+        assertEquals(1L, result.get(1).id());
+        assertEquals("/images/1", result.get(1).url());
     }
 }

@@ -1,6 +1,12 @@
 package org.ntnu.backend.image.service;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import org.ntnu.backend.image.ImageEntity;
+import org.ntnu.backend.image.dto.TeacherImageResponse;
 import org.ntnu.backend.image.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -9,11 +15,6 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Service for uploading and retrieving images via Amazon S3.
@@ -70,7 +71,7 @@ public class ImageService {
      * @throws IOException      if reading the file bytes fails
      * @throws RuntimeException if the file is empty, an unsupported type, or exceeds 5 MB
      */
-    public ImageEntity uploadImage(MultipartFile file) throws IOException {
+    public ImageEntity uploadImage(MultipartFile file, UUID uploadedByUserId) throws IOException {
         validateImage(file);
         ensureBucketExists();
 
@@ -94,8 +95,16 @@ public class ImageService {
         image.setContentType(file.getContentType());
         image.setSize(file.getSize());
         image.setUploadedAt(LocalDateTime.now());
+        image.setUploadedByUserId(uploadedByUserId);
 
         return imageRepository.save(image);
+    }
+
+    public List<TeacherImageResponse> getTeacherImages(UUID teacherId) {
+        return imageRepository.findByUploadedByUserIdOrderByUploadedAtDesc(teacherId).stream()
+                .map(img -> new TeacherImageResponse(img.getId(), "/images/" + img.getId(),
+                        img.getOriginalFilename(), img.getUploadedAt()))
+                .toList();
     }
 
     /**

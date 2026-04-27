@@ -6,6 +6,7 @@ import jakarta.validation.Validator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.ClassifyItemsOption;
@@ -38,6 +39,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class OptionValidator {
+
+  private static final Pattern IMAGE_URL_PATTERN = Pattern.compile("^/images/\\d+$");
 
   private final Validator validator;
 
@@ -103,6 +106,17 @@ public class OptionValidator {
     if (correctCount != 1) {
       throw new OptionValidationException("Multiple choice must have exactly one correct answer");
     }
+
+    for (Option option : options) {
+      String imageUrl = ((MultipleChoiceOption) option).getImageUrl();
+      if (imageUrl != null && !IMAGE_URL_PATTERN.matcher(imageUrl).matches()) {
+        throw new OptionValidationException("imageUrl must match /images/{id} or be null");
+      }
+    }
+  }
+
+  public static boolean isValidImageUrl(String imageUrl) {
+    return imageUrl == null || IMAGE_URL_PATTERN.matcher(imageUrl).matches();
   }
 
   /**

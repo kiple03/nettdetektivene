@@ -45,9 +45,9 @@ class QuestionServiceTest {
 
   private static final String VALID_OPTIONS_JSON = """
         [
-          {"id": 1, "text": "Wrong answer", "imageUrl": "https://example.com/a.jpg", "isCorrect": false, "explanation": "This is wrong"},
-          {"id": 2, "text": "Right answer", "imageUrl": "https://example.com/b.jpg", "isCorrect": true, "explanation": "This is correct"},
-          {"id": 3, "text": "Also wrong", "imageUrl": "https://example.com/c.jpg", "isCorrect": false, "explanation": "This is also wrong"}
+          {"id": 1, "text": "Wrong answer", "imageUrl": "/images/1", "isCorrect": false, "explanation": "This is wrong"},
+          {"id": 2, "text": "Right answer", "imageUrl": "/images/2", "isCorrect": true, "explanation": "This is correct"},
+          {"id": 3, "text": "Also wrong", "imageUrl": "/images/3", "isCorrect": false, "explanation": "This is also wrong"}
         ]
         """;
 
