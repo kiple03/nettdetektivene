@@ -1,5 +1,7 @@
 package org.ntnu.backend.classroom.mapper;
 
+import java.util.List;
+
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
@@ -11,7 +13,6 @@ import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 /**
  * Mapper Component. It translates data between database models and DTO's.
@@ -107,17 +108,18 @@ public class ClassroomMapper {
     Enrollment enrollment,
     ProgressSummaryResponse progress,
     int score,
+    int medalsEarned,
     List<EquippedItemDto> equippedItems) {
 
     int levelsCompleted = progress != null ? progress.totalLevelsCompleted() : 0;
-    return new StudentProgressResponse(
-        enrollment.getUser().getId().toString(),
-        enrollment.getUser().getUsername(),
-        levelsCompleted,
-        levelsCompleted,
-        score,
-        equippedItems
-    );
+    return StudentProgressResponse.builder()
+        .userId(enrollment.getUser().getId().toString())
+        .username(enrollment.getUser().getUsername())
+        .levelsCompleted(levelsCompleted)
+        .score(score)
+        .medalsEarned(medalsEarned)
+        .equippedItems(equippedItems)
+        .build();
   }
 
   /**

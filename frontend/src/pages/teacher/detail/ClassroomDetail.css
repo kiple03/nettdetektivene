@@ -695,8 +695,9 @@
 }
 
 .classroom-detail__student-meta {
-  font-size: 11px;
-  color: rgba(90, 62, 27, 0.65);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(64, 41, 15, 0.82);
 }
 
 .classroom-detail__student-actions {
