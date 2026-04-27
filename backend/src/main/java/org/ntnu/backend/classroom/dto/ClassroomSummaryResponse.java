@@ -20,8 +20,8 @@ public class ClassroomSummaryResponse {
     private LocalDateTime createdAt;
     private long studentCount;
 
-    private int assignmentCount;
-    private int completedCount;
+    private int totalStops;
+    private double avgStopPosition;
     private int avgScore;
     private int progressPercent;
     private List<String> teacherUsernames;

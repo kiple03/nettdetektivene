@@ -76,13 +76,11 @@ public class ClassroomMapper {
   public ClassroomSummaryResponse toSummary(
       Classroom classroom,
       long studentCount,
-      int totalLevelsInGame,
-      int completedCount,
+      int totalStops,
+      double avgStopPosition,
       int avgScore
   ) {
-
-    long possible = (long) totalLevelsInGame * studentCount;
-    int progressPercent = possible > 0 ? (int) (completedCount * 100L / possible) : 0;
+    int progressPercent = totalStops > 0 ? (int) Math.round(avgStopPosition * 100.0 / totalStops) : 0;
 
     return ClassroomSummaryResponse.builder()
         .id(classroom.getId().toString())
@@ -91,8 +89,8 @@ public class ClassroomMapper {
         .joinCode(classroom.getJoinCode())
         .createdAt(classroom.getCreatedAt())
         .studentCount(studentCount)
-        .assignmentCount(totalLevelsInGame)
-        .completedCount(completedCount)
+        .totalStops(totalStops)
+        .avgStopPosition(avgStopPosition)
         .avgScore(avgScore)
         .progressPercent(progressPercent)
         .build();
@@ -109,14 +107,16 @@ public class ClassroomMapper {
     ProgressSummaryResponse progress,
     int score,
     int medalsEarned,
+    int totalStops,
     List<EquippedItemDto> equippedItems) {
 
-    int levelsCompleted = progress != null ? progress.totalLevelsCompleted() : 0;
+    int currentStopDisplayOrder = progress != null ? progress.currentStopDisplayOrder() : 0;
     return StudentProgressResponse.builder()
         .userId(enrollment.getUser().getId().toString())
         .username(enrollment.getUser().getUsername())
-      .email(enrollment.getUser().getEmail())
-        .levelsCompleted(levelsCompleted)
+        .email(enrollment.getUser().getEmail())
+        .currentStopDisplayOrder(currentStopDisplayOrder)
+        .totalStops(totalStops)
         .score(score)
         .medalsEarned(medalsEarned)
         .equippedItems(equippedItems)

@@ -16,7 +16,8 @@ public class StudentProgressResponse {
     private final String userId;
     private final String username;
     private final String email;
-    private final int levelsCompleted;
+    private final int currentStopDisplayOrder;
+    private final int totalStops;
     private final int score;
     private final int medalsEarned;
     private final List<EquippedItemDto> equippedItems;
