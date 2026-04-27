@@ -60,8 +60,10 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
                   title={submitResult.correct ? "Riktig!" : "Feil"}
                   text={submitResult.feedback}
               />
-
-              <Button variant={'fun'} onClick={onNext}>
+              <Button 
+                variant={'fun'} onClick={onNext}
+                aria-label="Gå videre"
+              >
                 Neste →
               </Button>
             </div>

@@ -71,10 +71,37 @@ export default function GamePage() {
         enabled: validId,
     });
 
-    if (!validId) return <div>Ugyldig nivå-ID.</div>;
-    if (levelError || questionsError) return <div>Noe gikk galt. Prøv igjen.</div>;
-    if (isPending) return <div>Laster...</div>;
-    if (questions.length === 0) return <div>Ingen spørsmål funnet.</div>;
+    if (!validId) {
+        return (
+            <div role="alert" aria-live="assertive">
+                Ugyldig nivå-ID.
+            </div>
+        );
+    }
+
+    if (levelError || questionsError) {
+        return (
+            <div role="alert" aria-live="assertive">
+                Noe gikk galt. Prøv igjen.
+            </div>
+        );
+    }
+
+    if (isPending) {
+        return (
+            <div role="status" aria-live="polite">
+                Laster...
+            </div>
+        );
+    }
+
+    if (questions.length === 0) {
+        return (
+            <div role="status" aria-live="polite">
+                Ingen spørsmål funnet.
+            </div>
+        );
+    }
 
     const currentQuestion = questions[questionIndex];
     const station = mapQuestionToStationData(currentQuestion);
