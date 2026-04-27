@@ -1,14 +1,30 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useGameLevel, useLevelQuestions } from '@/hooks/teacher/useTeacherQueries';
+import { useUpdateQuestion, useQuestionMutationError } from '@/hooks/teacher/useTeacherMutations';
+import { QuestionEditorModal } from '@/components/teacher/questionEditor/QuestionEditorModal';
 import StationContainer from '@/components/game/station/StationContainer';
 import StationRenderer from '@/components/game/station/StationRenderer';
 import { STATION_TYPE } from '@/types/station';
 import type { StationData, SubmitAnswerResult } from '@/types/station';
 import type { TeacherQuestion } from '@/api/teacherApi';
+import type { MultipleChoiceQuestionDraft } from '@/components/teacher/questionEditor/types';
 import type { SubmitAnswerRequest } from '@/api/gameApi';
 import '@/components/game/ui/game.css';
 import './TeacherLevelPreviewPage.css';
+
+function questionToInitialDraft(q: TeacherQuestion): MultipleChoiceQuestionDraft {
+    return {
+        questionText: q.questionText,
+        options: (q.options ?? []).map(o => ({
+            id: o.id.toString(),
+            text: o.text ?? '',
+            isCorrect: o.isCorrect,
+            explanation: o.explanation ?? '',
+            imageUrl: o.imageUrl,
+        })),
+    };
+}
 
 function mapToStation(q: TeacherQuestion): StationData {
     return {
@@ -31,6 +47,10 @@ export default function TeacherLevelPreviewPage() {
 
     const [questionIndex, setQuestionIndex] = useState(0);
     const [submitResult, setSubmitResult] = useState<SubmitAnswerResult | null>(null);
+    const [editingQuestion, setEditingQuestion] = useState<TeacherQuestion | null>(null);
+
+    const updateMutation = useUpdateQuestion(classroomId, levelId);
+    const updateError = useQuestionMutationError(updateMutation.error);
 
     const { data: level, isLoading: levelLoading, isError: levelError } = useGameLevel(levelId);
     const { data: questions = [], isLoading: questionsLoading, isError: questionsError } = useLevelQuestions(classroomId, levelId);
@@ -80,6 +100,25 @@ export default function TeacherLevelPreviewPage() {
         setSubmitResult(result);
     };
 
+    const handleSave = async (draft: MultipleChoiceQuestionDraft) => {
+        if (!editingQuestion) return;
+        const options = draft.options.map(o => ({
+            text: o.text,
+            imageUrl: o.imageUrl,
+            isCorrect: o.isCorrect,
+            explanation: o.explanation,
+        }));
+        try {
+            await updateMutation.mutateAsync({
+                questionId: editingQuestion.id,
+                payload: { questionText: draft.questionText, options },
+            });
+            setEditingQuestion(null);
+        } catch {
+            // error shown via updateError
+        }
+    };
+
     const handleNext = () => {
         if (!isLastQuestion) {
             setQuestionIndex(i => i + 1);
@@ -114,7 +153,34 @@ export default function TeacherLevelPreviewPage() {
                         disabled={!!submitResult}
                     />
                 </StationContainer>
+                <div className="teacher-preview__floater">
+                    {currentQuestion.isDefault ? (
+                        <span className="teacher-preview__locked-badge">Låst</span>
+                    ) : (
+                        <button
+                            type="button"
+                            className="teacher-preview__edit-btn"
+                            aria-label="Rediger spørsmål"
+                            onClick={() => setEditingQuestion(currentQuestion)}
+                        >
+                            Rediger
+                        </button>
+                    )}
+                </div>
             </div>
+
+            {editingQuestion && (
+                <QuestionEditorModal
+                    key={editingQuestion.id}
+                    mode="edit"
+                    levelType="MULTIPLE_CHOICE"
+                    initialValue={questionToInitialDraft(editingQuestion)}
+                    saving={updateMutation.isPending}
+                    error={updateError}
+                    onClose={() => { updateMutation.reset(); setEditingQuestion(null); }}
+                    onSave={handleSave}
+                />
+            )}
         </div>
     );
 }
