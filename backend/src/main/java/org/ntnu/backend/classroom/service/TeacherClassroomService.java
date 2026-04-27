@@ -1,11 +1,13 @@
 package org.ntnu.backend.classroom.service;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
@@ -21,7 +23,6 @@ import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardClassroomResponse;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
-import org.ntnu.backend.classroom.mapper.LeaderboardMapper;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
@@ -35,9 +36,9 @@ import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.medalion.service.MedalionService;
+import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.notes.dto.NotesOverviewResponse;
 import org.ntnu.backend.notes.service.NoteService;
-import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
@@ -189,14 +190,21 @@ public class TeacherClassroomService {
                 ));
 
         Map<UUID, Integer> scores = leaderboardService.computeScores(enrollments);
+        Map<UUID, Integer> medalsByStudent = medalionService.getMedalCountsForUsers(studentIds);
 
         return enrollments.stream()
             .map(e -> classroomMapper.toStudentProgress(
                 e,
                 progressByStudent.get(e.getUser().getId()),
                 scores.getOrDefault(e.getUser().getId(), 0),
+                medalsByStudent.getOrDefault(e.getUser().getId(), 0),
                 equippedItemsByStudent.getOrDefault(e.getUser().getId(), List.of())
-            )).toList();
+            ))
+            .sorted(Comparator
+                .comparingInt(StudentProgressResponse::getScore)
+                .reversed()
+                .thenComparing(StudentProgressResponse::getUsername, String.CASE_INSENSITIVE_ORDER))
+            .toList();
     }
 
     @Transactional
