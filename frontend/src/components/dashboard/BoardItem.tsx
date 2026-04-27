@@ -5,14 +5,22 @@ import {Header as UserProfileHeader} from "@/components/dashboard/BoardProfile";
 
 type BoardItemProps = DashboardItem;
 
-function BoardItem( {id, label, to, top, left, image, size} :BoardItemProps) {
+function BoardItem( {id, label, to, top, left, image, size, circle} :BoardItemProps) {
   return (
       <Link to={to}
             className={`board-item-wrapper board-item-${size}`}
             style={{top, left}}
       >
         {image && (
-            <img src={image} alt="" className="board-item-img" />
+            <>
+              <img src={image} alt="" className="board-item-img"/>
+
+              {/* red circle overlay only for map */}
+              {id === "map" && (
+                  <img src={circle} className="map-circle" alt=""/>
+              )}
+            </>
+
         )}
 
         {/* avatar profile picture */}

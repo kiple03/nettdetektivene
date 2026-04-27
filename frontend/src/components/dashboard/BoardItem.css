@@ -48,6 +48,21 @@
   pointer-events: none;
 }
 
+/* red circle over map */
+.board-item-img-wrapper {
+  position: relative;
+}
+
+.map-circle {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: 122%;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  pointer-events: none;
+  opacity: 0.9;
+}
+
 /* left tape */
 .board-item::before {
   content: "";

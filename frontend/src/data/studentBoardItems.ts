@@ -3,6 +3,7 @@ import badgeImg from '@/assets/images/studentHomeBoard/badge.png';
 import noteImg from '@/assets/images/studentHomeBoard/notebook.png';
 import mysteryImg from '@/assets/images/studentHomeBoard/mystery.png';
 import profileImg from '@/assets/images/studentHomeBoard/profile.png';
+import circle from '@/assets/images/studentHomeBoard/red_circle.png'
 
 import type { DashboardItem } from "@/types/dashboard.ts";
 
@@ -14,7 +15,8 @@ export const studentBoardItems: DashboardItem[] = [
     top: '39%',
     left: '51%',
     image: mapImg,
-    size: 'large'
+    size: 'large',
+    circle: circle
   },
   {
     id: 'badges',

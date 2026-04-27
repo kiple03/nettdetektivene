@@ -51,7 +51,7 @@ export interface SubmitSingleChoiceAnswerRequest {
 }
 
 export interface SubmitMultiSelectAnswerRequest {
-  shape: "MULTIPLE_CHOICE";
+  shape: "MULTI";
   selectedIds: number[];
 }
 
