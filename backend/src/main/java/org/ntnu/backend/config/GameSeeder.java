@@ -52,7 +52,8 @@ public class GameSeeder implements CommandLineRunner {
     deduplicateLevels();
     deduplicateLevelNoteTemplates();
     seedNews();
-    seedPasswords(); 
+    seedPasswords();
+    seedMarkedsplassen();
     log.info("GameSeeder: done");
   }
 
@@ -420,5 +421,64 @@ public class GameSeeder implements CommandLineRunner {
                                                                                                      
       ensureLevelNoteTemplate(l3, NoteCategory.PASSORD,                                              
           "Bytt passord og skru på 2FA så fort du oppdager lekkasje.");
-  }   
+  }
+  private void seedMarkedsplassen() {
+    Stop stop = stopRepository.findByName("Markedsplassen").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Markedsplassen");
+      s.setDisplayOrder(5); // adjust to your ordering
+      return stopRepository.save(s);
+    });
+
+    Level l1 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Er denne nettbutikken trygg?")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Er denne nettbutikken trygg?");
+          l.setDescription("Du har funnet noen nettbutikker. Se nøye på tilbudene og vurder om du bør handle der.");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(1);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l1,
+        "Du finner en nettbutikk som heter 'SuperBillig-Shop.xyz'. De har 90% rabatt på ALT, ingen kontaktinformasjon, og nettsiden ser ut som den ble laget i går. Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Kjøpe – dette er et godt tilbud!", null, false,
+                "Denne nettbutikken har mange varseltegn. 90% rabatt på alt er nesten alltid for godt til å være sant."),
+            new MultipleChoiceOption(2, "Undersøke mer først", null, false,
+                "Det er bra å være forsiktig, men denne butikken har så mange røde flagg at det er best å holde seg unna."),
+            new MultipleChoiceOption(3, "Ikke handle – dette virker utrygt", null, true,
+                "Riktig! Butikken har 90% rabatt på alt, ingen kontaktinfo og en merkelig nettadresse. Dette er typiske tegn på svindel.")
+        )
+    );
+
+    ensureQuestion(l1,
+        "En nettbutikk selger populære sko til halv pris. Siden ser profesjonell ut, men alle anmeldelsene er 5 stjerner og skrevet på samme dag. Du finner ikke noe info om hvem som eier butikken. Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Kjøpe – det ser fint ut", null, false,
+                "Selv om siden ser pen ut, bør du være forsiktig. Alle anmeldelsene er skrevet på samme dag, og det finnes ingen informasjon om hvem som driver butikken."),
+            new MultipleChoiceOption(2, "Undersøke mer først", null, true,
+                "Riktig! Butikken ser grei ut ved første øyekast, men det er noen ting som bør sjekkes nærmere – som anmeldelsene og manglende info om selskapet."),
+            new MultipleChoiceOption(3, "Ikke handle – dette virker utrygt", null, false,
+                "Det er lurt å være forsiktig, men her er det bedre å undersøke mer først. Noen av tegnene kan ha en forklaring.")
+        )
+    );
+
+    ensureQuestion(l1,
+        "Du finner en nettbutikk med norsk organisasjonsnummer, telefonnummer og e-post på kontaktsiden. Nettadressen starter med hengelås og slutter på '.no'. Anmeldelsene ser ekte ut med både gode og dårlige tilbakemeldinger. Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Kjøpe – dette ser trygt ut", null, true,
+                "Riktig! Denne butikken har organisasjonsnummer, kontaktinfo, sikker betaling og ekte anmeldelser. Dette er tegn på en trygg nettbutikk."),
+            new MultipleChoiceOption(2, "Undersøke mer først", null, false,
+                "Det er alltid lurt å være forsiktig, men denne butikken viser alle tegnene på at den er trygg og seriøs."),
+            new MultipleChoiceOption(3, "Ikke handle – jeg stoler ikke på nettbutikker", null, false,
+                "Denne butikken er faktisk trygg! Den har kontaktinfo, organisasjonsnummer, hengelås i nettleseren og ekte anmeldelser. Det er viktig å kunne kjenne igjen trygge butikker også.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l1, NoteCategory.NETT,
+        "Sjekk alltid kontaktinfo, nettadresse og anmeldelser før du handler på nett. Hvis noe virker for godt til å være sant, er det ofte det.");
+  }
 }
