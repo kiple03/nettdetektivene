@@ -39,7 +39,6 @@ public final class MultipleChoiceOption implements Option {
     @NotBlank
     private String text;
 
-    @NotBlank
     private String imageUrl;
 
     @JsonProperty("isCorrect")

@@ -7,6 +7,7 @@ import org.ntnu.backend.exception.InvalidOptionFormatException;
 import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
@@ -56,6 +57,10 @@ public class OptionParser {
               });
           yield new ArrayList<>(list);
         }
+        case PASSWORD_STRENGTH -> {
+          List<PasswordStrengthOption> list = mapper.readValue(json, new TypeReference<>() {});
+          yield new ArrayList<>(list);
+        }
         case TEXT_QUIZ -> null;
         case PICTURE_QUIZ -> null;
         case MINIGAME -> null;
@@ -63,6 +68,7 @@ public class OptionParser {
         case TUTORIAL -> null;
         case PASSWORD_STRENGTH -> null;
         case POST_OFFICE -> null;
+        default -> null;
       };
     } catch (JacksonException e) {
       throw new InvalidOptionFormatException("Invalid JSON for " + type + ": " + e.getMessage());

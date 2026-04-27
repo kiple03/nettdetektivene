@@ -5,6 +5,8 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
   switch (levelType) {
     case "MULTIPLE_CHOICE":
       return STATION_TYPE.NEWS; //legge til flere etter hvert
+    case "PASSWORD_STRENGTH":
+      return STATION_TYPE.PASSWORD;
   }
 }
 
@@ -12,6 +14,8 @@ function mapQuestionToStationTitle(levelType: GameQuestion["levelType"]): string
   switch (levelType) {
     case "MULTIPLE_CHOICE":
       return "Nyhetskvartal"; //legge til flere etter hvert
+    case "PASSWORD_STRENGTH":
+      return "Passordbanken";
   }
 }
 
@@ -20,6 +24,11 @@ export function mapOptionToStation(option: QuestionOption) : StationOption {
     id: option.id,
     label: option.text ?? "Velg",
     imageUrl: option.imageUrl,
+    minLength: option.minLength,
+    requireDigit:  option.requireDigit,                                                            
+    requireUpper:  option.requireUpper,
+    requireLower:  option.requireLower,                                                            
+    requireSymbol: option.requireSymbol,
   };
 }
 
