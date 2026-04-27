@@ -115,6 +115,7 @@ public class ClassroomMapper {
     return StudentProgressResponse.builder()
         .userId(enrollment.getUser().getId().toString())
         .username(enrollment.getUser().getUsername())
+      .email(enrollment.getUser().getEmail())
         .levelsCompleted(levelsCompleted)
         .score(score)
         .medalsEarned(medalsEarned)

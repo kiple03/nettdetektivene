@@ -50,9 +50,10 @@ interface RawStudentProgress {
   studentId?: string;
   id?: string;
   username: string;
+  email?: string | null;
   levelsCompleted: number;
   medalsEarned: number;
-    score: number; 
+  score: number;
   equippedItems?: RawEquippedItem[] | null;
 }
 
@@ -119,9 +120,10 @@ function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
   return {
     userId: resolvedUserId,
     username: raw.username,
+    email: raw.email ?? null,
     levelsCompleted: raw.levelsCompleted,
     medalsEarned: raw.medalsEarned,
-      score: raw.score, 
+    score: raw.score,
     equippedItems: raw.equippedItems ?? [],
   };
 }
