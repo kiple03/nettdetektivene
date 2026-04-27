@@ -1,29 +1,31 @@
 import { createBrowserRouter } from "react-router-dom";
-import TeacherLayout from "@/components/layout/TeacherLayout";
-import MapPage from "../pages/student/MapPage";
-import LevelOne from "../pages/student/LevelOnePage";
-import StudentLoginPage from "@/pages/auth/StudentLoginPage";
-import TeacherLoginPage from "@/pages/auth/TeacherLoginPage";
-import FeideFake from "@/pages/auth/FeideFake";
-import StudentHomePage from "@/pages/student/StudentHomePage";
-import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
-import ClassroomDetail from "@/pages/teacher/detail/ClassroomDetail.tsx";
-import StudentDetail from "@/pages/teacher/detail/StudentDetail.tsx";
-import MysterySubmissions from "@/pages/teacher/MysterySubmissions";
-import Notifications from "@/pages/teacher/Notifications";
-import LeaderboardPage from "@/pages/student/LeaderboardPage.tsx";
-import NotesPage from "@/pages/student/notebook/NotesPage";
-import BadgesPage from "@/pages/student/MedalionPage";
-import WeeklyMysteryPage from "@/pages/student/WeeklyMysteryPage";
-import JoinWithCodePage from "@/pages/student/JoinWithCodePage";
-import MyClassroomsPage from "@/pages/teacher/MyClassroomsPage.tsx";
-import AvatarDevPage from "@/pages/student/AvatarDevPage";
-import GamePage from "@/pages/game/GamePage.tsx";
-import BossBattlePage from "@/pages/game/BossBattlePage.tsx";
-import CodePage from "@/pages/teacher/CodePage.tsx";
+import { lazy } from "react";
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
-import ProfilePage from "@/pages/student/ProfilePage.tsx";
+import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
+
+const TeacherLayout = lazy(() => import("@/components/layout/TeacherLayout"));
+const MapPage = lazy(() => import("../pages/student/MapPage"));
+const LevelOne = lazy(() => import("../pages/student/LevelOnePage"));
+const StudentLoginPage = lazy(() => import("@/pages/auth/StudentLoginPage"));
+const TeacherLoginPage = lazy(() => import("@/pages/auth/TeacherLoginPage"));
+const FeideFake = lazy(() => import("@/pages/auth/FeideFake"));
+const StudentHomePage = lazy(() => import("@/pages/student/StudentHomePage"));
+const ClassroomDetail = lazy(() => import("@/pages/teacher/detail/ClassroomDetail"));
+const StudentDetail = lazy(() => import("@/pages/teacher/detail/StudentDetail"));
+const MysterySubmissions = lazy(() => import("@/pages/teacher/MysterySubmissions"));
+const Notifications = lazy(() => import("@/pages/teacher/Notifications"));
+const LeaderboardPage = lazy(() => import("@/pages/student/LeaderboardPage"));
+const NotesPage = lazy(() => import("@/pages/student/notebook/NotesPage"));
+const BadgesPage = lazy(() => import("@/pages/student/MedalionPage"));
+const WeeklyMysteryPage = lazy(() => import("@/pages/student/WeeklyMysteryPage"));
+const JoinWithCodePage = lazy(() => import("@/pages/student/JoinWithCodePage"));
+const MyClassroomsPage = lazy(() => import("@/pages/teacher/MyClassroomsPage"));
+const AvatarDevPage = lazy(() => import("@/pages/student/AvatarDevPage"));
+const GamePage = lazy(() => import("@/pages/game/GamePage"));
+const BossBattlePage = lazy(() => import("@/pages/game/BossBattlePage"));
+const CodePage = lazy(() => import("@/pages/teacher/CodePage"));
+const ProfilePage = lazy(() => import("@/pages/student/ProfilePage"));
 
 export const router = createBrowserRouter([
     // Auth routes (public)
