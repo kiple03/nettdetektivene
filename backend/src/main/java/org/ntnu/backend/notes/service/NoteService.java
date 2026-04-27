@@ -141,6 +141,15 @@ public class NoteService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public NotesOverviewResponse getNotesForUser(UUID userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        List<Note> ownNotes = noteRepository.findAllByUserOrderByCategoryAsc(user);
+        List<StudentLevelNote> levelNotes = studentLevelNoteRepository.findAllByUserOrderByCategoryAsc(user);
+        return noteMapper.toOverviewResponse(ownNotes, levelNotes);
+    }
+
     public void saveCompletionTipIfNeeded(UUID userId, Level level) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
