@@ -8,7 +8,6 @@ type ImageOptionCardProps = {
 
 function ImageOptionCard({
                              imageUrl,
-                             imageAlt,
                              buttonLabel,
                              onSelect,
                              disabled = false,
@@ -17,11 +16,12 @@ function ImageOptionCard({
         <div className="image-option-card">
             <img
                 src={imageUrl}
-                alt={imageAlt}
+                alt=""
                 className="image-option-card__image"
             />
 
             <button
+                type="button"
                 onClick={onSelect}
                 className="image-option-card__button"
                 disabled={disabled}

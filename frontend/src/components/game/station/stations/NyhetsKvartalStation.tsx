@@ -37,6 +37,7 @@ function NyhetsKvartalStation({ station, onAnswer, disabled = false}: NyhetsKvar
         <div className="nyhetskvartal-station">
             <TaskHeader questionText={station.questionText} />
             <MultipleChoice
+                question={station.questionText}
                 options={station.options}
                 onSelect={handleSelect}
                 disabled={disabled}
