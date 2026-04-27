@@ -293,7 +293,7 @@ public class GameSeeder implements CommandLineRunner {
       Stop stop = stopRepository.findByName("Passordbanken").orElseGet(() -> {
           Stop s = new Stop();                                                                       
           s.setName("Passordbanken");
-          s.setDisplayOrder(2);                     
+          s.setDisplayOrder(4);                     
           return stopRepository.save(s);                                                             
       });
                                                                                                      

@@ -205,6 +205,7 @@ public class ProgressService {
       case "Nyhetskvartalet" -> Map.entry("Breaking news", "Du avslørte alle falske nyheter");
       case "Fotografen" -> Map.entry("Fanget på kamera", "Du gjennomskuet bildene!");
       case "Postkontoret" -> Map.entry("Ikke klikk!", "Du gjennomskuet falske eposter");
+      case "PassordBanken" -> Map.entry("Passordvokter", "Du bygde passord som holder skurker ute!");
       default -> null;
     };
     if(medal != null){
