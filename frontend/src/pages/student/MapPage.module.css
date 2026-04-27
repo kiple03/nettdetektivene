@@ -142,7 +142,7 @@
   offset-distance: var(--car-offset, 0%);
   offset-rotate: auto;
   offset-anchor: 50% 50%;
-  z-index: 2;
+  z-index: 40;
   pointer-events: none;
 }
 
