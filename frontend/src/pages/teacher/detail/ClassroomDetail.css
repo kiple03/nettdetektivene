@@ -680,6 +680,13 @@
   min-width: 0;
 }
 
+.classroom-detail__student-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
 .classroom-detail__student-name {
   font-size: 14px;
   font-weight: 700;
@@ -694,9 +701,20 @@
   text-decoration: underline;
 }
 
+.classroom-detail__student-email {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(112, 78, 35, 0.88);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .classroom-detail__student-meta {
-  font-size: 11px;
-  color: rgba(90, 62, 27, 0.65);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(64, 41, 15, 0.82);
 }
 
 .classroom-detail__student-actions {

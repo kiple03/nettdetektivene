@@ -23,7 +23,7 @@ export default function ClassroomDetailPage() {
     } = useClassroomEdit(classroomId);
 
     const {
-        studentList, totalStops,
+        studentList,
         editingStudentId,
         editUsernameValue, setEditUsernameValue,
         savingUsername, usernameError,
@@ -88,7 +88,6 @@ export default function ClassroomDetailPage() {
                 onInviteTeacher={handleInviteTeacher}
                 onLeaveClassroom={handleLeaveClassroom}
                 students={studentList}
-                totalStops={totalStops}
                 editingStudentId={editingStudentId}
                 editUsernameValue={editUsernameValue}
                 savingUsername={savingUsername}

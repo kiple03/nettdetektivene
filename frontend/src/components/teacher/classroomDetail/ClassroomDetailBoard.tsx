@@ -23,7 +23,6 @@ type ClassroomDetailBoardProps = {
     onInviteTeacher: (event: React.FormEvent) => void;
     onLeaveClassroom: () => void;
     students: StudentSummary[];
-    totalStops: number;
     editingStudentId: string | null;
     editUsernameValue: string;
     savingUsername: boolean;
@@ -57,7 +56,6 @@ export function ClassroomDetailBoard({
     onInviteTeacher,
     onLeaveClassroom,
     students,
-    totalStops,
     editingStudentId,
     editUsernameValue,
     savingUsername,
@@ -145,7 +143,6 @@ export function ClassroomDetailBoard({
                 <ClassroomDetailStudentCard
                     classroomId={classroomId}
                     students={students}
-                    totalStops={totalStops}
                     editingStudentId={editingStudentId}
                     editUsernameValue={editUsernameValue}
                     savingUsername={savingUsername}

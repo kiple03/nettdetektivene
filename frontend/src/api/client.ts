@@ -1,4 +1,5 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import { isLoggedIn as tokenIsValid } from '@/stores/authStore';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api',
@@ -42,8 +43,13 @@ async function performRefresh(): Promise<string | null> {
   }
 }
 
-/** Starts a refresh if none is in flight, otherwise joins the existing one. */
+/** Starts a refresh if none is in flight, otherwise joins the existing one.
+ *  Short-circuits if the token in localStorage is already valid — prevents a
+ *  second HTTP call when the interceptor already refreshed before this runs. */
 export function sharedRefresh(): Promise<string | null> {
+  if (tokenIsValid()) {
+    return Promise.resolve(localStorage.getItem('token'));
+  }
   if (!refreshInFlight) {
     refreshInFlight = performRefresh().finally(() => {
       refreshInFlight = null;
