@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/buttons/Button.tsx'
 import TutorialOverlay from "@/components/game/tutorial/TutorialOverlay.tsx";
 import { TUTORIAL_STEPS, hasSeenTutorial } from "@/components/game/tutorial/tutorialContent.ts";
 import useSound from "use-sound";
-import CorrectFx from '@/assets/sounds/CorrectAnswerII.mp3';
-import IncorrectFx from '@/assets/sounds/IncorrectAnswer.wav';
+import CorrectFx from '@/assets/sounds/IncorrectAnswer.wav';
+import IncorrectFx from '@/assets/sounds/CorrectAnswerII.mp3';
 
 type Props = {
   title: string;
