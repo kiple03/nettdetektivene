@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import BackButton from "@/components/ui/buttons/BackButton";
 import { studentKeys } from "@/hooks/student/queryKeys";
 import { mapQuestionToStationData } from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/buttons/Button.tsx";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getGameLevelById, getLevelQuestions, submitLevel } from "@/api/gameApi.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
+import ConfettiComp from "@/components/ConfettiComp";
 
 
 export default function GamePage() {
@@ -126,10 +127,16 @@ export default function GamePage() {
             </StationContainer>
 
             <BackButton
-                style={{ position: "absolute", top: "6%", left: "1.5%" }}
+                style={{
+                    position: "absolute",
+                    top: "1rem",
+                    left: "1rem",
+                    zIndex: 50,
+                }}
                 ariaLabel="Gå tilbake"
             />
 
+            {dialogOpen && levelPassed && <ConfettiComp duration={5000}/>}
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <AlertDialogContent icon={levelPassed ? "🎉" : "💪"}>
                     <AlertDialogTitle>

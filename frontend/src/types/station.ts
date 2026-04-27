@@ -1,3 +1,5 @@
+import type { LevelType } from "@/api/gameApi";
+
 export const STATION_TYPE = {
   NEWS: "NEWS",
   PHOTO: "PHOTO",
@@ -14,6 +16,10 @@ export type StationOption = {
   id: number;
   label: string;
   imageUrl?: string;
+
+  key?: string;
+  labels?: string[];
+
   //PASSWORD
   minLength?: number;       
   requireDigit?: boolean;                                                                          

@@ -1,9 +1,10 @@
 import client from "./client"
 
-export type LevelType = "MULTIPLE_CHOICE" | "PASSWORD_STRENGTH"// legge til flere oppgavetyper senere
+export type LevelType = "MULTIPLE_CHOICE" | "PICTURE_QUIZ"| "PASSWORD_STRENGTH" | "CLASSIFY_ITEMS" // legge til flere oppgavetyper senere
 
 export type SubmitAnswerRequest =
     | SubmitSingleChoiceAnswerRequest
+    | SubmitMultiSelectAnswerRequest
     | SubmitPasswordStrengthAnswerRequest
 
 
@@ -18,6 +19,9 @@ export interface QuestionOption {
   id: number;
   text?: string
   imageUrl?: string;
+
+  key?: string;
+  labels?: string[];
 
   //For PASSWORD
   minLength?: number;
@@ -47,9 +51,16 @@ export interface SubmitSingleChoiceAnswerRequest {
   selectedId: number;
 }
 
+export interface SubmitMultiSelectAnswerRequest {
+  shape: "MULTIPLE_CHOICE";
+  selectedIds: number[];
+}
+
 export interface SubmitAnswerResponse {
   correct: boolean;
   feedback: string;
+  correctOptionIds: number[];
+  wrongSelectedOptionIds: number[];
 }
 
 export interface QuestionAnswer {
@@ -106,6 +117,13 @@ export const submitSingleChoiceAnswer = async (
     questionId: number, body: SubmitSingleChoiceAnswerRequest): Promise<SubmitAnswerResponse> => {
   const response =
       await client.post(`/game/questions/${questionId}/submit`,body);
+  return response.data;
+};
+
+export const submitMultiSelectAnswer = async (
+    questionId: number,
+    body: SubmitMultiSelectAnswerRequest): Promise<SubmitAnswerResponse> => {
+  const response = await client.post(`/game/questions/${questionId}/submit`, body);
   return response.data;
 };
 

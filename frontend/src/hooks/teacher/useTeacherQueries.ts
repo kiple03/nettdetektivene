@@ -5,6 +5,7 @@ import {
     getStudentProgress,
     getStudentDetail,
     getStudentMedalions,
+    getStudentNotebook,
     getCoTeachers,
     getMysterySubmissions,
     getStops,
@@ -50,6 +51,14 @@ export function useStudentMedalions(classroomId: string, studentId: string) {
     return useQuery({
         queryKey: teacherKeys.studentMedalions(classroomId, studentId),
         queryFn: () => getStudentMedalions(classroomId, studentId),
+        enabled: !!classroomId && !!studentId,
+    });
+}
+
+export function useStudentNotebook(classroomId: string, studentId: string) {
+    return useQuery({
+        queryKey: teacherKeys.studentNotebook(classroomId, studentId),
+        queryFn: () => getStudentNotebook(classroomId, studentId),
         enabled: !!classroomId && !!studentId,
     });
 }

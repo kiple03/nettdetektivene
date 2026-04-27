@@ -1,4 +1,4 @@
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import BackButton from "@/components/ui/buttons/BackButton";
 import mapStyles from "@/pages/student/MapPage.module.css";
 import styles from "@/pages/student/MedalionPage.module.css";
 import { useMedalions } from "@/hooks/useMedalions";

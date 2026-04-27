@@ -1,11 +1,13 @@
 package org.ntnu.backend.config;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
+import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.Question;
@@ -20,6 +22,7 @@ import org.ntnu.backend.notes.model.enums.NoteCategory;
 import org.ntnu.backend.notes.repository.LevelNoteTemplateRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
@@ -46,7 +49,15 @@ public class GameSeeder implements CommandLineRunner {
   private final OptionValidator optionValidator;
   private final LevelNoteTemplateRepository levelNoteTemplateRepository;
 
+  /**
+   * Executes automatically when the Spring Boot application starts.
+   * Checks if the database is already seeded by verifying if any Stops exist.
+   * If the database is empty, it triggers the initial seeding process.
+   *
+   * @param args Command line arguments passed to the application.
+   */
   @Override
+  @Transactional
   public void run(String... args) {
     log.info("GameSeeder: deduplicating and ensuring seed data...");
     deduplicateStops();
@@ -54,10 +65,15 @@ public class GameSeeder implements CommandLineRunner {
     deduplicateLevelNoteTemplates();
     seedNews();
     seedPasswords();
+    seedPhoto();
     seedMarkedsplassen();
     log.info("GameSeeder: done");
   }
 
+  /**
+   * For each stop name that has more than one row, keep the lowest-id row and
+   * delete the duplicates along with their levels and questions.
+   */
   private void deduplicateStops() {
     List<Stop> allStops = stopRepository.findAll();
     allStops.stream()
@@ -81,6 +97,9 @@ public class GameSeeder implements CommandLineRunner {
     stopRepository.delete(stop);
   }
 
+  /**
+   * For each stop, deduplicate levels by title and keep the lowest-id row.
+   */
   private void deduplicateLevels() {
     List<Stop> allStops = stopRepository.findAll();
     for (Stop stop : allStops) {
@@ -241,13 +260,183 @@ public class GameSeeder implements CommandLineRunner {
     );
   }
 
+  private void seedPhoto() {
+    Stop stop = stopRepository.findByName("Fotografen").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Fotografen");
+      s.setDisplayOrder(2);
+      return stopRepository.save(s);
+    });
+
+    Level level = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte, KI eller manipulert?").orElseGet(() -> {
+      Level l = new Level();
+      l.setTitle("Ekte, KI eller manipulert?");
+      l.setDescription("Se nøye på bildet og velg riktig svar.");
+      l.setLevelType(LevelType.PICTURE_QUIZ);
+      l.setStop(stop);
+      return levelRepository.save(l);
+    });
+
+    ensurePictureQuizQuestion(
+            level,
+            "Hvilke bilder er AI-generert?",
+            List.of(
+                    new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseReal.png", false,
+                            "Bildet er ikke ekte. Det har tegn på KI-generering."),
+                    new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseAi.png", true,
+                            "Riktig. Ansiktstrekkene og detaljene i bildet tyder på at det er KI-generert."),
+                    new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aiFake.png", true,
+                            "Riktig! Dette bildet er KI generert"),
+                    new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_2.png", false,
+                            "Bildet er ikke ekte. Det har tegn på KI-generering.")
+            )
+    );
+
+    ensurePictureQuizQuestion(
+            level,
+            "Hvilket bilde er IKKE ekte?",
+            List.of(
+                    new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/robben.png", false,
+                            "Feil! Bildet er Helt ekte!"),
+                    new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/FootballFakePic.png", true,
+                            "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt."),
+                    new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/FootballReal.png", false,
+                            "Feil! Bildet er Helt ekte!"),
+                    new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/crouch.png", false,
+                            "Feil! Bildet er Helt ekte!")
+            )
+    );
+
+    ensurePictureQuizQuestion(
+            level,
+            "Marker bildet genrert av AI",
+            List.of(
+                    new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/manAI.png", true,
+                            "Riktig. Rare detaljer som glinsende, ren og myk hud er lette identifikatorer"),
+                    new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_1.png", false,
+                            "Feil!, Dette er et helt ekte bilde!"),
+                    new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/beetle.png", false,
+                            "Feil!, Dette er et helt ekte bilde!"),
+                    new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/john.png", false,
+                            "Feil!, Dette er et helt ekte bilde!")
+            )
+    );
+
+    Level level2 = levelRepository
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert? 2")
+          .orElseGet(() -> {
+              Level l = new Level();
+              l.setTitle("Ekte, KI eller manipulert? 2");
+              l.setDescription("Se nøye på bildet og velg riktig svar.");
+              l.setLevelType(LevelType.PICTURE_QUIZ);
+              l.setStop(stop);
+              l.setOrder(2);
+              return levelRepository.save(l);
+          });
+
+    ensurePictureQuizQuestion(
+            level2,
+            "Hvilket bilde er av ekte natur?",
+            List.of(
+                    new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png", false,
+                            "Feil!, ingen natur ser slik ut!"),
+                    new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png", true,
+                            "Helt riktig!, dette er helt nydelig norsk natur!")
+            )
+    );
+
+    ensurePictureQuizQuestion(
+            level2,
+            "Hva er riktig påstand?",
+            List.of(
+                    new PictureQuizOption(1, "Bildet er ikke ekte fordi mange rare ting skjer samtidig," +
+                            " og sånt finnes ikke i virkeligheten.",
+                            null, true, "Helt riktig!"),
+                    new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, false, "Helt feil!"),
+                    new PictureQuizOption(3, "Jeg vet ikke", null, false, "Helt feil!"),
+                    new PictureQuizOption(4, "Bildet er ekte fordi alt ser helt naturlig ut", null, false, "Helt feil!")
+            )
+    );
+
+    ensurePictureQuizQuestion(
+            level2,
+            "Hvilke reklamer er AI-generert?",
+            List.of(
+                    new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aireklame.png",
+                            true, "Helt riktig!"),
+                    new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/ektereklame.png",
+                            false, "Feil!, Denne reklamen er ikke AI generert."),
+                    new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/ektereklame2.png",
+                            false, "Feil!, Denne reklamen er ikke AI generert."),
+                    new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aireklameigjen.png",
+                            true, "Helt riktig!")
+
+            )
+    );
+
+    Level level3 = levelRepository
+            .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert? 3")
+            .orElseGet(() -> {
+                Level l = new Level();
+                l.setTitle("Ekte, KI eller manipulert? 3");
+                l.setDescription("Se nøye på bildet og velg riktig svar.");
+                l.setLevelType(LevelType.PICTURE_QUIZ);
+                l.setStop(stop);
+                l.setOrder(3);
+                return levelRepository.save(l);
+            });
+
+    ensurePictureQuizQuestion(
+            level3,
+            "Hvilket bilde er AI?",
+            List.of(
+                    new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/zebra.jpg",
+                            false, "Feil! Det er et ekte zebra"),
+                    new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/zebraFake.png",
+                            true, "Riktig! dette bildet er faktisk generert av AI")
+            )
+    );
+
+    ensurePictureQuizQuestion(
+            level3,
+            "Hvilket bilde er ekte",
+            List.of(
+                    new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fotballai.png",
+                            false, "Feil! Det er et AI generert bilde!"),
+                    new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fotballnotai.png",
+                            true, "Riktig! dette bildet er faktisk ikke generert av AI")
+            )
+    );
+  }
+
+  private void ensurePictureQuizQuestion(Level level, String questionText, List<PictureQuizOption> options) {
+    boolean exists = questionRepository
+            .findByLevelIdAndQuestionText(level.getId(), questionText)
+            .isPresent();
+    if (exists) return;
+
+    List<Option> optionList = new ArrayList<>();
+    optionList.addAll(options);
+
+    optionValidator.validate(optionList, level.getLevelType());
+
+    Question question = new Question();
+    question.setQuestionText(questionText);
+    question.setLevel(level);
+    question.setOptionContent(writeOptions(optionList));
+    questionRepository.save(question);
+  }
+
   private void ensureQuestion(Level level, String questionText, List<Option> options) {
     boolean exists = questionRepository
         .findByLevelIdAndQuestionText(level.getId(), questionText)
         .isPresent();
     if (exists) return;
 
-    optionValidator.validate(List.copyOf(options), level.getLevelType());
+    List<Option> optionList = new ArrayList<>();
+    optionList.addAll(options);
+
+    optionValidator.validate(optionList, level.getLevelType());
 
     Question question = new Question();
     question.setQuestionText(questionText);
@@ -256,7 +445,7 @@ public class GameSeeder implements CommandLineRunner {
     questionRepository.save(question);
   }
 
-  private String writeOptions(List<Option> options) {
+  private String writeOptions(List<? extends Option> options) {
     try {
       return new ObjectMapper().writeValueAsString(options);
     } catch (JacksonException e) {
@@ -290,139 +479,140 @@ public class GameSeeder implements CommandLineRunner {
             }
         );
   }
-                                                                                                                
-  private void seedPasswords() {                                                                     
+
+  private void seedPasswords() {
       Stop stop = stopRepository.findByName("Passordbanken").orElseGet(() -> {
-          Stop s = new Stop();                                                                       
+          Stop s = new Stop();
           s.setName("Passordbanken");
-          s.setDisplayOrder(4);                     
-          return stopRepository.save(s);                                                             
+          s.setDisplayOrder(4);
+          return stopRepository.save(s);
       });
-                                                                                                     
-      // ---------- LEVEL 1 — password strength (new type) ----------                                
+
+      // ---------- LEVEL 1 — password strength (new type) ----------
       Level l1 = levelRepository
-          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Lag et sterkt passord")                
-          .orElseGet(() -> {                                                                         
-              Level l = new Level();                                                                 
-              l.setTitle("Lag et sterkt passord");                                                   
-              l.setDescription("Skriv inn et passord. Systemet sier fra hvor sterkt det er.");       
-              l.setLevelType(LevelType.PASSWORD_STRENGTH);                                           
-              l.setStop(stop);                                                                       
-              l.setOrder(1);                                                                         
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Lag et sterkt passord")
+          .orElseGet(() -> {
+              Level l = new Level();
+              l.setTitle("Lag et sterkt passord");
+              l.setDescription("Skriv inn et passord. Systemet sier fra hvor sterkt det er.");
+              l.setLevelType(LevelType.PASSWORD_STRENGTH);
+              l.setStop(stop);
+              l.setOrder(1);
               return levelRepository.save(l);
-          });                                                                                        
-   
-      ensureQuestion(l1,                                                                             
+          });
+
+      ensureQuestion(l1,
           "Lag et passord på minst 8 tegn med tall og stor bokstav.",
-          List.of(new PasswordStrengthOption(                                                        
-              1, 8, true, true, false, false,                                                        
-              "Bra! Passordet oppfyller kravene.",                                                   
-              "Passordet ditt er ikke sterkt nok."                                                   
-          ))                                                                                         
-      );                                                                                             
-                                                                                                     
+          List.of(new PasswordStrengthOption(
+              1, 8, true, true, false, false,
+              "Bra! Passordet oppfyller kravene.",
+              "Passordet ditt er ikke sterkt nok."
+          ))
+      );
+
       ensureQuestion(l1,
           "Nå skjerper vi kravene: minst 12 tegn, med tall, stor bokstav OG symbol.",
-          List.of(new PasswordStrengthOption(                                                        
+          List.of(new PasswordStrengthOption(
               1, 12, true, true, false, true,
-              "Utmerket — dette er et robust passord!",                                              
-              "Passordet ditt er ikke sterkt nok."                                                   
+              "Utmerket — dette er et robust passord!",
+              "Passordet ditt er ikke sterkt nok."
           ))
-      );                                                                                             
-                  
-      ensureLevelNoteTemplate(l1, NoteCategory.PASSORD,                                              
-          "Lange passord med blanding av store/små bokstaver, tall og symboler er vanskelige å gjette.");                                                                                         
-                  
-      // ---------- LEVEL 2 — multiple choice: what makes a good password ----------                 
+      );
+
+      ensureLevelNoteTemplate(l1, NoteCategory.PASSORD,
+          "Lange passord med blanding av store/små bokstaver, tall og symboler er vanskelige å gjette.");
+
+      // ---------- LEVEL 2 — multiple choice: what makes a good password ----------
       Level l2 = levelRepository
-          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Hva er et godt passord?")              
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Hva er et godt passord?")
           .orElseGet(() -> {
               Level l = new Level();
               l.setTitle("Hva er et godt passord?");
               l.setDescription("Velg alternativet som beskriver et godt passord.");
-              l.setLevelType(LevelType.MULTIPLE_CHOICE);                                             
+              l.setLevelType(LevelType.MULTIPLE_CHOICE);
               l.setStop(stop);
-              l.setOrder(2);                                                                         
+              l.setOrder(2);
               return levelRepository.save(l);
           });
 
       ensureQuestion(l2,
           "Hvilket av passordene er tryggest?",
-          List.of(                                                                                   
+          List.of(
               new MultipleChoiceOption(1, "fotball2010",          "", false,
-                  "Et ord fra ordboka pluss et årstall er lett å gjette."),                          
-              new MultipleChoiceOption(2, "Kj0leskap!Blå_Sky12",  "", true,                          
-                  "Riktig! Langt, variert og uten ordbokord."),                                      
-              new MultipleChoiceOption(3, "12345678",             "", false,                         
-                  "Et av verdens vanligste passord — gjettes på sekunder."),                         
-              new MultipleChoiceOption(4, "passord",              "", false,                         
-                  "Direkte ordet 'passord' er det første noen prøver.")                              
-          )                                                                                          
-      );                                                                                             
-                                                                                                     
+                  "Et ord fra ordboka pluss et årstall er lett å gjette."),
+              new MultipleChoiceOption(2, "Kj0leskap!Blå_Sky12",  "", true,
+                  "Riktig! Langt, variert og uten ordbokord."),
+              new MultipleChoiceOption(3, "12345678",             "", false,
+                  "Et av verdens vanligste passord — gjettes på sekunder."),
+              new MultipleChoiceOption(4, "passord",              "", false,
+                  "Direkte ordet 'passord' er det første noen prøver.")
+          )
+      );
+
       ensureQuestion(l2,
-          "Hvilken regel er VIKTIGST for et sterkt passord?",                                        
-          List.of(                                                                                   
+          "Hvilken regel er VIKTIGST for et sterkt passord?",
+          List.of(
               new MultipleChoiceOption(1, "At det er kort og lett å huske",                "", false,
-                  "Korte passord gir angripere et lite søkerom."),                                   
+                  "Korte passord gir angripere et lite søkerom."),
               new MultipleChoiceOption(2, "At det inneholder kjælenavnet ditt",            "", false,
-                  "Personlig info er lett å finne i sosiale medier."),                               
-              new MultipleChoiceOption(3, "At det er langt og variert, og bare brukes ett sted", "", 
-  true,                                                                                              
-                  "Riktig — lengde + unikhet per konto er det som betyr mest."),                     
+                  "Personlig info er lett å finne i sosiale medier."),
+              new MultipleChoiceOption(3, "At det er langt og variert, og bare brukes ett sted", "",
+  true,
+                  "Riktig — lengde + unikhet per konto er det som betyr mest."),
               new MultipleChoiceOption(4, "At det bare består av tall",                    "", false,
-                  "Uten bokstaver og symboler blir søkerommet for lite.")                            
-          )                                                                                          
-      );                                                                                             
-                                                                                                     
+                  "Uten bokstaver og symboler blir søkerommet for lite.")
+          )
+      );
+
       ensureLevelNoteTemplate(l2, NoteCategory.PASSORD,
-          "Bruk unike passord per tjeneste, og vurder en passordbehandler.");                        
-                                                                                                     
-      // ---------- LEVEL 3 — multiple choice: what to do on a leak ----------                       
-      Level l3 = levelRepository                                                                     
-          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Passordlekkasje — hva gjør du?")       
-          .orElseGet(() -> {                                                                         
+          "Bruk unike passord per tjeneste, og vurder en passordbehandler.");
+
+      // ---------- LEVEL 3 — multiple choice: what to do on a leak ----------
+      Level l3 = levelRepository
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Passordlekkasje — hva gjør du?")
+          .orElseGet(() -> {
               Level l = new Level();
-              l.setTitle("Passordlekkasje — hva gjør du?");                                          
+              l.setTitle("Passordlekkasje — hva gjør du?");
               l.setDescription("Velg riktig handling hvis passordet ditt er lekket.");
-              l.setLevelType(LevelType.MULTIPLE_CHOICE);                                             
-              l.setStop(stop);                                                                       
-              l.setOrder(3);                                                                         
-              return levelRepository.save(l);                                                        
-          });     
+              l.setLevelType(LevelType.MULTIPLE_CHOICE);
+              l.setStop(stop);
+              l.setOrder(3);
+              return levelRepository.save(l);
+          });
 
       ensureQuestion(l3,
           "Du ser at passordet ditt er lekket på haveibeenpwned. Hva gjør du først?",
-          List.of(                                                                                   
+          List.of(
               new MultipleChoiceOption(1, "Ignorerer det, det går nok over",         "", false,
-                  "Lekkede passord testes av angripere i løpet av få timer."),                       
-              new MultipleChoiceOption(2, "Bytter passordet på den lekkede tjenesten og alle steder det gjenbrukes", "", true,                                                                         
-                  "Riktig — stopp gjenbruk først."),                                                 
-              new MultipleChoiceOption(3, "Skriver passordet på en post-it",         "", false,      
-                  "Dette løser ikke lekkasjen og øker fysisk risiko."),                              
-              new MultipleChoiceOption(4, "Sender det til en venn for råd",          "", false,      
-                  "Du sprer eksponeringen uten å løse problemet.")                                   
-          )                                                                                          
-      );                                                                                             
-                                                                                                     
+                  "Lekkede passord testes av angripere i løpet av få timer."),
+              new MultipleChoiceOption(2, "Bytter passordet på den lekkede tjenesten og alle steder det gjenbrukes", "", true,
+                  "Riktig — stopp gjenbruk først."),
+              new MultipleChoiceOption(3, "Skriver passordet på en post-it",         "", false,
+                  "Dette løser ikke lekkasjen og øker fysisk risiko."),
+              new MultipleChoiceOption(4, "Sender det til en venn for råd",          "", false,
+                  "Du sprer eksponeringen uten å løse problemet.")
+          )
+      );
+
       ensureQuestion(l3,
           "Hvilket tiltak reduserer skaden av fremtidige lekkasjer mest?",
-          List.of(                                                                                   
+          List.of(
               new MultipleChoiceOption(1, "Aldri bruke nettet",                      "", false,
-                  "Urealistisk og unødvendig."),                                                     
-              new MultipleChoiceOption(2, "Slå på to-faktor-autentisering",          "", true,       
-                  "Riktig — selv om passordet lekkes, mangler angriperen andre faktor."),            
-              new MultipleChoiceOption(3, "Bruke samme passord overalt for enkelhet","", false,      
-                  "Motsatt — én lekkasje kompromitterer da alle kontoer."),                          
-              new MultipleChoiceOption(4, "Skrive alle passord i en tekstfil på skrivebordet", "",   
-  false,                                                                                             
-                  "Malware leser slike filer trivielt.")                                             
-          )                                                                                          
-      );          
-                                                                                                     
-      ensureLevelNoteTemplate(l3, NoteCategory.PASSORD,                                              
+                  "Urealistisk og unødvendig."),
+              new MultipleChoiceOption(2, "Slå på to-faktor-autentisering",          "", true,
+                  "Riktig — selv om passordet lekkes, mangler angriperen andre faktor."),
+              new MultipleChoiceOption(3, "Bruke samme passord overalt for enkelhet","", false,
+                  "Motsatt — én lekkasje kompromitterer da alle kontoer."),
+              new MultipleChoiceOption(4, "Skrive alle passord i en tekstfil på skrivebordet", "",
+  false,
+                  "Malware leser slike filer trivielt.")
+          )
+      );
+
+      ensureLevelNoteTemplate(l3, NoteCategory.PASSORD,
           "Bytt passord og skru på 2FA så fort du oppdager lekkasje.");
   }
+
   private void seedMarkedsplassen() {
     Stop stop = stopRepository.findByName("Markedsplassen").orElseGet(() -> {
       Stop s = new Stop();

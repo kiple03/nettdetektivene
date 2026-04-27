@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useJoinClassroom } from '@/hooks/student/useJoinClassroom';
 import styles from './JoinWithCodePage.module.css';
-import LogoutButton from '@/components/LogoutButton';
+import LogoutButton from '@/components/ui/buttons/LogoutButton';
 
 import detectiveImage from '@/assets/images/joinWithCode/detective.png';
 import classroomBackground from '@/assets/images/joinWithCode/bgClassroomCode.png';

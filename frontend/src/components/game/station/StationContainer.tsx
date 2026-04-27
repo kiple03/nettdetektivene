@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { StationType, SubmitAnswerResult } from "@/types/station.ts";
 import FeedbackBox from "@/components/game/ui/FeedbackBox.tsx";
+import { Button } from '@/components/ui/buttons/Button.tsx'
 import TutorialOverlay from "@/components/game/tutorial/TutorialOverlay.tsx";
 import { TUTORIAL_STEPS, hasSeenTutorial } from "@/components/game/tutorial/tutorialContent.ts";
+import useSound from "use-sound";
+import CorrectFx from '@/assets/sounds/CorrectAnswerII.mp3';
+import IncorrectFx from '@/assets/sounds/IncorrectAnswer.wav';
 
 type Props = {
   title: string;
@@ -14,10 +18,17 @@ type Props = {
 
 function StationContainer({ title, type, children, submitResult, onNext }: Props) {
   const [tutorialOpen, setTutorialOpen] = useState(() => !hasSeenTutorial(type));
+  
+  const [playCorrect] = useSound(CorrectFx);
+  const [playWomp] = useSound(IncorrectFx)
+  useEffect(() => {
+    if(submitResult?.correct) playCorrect(); 
+    else if(submitResult?.feedback) playWomp();
+  }, [submitResult]);
 
   return (
       // toLowerCase for css-styling for the specific station
-      <div className={`station-container station-${type.toLowerCase()}`} style={{ position: "relative" }}>
+      <div className={`station-container station-${type.toLowerCase()}`}>
         <h1 className="station-title">{title}</h1>
 
         <button
@@ -50,9 +61,9 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
                   text={submitResult.feedback}
               />
 
-              <button className="nextButton" onClick={onNext}>
-                Neste
-              </button>
+              <Button variant={'fun'} onClick={onNext}>
+                Neste →
+              </Button>
             </div>
         )}
       </div>
