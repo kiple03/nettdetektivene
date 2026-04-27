@@ -11,8 +11,6 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
   switch (levelType) {
     case "MULTIPLE_CHOICE":
       return STATION_TYPE.NEWS;
-    case "PICTURE_QUIZ":
-      return STATION_TYPE.PHOTO;
     case "PASSWORD_STRENGTH":
       return STATION_TYPE.PASSWORD;
     default:
@@ -24,8 +22,6 @@ function mapQuestionToStationTitle(levelType: GameQuestion["levelType"]): string
   switch (levelType) {
     case "MULTIPLE_CHOICE":
       return "Nyhetskvartal";
-    case "PICTURE_QUIZ":
-      return "Fotografen";
     case "PASSWORD_STRENGTH":
       return "Passordbanken";
     default:
