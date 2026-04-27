@@ -2,7 +2,9 @@ package org.ntnu.backend.notes.service;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.service.NotificationService;
@@ -142,12 +144,38 @@ public class NoteService {
     }
 
     @Transactional(readOnly = true)
-    public NotesOverviewResponse getNotesForUser(UUID userId) {
+    public NotesOverviewResponse getNotesForUser(UUID userId, UUID classroomId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         List<Note> ownNotes = noteRepository.findAllByUserOrderByCategoryAsc(user);
         List<StudentLevelNote> levelNotes = studentLevelNoteRepository.findAllByUserOrderByCategoryAsc(user);
-        return noteMapper.toOverviewResponse(ownNotes, levelNotes);
+        NotesOverviewResponse raw = noteMapper.toOverviewResponse(ownNotes, levelNotes);
+        return applyCensoring(raw, classroomId);
+    }
+
+    private NotesOverviewResponse applyCensoring(NotesOverviewResponse response, UUID classroomId) {
+        return new NotesOverviewResponse(
+            censorMap(response.reflections(), classroomId),
+            censorMap(response.levelNotes(), classroomId)
+        );
+    }
+
+    private Map<String, List<NoteResponse>> censorMap(Map<String, List<NoteResponse>> map, UUID classroomId) {
+        return map.entrySet().stream()
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                e -> e.getValue().stream()
+                    .map(note -> new NoteResponse(
+                        note.id(),
+                        note.category(),
+                        profanityFilter.containsProfanity(note.content(), classroomId)
+                            ? profanityFilter.censor(note.content(), classroomId)
+                            : note.content(),
+                        note.createdAt(),
+                        note.updatedAt()
+                    ))
+                    .toList()
+            ));
     }
 
     public void saveCompletionTipIfNeeded(UUID userId, Level level) {
