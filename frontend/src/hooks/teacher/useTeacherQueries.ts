@@ -13,6 +13,7 @@ import {
     getClassroomLeaderboard,
     getCensorWords,
     listLevelQuestions,
+    listMyImages,
 } from '@/api/teacherApi';
 import { getGameStops, getLevelsForStop, getGameLevelById } from '@/api/gameApi';
 import { teacherKeys } from './queryKeys';
@@ -139,5 +140,12 @@ export function useGameLevel(levelId: number) {
     queryKey: ['game', 'levels', levelId],
     queryFn: () => getGameLevelById(levelId),
     enabled: levelId > 0,
+  });
+}
+
+export function useTeacherImages() {
+  return useQuery({
+    queryKey: teacherKeys.images,
+    queryFn: listMyImages,
   });
 }

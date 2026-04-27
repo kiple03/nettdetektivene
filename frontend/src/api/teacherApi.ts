@@ -443,3 +443,40 @@ export async function updateQuestion(classroomId: string, levelId: number, quest
 export async function deleteQuestion(classroomId: string, levelId: number, questionId: number): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}/levels/${levelId}/questions/${questionId}`);
 }
+
+export interface TeacherImage {
+  id: number;
+  url: string;
+  originalFilename: string;
+  uploadedAt: string;
+}
+
+interface RawUploadedImage {
+  id: number;
+  originalFilename: string;
+  contentType: string;
+  size: number;
+  uploadedAt: string;
+}
+
+export function getImageDisplayUrl(imageUrl: string): string {
+  const base = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api';
+  return `${base}${imageUrl}`;
+}
+
+export async function listMyImages(): Promise<TeacherImage[]> {
+  const res = await apiClient.get<TeacherImage[]>('/teacher/images');
+  return res.data;
+}
+
+export async function uploadImage(file: File): Promise<TeacherImage> {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await apiClient.post<RawUploadedImage>('/images', formData);
+  return {
+    id: res.data.id,
+    url: `/images/${res.data.id}`,
+    originalFilename: res.data.originalFilename,
+    uploadedAt: res.data.uploadedAt,
+  };
+}

@@ -1,6 +1,7 @@
 import './MultipleChoiceEditor.css';
 import { makeOptionId } from './types';
 import type { MultipleChoiceOptionDraft, MultipleChoiceQuestionDraft } from './types';
+import { ImagePickerField } from './ImagePickerField';
 
 const MAX_OPTIONS = 6;
 
@@ -70,6 +71,10 @@ export function MultipleChoiceEditor({ value, onChange }: Props) {
                 value={opt.explanation}
                 onChange={e => setOption(idx, { explanation: e.target.value })}
                 placeholder="Forklaring (vises til eleven etter svar)"
+              />
+              <ImagePickerField
+                value={opt.imageUrl}
+                onChange={(url) => setOption(idx, { imageUrl: url })}
               />
             </div>
             <button

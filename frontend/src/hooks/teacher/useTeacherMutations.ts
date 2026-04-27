@@ -15,10 +15,11 @@ import {
     createQuestion,
     updateQuestion,
     deleteQuestion,
+    uploadImage,
 } from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
 import type { ClassroomDetail, CoTeacher, MysterySubmissionResponse, StudentSummary } from '@/types/classroom';
-import type { CensorWord, TeacherQuestion, CreateQuestionPayload, UpdateQuestionPayload } from '@/api/teacherApi';
+import type { CensorWord, TeacherQuestion, CreateQuestionPayload, UpdateQuestionPayload, TeacherImage } from '@/api/teacherApi';
 
 export function useUpdateClassroom(classroomId: string) {
     const queryClient = useQueryClient();
@@ -236,6 +237,19 @@ export function useDeleteQuestion(classroomId: string, levelId: number) {
             queryClient.setQueryData<TeacherQuestion[]>(
                 teacherKeys.levelQuestions(classroomId, levelId),
                 (prev) => prev?.filter((q) => q.id !== questionId) ?? [],
+            );
+        },
+    });
+}
+
+export function useUploadImage() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (file: File) => uploadImage(file),
+        onSuccess: (newImage: TeacherImage) => {
+            queryClient.setQueryData<TeacherImage[]>(
+                teacherKeys.images,
+                (prev) => [newImage, ...(prev ?? [])],
             );
         },
     });
