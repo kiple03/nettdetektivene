@@ -52,7 +52,7 @@ export function ClassroomDetailStudentCard({
             ) : (
                 <ul className="classroom-detail__student-list">
                     {students.map((student) => {
-                        const { userId, username, email, levelsCompleted, medalsEarned, score, equippedItems } = student;
+                        const { userId, username, email, currentStopDisplayOrder, totalStops: studentTotalStops, medalsEarned, score, equippedItems } = student;
                         const rank = getLeaderboardRank(userId);
                         const isEditing = editingStudentId === userId;
                         const isConfirmingRemove = confirmRemoveId === userId;
@@ -111,7 +111,7 @@ export function ClassroomDetailStudentCard({
                                         </div>
                                     )}
                                     <span className="classroom-detail__student-meta">
-                                        #{rank} · {levelsCompleted}/{totalStops} stopp · {medalsEarned} medaljer
+                                        #{rank} · {currentStopDisplayOrder}/{studentTotalStops} stopp · {medalsEarned} medaljer
                                     </span>
                                 </div>
 
