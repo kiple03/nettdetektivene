@@ -22,6 +22,7 @@ public class ClassroomSummaryResponse {
 
     private int assignmentCount;
     private int completedCount;
+    private int avgScore;
     private int progressPercent;
     private List<String> teacherUsernames;
 }
