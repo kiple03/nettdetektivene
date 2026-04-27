@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,8 @@ import org.springframework.stereotype.Component;
  *   <li>Bean Validation: checks field annotations like {@code @NotNull}
  *       and {@code @NotBlank} on each option</li>
  *   <li>Business rules: type-specific checks like "exactly one correct
- *       answer" for {@link  LevelType#MULTIPLE_CHOICE}</li>
+ *       answer" for {@link LevelType#MULTIPLE_CHOICE} and
+ *       {@link LevelType#PICTURE_QUIZ}</li>
  * </ol>
  *
  * <p>Called by {@link OptionParser} after deserialization, and should be used when the
@@ -55,10 +57,12 @@ public class OptionValidator {
 
     switch (type) {
       case MULTIPLE_CHOICE -> validateMultipleChoice(options);
+      case PICTURE_QUIZ    -> validatePictureQuiz(options);
       case PASSWORD_STRENGTH -> validatePasswordStrength(options);
       default -> {/* No rules */}
     }
   }
+
   /**
    * Checks that exactly one option is marked as correct.
    *
@@ -67,12 +71,33 @@ public class OptionValidator {
    */
   private void validateMultipleChoice(List<Option> options) {
     long correctCount = options.stream()
-        .map(o -> (MultipleChoiceOption) o)
-        .filter(MultipleChoiceOption::isCorrect)
-        .count();
+            .map(o -> (MultipleChoiceOption) o)
+            .filter(MultipleChoiceOption::isCorrect)
+            .count();
 
     if (correctCount != 1) {
       throw new OptionValidationException("Multiple choice must have exactly one correct answer");
+    }
+  }
+
+  /**
+   * Checks that at least one option is marked as correct.
+   *
+   * <p>For {@link LevelType#PICTURE_QUIZ}, one or more options may be correct.
+   * This validator therefore ensures that the option list contains at least one
+   * correct answer, but does not require exactly one.
+   *
+   * @param options the parsed picture quiz options
+   * @throws OptionValidationException if no option is marked as correct
+   */
+  private void validatePictureQuiz(List<Option> options) {
+    long correctCount = options.stream()
+            .map(o -> (PictureQuizOption) o)
+            .filter(PictureQuizOption::isCorrect)
+            .count();
+
+    if (correctCount < 1) {
+      throw new OptionValidationException("Må velge minst ett svar!");
     }
   }
 

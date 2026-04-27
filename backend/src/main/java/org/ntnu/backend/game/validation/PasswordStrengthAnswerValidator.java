@@ -38,7 +38,7 @@ public class PasswordStrengthAnswerValidator implements SubmittedAnswerValidator
             missing.append("Minst ett symbol");
 
         if(missing.length() == 0){
-            return new ValidationResult(true, rule.getSuccessFeedback());
-        } return new ValidationResult(false, rule.getFailureFeedback() + "\nMangler:\n"+ missing);
+            return new ValidationResult(true, rule.getSuccessFeedback(), List.of(), List.of());
+        } return new ValidationResult(false, rule.getFailureFeedback() + "\nMangler:\n"+ missing, List.of(), List.of());
     }
 }

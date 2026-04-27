@@ -126,7 +126,12 @@ export default function GamePage() {
             </StationContainer>
 
             <BackButton
-                style={{ position: "absolute", top: "6%", left: "1.5%" }}
+                style={{
+                    position: "absolute",
+                    top: "1rem",
+                    left: "1rem",
+                    zIndex: 50,
+                }}
                 ariaLabel="Gå tilbake"
             />
 
