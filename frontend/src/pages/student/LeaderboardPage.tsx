@@ -1,16 +1,44 @@
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
-import styles from "@/pages/student/MapPage.module.css";
+import { useGlobalLeaderboard } from '@/hooks/student/useLeaderboard';
+import BackButton from '@/components/ui/buttons/backButton/BackButton';
+import styles from './LeaderboardPage.module.css';
+import corkBoard from '@/assets/images/studentHomeBoard/cork_board.png';
+import detectiveRoom from '@/assets/detective_room_interior.png';
+import { Trophy } from 'lucide-react';
 
-function LeaderboardPage() {
-    return <div>
-        <h1>Ledertavle</h1>
-        <p>Kommer snart</p>
+export default function LeaderboardPage() {
+  const { data: leaderboard = [], isLoading } = useGlobalLeaderboard();
+
+  return (
+    <div className={styles.page} style={{ backgroundImage: `url(${detectiveRoom})` }}>
+      <div className={styles.board} style={{ backgroundImage: `url(${corkBoard})` }}>
         <BackButton
-            className={styles.hotspot}
-            style={{ top: "6%", left: "1.5%" }}
-            ariaLabel="Gå tilbake"
+          className={styles.backBtn}
+          ariaLabel="Gå tilbake"
         />
-    </div>;
-}
 
-export default LeaderboardPage;
+        <div className={styles.note}>
+          <div className={styles.tape} />
+          <h1 className={styles.title}>
+            <Trophy size={24} /> Ledertavle
+          </h1>
+
+          {isLoading ? (
+            <p className={styles.loading}>Laster...</p>
+          ) : leaderboard.length === 0 ? (
+            <p className={styles.empty}>Ingen klasserom ennå.</p>
+          ) : (
+            <ol className={styles.list}>
+              {leaderboard.map((entry) => (
+                <li key={entry.rank} className={styles.row}>
+                  <span className={styles.rank}>#{entry.rank}</span>
+                  <span className={styles.name}>{entry.classroom.name}</span>
+                  <span className={styles.score}>{entry.classroom.avgScore} p</span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
