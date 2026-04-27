@@ -345,3 +345,23 @@ export async function getClassroomLeaderboard(classroomId: string): Promise<Rank
   const res = await apiClient.get<RankedStudent[]>(`/leaderboard/classroom/${classroomId}`);
   return res.data;
 }
+
+export interface CensorWord {
+  id: string;
+  word: string;
+  createdAt: string;
+}
+
+export async function getCensorWords(classroomId: string): Promise<CensorWord[]> {
+  const res = await apiClient.get<CensorWord[]>(`/teacher/classrooms/${classroomId}/censor-words`);
+  return res.data;
+}
+
+export async function addCensorWord(classroomId: string, word: string): Promise<CensorWord> {
+  const res = await apiClient.post<CensorWord>(`/teacher/classrooms/${classroomId}/censor-words`, { word });
+  return res.data;
+}
+
+export async function deleteCensorWord(classroomId: string, wordId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}/censor-words/${wordId}`);
+}

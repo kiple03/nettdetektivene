@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { CoTeacher, StudentSummary } from '@/types/classroom.ts';
 import { ClassroomDetailStudentCard } from './ClassroomDetailStudentCard';
 import { ClassroomDetailTeacherCard } from './ClassroomDetailTeacherCard';
+import { CensorWordPanel } from './CensorWordPanel';
 
 type ClassroomDetailBoardProps = {
     classroomId: string;
@@ -112,6 +113,8 @@ export function ClassroomDetailBoard({
                             )}
                         </div>
                     </div>
+
+                    <CensorWordPanel classroomId={classroomId} />
 
                     <div className="classroom-detail__note">
                         <div className="classroom-detail__note-tape" />

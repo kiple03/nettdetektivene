@@ -7,6 +7,7 @@ import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
 import org.ntnu.backend.classroom.model.Enrollment;
+import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
@@ -15,6 +16,7 @@ import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ public class ClassroomService {
     private final EnrollmentRepository enrollmentRepository;
     private final ClassroomTeacherRepository classroomTeacherRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
+    private final ClassroomCensorWordRepository classroomCensorWordRepository;
+    private final ProfanityFilterService profanityFilterService;
 
     private final ClassroomMapper classroomMapper;
     private final JoinCodeGenerator joinCodeGenerator;
@@ -94,6 +98,8 @@ public class ClassroomService {
         mysterySubmissionRepository.deleteByEnrollmentClassroomId(id);
         enrollmentRepository.deleteByClassroomId(id);
         classroomTeacherRepository.deleteByClassroomId(id);
+        classroomCensorWordRepository.deleteByClassroomId(id);
+        profanityFilterService.evictClassroomCache(id);
         classroomRepository.deleteById(id);
     }
 
