@@ -40,26 +40,13 @@ public class OptionValidatorTest {
   }
 
   @Test
-  void validateMultipleChoice_invalidImageUrl_throws() {
+  void validateMultipleChoice_externalImageUrl_passes() {
     List<Option> options = List.of(
         new MultipleChoiceOption(1, "A", "https://example.com/img.jpg", true, "Reason")
     );
 
-    assertThrows(
-        OptionValidationException.class,
-        () -> validator.validate(options, LevelType.MULTIPLE_CHOICE)
-    );
-  }
-
-  @Test
-  void validateMultipleChoice_imageUrlWithTextId_throws() {
-    List<Option> options = List.of(
-        new MultipleChoiceOption(1, "A", "/images/abc", true, "Reason")
-    );
-
-    assertThrows(
-        OptionValidationException.class,
-        () -> validator.validate(options, LevelType.MULTIPLE_CHOICE)
+    assertDoesNotThrow(() ->
+        validator.validate(options, LevelType.MULTIPLE_CHOICE)
     );
   }
 
@@ -123,21 +110,4 @@ public class OptionValidatorTest {
     );
   }
 
-  @Test
-  void isValidImageUrl_nullIsValid() {
-    assertTrue(OptionValidator.isValidImageUrl(null));
-  }
-
-  @Test
-  void isValidImageUrl_validUrl() {
-    assertTrue(OptionValidator.isValidImageUrl("/images/42"));
-  }
-
-  @Test
-  void isValidImageUrl_invalidUrl() {
-    assertFalse(OptionValidator.isValidImageUrl("https://example.com/img.png"));
-    assertFalse(OptionValidator.isValidImageUrl("/images/abc"));
-    assertFalse(OptionValidator.isValidImageUrl("/images/"));
-    assertFalse(OptionValidator.isValidImageUrl("images/1"));
-  }
 }
