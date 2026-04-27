@@ -130,3 +130,20 @@
 .editBtn:active {
   transform: scale(0.97);
 }
+
+.editBtn:focus-visible {
+  outline: 4px solid #ffbf00;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 8px rgba(255, 191, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editBtn {
+    transition: none;
+  }
+
+  .editBtn:hover,
+  .editBtn:active {
+    transform: none;
+  }
+}
