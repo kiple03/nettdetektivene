@@ -426,7 +426,7 @@ public class GameSeeder implements CommandLineRunner {
     Stop stop = stopRepository.findByName("Markedsplassen").orElseGet(() -> {
       Stop s = new Stop();
       s.setName("Markedsplassen");
-      s.setDisplayOrder(5); // adjust to your ordering
+      s.setDisplayOrder(5);
       return stopRepository.save(s);
     });
 
