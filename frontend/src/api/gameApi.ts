@@ -1,6 +1,6 @@
 import client from "./client"
 
-export type LevelType = "MULTIPLE_CHOICE" | "PASSWORD_STRENGTH"// legge til flere oppgavetyper senere
+export type LevelType = "MULTIPLE_CHOICE" | "PICTURE_QUIZ"| "PASSWORD_STRENGTH" // legge til flere oppgavetyper senere
 
 export type SubmitAnswerRequest =
     | SubmitSingleChoiceAnswerRequest
