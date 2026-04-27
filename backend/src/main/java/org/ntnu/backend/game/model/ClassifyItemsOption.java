@@ -3,6 +3,7 @@ package org.ntnu.backend.game.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,10 @@ public final class ClassifyItemsOption implements Option {
 
   @NotBlank
   private String text;
+
+
+  @NotNull
+  private List<String> labels;
 
   @NotBlank
   private String correctLabel;

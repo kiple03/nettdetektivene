@@ -9,5 +9,5 @@ public enum LevelType {
     TUTORIAL,
     PASSWORD_STRENGTH,
     POST_OFFICE,
-    CLASSIFY_ITEM
+    CLASSIFY_ITEMS
 }

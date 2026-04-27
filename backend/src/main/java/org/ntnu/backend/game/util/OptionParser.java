@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ntnu.backend.exception.InvalidOptionFormatException;
 import org.ntnu.backend.exception.OptionValidationException;
+import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
@@ -61,13 +62,17 @@ public class OptionParser {
           List<PasswordStrengthOption> list = mapper.readValue(json, new TypeReference<>() {});
           yield new ArrayList<>(list);
         }
+        case CLASSIFY_ITEMS -> {
+          List<ClassifyItemsOption> list = mapper.readValue(json, new TypeReference<>() {});
+          yield new ArrayList<>(list);
+        }
+
         case TEXT_QUIZ -> null;
         case PICTURE_QUIZ -> null;
         case MINIGAME -> null;
         case BOSS_BATTLE -> null;
         case TUTORIAL -> null;
         case POST_OFFICE -> null;
-        default -> null;
       };
     } catch (JacksonException e) {
       throw new InvalidOptionFormatException("Invalid JSON for " + type + ": " + e.getMessage());

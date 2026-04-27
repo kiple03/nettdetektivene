@@ -3,10 +3,12 @@ package org.ntnu.backend.game.util;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.OptionValidationException;
+import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
@@ -55,9 +57,31 @@ public class OptionValidator {
     switch (type) {
       case MULTIPLE_CHOICE -> validateMultipleChoice(options);
       case PASSWORD_STRENGTH -> validatePasswordStrength(options);
+      case CLASSIFY_ITEMS -> validateClassifyItems(options);
       default -> {/* No rules */}
     }
   }
+
+  private void validateClassifyItems(List<Option> options) {
+    if (options.isEmpty()) {
+      throw new OptionValidationException("Classify items must have at least one item");
+    }
+
+    Set<String> keys = new HashSet<>();
+    for (Option o : options) {
+      if (!(o instanceof ClassifyItemsOption item)) {
+        throw new OptionValidationException("CLASSIFY_ITEMS options must be ClassifyItemsOption");
+      }
+      if (!keys.add(item.getKey())) {
+        throw new OptionValidationException("Duplicate key: " + item.getKey());
+      }
+      if (!item.getLabels().contains(item.getCorrectLabel())) {
+        throw new OptionValidationException(
+            "correctLabel '" + item.getCorrectLabel() + "' is not in labels: " + item.getLabels());
+      }
+    }
+  }
+
   /**
    * Checks that exactly one option is marked as correct.
    *
