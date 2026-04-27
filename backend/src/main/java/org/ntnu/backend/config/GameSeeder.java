@@ -480,5 +480,56 @@ public class GameSeeder implements CommandLineRunner {
 
     ensureLevelNoteTemplate(l1, NoteCategory.NETT,
         "Sjekk alltid kontaktinfo, nettadresse og anmeldelser før du handler på nett. Hvis noe virker for godt til å være sant, er det ofte det.");
+    Level l2 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Hva er mistenkelig?")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Hva er mistenkelig?");
+          l.setDescription("Noe er galt med disse nettbutikkene. Kan du finne ut hva som er mistenkelig?");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(2);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l2,
+        "En nettbutikk selger jakker til 50 kr. Nettadressen er 'www.billige-jakker-norge.ru'. Hva er mest mistenkelig?",
+        List.of(
+            new MultipleChoiceOption(1, "Prisen er lav", null, false,
+                "Lave priser kan være mistenkelig, men det finnes ekte tilbud. Det mest mistenkelige her er nettadressen."),
+            new MultipleChoiceOption(2, "Nettadressen ender på .ru", null, true,
+                "Riktig! En norsk nettbutikk bør ha en norsk nettadresse. '.ru' er russisk, og det er rart for en butikk som later som den er norsk."),
+            new MultipleChoiceOption(3, "De selger jakker", null, false,
+                "Det er ingenting galt med å selge jakker. Se nøyere på nettadressen!")
+        )
+    );
+
+    ensureQuestion(l2,
+        "Du finner en nettbutikk med mange gode anmeldelser, men alle er skrevet av 'Bruker123' med litt forskjellig tekst. Hva er mistenkelig?",
+        List.of(
+            new MultipleChoiceOption(1, "Butikken har anmeldelser", null, false,
+                "Det er bra at en butikk har anmeldelser! Problemet er at de alle ser ut til å komme fra samme person."),
+            new MultipleChoiceOption(2, "Alle anmeldelsene er fra samme bruker", null, true,
+                "Riktig! Ekte anmeldelser kommer fra mange forskjellige personer. Når alle er fra samme bruker, er de sannsynligvis falske."),
+            new MultipleChoiceOption(3, "Teksten er litt forskjellig", null, false,
+                "Det er normalt at anmeldelser har forskjellig tekst. Problemet er hvem som har skrevet dem.")
+        )
+    );
+
+    ensureQuestion(l2,
+        "En nettbutikk tilbyr kun betaling med gavekort eller kryptovaluta. Hva er mistenkelig?",
+        List.of(
+            new MultipleChoiceOption(1, "At butikken finnes på nett", null, false,
+                "Det er helt vanlig å handle på nett. Det mistenkelige er betalingsmåten."),
+            new MultipleChoiceOption(2, "Betalingsmåten – du kan ikke spore pengene", null, true,
+                "Riktig! Trygge nettbutikker tilbyr vanlige betalingsmetoder som Vipps, kort eller faktura. Gavekort og krypto kan ikke spores, så du får aldri pengene tilbake."),
+            new MultipleChoiceOption(3, "At de tar betaling i det hele tatt", null, false,
+                "Alle butikker tar betaling. Det mistenkelige er hvilke betalingsmåter de tilbyr.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l2, NoteCategory.NETT,
+        "Sjekk nettadressen, hvem som har skrevet anmeldelsene, og om betalingsmåtene er trygge.");
+
   }
 }

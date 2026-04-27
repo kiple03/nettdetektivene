@@ -5,4 +5,4 @@ package org.ntnu.backend.game.model;
  * The root of the tagged union for options. Include all options that are permitted.
  */
 public sealed interface Option
-permits MultipleChoiceOption, PasswordStrengthOption {}
+    permits ClassifyItemsOption, MultipleChoiceOption, PasswordStrengthOption {}
