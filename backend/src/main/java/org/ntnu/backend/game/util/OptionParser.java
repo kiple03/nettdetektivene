@@ -1,17 +1,19 @@
 package org.ntnu.backend.game.util;
 
-import org.ntnu.backend.exception.OptionValidationException;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+
 import org.ntnu.backend.exception.InvalidOptionFormatException;
+import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Deserializes question option JSON into typed {@link Option} subclasses
@@ -59,6 +61,8 @@ public class OptionParser {
         case MINIGAME -> null;
         case BOSS_BATTLE -> null;
         case TUTORIAL -> null;
+        case PASSWORD_STRENGTH -> null;
+        case POST_OFFICE -> null;
       };
     } catch (JacksonException e) {
       throw new InvalidOptionFormatException("Invalid JSON for " + type + ": " + e.getMessage());
@@ -67,6 +71,5 @@ public class OptionParser {
     validator.validate(options, type);
     return options;
   }
-
 }
 
