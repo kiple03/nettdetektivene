@@ -12,7 +12,7 @@ function BoardItem( {id, label, to, top, left, image, size} :BoardItemProps) {
             style={{top, left}}
       >
         {image && (
-            <img src={image} alt={label} className="board-item-img" />
+            <img src={image} alt="" className="board-item-img" />
         )}
 
         {/* avatar profile picture */}

@@ -31,7 +31,10 @@ export default function StudentHomePage(){
           <HomeBoard items={studentBoardItems} />
         </section>
 
-        <button className="help-button" onClick={() => setLockedDialogOpen(true)}>
+        <button
+            className="help-button" onClick={() => setLockedDialogOpen(true)}
+            aria-label="Hjelp"
+        >
           ?
         </button>
 
