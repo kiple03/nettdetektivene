@@ -264,7 +264,7 @@ class TeacherClassroomControllerTest {
             .userId(studentId.toString())
             .username("alice")
             .email("alice@example.com")
-            .levelsCompleted(3)
+            .currentStopDisplayOrder(3)
             .medalsEarned(3)
             .build();
 
@@ -276,7 +276,7 @@ class TeacherClassroomControllerTest {
             .andExpect(jsonPath("$[0].userId").value(studentId.toString()))
             .andExpect(jsonPath("$[0].username").value("alice"))
                 .andExpect(jsonPath("$[0].email").value("alice@example.com"))
-            .andExpect(jsonPath("$[0].levelsCompleted").value(3))
+            .andExpect(jsonPath("$[0].currentStopDisplayOrder").value(3))
             .andExpect(jsonPath("$[0].medalsEarned").value(3));
     }
 
