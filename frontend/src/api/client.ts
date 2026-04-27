@@ -1,5 +1,5 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
-import { isLoggedIn as tokenIsValid } from '@/stores/authStore';
+import { isLoggedIn as tokenIsValid, isSessionEnded, setToken } from '@/stores/authStore';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api',
@@ -35,7 +35,7 @@ async function performRefresh(): Promise<string | null> {
       { withCredentials: true },
     );
     const token = res.data.accessToken;
-    localStorage.setItem('token', token);
+    setToken(token);
     return token;
   } catch {
     localStorage.removeItem('token');
@@ -49,6 +49,9 @@ async function performRefresh(): Promise<string | null> {
 export function sharedRefresh(): Promise<string | null> {
   if (tokenIsValid()) {
     return Promise.resolve(localStorage.getItem('token'));
+  }
+  if (isSessionEnded()) {
+    return Promise.resolve(null);
   }
   if (!refreshInFlight) {
     refreshInFlight = performRefresh().finally(() => {

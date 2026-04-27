@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { clearToken, decodeToken, getToken, isLoggedIn as checkLoggedIn } from '@/stores/authStore';
+import { clearToken, decodeToken, getToken, isLoggedIn as checkLoggedIn, markSessionEnded } from '@/stores/authStore';
 import { logout as logoutApi } from '@/api/authApi';
 import type { Role } from '@/types/user';
 
@@ -26,6 +26,7 @@ export function useAuth(): UseAuth {
   }, []);
 
   const logout = useCallback(async () => {
+    markSessionEnded();
     try {
       await logoutApi();
     } catch {
