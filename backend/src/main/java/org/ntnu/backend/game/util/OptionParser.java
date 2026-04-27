@@ -1,5 +1,10 @@
 package org.ntnu.backend.game.util;
 
+import org.ntnu.backend.exception.OptionValidationException;
+import org.ntnu.backend.game.model.PictureQuizOption;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +58,12 @@ public class OptionParser {
       options = switch (type) {
         case MULTIPLE_CHOICE -> {
           List<MultipleChoiceOption> list =
-              mapper.readValue(json, new TypeReference<>() {
-              });
+                  mapper.readValue(json, new TypeReference<>() {});
+          yield new ArrayList<>(list);
+        }
+        case PICTURE_QUIZ -> {
+          List<PictureQuizOption> list =
+                  mapper.readValue(json, new TypeReference<>() {});
           yield new ArrayList<>(list);
         }
         case PASSWORD_STRENGTH -> {
@@ -62,12 +71,10 @@ public class OptionParser {
           yield new ArrayList<>(list);
         }
         case TEXT_QUIZ -> null;
-        case PICTURE_QUIZ -> null;
         case MINIGAME -> null;
         case BOSS_BATTLE -> null;
-        case TUTORIAL -> null;
+        case TUTORIAL   -> null;
         case POST_OFFICE -> null;
-        default -> null;
       };
     } catch (JacksonException e) {
       throw new InvalidOptionFormatException("Invalid JSON for " + type + ": " + e.getMessage());
@@ -77,4 +84,3 @@ public class OptionParser {
     return options;
   }
 }
-

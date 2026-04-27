@@ -24,3 +24,11 @@ export async function joinClassroom(joinCode: string): Promise<ClassroomDetail> 
   const res = await apiClient.post<RawClassroomResponse>('/classrooms/join', { joinCode });
   return mapClassroomDetail(res.data);
 }
+
+export async function getMyClassroom(): Promise<ClassroomDetail | null> {
+  const res = await apiClient.get<RawClassroomResponse>('/classrooms/my', {
+    validateStatus: (s) => s === 200 || s === 204,
+  });
+  if (res.status === 204) return null;
+  return mapClassroomDetail(res.data);
+}

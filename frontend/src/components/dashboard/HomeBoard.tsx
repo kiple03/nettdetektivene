@@ -2,7 +2,7 @@ import BoardItem from "@/components/dashboard/BoardItem.tsx";
 import corkBoard from '../../assets/images/studentHomeBoard/cork_board.png';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './HomeBoard.css';
-import LogoutButton from "../LogoutButton";
+import LogoutButton from "../ui/buttons/LogoutButton";
 
 type BoardItemData = {
   id: string;

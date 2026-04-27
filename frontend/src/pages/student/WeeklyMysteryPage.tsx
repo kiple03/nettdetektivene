@@ -1,4 +1,4 @@
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import BackButton from "@/components/ui/buttons/BackButton";
 import styles from "@/pages/student/MapPage.module.css";
 
 function WeeklyMysteryPage() {

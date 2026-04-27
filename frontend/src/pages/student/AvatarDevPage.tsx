@@ -63,10 +63,16 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   const {mutate: saveOutfit, isPending: isSaving} = useSaveAvatarOutfit();
 
   const [equipped, setEquipped] = useState<EquippedItem[]>(() => {
-    const hasSkinTone = initialItems.some(i => i.category === 'skin_tone');
-    if (hasSkinTone) return initialItems;
-    const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
-    return defaultTone ? [...initialItems, defaultTone] : initialItems;
+    let items = [...initialItems];
+    if (!items.some(i => i.category === 'skin_tone')) {
+      const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
+      if (defaultTone) items = [...items, defaultTone];
+    }
+    if (!items.some(i => i.category === 'hair')) {
+      const defaultHair = inventory.find(i => i.name === 'boy_hair' && i.category === 'hair');
+      if (defaultHair) items = [...items, defaultHair];
+    }
+    return items;
   });
 
   const [username, setUsername] = useState(
@@ -107,10 +113,16 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
 
   // Derive initial equipped for edit detection (props don't change across renders)
   const initEquipped: EquippedItem[] = (() => {
-    const hasSkinTone = initialItems.some(i => i.category === 'skin_tone');
-    if (hasSkinTone) return initialItems;
-    const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
-    return defaultTone ? [...initialItems, defaultTone] : initialItems;
+    let items = [...initialItems];
+    if (!items.some(i => i.category === 'skin_tone')) {
+      const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
+      if (defaultTone) items = [...items, defaultTone];
+    }
+    if (!items.some(i => i.category === 'hair')) {
+      const defaultHair = inventory.find(i => i.name === 'boy_hair' && i.category === 'hair');
+      if (defaultHair) items = [...items, defaultHair];
+    }
+    return items;
   })();
   const initEquippedIds = new Set(initEquipped.map(i => i.id));
   const initGender: Gender = (() => {

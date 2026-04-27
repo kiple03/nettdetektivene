@@ -99,6 +99,14 @@
   letter-spacing: 0.03em;
 }
 
+.classroom {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #7a5c30;
+  letter-spacing: 0.03em;
+  font-style: italic;
+}
+
 .editBtn {
   padding: 12px 40px;
   font-size: 1rem;

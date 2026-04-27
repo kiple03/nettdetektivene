@@ -1,18 +1,18 @@
-/* station - collective background and layout for different game stations */
 .station-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 100vh;
   font-family: Rockwell;
+  overflow: hidden;
 }
 
-/* gray overlay to add opacity */
 .station-container::before {
   content: "";
   position: absolute;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.45);
+  background-color: rgba(255, 255, 255, 0.22);
   z-index: 0;
 }
 
@@ -21,50 +21,61 @@
   z-index: 1;
 }
 
-/* station - (name of the station) (bakground picture) */
+/* background photos for different stations */
 .station-news {
   background-image: url("@/assets/images/game/news.png");
 }
 
-/* title */
-/* info header under title */
-.station-title, .task-header {
-  background: beige;
-  padding: 0.5rem;
+.station-photo {
+  background-image: url("@/assets/images/game/photo.png");
 }
 
-/* the whole photo-task box */
-.photo-task {
-  display: flex;
-  gap: 2rem;
-  margin: 2rem;
-  justify-content: center;
-  align-items: center;
-}
+/* Title of the level (1, 2, 3). Styled with same box as badge */
+.station-title {
+  position: fixed;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
 
-/* beige box behind each option */
-.image-option-card {
+  margin: 0;
+  padding: 0.35rem 1rem;
+
+  font-size: clamp(1rem, 1.5vw, 1.5rem);
+  font-weight: 0;
+  text-align: center;
+
+  background: rgba(255, 248, 220, 0.94);
+  border: 2px dashed rgb(126, 95, 55);
+  color: #2d1b0f;
+  border-radius: 6px;
+  padding: 16px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: end;
-  background-color: beige;
-  width: 40vw;
-  height: 50vh;
-  border-radius: 0px;
-  border: 2px solid rgba(0, 0, 0, 0.45);
-  padding: 10px;
-
-  opacity: 0;
-  animation: fadeInUp 0.5s ease-out forwards;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* option picture */
-.image-option-card img {
-  width: auto;
-  min-height: 0;
-  flex: 1;
+.feedback-wrapper {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 80;
+
+  width: min(680px, calc(100% - 2rem));
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
+
+.feedback-box {
+  width: 100%;
+  padding: 1rem 1.35rem;
+  border-radius: 28px;
 
 .image-option-card__button {
   position: relative;
@@ -106,48 +117,38 @@
   outline-offset: 4px;
 }
 
-/* wrapper to center feedback*/
-.feedback-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
+.feedback-box h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.35rem;
+  font-weight: 900;
 }
 
-/* feedback box when right/wrong */
-.feedback-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-  border-radius: 10px;
-  background-color: beige;
-  width: 740px;
+.feedback-box p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
 }
 
 .feedback-box__correct {
-  border: 5px solid green;
+  box-shadow:
+          0 0 0 4px rgba(34, 197, 94, 0.18),
+          0 22px 44px rgba(35, 24, 48, 0.25);
 }
 
 .feedback-box__wrong {
-  border: 5px solid red;
+  box-shadow:
+          0 0 0 4px rgba(239, 68, 68, 0.16),
+          0 22px 44px rgba(35, 24, 48, 0.25);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+.nextButton {
+  min-width: 190px;
+  min-height: 52px;
+  border-radius: 999px !important;
 
-@media only screen and (max-width: 768px) {
-  .photo-task {
-    flex-direction: column;
-  }
+  font-family: Rockwell, Georgia, serif !important;
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
 
   .image-option-card {
     width: 80vh;
