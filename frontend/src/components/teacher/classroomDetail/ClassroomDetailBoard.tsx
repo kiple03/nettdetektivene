@@ -114,6 +114,8 @@ export function ClassroomDetailBoard({
                         </div>
                     </div>
 
+                    <CensorWordPanel classroomId={classroomId} />
+
                     <div className="classroom-detail__note">
                         <div className="classroom-detail__note-tape" />
                         <h2 className="classroom-detail__section-title">Mystery-innleveringer</h2>
@@ -138,8 +140,6 @@ export function ClassroomDetailBoard({
                         onInviteTeacher={onInviteTeacher}
                         onLeaveClassroom={onLeaveClassroom}
                     />
-
-                    <CensorWordPanel classroomId={classroomId} />
                 </div>
 
                 <ClassroomDetailStudentCard

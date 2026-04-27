@@ -62,6 +62,16 @@ public class ProfanityFilterService {
         return extra.stream().anyMatch(p -> p.matcher(text).find());
     }
 
+    public boolean containsProfanity(String text, List<String> extraWords) {
+        if (text == null || text.isBlank()) return false;
+        if (containsProfanity(text)) return true;
+        if (extraWords == null || extraWords.isEmpty()) return false;
+        return extraWords.stream().anyMatch(word ->
+                Pattern.compile("\\b" + Pattern.quote(word) + "\\b",
+                        Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)
+                        .matcher(text).find());
+    }
+
     public String censor(String text) {
         if (text == null) return null;
         String result = text;

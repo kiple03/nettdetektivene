@@ -216,7 +216,7 @@ public class TeacherClassroomService {
         var user = userRepository.findById(studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         String newUsername = request.username().trim();
-        if (profanityFilter.containsProfanity(newUsername, classroomId)) {
+        if (profanityFilter.containsProfanity(newUsername)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukernavnet inneholder upassende innhold");
         }
         user.setUsername(newUsername);
