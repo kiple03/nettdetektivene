@@ -1,6 +1,7 @@
 package org.ntnu.backend.game.util;
 
 import org.ntnu.backend.exception.OptionValidationException;
+import org.ntnu.backend.game.model.PostOfficeQuestion;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -53,6 +54,10 @@ public class OptionParser {
               mapper.readValue(json, new TypeReference<>() {
               });
           yield new ArrayList<>(list);
+        }
+        case POST_OFFICE -> {
+          PostOfficeQuestion question = mapper.readValue(json, PostOfficeQuestion.class);
+          yield new ArrayList<>(question.getOptions());
         }
         case TEXT_QUIZ -> null;
         case PICTURE_QUIZ -> null;

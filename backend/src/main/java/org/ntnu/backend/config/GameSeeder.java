@@ -1,10 +1,13 @@
 package org.ntnu.backend.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
+import org.ntnu.backend.game.model.PostOfficeOption;
+import org.ntnu.backend.game.model.PostOfficeQuestion;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -50,6 +53,7 @@ public class GameSeeder implements CommandLineRunner {
     deduplicateLevels();
     deduplicateLevelNoteTemplates();
     seedNews();
+    seedPost();
     log.info("GameSeeder: done");
   }
 
@@ -236,7 +240,61 @@ public class GameSeeder implements CommandLineRunner {
     );
   }
 
-  private void ensureQuestion(Level level, String questionText, List<MultipleChoiceOption> options) {
+  private void seedPost() {
+    Stop stop3 = stopRepository.findByName("Postkontoret").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Postkontoret");
+      s.setDisplayOrder(3);
+      return stopRepository.save(s);
+    });
+
+    Level postLevel1 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen! 1")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Finn det mistenklige i mailen! 1");
+          l.setDescription("Kan du hva som er mistenkelig i mailene?");
+          l.setLevelType(LevelType.POST_OFFICE);
+          l.setStop(stop3);
+          l.setOrder(1);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(postLevel1,
+        "Hva er mistenkelig med denne e-posten?",
+        new PostOfficeQuestion(
+            new PostOfficeQuestion.Email(
+                "Skoleklubben",
+                "info@skoleklubb-bygg.no",
+                "kontakt@skoleklubb-bygg.no",
+                "Invitasjon til byggkonkurranse — vinn LEGO-sett!",
+                "2026-04-24T13:22:00Z",
+                List.of(
+                    "Hei!",
+                    "Vi inviterer alle elever til en morsom byggkonkurranse.",
+                    "Vinneren får et splitter nytt LEGO-sett og et gavekort på 500 kr.",
+                    "Meld deg på via lenken under. Husk å spørre en voksen om hjelp!"
+                ),
+                List.of(
+                    new PostOfficeQuestion.Link("signup", "Meld deg på her", "http://skoleklubb-bygg.no")
+                ),
+                List.of(
+                    new PostOfficeQuestion.Image("promo", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/LEGO_logo.svg/250px-LEGO_logo.svg.png", "Barn som bygger LEGO")
+                ),
+                "Hilsen Skoleklubben"
+            ),
+            List.of(
+                new PostOfficeOption("senderEmail", "senderEmail", true, "Avsenderadressen er ikke fra en kjent organisasjon."),
+                new PostOfficeOption("signup",      "link",        true, "Lenken peker til et ukjent nettsted."),
+                new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut.")
+            ),
+            List.of("senderEmail", "signup"),
+            "Spør en voksen"
+        )
+    );
+  }
+
+    private void ensureQuestion(Level level, String questionText, List<MultipleChoiceOption> options) {
     boolean exists = questionRepository
         .findByLevelIdAndQuestionText(level.getId(), questionText)
         .isPresent();
@@ -251,12 +309,33 @@ public class GameSeeder implements CommandLineRunner {
     questionRepository.save(question);
   }
 
+  private void ensureQuestion(Level level, String questionText, PostOfficeQuestion postOfficeQuestion) {
+    boolean exists = questionRepository
+        .findByLevelIdAndQuestionText(level.getId(), questionText)
+        .isPresent();
+    if (exists) return;
+    optionValidator.validate(List.copyOf(postOfficeQuestion.getOptions()), level.getLevelType());
+    Question question = new Question();
+    question.setQuestionText(questionText);
+    question.setLevel(level);
+    question.setOptionContent(writePostOfficeQuestion(postOfficeQuestion));
+    questionRepository.save(question);
+  }
   private String writeOptions(List<MultipleChoiceOption> options) {
     try {
       return new ObjectMapper().writeValueAsString(options);
     } catch (JacksonException e) {
       log.error("Error while writing options json", e);
       throw new IllegalStateException("Failed to serialize options", e);
+    }
+  }
+
+  private String writePostOfficeQuestion(PostOfficeQuestion postOfficeQuestion) {
+    try {
+      return new ObjectMapper().writeValueAsString(postOfficeQuestion);
+    } catch (JacksonException e) {
+      log.error("Error while writing post office questions json", e);
+      throw new IllegalStateException("Failed to serialize PostOfficeQuestion", e);
     }
   }
 

@@ -4,12 +4,14 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.OptionResponse;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PostOfficeOption;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -78,6 +80,7 @@ public class GameMapper {
           mc.getText(),
           mc.getImageUrl()
       );
+      case PostOfficeOption o -> new PostOfficeOptionResponse(o.getId(), o.getType());
     };
   }
 }
