@@ -79,6 +79,14 @@ export function ClassroomQuestionsCard({ classroomId }: Props) {
                     )}
                 </div>
             )}
+
+            <Link
+                to={`/teacher/classrooms/${classroomId}/map`}
+                className="classroom-detail__mystery-link"
+                style={{ marginTop: '12px', display: 'inline-block' }}
+            >
+                Se kart →
+            </Link>
         </div>
     );
 }

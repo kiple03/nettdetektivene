@@ -1,25 +1,4 @@
-.container {
-  width: 100%;
-  height: 100dvh;
-  overflow-x: auto;
-  overflow-y: hidden;
-  overscroll-behavior: contain;
-  color-scheme: light;
-}
-
-.mapInner {
-  position: relative;
-  height: 100%;
-  width: max(100%, calc(100vh * 1440 / 810));
-}
-
-.mapBg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-}
+/* Student-specific styles. Shared map layout lives in StopMap.module.css. */
 
 .mapBgOverlay {
   position: absolute;
@@ -56,37 +35,6 @@
   font-size: 1.2rem;
 }
 
-.levelGrid {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
-.hotspot {
-  position: absolute;
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
-  display: inline-flex;
-  width: fit-content;
-  height: fit-content;
-  z-index: 2;
-}
-
-.hotspot:hover .iconWrapper {
-  transform: scale(1.03);
-}
-
-.iconWrapper {
-  position: relative;
-  display: inline-block;
-  width: fit-content;
-  height: fit-content;
-  transition: transform 0.2s ease;
-}
-
 .icon {
   display: block;
   width: auto;
@@ -99,43 +47,6 @@
 .lockedIcon {
   filter: grayscale(100%) brightness(0.82);
   opacity: 0.9;
-}
-
-.scrollBtn {
-  position: fixed;
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-size: 1.6rem;
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 30;
-  bottom: 24px;
-  transition: background 0.15s;
-}
-
-.scrollBtn:hover {
-  background: rgba(0, 0, 0, 0.9);
-}
-
-.scrollBtnLeft {
-  left: 24px;
-}
-
-.scrollBtnRight,
-.scrollBtnDown {
-  right: 24px;
-}
-
-.scrollBtnUp {
-  right: 24px;
-  bottom: 100px;
 }
 
 .car {
@@ -153,12 +64,6 @@
 
 .carFlipped {
   transform: scaleX(-1);
-}
-
-.dialogActions {
-  margin-top: 18px;
-  display: flex;
-  justify-content: flex-end;
 }
 
 .datasenteretIcons {
@@ -221,13 +126,13 @@
   caret-color: rgba(0, 0, 0, 0.2);
 }
 
-@media (orientation: portrait) {
-  .container {
-    overflow-x: hidden;
-    overflow-y: auto;
-    background: #e9e9e9;
-  }
+.dialogActions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+}
 
+@media (orientation: portrait) {
   .header {
     position: sticky;
     top: 0;
@@ -250,35 +155,9 @@
     font-size: 0.85rem;
   }
 
-  .mapInner {
-    position: relative;
-    width: max(100vw, calc(100dvh * 810 / 1440));
-    height: max(calc(100vw * 1440 / 810), 100dvh);
-  }
-
   .icon {
     max-width: 160px;
     max-height: 160px;
-  }
-
-  .mapBg {
-    width: max(calc(100vw * 1440 / 810), 100dvh);
-    height: max(100vw, calc(100dvh * 810 / 1440));
-    top: 50%;
-    left: 50%;
-    right: unset;
-    bottom: unset;
-    transform: translate(-50%, -50%) rotate(-90deg);
-  }
-
-  .mapBgOverlay {
-    width: max(calc(100vw * 1440 / 810), 100dvh);
-    height: max(100vw, calc(100dvh * 810 / 1440));
-    top: 50%;
-    left: 50%;
-    right: unset;
-    bottom: unset;
-    transform: translate(-50%, -50%) rotate(-90deg);
   }
 
   .car {

@@ -26,6 +26,7 @@ const GamePage = lazy(() => import("@/pages/game/GamePage"));
 const BossBattlePage = lazy(() => import("@/pages/game/BossBattlePage"));
 const CodePage = lazy(() => import("@/pages/teacher/CodePage"));
 const ProfilePage = lazy(() => import("@/pages/student/ProfilePage"));
+const TeacherMapPage = lazy(() => import("@/pages/teacher/TeacherMapPage"));
 
 export const router = createBrowserRouter([
     // Auth routes (public)
@@ -97,8 +98,8 @@ export const router = createBrowserRouter([
                 element: <MyClassroomsPage />,
             },
             {
-                path: '/teacher/map',
-                element: <MapPage />,
+                path: '/teacher/classrooms/:classroomId/map',
+                element: <TeacherMapPage />,
             },
             {
                 path: '/teacher/leaderboard',
