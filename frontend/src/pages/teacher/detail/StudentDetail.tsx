@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { useStudentDetail, useStudentProgress, useStudentMedalions } from '@/hooks/teacher/useTeacherQueries';
+import { useStudentDetail, useStudentProgress, useStudentMedalions, useStudentNotebook } from '@/hooks/teacher/useTeacherQueries';
 import { useUpdateStudentUsername } from '@/hooks/teacher/useTeacherMutations';
 import { teacherKeys } from '@/hooks/teacher/queryKeys';
 import { StudentDetailHeader } from '@/components/teacher/studentDetail/StudentDetailHeader';
 import { StudentDetailLevels } from '@/components/teacher/studentDetail/StudentDetailLevels';
+import { StudentNotebook } from '@/components/teacher/studentDetail/StudentNotebook';
 import './StudentDetail.css';
 
 const ALL_MEDALS = [
@@ -25,6 +26,7 @@ export default function StudentDetail() {
     const { data: studentDetail = null } = useStudentDetail(classroomId, studentId);
     const { data: students = [] } = useStudentProgress(classroomId);
     const { data: medalions = [] } = useStudentMedalions(classroomId, studentId);
+    const { data: notebook = null } = useStudentNotebook(classroomId, studentId);
     const studentProfile = students.find((s) => s.userId === studentId) ?? null;
 
     const updateUsernameMutation = useUpdateStudentUsername(classroomId);
@@ -125,6 +127,8 @@ export default function StudentDetail() {
                             })}
                         </div>
                     </div>
+
+                    {notebook && <StudentNotebook notes={notebook} />}
                 </div>
             </div>
         </div>
