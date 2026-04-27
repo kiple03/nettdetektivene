@@ -285,7 +285,7 @@ public class GameSeeder implements CommandLineRunner {
                     new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseAi.png", true,
                             "Riktig. Ansiktstrekkene og detaljene i bildet tyder på at det er KI-generert."),
                     new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aiFake.png", true,
-                            "Bildet er ikke ekte. Det har tegn på KI-generering."),
+                            "Riktig! Dette bildet er KI generert"),
                     new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_2.png", false,
                             "Bildet er ikke ekte. Det har tegn på KI-generering.")
             )
