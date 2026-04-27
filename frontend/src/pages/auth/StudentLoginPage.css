@@ -54,23 +54,22 @@
   position: absolute;
   top: 20px;
   left: 24px;
-  color: rgba(255, 255, 255, 0.85);
+  color: #ffffff;
   font-size: 0.9rem;
   font-weight: 600;
   padding: 10px 20px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(8px);
+  background: #3b2463;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid #5a3d8a;
   transition: all 0.3s ease;
   z-index: 10;
 }
 
 .teacher-link:hover {
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
+  background: #4b2f7d;
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 /* Main card – detective corkboard style */
@@ -201,7 +200,7 @@
 
 .student-login__subtitle {
   font-size: 1.05rem;
-  color: #6b4c30;
+  color: #4a2e16;
   margin-bottom: 28px;
   font-weight: 600;
   font-style: italic;
@@ -243,7 +242,7 @@
   align-items: center;
   gap: 14px;
   margin: 20px 0;
-  color: #8b6340;
+  color: #5a3218;
   font-size: 0.9rem;
   font-weight: 700;
 }
@@ -571,6 +570,34 @@
 
 .register-modal__submit:active {
   transform: translateY(0);
+}
+
+.teacher-link:focus-visible,
+.student-login__feide-btn:focus-visible,
+.student-login__register-btn:focus-visible {
+  outline: 3px solid #fbbf24;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .student-login::before,
+  .student-login::after,
+  .student-login__card,
+  .student-login__badge,
+  .register-overlay,
+  .register-modal {
+    animation: none;
+  }
+
+  .teacher-link,
+  .student-login__feide-btn,
+  .student-login__register-btn,
+  .register-modal__close,
+  .register-modal__input,
+  .register-modal__submit {
+    transition: none;
+  }
 }
 
 @media (max-width: 480px) {
