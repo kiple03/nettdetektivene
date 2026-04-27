@@ -10,6 +10,8 @@ import type {
   CoTeacher,
 } from '../types/classroom';
 import type { MedalionResponse } from './medalionApi';
+import { toNotesMap } from './notesService';
+import type { NotesData } from './notesService';
 import apiClient from '../api/client';
 import axios from 'axios';
 import type { RankedStudent } from '@/types/leaderboard';
@@ -327,6 +329,16 @@ export async function updateStudentUsername(classroomId: string, studentId: stri
 export async function getStudentMedalions(classroomId: string, studentId: string): Promise<MedalionResponse[]> {
   const res = await apiClient.get<MedalionResponse[]>(`/teacher/classrooms/${classroomId}/students/${studentId}/medalions`);
   return res.data;
+}
+
+export async function getStudentNotebook(classroomId: string, studentId: string): Promise<NotesData> {
+  const res = await apiClient.get<{ reflections?: Record<string, any[]>; levelNotes?: Record<string, any[]> }>(
+    `/teacher/classrooms/${classroomId}/students/${studentId}/notebook`,
+  );
+  return {
+    reflections: toNotesMap(res.data.reflections as any),
+    levelNotes: toNotesMap(res.data.levelNotes as any),
+  };
 }
 
 export async function getCoTeachers(classroomId: string): Promise<CoTeacher[]> {

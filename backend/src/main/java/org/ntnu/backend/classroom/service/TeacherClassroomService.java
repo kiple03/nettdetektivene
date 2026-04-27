@@ -35,6 +35,8 @@ import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.medalion.service.MedalionService;
+import org.ntnu.backend.notes.dto.NotesOverviewResponse;
+import org.ntnu.backend.notes.service.NoteService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
@@ -70,6 +72,7 @@ public class TeacherClassroomService {
     private final LeaderboardService leaderboardService;
     private final MedalionService medalionService;
     private final ProfanityFilterService profanityFilter;
+    private final NoteService noteService;
 
     public ClassroomResponse createClassroom(CreateClassroomRequest request, UUID teacherId) {
         return classroomService.createClassroom(request, teacherId);
@@ -213,6 +216,15 @@ public class TeacherClassroomService {
             .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return medalionService.getAllUsersMedalion(studentId);
+    }
+
+    @Transactional(readOnly = true)
+    public NotesOverviewResponse getStudentNotebook(UUID classroomId, UUID studentId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return noteService.getNotesForUser(studentId, classroomId);
     }
 
     @Transactional
