@@ -50,7 +50,10 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
                   text={submitResult.feedback}
               />
 
-              <button className="nextButton" onClick={onNext}>
+              <button
+                className="nextButton" onClick={onNext}
+                aria-label="Gå videre"
+              >
                 Neste
               </button>
             </div>
