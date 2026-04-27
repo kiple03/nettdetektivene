@@ -6,4 +6,5 @@ export const studentKeys = {
     gameLevel: (levelId: number) => ['level', levelId] as const,
     levelQuestions: (levelId: number) => ['levelQuestions', levelId] as const,
     globalLeaderboard: ['leaderboard', 'classrooms'] as const,
+    myClassroom: ['myClassroom'] as const,
 };
