@@ -57,10 +57,7 @@ public class User {
   @Column(nullable = false)
   private RoleEnum role;
 
-  /**
-   * Optional display name chosen by the user. Must be unique across all accounts when set.
-   */
-  @Column(nullable = true, unique = true)
+  @Column(nullable = true)
   private String username;
 
   /**

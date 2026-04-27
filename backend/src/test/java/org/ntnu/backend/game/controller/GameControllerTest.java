@@ -107,9 +107,9 @@ class GameControllerTest {
     when(gameService.getLevelsForStop(anyInt(), any(), any()))
         .thenReturn(List.of(
             new LevelResponse(1, "Ekte eller falskt?", "Finn den ekte nyheten",
-                LevelType.MULTIPLE_CHOICE, false),
+                LevelType.MULTIPLE_CHOICE, 1,false),
             new LevelResponse(2, "Clickbait-detektiven", "Spot clickbait",
-                LevelType.MULTIPLE_CHOICE, false)
+                LevelType.MULTIPLE_CHOICE, 2, false)
         ));
 
     mockMvc.perform(get("/game/stops/1/levels").with(authentication(studentAuth)))
@@ -123,7 +123,7 @@ class GameControllerTest {
   void getLevel_returnsLevelDetail() throws Exception {
     when(gameService.getLevel(anyInt(), any(), any())).thenReturn(
         new LevelResponse(1, "Ekte eller falskt?", "Finn den ekte nyheten",
-            LevelType.MULTIPLE_CHOICE, false));
+            LevelType.MULTIPLE_CHOICE, 1, false));
 
     mockMvc.perform(get("/game/levels/1").with(authentication(studentAuth)))
         .andExpect(status().isOk())

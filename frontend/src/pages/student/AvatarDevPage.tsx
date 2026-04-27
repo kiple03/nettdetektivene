@@ -6,7 +6,7 @@ import {
   useUserInventory,
   useUserProfile,
   type EquippedItem,
-  useUpdateUserProfile
+  useUpdateUserProfile,
 } from '@/hooks/useUserProfile';
 import { refreshToken } from '@/api/authApi';
 import { getClassroomId } from '@/stores/authStore';
@@ -167,7 +167,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   const handleSave = () => {
     const trimmed = username.trim();
     if (trimmed.length < 3 || trimmed.length > 20) {
-      setUsernameError('Brukernavn må være mellom 3 og 20 tegn');
+      setUsernameError('Brukernavn må være mellom 3 og 30 tegn');
       return;
     }
     setUsernameError('');
@@ -181,9 +181,10 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
         navigate(getClassroomId() ? '/home' : '/join-with-code');
       },
       onError: (err) => {
-        const status = (err as AxiosError).response?.status;
-        if (status === 409) {
-          setUsernameError('Brukernavnet er allerede tatt');
+        const axiosErr = err as AxiosError<{ message?: string }>;
+        const status = axiosErr.response?.status;
+        if (status === 400) {
+          setUsernameError(axiosErr.response?.data?.message ?? 'Ugyldig brukernavn');
         } else {
           setUsernameError('Kunne ikke lagre brukernavn. Prøv igjen.');
         }
@@ -209,7 +210,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
           <div className={styles.previewTop}>
             <h2 className={styles.sectionTitle}>Din profil</h2>
             <div className={styles.avatarWrapper}>
-              <LayeredAvatar items={equipped} size={200} skinToneBase={colors.base} skinToneShadowDark={colors.shadowDark} skinToneShadowLight={colors.shadowLight} hairColor={hairColorHex} />
+              <LayeredAvatar items={equipped} size={160} skinToneBase={colors.base} skinToneShadowDark={colors.shadowDark} skinToneShadowLight={colors.shadowLight} hairColor={hairColorHex} />
             </div>
             </div>
 
@@ -295,11 +296,11 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
                 placeholder="Ditt detektivnavn"
                 required
                 minLength={3}
-                maxLength={20}
+                maxLength={30}
               />
-              {usernameError && (
-                <p style={{ color: '#dc2626', marginTop: 4, fontSize: 14 }}>{usernameError}</p>
-              )}
+            </div>
+            <div className={styles.usernameErrorSlot}>
+              {usernameError && <p className={styles.usernameError}>{usernameError}</p>}
             </div>
 
             <button

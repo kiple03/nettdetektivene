@@ -12,6 +12,7 @@ import type {
 import type { MedalionResponse } from './medalionApi';
 import apiClient from '../api/client';
 import axios from 'axios';
+import type { RankedStudent } from '@/types/leaderboard';
 
 export type { MedalionResponse };
 
@@ -49,6 +50,7 @@ interface RawStudentProgress {
   username: string;
   levelsCompleted: number;
   medalsEarned: number;
+    score: number; 
   equippedItems?: RawEquippedItem[] | null;
 }
 
@@ -62,6 +64,7 @@ interface RawClassroomSummary {
   assignmentCount: number;
   completedCount: number;
   progressPercent: number;
+  avgScore: number;
   teacherUsernames: string[];
 }
 
@@ -116,6 +119,7 @@ function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
     username: raw.username,
     levelsCompleted: raw.levelsCompleted,
     medalsEarned: raw.medalsEarned,
+      score: raw.score, 
     equippedItems: raw.equippedItems ?? [],
   };
 }
@@ -131,6 +135,7 @@ function mapClassroomSummary(raw: RawClassroomSummary): ClassroomSummary {
     assignmentCount: raw.assignmentCount,
     completedCount: raw.completedCount,
     progressPercent: raw.progressPercent,
+    avgScore: raw.avgScore ?? 0,
     teacherUsernames: raw.teacherUsernames ?? [],
   };
 }
@@ -336,4 +341,29 @@ export async function inviteCoTeacher(classroomId: string, email: string): Promi
 
 export async function removeCoTeacher(classroomId: string, userId: string): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}/teachers/${userId}`);
+}
+
+export async function getClassroomLeaderboard(classroomId: string): Promise<RankedStudent[]> {
+  const res = await apiClient.get<RankedStudent[]>(`/leaderboard/classroom/${classroomId}`);
+  return res.data;
+}
+
+export interface CensorWord {
+  id: string;
+  word: string;
+  createdAt: string;
+}
+
+export async function getCensorWords(classroomId: string): Promise<CensorWord[]> {
+  const res = await apiClient.get<CensorWord[]>(`/teacher/classrooms/${classroomId}/censor-words`);
+  return res.data;
+}
+
+export async function addCensorWord(classroomId: string, word: string): Promise<CensorWord> {
+  const res = await apiClient.post<CensorWord>(`/teacher/classrooms/${classroomId}/censor-words`, { word });
+  return res.data;
+}
+
+export async function deleteCensorWord(classroomId: string, wordId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}/censor-words/${wordId}`);
 }

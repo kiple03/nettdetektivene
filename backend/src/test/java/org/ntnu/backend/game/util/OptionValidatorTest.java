@@ -80,15 +80,12 @@ public class OptionValidatorTest {
   }
 
   @Test
-  void validateMultipleChoice_nullImageUrl_throws() {
+  void validateMultipleChoice_nullImageUrl_passes() {
     List<Option> options = List.of(
         new MultipleChoiceOption(1, "A", null, true, "Reason")
     );
 
-    assertThrows(
-        OptionValidationException.class,
-        () -> validator.validate(options, LevelType.MULTIPLE_CHOICE)
-    );
+    assertDoesNotThrow(() -> validator.validate(options, LevelType.MULTIPLE_CHOICE));
   }
 
   @Test

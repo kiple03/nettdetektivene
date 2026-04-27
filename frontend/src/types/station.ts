@@ -16,6 +16,12 @@ export type StationOption = {
   id: number;
   label: string;
   imageUrl?: string;
+  //PASSWORD
+  minLength?: number;       
+  requireDigit?: boolean;                                                                          
+  requireUpper?: boolean;
+  requireLower?: boolean;                                                                          
+  requireSymbol?: boolean;
 };
 
 export type StationData = {

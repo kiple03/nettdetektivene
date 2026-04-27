@@ -10,9 +10,12 @@ import {
     approveMysterySubmission,
     rejectMysterySubmission,
     featureMysterySubmission,
+    addCensorWord,
+    deleteCensorWord,
 } from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
 import type { ClassroomDetail, CoTeacher, MysterySubmissionResponse, StudentSummary } from '@/types/classroom';
+import type { CensorWord } from '@/api/teacherApi';
 
 export function useUpdateClassroom(classroomId: string) {
     const queryClient = useQueryClient();
@@ -131,12 +134,66 @@ export function useFeatureMysterySubmission(classroomId: string) {
     });
 }
 
+export function useLeaveClassroom(classroomId: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (userId: string) => removeCoTeacher(classroomId, userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: teacherKeys.classrooms });
+            queryClient.removeQueries({ queryKey: teacherKeys.classroom(classroomId) });
+        },
+    });
+}
+
 export function useInviteCoTeacherError(error: unknown): string | null {
     if (!error) return null;
     if (axios.isAxiosError(error)) {
         if (error.response?.status === 404) return 'Ingen lærer med den e-postadressen ble funnet.';
         if (error.response?.status === 409) return 'Læreren er allerede lagt til i klassen.';
         if (error.response?.status === 400) return 'Den angitte brukeren er ikke registrert som lærer.';
+    }
+    return 'Noe gikk galt. Prøv igjen.';
+}
+
+export function useLeaveClassroomError(error: unknown): string | null {
+    if (!error) return null;
+    if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) return 'Du er eneste lærer i klasserommet. Slett klasserommet i stedet.';
+    }
+    return 'Noe gikk galt. Prøv igjen.';
+}
+
+export function useAddCensorWord(classroomId: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (word: string) => addCensorWord(classroomId, word),
+        onSuccess: (added: CensorWord) => {
+            queryClient.setQueryData<CensorWord[]>(
+                teacherKeys.censorWords(classroomId),
+                (prev) => [...(prev ?? []), added],
+            );
+        },
+    });
+}
+
+export function useDeleteCensorWord(classroomId: string) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (wordId: string) => deleteCensorWord(classroomId, wordId),
+        onSuccess: (_: void, wordId: string) => {
+            queryClient.setQueryData<CensorWord[]>(
+                teacherKeys.censorWords(classroomId),
+                (prev) => prev?.filter((w) => w.id !== wordId) ?? [],
+            );
+        },
+    });
+}
+
+export function useCensorWordError(error: unknown): string | null {
+    if (!error) return null;
+    if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) return 'Ordet finnes allerede i listen.';
+        if (error.response?.status === 400) return 'Ugyldig ord. Maks 50 tegn.';
     }
     return 'Noe gikk galt. Prøv igjen.';
 }

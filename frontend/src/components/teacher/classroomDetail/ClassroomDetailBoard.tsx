@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { CoTeacher, StudentSummary } from '@/types/classroom.ts';
 import { ClassroomDetailStudentCard } from './ClassroomDetailStudentCard';
 import { ClassroomDetailTeacherCard } from './ClassroomDetailTeacherCard';
+import { CensorWordPanel } from './CensorWordPanel';
 
 type ClassroomDetailBoardProps = {
     classroomId: string;
@@ -11,12 +12,16 @@ type ClassroomDetailBoardProps = {
     didCopyCode: boolean;
     onCopyJoinCode: () => void;
     teachers: CoTeacher[];
+    currentUserId: string;
     inviteEmail: string;
     inviting: boolean;
     inviteError: string | null;
     isOwner: boolean;
+    leaving: boolean;
+    leaveError: string | null;
     onInviteEmailChange: (value: string) => void;
     onInviteTeacher: (event: React.FormEvent) => void;
+    onLeaveClassroom: () => void;
     students: StudentSummary[];
     totalStops: number;
     editingStudentId: string | null;
@@ -41,12 +46,16 @@ export function ClassroomDetailBoard({
     didCopyCode,
     onCopyJoinCode,
     teachers,
+    currentUserId,
     inviteEmail,
     inviting,
     inviteError,
     isOwner,
+    leaving,
+    leaveError,
     onInviteEmailChange,
     onInviteTeacher,
+    onLeaveClassroom,
     students,
     totalStops,
     editingStudentId,
@@ -105,6 +114,8 @@ export function ClassroomDetailBoard({
                         </div>
                     </div>
 
+                    <CensorWordPanel classroomId={classroomId} />
+
                     <div className="classroom-detail__note">
                         <div className="classroom-detail__note-tape" />
                         <h2 className="classroom-detail__section-title">Mystery-innleveringer</h2>
@@ -118,12 +129,16 @@ export function ClassroomDetailBoard({
 
                     <ClassroomDetailTeacherCard
                         teachers={teachers}
+                        currentUserId={currentUserId}
                         inviteEmail={inviteEmail}
                         inviting={inviting}
                         inviteError={inviteError}
                         isOwner={isOwner}
+                        leaving={leaving}
+                        leaveError={leaveError}
                         onInviteEmailChange={onInviteEmailChange}
                         onInviteTeacher={onInviteTeacher}
+                        onLeaveClassroom={onLeaveClassroom}
                     />
                 </div>
 

@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.ntnu.backend.classroom.dto.AddCensorWordRequest;
+import org.ntnu.backend.classroom.dto.CensorWordResponse;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CoTeacherResponse;
@@ -15,6 +17,7 @@ import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
+import org.ntnu.backend.classroom.service.CensorWordService;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TeacherClassroomController {
 
     private final TeacherClassroomService teacherClassroomService;
+    private final CensorWordService censorWordService;
 
     @GetMapping
     @PreAuthorize("hasRole('TEACHER')")
@@ -178,5 +182,33 @@ public class TeacherClassroomController {
             @PathVariable UUID userId,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         teacherClassroomService.removeCoTeacher(id, userId, principal);
+    }
+
+    @GetMapping("/{id}/censor-words")
+    @PreAuthorize("hasRole('TEACHER')")
+    public List<CensorWordResponse> listCensorWords(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return censorWordService.listWords(id, principal);
+    }
+
+    @PostMapping("/{id}/censor-words")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('TEACHER')")
+    public CensorWordResponse addCensorWord(
+            @PathVariable UUID id,
+            @Valid @RequestBody AddCensorWordRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return censorWordService.addWord(id, request, principal);
+    }
+
+    @DeleteMapping("/{id}/censor-words/{wordId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('TEACHER')")
+    public void deleteCensorWord(
+            @PathVariable UUID id,
+            @PathVariable UUID wordId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        censorWordService.deleteWord(id, wordId, principal);
     }
 }

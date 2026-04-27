@@ -13,12 +13,16 @@ import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.model.UserInventoryItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
+import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
+import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -32,6 +36,9 @@ public class UserAvatarService {
     private final UserInventoryItemRepository inventoryRepository;
     private final AvatarItemRepository avatarItemRepository;
     private final UserRepository userRepository;
+    private final ProfanityFilterService profanityFilter;
+    private final NotificationService notificationService;
+    private final ClassroomCensorWordRepository classroomCensorWordRepository;
 
     private String imageUrl(AvatarItem item) {
         String file = item.getImageFile();
@@ -146,15 +153,19 @@ public class UserAvatarService {
     }
 
     @Transactional
-    public UserProfileResponse updateUserProfile(UUID userId, UpdateUserProfileRequest request) {
+    public UserProfileResponse updateUserProfile(UUID userId, UUID classroomId, UpdateUserProfileRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
         String newUsername = request.username().trim();
 
-        if (!newUsername.equals(user.getUsername())
-            && userRepository.existsByUsername(newUsername)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Brukernavnet er allerede tatt");
+        List<String> classroomWords = classroomId == null ? List.of() :
+            classroomCensorWordRepository.findByClassroomId(classroomId)
+                .stream().map(w -> w.getWord()).toList();
+
+        if (profanityFilter.containsProfanity(newUsername, classroomWords)) {
+            notificationService.notifyInappropriateUsername(user, newUsername);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Brukernavnet inneholder upassende innhold");
         }
 
         user.setUsername(newUsername);
@@ -164,5 +175,5 @@ public class UserAvatarService {
         userRepository.save(user);
         return getUserProfile(userId);
     }
-
 }
+

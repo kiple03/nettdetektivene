@@ -1,5 +1,6 @@
 package org.ntnu.backend.classroom.mapper;
 
+import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
@@ -10,6 +11,7 @@ import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.springframework.stereotype.Component;
+import java.util.List;
 
 /**
  * Mapper Component. It translates data between database models and DTO's.
@@ -74,7 +76,9 @@ public class ClassroomMapper {
       Classroom classroom,
       long studentCount,
       int totalLevelsInGame,
-      int completedCount) {
+      int completedCount,
+      int avgScore
+  ) {
 
     long possible = (long) totalLevelsInGame * studentCount;
     int progressPercent = possible > 0 ? (int) (completedCount * 100L / possible) : 0;
@@ -88,6 +92,7 @@ public class ClassroomMapper {
         .studentCount(studentCount)
         .assignmentCount(totalLevelsInGame)
         .completedCount(completedCount)
+        .avgScore(avgScore)
         .progressPercent(progressPercent)
         .build();
   }
@@ -101,15 +106,18 @@ public class ClassroomMapper {
   public StudentProgressResponse toStudentProgress(
     Enrollment enrollment,
     ProgressSummaryResponse progress,
-    java.util.List<org.ntnu.backend.avatar.dto.EquippedItemDto> equippedItems) {
+    int score,
+    List<EquippedItemDto> equippedItems) {
 
     int levelsCompleted = progress != null ? progress.totalLevelsCompleted() : 0;
     return new StudentProgressResponse(
         enrollment.getUser().getId().toString(),
         enrollment.getUser().getUsername(),
         levelsCompleted,
-        levelsCompleted, // TODO: medals are per-stop; rework needed
-        equippedItems);
+        levelsCompleted,
+        score,
+        equippedItems
+    );
   }
 
   /**

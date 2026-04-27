@@ -8,11 +8,13 @@ import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.OptionResponse;
+import org.ntnu.backend.game.dto.PasswordStrengthOptionResponse;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PostOfficeOption;
 import org.ntnu.backend.game.model.PostOfficeQuestion;
+import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -50,6 +52,7 @@ public class GameMapper {
         level.getTitle(),
         level.getDescription(),
         level.getLevelType(),
+        level.getOrder(),
         locked
     );
   }
@@ -87,6 +90,9 @@ public class GameMapper {
           mc.getImageUrl()
       );
       case PostOfficeOption o -> new PostOfficeOptionResponse(o.getId(), o.getType());
+
+      case PasswordStrengthOption p -> new PasswordStrengthOptionResponse(
+        p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol());
     };
   }
 }

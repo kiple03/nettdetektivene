@@ -55,7 +55,7 @@ function StudentLoginPage() {
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
 
-      await queryClient.invalidateQueries({queryKey: ['medalions']});
+      queryClient.clear();
 
       navigate('/avatar');
     } catch (err) {

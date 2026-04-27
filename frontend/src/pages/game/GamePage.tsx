@@ -111,6 +111,7 @@ export default function GamePage() {
     return (
         <div>
             <StationContainer
+                key={station.type}
                 title={level?.title ?? station.title}
                 type={station.type}
                 submitResult={submitResult}

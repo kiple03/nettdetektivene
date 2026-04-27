@@ -5,7 +5,7 @@
   align-items: flex-start;
   justify-content: center;
   overflow: hidden;
-  padding: 40px 16px;
+  padding: 24px 16px;
   box-sizing: border-box;
 }
 
@@ -45,11 +45,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px;
+  padding: 20px;
   background: rgba(235, 215, 165, 0.6);
   border-radius: 4px;
   border: 2px solid #8b6914;
-  overflow: hidden;
+  overflow: visible;
   flex-shrink: 0;
 }
 
@@ -59,15 +59,13 @@
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
-  padding-bottom: 16px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #c8a96e;
   width: 100%;
 }
 
-/* Scrollable controls below the avatar */
+/* Controls below the avatar */
 .previewScrollable {
-  flex: 1;
-  overflow-y: auto;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -75,10 +73,35 @@
   padding-top: 8px;
 }
 
+.previewScrollable::-webkit-scrollbar,
+.gridContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.previewScrollable::-webkit-scrollbar-track,
+.gridContainer::-webkit-scrollbar-track {
+  background: rgba(139, 105, 20, 0.12);
+  border-radius: 4px;
+}
+
+.previewScrollable::-webkit-scrollbar-thumb,
+.gridContainer::-webkit-scrollbar-thumb {
+  background: #8b6914;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.previewScrollable::-webkit-scrollbar-thumb:hover,
+.gridContainer::-webkit-scrollbar-thumb:hover {
+  background: #6b4c11;
+  background-clip: padding-box;
+}
+
 .sectionTitle {
   font-size: 1.5rem;
   font-weight: 700;
-  margin: 0 0 16px 0;
+  margin: 0 0 10px 0;
   color: #3b2a10;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -114,14 +137,14 @@
 .genderRow {
   display: flex;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 10px;
   margin-bottom: 4px;
   width: 100%;
 }
 
 .genderButton {
   flex: 1;
-  padding: 14px 24px;
+  padding: 8px 24px;
   border-radius: 4px;
   border: 2px solid #c8a96e;
   background: transparent;
@@ -146,8 +169,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 12px;
-  margin-bottom: 4px;
+  margin-top: 8px;
+  margin-bottom: 2px;
   width: 100%;
 }
 
@@ -169,8 +192,8 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 12px;
-  margin-bottom: 10px;
+  margin-top: 8px;
+  margin-bottom: 6px;
   width: 100%;
 }
 
@@ -192,7 +215,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
 .nameLabel {
@@ -342,4 +365,84 @@
   padding: 2px 6px;
   border-radius: 2px;
   letter-spacing: 0.05em;
+}
+
+.usernameSection {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.usernameLabel {
+  display: block;
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #3b2a10;
+  margin-bottom: 6px;
+}
+
+.usernameInput {
+  width: 100%;
+  padding: 8px 12px;
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  color: #3b2a10;
+  background: #fdf6e3;
+  border: 2px solid #8b6914;
+  border-radius: 4px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.usernameInput:focus {
+  border-color: #5a3e0a;
+  box-shadow: 0 0 0 3px rgba(139, 105, 20, 0.2);
+}
+
+.usernameErrorSlot {
+  min-height: 1.25rem;
+  margin-top: 4px;
+}
+
+.usernameError {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9b1c1c;
+  font-style: italic;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.saveButton {
+  margin-top: 20px;
+  width: 100%;
+  padding: 12px 0;
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fdf6e3;
+  background: #6b4c11;
+  border: 2px solid #4a340b;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.saveButton:hover:not(:disabled) {
+  background: #7d5a14;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+.saveButton:disabled {
+  background: #a89070;
+  border-color: #8a7055;
+  cursor: not-allowed;
+  box-shadow: none;
 }

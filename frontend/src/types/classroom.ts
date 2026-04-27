@@ -11,6 +11,7 @@ export type ClassroomSummary = {
   studentCount: number;
   assignmentCount: number;
   completedCount: number;
+  avgScore: number;
   progressPercent: number;
   teacherUsernames: string[];
 };
@@ -28,6 +29,7 @@ export interface StudentSummary {
   username: string;
   medalsEarned: number;
   levelsCompleted: number;
+  score: number;
   equippedItems: EquippedItem[];
 }
 

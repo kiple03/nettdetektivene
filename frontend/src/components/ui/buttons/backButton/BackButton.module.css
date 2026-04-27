@@ -6,7 +6,7 @@
     padding: 0 18px;
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(80, 60, 120, 0.85);
     color: #f4efff;
     font-size: 14px;
     font-weight: 700;
@@ -24,7 +24,7 @@
 
 .backButton:hover {
     transform: translateY(-1px);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(80, 60, 120, 1);
     border-color: rgba(255, 255, 255, 0.2);
     color: #ffffff;
 }

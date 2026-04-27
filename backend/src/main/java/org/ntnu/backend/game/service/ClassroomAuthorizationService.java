@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * <ul>
  *   <li>{@link RoleEnum#STUDENT}: the classroom ID must match the one in their JWT
  *       (set during enrollment). A student can only access their own classroom.</li>
- *   <li>{@link RoleEnum#STUDENT}: must be registered as a teacher for the classroom
+ *   <li>{@link RoleEnum#TEACHER}: must be registered as a teacher for the classroom
  *       via the {@code classroom_teacher} join table.</li>
  * </ul>
  *

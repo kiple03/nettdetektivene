@@ -9,6 +9,8 @@ import {
     getMysterySubmissions,
     getStops,
     getNotifications,
+    getClassroomLeaderboard,
+    getCensorWords,
 } from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
 
@@ -32,6 +34,7 @@ export function useStudentProgress(classroomId: string) {
         queryKey: teacherKeys.students(classroomId),
         queryFn: () => getStudentProgress(classroomId),
         enabled: !!classroomId,
+        refetchInterval: 30_000,
     });
 }
 
@@ -78,5 +81,21 @@ export function useNotifications() {
     return useQuery({
         queryKey: teacherKeys.notifications,
         queryFn: getNotifications,
+    });
+}
+
+export function useClassroomLeaderboard(classroomId: string) {
+  return useQuery({
+    queryKey: teacherKeys.leaderboard(classroomId),
+    queryFn: () => getClassroomLeaderboard(classroomId),
+    enabled: !!classroomId,
+  });
+}
+
+export function useCensorWords(classroomId: string) {
+    return useQuery({
+        queryKey: teacherKeys.censorWords(classroomId),
+        queryFn: () => getCensorWords(classroomId),
+        enabled: !!classroomId,
     });
 }
