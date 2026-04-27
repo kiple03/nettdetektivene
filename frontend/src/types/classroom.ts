@@ -27,6 +27,7 @@ export interface ClassroomDetail {
 export interface StudentSummary {
   userId: string;
   username: string;
+  email: string | null;
   medalsEarned: number;
   levelsCompleted: number;
   score: number;

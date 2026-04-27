@@ -1,21 +1,14 @@
 package org.ntnu.backend.classroom.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
@@ -23,22 +16,26 @@ import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
-import org.ntnu.backend.mystery.model.enums.MysteryStatusEnum;
-import org.ntnu.backend.classroom.service.CensorWordService;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
-import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
-import org.ntnu.backend.security.JwtService;
-import org.ntnu.backend.security.JwtAuthenticationToken;
 import org.ntnu.backend.config.SecurityConfig;
+import org.ntnu.backend.mystery.model.enums.MysteryStatusEnum;
+import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.security.JwtAuthenticationEntryPoint;
+import org.ntnu.backend.security.JwtAuthenticationToken;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TeacherClassroomController.class)
 @Import({SecurityConfig.class, JwtAuthenticationEntryPoint.class})
@@ -49,12 +46,6 @@ class TeacherClassroomControllerTest {
 
     @MockitoBean
     private TeacherClassroomService teacherClassroomService;
-
-    @MockitoBean
-    private CensorWordService censorWordService;
-
-    @MockitoBean
-    private JwtService jwtService;
 
 
     private JwtAuthenticationToken teacherAuth(UUID userId) {
@@ -272,6 +263,7 @@ class TeacherClassroomControllerTest {
         StudentProgressResponse student = StudentProgressResponse.builder()
             .userId(studentId.toString())
             .username("alice")
+            .email("alice@example.com")
             .levelsCompleted(3)
             .medalsEarned(3)
             .build();
@@ -283,6 +275,7 @@ class TeacherClassroomControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].userId").value(studentId.toString()))
             .andExpect(jsonPath("$[0].username").value("alice"))
+                .andExpect(jsonPath("$[0].email").value("alice@example.com"))
             .andExpect(jsonPath("$[0].levelsCompleted").value(3))
             .andExpect(jsonPath("$[0].medalsEarned").value(3));
     }

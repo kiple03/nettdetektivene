@@ -52,7 +52,7 @@ export function ClassroomDetailStudentCard({
             ) : (
                 <ul className="classroom-detail__student-list">
                     {students.map((student) => {
-                        const { userId, username, levelsCompleted, medalsEarned, score, equippedItems } = student;
+                        const { userId, username, email, levelsCompleted, medalsEarned, score, equippedItems } = student;
                         const rank = getLeaderboardRank(userId);
                         const isEditing = editingStudentId === userId;
                         const isConfirmingRemove = confirmRemoveId === userId;
@@ -100,12 +100,15 @@ export function ClassroomDetailStudentCard({
                                             </button>
                                         </div>
                                     ) : (
-                                        <Link
-                                            to={`/teacher/classrooms/${classroomId}/students/${userId}`}
-                                            className="classroom-detail__student-name"
-                                        >
-                                            {username}
-                                        </Link>
+                                        <div className="classroom-detail__student-name-row">
+                                            <Link
+                                                to={`/teacher/classrooms/${classroomId}/students/${userId}`}
+                                                className="classroom-detail__student-name"
+                                            >
+                                                {username}
+                                            </Link>
+                                            {email && <span className="classroom-detail__student-email">{email}</span>}
+                                        </div>
                                     )}
                                     <span className="classroom-detail__student-meta">
                                         #{rank} · {levelsCompleted}/{totalStops} stopp · {medalsEarned} medaljer
