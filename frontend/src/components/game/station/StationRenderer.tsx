@@ -2,6 +2,7 @@ import NyhetsKvartalStation from "@/components/game/station/stations/NyhetsKvart
 import PassordbankenStation from "@/components/game/station/stations/PassordBankenStation";
 import {STATION_TYPE, type StationData, type SubmitAnswerResult,} from "@/types/station.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
+import MarkedsplassenStation from "@/components/game/station/stations/MarkedsPlassenStation";
 
 
 type StationRendererProps = {
@@ -18,6 +19,8 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
           onAnswer={onAnswer}
           disabled={disabled}
       />;
+    case STATION_TYPE.MARKETPLACE:
+      return <MarkedsplassenStation station={station} onAnswer={onAnswer} disabled={disabled} />;
     case STATION_TYPE.PASSWORD:
       return <PassordbankenStation station={station} onAnswer={onAnswer} disabled={disabled}/>;
     default:

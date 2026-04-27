@@ -4,6 +4,7 @@ export const STATION_TYPE = {
   QUIZ: "QUIZ",
   SOCIAL: "SOCIAL",
   PASSWORD: "PASSWORD",
+  MARKETPLACE: "MARKETPLACE",
 } as const;
 
 export type StationType =
@@ -24,6 +25,7 @@ export type StationOption = {
 export type StationData = {
   questionId: number;
   type: StationType;
+  levelType: LevelType;
   title: string;
   questionText: string;
   options: StationOption[];

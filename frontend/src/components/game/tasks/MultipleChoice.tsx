@@ -8,29 +8,32 @@ type MultipleChoiceProps = {
 };
 
 function MultipleChoice({options, onSelect, disabled = false}: MultipleChoiceProps) {
-  return (
-      <div className="photo-task">
-        {options.map((option) => (
-            option.imageUrl ? (
-                <ImageOptionCard
-                    key={option.id}
-                    imageUrl={option.imageUrl}
-                    buttonLabel={option.label}
-                    onSelect={() => onSelect(option)}
-                    disabled={disabled}
-                />
-            ) : (
-                <button
-                    key={option.id}
-                    onClick={() => onSelect(option)}
-                    disabled={disabled}
-                >
-                  {option.label}
-                </button>
-            )
-        ))}
-      </div>
-  );
+    const hasImages = options.some(o => o.imageUrl);
+
+    return (
+        <div className={hasImages ? "photo-task" : "optionsContainer"}>
+            {options.map((option) => (
+                option.imageUrl ? (
+                    <ImageOptionCard
+                        key={option.id}
+                        imageUrl={option.imageUrl}
+                        buttonLabel={option.label}
+                        onSelect={() => onSelect(option)}
+                        disabled={disabled}
+                    />
+                ) : (
+                    <button
+                        key={option.id}
+                        className="optionButton"
+                        onClick={() => onSelect(option)}
+                        disabled={disabled}
+                    >
+                        {option.label}
+                    </button>
+                )
+            ))}
+        </div>
+    );
 }
 
 export default MultipleChoice;

@@ -5,7 +5,7 @@ import { studentKeys } from "@/hooks/student/queryKeys";
 import { mapQuestionToStationData } from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
 import StationRenderer from "@/components/game/station/StationRenderer.tsx";
-import type { SubmitAnswerResult } from "@/types/station";
+import type { SubmitAnswerResult, StationType } from "@/types/station";
 import "@/components/game/ui/game.css";
 import {
     AlertDialog,
@@ -25,6 +25,7 @@ export default function GamePage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const stopId = Number(searchParams.get("stopId")) || null;
+    const stationType = searchParams.get("type") as StationType;
 
     const [questionIndex, setQuestionIndex] = useState(0);
     const [submitResult, setSubmitResult] = useState<SubmitAnswerResult | null>(null);
@@ -33,6 +34,9 @@ export default function GamePage() {
 
     const [answers, setAnswers] = useState<Record<number, SubmitAnswerRequest>>({});
     const queryClient = useQueryClient();
+
+    const levelIdNum = Number(levelId);
+    const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
 
     const submitLevelMutation = useMutation({
         mutationFn: () => submitLevel(levelIdNum, {
@@ -54,9 +58,6 @@ export default function GamePage() {
         },
     });
 
-    const levelIdNum = Number(levelId);
-    const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
-
     const { data: level, isError: levelError } = useQuery({
         queryKey: studentKeys.gameLevel(levelIdNum),
         queryFn: () => getGameLevelById(levelIdNum),
@@ -75,7 +76,7 @@ export default function GamePage() {
     if (questions.length === 0) return <div>Ingen spørsmål funnet.</div>;
 
     const currentQuestion = questions[questionIndex];
-    const station = mapQuestionToStationData(currentQuestion);
+    const station = mapQuestionToStationData(currentQuestion, stationType);
 
     const handleAnswer = (result: SubmitAnswerResult, request: SubmitAnswerRequest) => {
         setSubmitResult(result);

@@ -3,6 +3,7 @@ package org.ntnu.backend.config;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
@@ -530,6 +531,67 @@ public class GameSeeder implements CommandLineRunner {
 
     ensureLevelNoteTemplate(l2, NoteCategory.NETT,
         "Sjekk nettadressen, hvem som har skrevet anmeldelsene, og om betalingsmåtene er trygge.");
+
+
+    Level l3 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nettbutikk-eksperten")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Nettbutikk-eksperten");
+          l.setDescription("Gå gjennom nettbutikken og vurder hvert element.");
+          l.setLevelType(LevelType.CLASSIFY_ITEMS);
+          l.setStop(stop);
+          l.setOrder(3);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l3,
+        "Du har funnet nettbutikken 'ElektroTilbud'. Hva tror du om hvert element?",
+        List.of(
+            new ClassifyItemsOption("url", "Nettadressen er www.elektrotilbud.xyz",
+                List.of("Ekte norsk butikk", "Utenlandsk side", "Ukjent domene"),
+                "Ukjent domene",
+                ".xyz er ikke et norsk domene. Norske butikker bruker vanligvis .no — et ukjent domene betyr at du bør være ekstra forsiktig."),
+            new ClassifyItemsOption("reviews", "Alle 200 anmeldelsene er 5 stjerner og lagt inn samme dag",
+                List.of("Ekte anmeldelser", "Kjøpte anmeldelser", "Ansatte som har skrevet"),
+                "Kjøpte anmeldelser",
+                "200 perfekte anmeldelser på én dag er nesten helt sikkert kjøpt. Ekte anmeldelser kommer over tid fra forskjellige folk."),
+            new ClassifyItemsOption("contact", "Kontaktsiden har telefonnummer, e-post og besøksadresse",
+                List.of("Vanlig for nettbutikker", "Uvanlig mye info", "Sikkert falsk info"),
+                "Vanlig for nettbutikker",
+                "Seriøse butikker har alltid kontaktinfo. Du kan ringe eller besøke dem hvis noe går galt."),
+            new ClassifyItemsOption("payment", "Betaling kun via kryptovaluta",
+                List.of("Moderne betalingsløsning", "Uvanlig for norske butikker", "Helt normalt"),
+                "Uvanlig for norske butikker",
+                "Norske nettbutikker tilbyr alltid Vipps, kort eller faktura. Kun krypto betyr at pengene ikke kan spores tilbake.")
+        )
+    );
+
+    ensureQuestion(l3,
+        "Du ser en annonse for 'GamerShop' på sosiale medier. Hva tenker du om hvert element?",
+        List.of(
+            new ClassifyItemsOption("ad", "Annonsen sier 'KUN I DAG: 90% på alt!'",
+                List.of("Vanlig tilbud", "Lokketilbud", "Sesongkampanje"),
+                "Lokketilbud",
+                "90% rabatt på alt er urealistisk. Slike tilbud skaper hastverk så du handler uten å tenke."),
+            new ClassifyItemsOption("spelling", "Nettsiden har skrivefeil som 'bestil nå' og 'levaringtid'",
+                List.of("Norsk dialekt", "Dårlig oversettelse", "Vanlige skrivefeil"),
+                "Dårlig oversettelse",
+                "Mange slike feil tyder på at siden er automatisk oversatt fra et annet språk — vanlig for svindelbutikker."),
+            new ClassifyItemsOption("price", "En PlayStation 5 koster vanlig butikkpris",
+                List.of("For dyrt", "Rettferdig pris", "Mistenkelig billig"),
+                "Rettferdig pris",
+                "Normal pris er faktisk et godt tegn! Svindelbutikker lokker med urealistisk lave priser."),
+            new ClassifyItemsOption("return", "Det finnes ingen informasjon om retur eller angrerett",
+                List.of("Normalt for nettbutikker", "Bryter norsk lov", "Betyr gratis retur"),
+                "Bryter norsk lov",
+                "Norske nettbutikker er pålagt å tilby 14 dagers angrerett. Manglende info om dette er et alvorlig rødt flagg.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l3, NoteCategory.NETT,
+        "Vurder hele nettbutikken samlet: nettadresse, priser, anmeldelser, betaling og returrett. Én trygg detalj betyr ikke at alt er trygt.");
+
 
   }
 }
