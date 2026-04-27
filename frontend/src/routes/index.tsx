@@ -6,7 +6,6 @@ import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateCl
 
 const TeacherLayout = lazy(() => import("@/components/layout/TeacherLayout"));
 const MapPage = lazy(() => import("../pages/student/MapPage"));
-const LevelOne = lazy(() => import("../pages/student/LevelOnePage"));
 const StudentLoginPage = lazy(() => import("@/pages/auth/StudentLoginPage"));
 const TeacherLoginPage = lazy(() => import("@/pages/auth/TeacherLoginPage"));
 const FeideFake = lazy(() => import("@/pages/auth/FeideFake"));
@@ -54,10 +53,6 @@ export const router = createBrowserRouter([
     {
         path: '/map',
         element: <RequireAuth role="STUDENT"><RequireClassroom><MapPage /></RequireClassroom></RequireAuth>,
-    },
-    {
-        path: '/levelOne',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><LevelOne /></RequireClassroom></RequireAuth>,
     },
     {
         path: '/leaderboard',

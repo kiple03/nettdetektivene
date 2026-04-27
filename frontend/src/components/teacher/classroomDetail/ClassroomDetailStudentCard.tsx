@@ -6,7 +6,6 @@ import type { StudentSummary } from '@/types/classroom.ts';
 type ClassroomDetailStudentCardProps = {
     classroomId: string;
     students: StudentSummary[];
-    totalStops: number;
     editingStudentId: string | null;
     editUsernameValue: string;
     savingUsername: boolean;
@@ -25,7 +24,6 @@ type ClassroomDetailStudentCardProps = {
 export function ClassroomDetailStudentCard({
     classroomId,
     students,
-    totalStops,
     editingStudentId,
     editUsernameValue,
     savingUsername,
