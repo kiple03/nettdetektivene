@@ -75,6 +75,7 @@ public class OptionParser {
         case BOSS_BATTLE -> null;
         case TUTORIAL   -> null;
         case POST_OFFICE -> null;
+        case CLASSIFY_ITEMS -> null;
       };
     } catch (JacksonException e) {
       throw new InvalidOptionFormatException("Invalid JSON for " + type + ": " + e.getMessage());

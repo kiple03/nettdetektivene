@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { register } from '@/api/authApi';
@@ -19,6 +19,7 @@ import { useQueryClient } from '@tanstack/react-query';
 function StudentLoginPage() {
   const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
+  const registerButtonRef = useRef<HTMLButtonElement>(null);
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirm, setRegConfirm] = useState('');
@@ -81,7 +82,9 @@ function StudentLoginPage() {
 
       <div className="student-login__card">
         <div className="student-login__paper">
-          <div className="student-login__badge">🔍</div>
+          <div className="student-login__badge">
+            <span aria-hidden={"true"}>🔍</span>
+          </div>
           <h1 className="student-login__title">Nettdetektivene</h1>
           <p className="student-login__subtitle">
             Bli med og beskytt internettbyen!
@@ -96,6 +99,7 @@ function StudentLoginPage() {
           </div>
 
           <button
+            ref={registerButtonRef}
             className="student-login__register-btn"
             onClick={() => setShowRegister(true)}
           >
@@ -110,6 +114,7 @@ function StudentLoginPage() {
             subtitle="Registrer deg for å bli en nettdetektiv!"
             submitLabel="Opprett konto"
             onClose={() => setShowRegister(false)}
+            returnFocusRef={registerButtonRef}
             onSubmit={handleRegister}
             error={regError}
             fieldErrors={regFieldErrors}

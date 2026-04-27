@@ -7,7 +7,15 @@ export function useStudentManagement(classroomId: string) {
     const studentsQuery = useStudentProgress(classroomId);
     const stopsQuery = useStops();
 
-    const studentList = studentsQuery.data ?? [];
+    const studentList = useMemo(
+        () =>
+            [...(studentsQuery.data ?? [])].sort((a, b) => {
+                const scoreDelta = b.score - a.score;
+                if (scoreDelta !== 0) return scoreDelta;
+                return a.username.localeCompare(b.username, 'nb', { sensitivity: 'base' });
+            }),
+        [studentsQuery.data],
+    );
     const totalStops = stopsQuery.data?.length ?? 0;
 
     const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
@@ -19,11 +27,8 @@ export function useStudentManagement(classroomId: string) {
     const updateUsernameMutation = useUpdateStudentUsername(classroomId);
 
     const leaderboard = useMemo(
-        () =>
-            [...studentList]
-                .sort((a, b) => b.score - a.score)
-                .map((student, index) => ({ userId: student.userId, rank: index + 1 })),
-        [studentList],  
+        () => studentList.map((student, index) => ({ userId: student.userId, rank: index + 1 })),
+        [studentList],
     );
 
     function getLeaderboardRank(userId: string) {

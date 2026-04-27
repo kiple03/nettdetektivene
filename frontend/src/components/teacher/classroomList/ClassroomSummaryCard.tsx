@@ -42,13 +42,10 @@ export function ClassroomSummaryCard({ summary, accentColor, didCopy, onOpen, on
                 </div>
 
                 <div className="classroom-card__stat">
-                    <span className="classroom-card__stat-value">{summary.assignmentCount}</span>
-                    <span className="classroom-card__stat-label">Oppdrag</span>
-                </div>
-
-                <div className="classroom-card__stat">
-                    <span className="classroom-card__stat-value">{summary.completedCount}</span>
-                    <span className="classroom-card__stat-label">Fullført</span>
+                    <span className="classroom-card__stat-value">
+                        {Math.round(summary.avgStopPosition)}/{summary.totalStops}
+                    </span>
+                    <span className="classroom-card__stat-label">Stopp</span>
                 </div>
                 <div className="classroom-card__stat">
                     <span className="classroom-card__stat-value">{summary.avgScore}</span>
