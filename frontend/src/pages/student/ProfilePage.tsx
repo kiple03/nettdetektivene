@@ -47,7 +47,7 @@ function ProfilePage() {
               : classroomError
                 ? "Kunne ikke laste klasserom"
                 : classroom
-                  ? classroom.title
+                  ? `Du er i klasserom: ${classroom.title}`
                   : "Ikke i et klasserom"}
           </p>
         </div>
