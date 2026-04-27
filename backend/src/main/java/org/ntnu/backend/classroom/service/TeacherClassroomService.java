@@ -183,7 +183,7 @@ public class TeacherClassroomService {
                             .id(item.getAvatarItem().getId())
                             .name(item.getAvatarItem().getName())
                             .category(item.getAvatarItem().getCategory())
-                            .imageUrl("/assets/" + item.getAvatarItem().getName() + ".svg")
+                            .imageUrl("/assets/" + (item.getAvatarItem().getImageFile() != null ? item.getAvatarItem().getImageFile() : item.getAvatarItem().getName() + ".svg"))
                             .build(),
                         Collectors.toList())
                 ));
