@@ -5,13 +5,17 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
   switch (levelType) {
     case "MULTIPLE_CHOICE":
       return STATION_TYPE.NEWS; //legge til flere etter hvert
+    case "POST_OFFICE":
+      return STATION_TYPE.POST;
   }
 }
 
 function mapQuestionToStationTitle(levelType: GameQuestion["levelType"]): string {
   switch (levelType) {
     case "MULTIPLE_CHOICE":
-      return "Nyhetskvartal"; //legge til flere etter hvert
+      return "Nyhetskvartal";
+    case "POST_OFFICE":
+      return "Postkontoret"//legge til flere etter hvert
   }
 }
 
@@ -29,7 +33,8 @@ export function mapQuestionToStationData(question: GameQuestion) : StationData {
     type: mapLevelToStationType(question.levelType),
     title: mapQuestionToStationTitle(question.levelType),
     questionText: question.questionText,
-    options: question.options.map(mapOptionToStation)
+    options: question.options.map(mapOptionToStation),
+    email: question.email
   }
 }
 
