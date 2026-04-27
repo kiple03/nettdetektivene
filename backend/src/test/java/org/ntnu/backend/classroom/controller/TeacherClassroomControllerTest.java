@@ -24,6 +24,7 @@ import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.mystery.model.enums.MysteryStatusEnum;
+import org.ntnu.backend.classroom.service.CensorWordService;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.security.JwtService;
@@ -48,6 +49,9 @@ class TeacherClassroomControllerTest {
 
     @MockitoBean
     private TeacherClassroomService teacherClassroomService;
+
+    @MockitoBean
+    private CensorWordService censorWordService;
 
     @MockitoBean
     private JwtService jwtService;
