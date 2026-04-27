@@ -1,6 +1,9 @@
+import type {EmailContent} from "@/types/email.ts";
+
 export const STATION_TYPE = {
   NEWS: "NEWS",
   PHOTO: "PHOTO",
+  POST: "POST",
   QUIZ: "QUIZ",
   SOCIAL: "SOCIAL",
   PASSWORD: "PASSWORD",
@@ -27,6 +30,7 @@ export type StationData = {
   title: string;
   questionText: string;
   options: StationOption[];
+  email?: EmailContent; // only for POST_OFFICE
 };
 
 export type SubmitAnswerResult = {

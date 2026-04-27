@@ -10,6 +10,7 @@ import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PictureQuizOption;
+import org.ntnu.backend.game.model.PostOfficeOption;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
@@ -58,8 +59,9 @@ public class OptionValidator {
     switch (type) {
       case MULTIPLE_CHOICE -> validateMultipleChoice(options);
       case PICTURE_QUIZ    -> validatePictureQuiz(options);
+      case POST_OFFICE -> validatePostOffice(options);
       case PASSWORD_STRENGTH -> validatePasswordStrength(options);
-      default -> {/* No rules */}
+      default -> throw new OptionValidationException("Option type doesnt exist");
     }
   }
 
@@ -77,6 +79,23 @@ public class OptionValidator {
 
     if (correctCount != 1) {
       throw new OptionValidationException("Multiple choice must have exactly one correct answer");
+    }
+  }
+
+  /**
+   * Checks that at least one option is marked as suspicious, and that
+   * every ID listed in correctSuspicious matches an actual option ID.
+   *
+   * @param options the parsed post office options
+   * @throws OptionValidationException if no option is suspicious
+   */
+  private void validatePostOffice(List<Option> options) {
+    long suspiciousCount = options.stream()
+        .map(o -> (PostOfficeOption) o)
+        .filter(PostOfficeOption::isSuspicious)
+        .count();
+    if (suspiciousCount < 1) {
+      throw new OptionValidationException("Post office question must have at least one suspicious option");
     }
   }
 

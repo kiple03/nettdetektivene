@@ -714,3 +714,40 @@
         width: 46px;
     }
 }
+
+@media (prefers-reduced-motion: reduce) {
+    .notebookClosed,
+    .clickHint,
+    .openBook {
+        animation: none;
+        transition: none;
+    }
+
+    .notebookClosed:hover,
+    .notebookClosed:active,
+    .tabBtn:hover {
+        transform: none;
+    }
+
+    .tabBtn,
+    .closeBtn {
+        transition: none;
+    }
+
+    .deleteButton {
+        transition: none;
+    }
+}
+
+.notebookClosed:focus-visible,
+.closeBtn:focus-visible,
+.tabBtn:focus-visible,
+.reflectionTextarea:focus-visible,
+.saveButton:focus-visible,
+.deleteButton:focus-visible,
+.backButtonWrapper a:focus-visible,
+.backButtonWrapper button:focus-visible {
+    outline: 4px solid #ffbf00;
+    outline-offset: 5px;
+    box-shadow: 0 0 0 8px rgba(255, 191, 0, 0.35);
+}

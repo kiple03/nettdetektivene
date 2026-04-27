@@ -15,4 +15,7 @@ public record ValidationResult(
         List<Integer> correctOptionIds,
         List<Integer> wrongSelectedOptionIds
 ) {
+  public static ValidationResult of(boolean correct, String feedback) {
+    return new ValidationResult(correct, feedback, List.of(), List.of());
+  }
 }
