@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import org.ntnu.backend.classroom.dto.AddCensorWordRequest;
+import org.ntnu.backend.classroom.dto.CensorWordResponse;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CoTeacherResponse;
@@ -15,6 +17,7 @@ import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
+import org.ntnu.backend.classroom.service.CensorWordService;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TeacherClassroomController {
 
     private final TeacherClassroomService teacherClassroomService;
+    private final CensorWordService censorWordService;
 
     @GetMapping
     @PreAuthorize("hasRole('TEACHER')")
