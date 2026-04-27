@@ -9,8 +9,8 @@ export type ClassroomSummary = {
   joinCode: string;
   createdAt: string;
   studentCount: number;
-  assignmentCount: number;
-  completedCount: number;
+  totalStops: number;
+  avgStopPosition: number;
   avgScore: number;
   progressPercent: number;
   teacherUsernames: string[];
@@ -27,8 +27,10 @@ export interface ClassroomDetail {
 export interface StudentSummary {
   userId: string;
   username: string;
+  email: string | null;
   medalsEarned: number;
-  levelsCompleted: number;
+  currentStopDisplayOrder: number;
+  totalStops: number;
   score: number;
   equippedItems: EquippedItem[];
 }

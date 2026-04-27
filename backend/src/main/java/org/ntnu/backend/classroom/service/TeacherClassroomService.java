@@ -1,11 +1,13 @@
 package org.ntnu.backend.classroom.service;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
@@ -21,7 +23,6 @@ import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardClassroomResponse;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
-import org.ntnu.backend.classroom.mapper.LeaderboardMapper;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
@@ -31,13 +32,14 @@ import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.repository.LevelRepository;
+import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.medalion.service.MedalionService;
+import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.notes.dto.NotesOverviewResponse;
 import org.ntnu.backend.notes.service.NoteService;
-import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
@@ -64,6 +66,7 @@ public class TeacherClassroomService {
     private final ClassroomAuthorizationService classroomAuthorizationService;
     private final EnrollmentRepository enrollmentRepository;
     private final LevelRepository levelRepository;
+    private final StopRepository stopRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
     private final UserRepository userRepository;
     private final ProgressService progressService;
@@ -90,7 +93,7 @@ public class TeacherClassroomService {
     @Transactional(readOnly = true)
     public List<ClassroomSummaryResponse> listClassrooms(UUID teacherId) {
         List<Classroom> classrooms = classroomTeacherRepository.findClassroomsByTeacherId(teacherId);
-        int totalLevelsInGame = (int) levelRepository.count();
+        int totalStops = (int) stopRepository.count();
 
         List<UUID> allStudentIds = classrooms.stream()
             .flatMap(c -> enrollmentRepository.findByClassroomIdAndLeftAtIsNull(c.getId()).stream())
@@ -106,7 +109,7 @@ public class TeacherClassroomService {
             .collect(Collectors.toMap(LeaderboardClassroomResponse::id, LeaderboardClassroomResponse::avgScore));
 
         return classrooms.stream()
-            .map(classroom -> summarizeClassroom(classroom, progressByStudent, totalLevelsInGame,
+            .map(classroom -> summarizeClassroom(classroom, progressByStudent, totalStops,
                 avgScoreByClassroom.getOrDefault(classroom.getId().toString(), 0)))
             .toList();
     }
@@ -114,20 +117,21 @@ public class TeacherClassroomService {
     private ClassroomSummaryResponse summarizeClassroom(
         Classroom classroom,
         Map<UUID, ProgressSummaryResponse> progressByStudent,
-        int totalLevelsInGame,
+        int totalStops,
         int avgScore) {
 
         List<Enrollment> activeEnrollments =
             enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroom.getId());
 
-        int completedCount = activeEnrollments.stream()
+        double avgStopPosition = activeEnrollments.stream()
             .map(e -> progressByStudent.get(e.getUser().getId()))
             .filter(Objects::nonNull)
-            .mapToInt(ProgressSummaryResponse::totalLevelsCompleted)
-            .sum();
+            .mapToInt(ProgressSummaryResponse::currentStopDisplayOrder)
+            .average()
+            .orElse(0.0);
 
         return classroomMapper.toSummary(
-            classroom, activeEnrollments.size(), totalLevelsInGame, completedCount, avgScore);
+            classroom, activeEnrollments.size(), totalStops, avgStopPosition, avgScore);
     }
 
     /**
@@ -189,14 +193,22 @@ public class TeacherClassroomService {
                 ));
 
         Map<UUID, Integer> scores = leaderboardService.computeScores(enrollments);
+        Map<UUID, Integer> medalsByStudent = medalionService.getMedalCountsForUsers(studentIds);
+        int totalStops = (int) stopRepository.count();
 
         return enrollments.stream()
             .map(e -> classroomMapper.toStudentProgress(
                 e,
                 progressByStudent.get(e.getUser().getId()),
                 scores.getOrDefault(e.getUser().getId(), 0),
+                medalsByStudent.getOrDefault(e.getUser().getId(), 0),
+                totalStops,
                 equippedItemsByStudent.getOrDefault(e.getUser().getId(), List.of())
-            )).toList();
+            ))
+            .sorted(Comparator.<StudentProgressResponse, Integer>comparing(StudentProgressResponse::getScore)
+                .reversed()
+                .thenComparing(StudentProgressResponse::getUsername, String.CASE_INSENSITIVE_ORDER))
+            .toList();
     }
 
     @Transactional
