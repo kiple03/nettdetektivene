@@ -1,4 +1,4 @@
-/* puter layer of the container */
+/* outer layer of the container */
 .viewport {
     width: 100%;
     display: flex;
@@ -12,8 +12,8 @@
 /* the books size and proportions */
 .bookShell {
     position: relative;
-    width: min(1050px, 82vw);
-    aspect-ratio: 1.58 / 1;
+    width: min(1020px, 82vw);
+    aspect-ratio: 1.62 / 1;
     flex-shrink: 0;
 }
 
@@ -27,6 +27,7 @@
         0 26px 52px rgba(43, 29, 64, 0.24),
         inset 0 0 0 4px rgba(70, 38, 18, 0.25);
     overflow: visible;
+    z-index: 0;
 }
 
 /* pages */
@@ -48,7 +49,7 @@
     box-shadow:
         inset 0 0 22px rgba(99, 64, 28, 0.16),
         inset 0 0 0 2px rgba(255, 255, 255, 0.28);
-    z-index: 0;
+    z-index: 1;
     pointer-events: none;
 }
 
@@ -66,25 +67,26 @@
         -8px 0 18px rgba(80, 54, 28, 0.10),
         8px 0 18px rgba(80, 54, 28, 0.10);
     border-radius: 999px;
-    z-index: 1;
+    z-index: 2;
 }
 
+/* paperstack behind pages to mimic book pages */
 .paperStackLeft,
 .paperStackRight {
     position: absolute;
-    top: 2%;
-    bottom: 2%;
-    width: 8%;
-    border-radius: 26px;
-    background: linear-gradient(180deg, #e8d2a7 0%, #dcc093 100%);
-    z-index: -1;
+    top: 3.2%;
+    bottom: 3.2%;
+    width: 5%;
+    border-radius: 6px;
+    background: linear-gradient(180deg, #edd9b0 0%, #dcc093 100%);
+    z-index: 0.5;
     box-shadow:
             inset 0 0 0 1px rgba(122, 86, 43, 0.1),
             0 10px 22px rgba(53, 36, 28, 0.15);
 }
 
-.paperStackLeft { left: -1.2%; }
-.paperStackRight { right: -1.2%; }
+.paperStackLeft { left: 1%; }
+.paperStackRight { right: 1%; }
 
 .paperStackLeft::before,
 .paperStackLeft::after,
@@ -93,20 +95,28 @@
     content: "";
     position: absolute;
     inset: 0;
-    border-radius: 26px;
+    border-radius: 6px;
     background: inherit;
     box-shadow: inherit;
 }
 
-.paperStackLeft::before,
-.paperStackRight::before {
-    transform: translateX(8px);
+.paperStackLeft::before {
+    transform: translate(16px);
     opacity: 0.82;
 }
 
-.paperStackLeft::after,
+.paperStackLeft::after {
+    transform: translateX(8px);
+    opacity: 0.64;
+}
+
+.paperStackRight::before {
+    transform: translate(-16px);
+    opacity: 0.82;
+}
+
 .paperStackRight::after {
-    transform: translateX(16px);
+    transform: translateX(-8px);
     opacity: 0.64;
 }
 
@@ -152,22 +162,19 @@
     transform: rotate(12deg);
 }
 
+/* Title of the station */
 .title {
     margin: 0;
-    color: #2d2146;
-    font-size: clamp(2.5rem, 2.5vw, 2.5rem);
+    font-size: clamp(1rem, 2vw, 2rem);
     line-height: 0.92;
     text-align: center;
-    font-weight: 900;
 }
 
 .subtitle {
     margin: 0.7rem 0 0;
-    color: #3d2c59;
-    font-size: clamp(1rem, 1.35vw, 1.65rem);
+    font-size: clamp(0.5rem, 1vw, 1rem);
     line-height: 1.15;
     text-align: center;
-    font-weight: 700;
 }
 
 /* REMOVED tipsArea completely */

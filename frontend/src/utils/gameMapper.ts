@@ -32,7 +32,7 @@ function mapQuestionToStationTitle(levelType: GameQuestion["levelType"]): string
 export function mapOptionToStation(option: QuestionOption): StationOption {
   return {
     id: option.id,
-    label: option.text ?? "Velg",
+    label: option.text ?? "",
     imageUrl: option.imageUrl,
   };
 }

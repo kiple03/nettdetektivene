@@ -5,7 +5,7 @@
     flex-direction: column;
     justify-content: flex-end;
     gap: 0.6rem;
-    overflow: hidden;
+    overflow: visible; /* viktig for teipbit */
     padding: 0.2rem 0.4rem 0;
     box-sizing: border-box;
 }
@@ -16,7 +16,6 @@
     flex: 1;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
     gap: 2rem 5rem;
     min-height: 0;
     overflow: visible; /* viktig: ikke klipp teipen */
@@ -24,7 +23,45 @@
     box-sizing: border-box;
 }
 
+/* grid options for two or four card options */
+.gridTwoOptions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+}
+
+.gridTwoOptions .card {
+    max-height: 600px;
+}
+
+.gridFourOptions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+}
+.gridFourOptions .card {
+    height: 100%;
+    padding: 0.35rem;
+}
+
+.gridFourOptions .imageFrame {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.gridFourOptions .image {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
 .card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
     position: relative;
     width: 100%;
     min-width: 0;
@@ -122,15 +159,14 @@
 
 .imageFrame {
     width: 100%;
-    height: 100%;
-    min-height: 190px;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #eee4d0;
+    height: auto;
+    max-height: 220px;
+
+    border-radius: 6px;
+    overflow: visible;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.25rem;
 }
 
 .image {
@@ -138,23 +174,23 @@
     width: auto;
     height: auto;
     max-width: 100%;
-    max-height: 100%;
+    max-height: 220px;
     object-fit: contain;
     object-position: center;
     border-radius: 6px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-    background: #efe5d2;
 }
 
+/* textbox for text questions */
 .textBox {
     width: 100%;
     padding: 0.85rem 1rem;
-    border-radius: 14px;
+    border-radius: 6px;
     background: rgba(255, 248, 229, 0.92);
     border: 2px dashed rgba(126, 95, 55, 0.28);
     color: #2d1b0f;
-    font-size: clamp(1rem, 1.35vw, 1.35rem);
-    font-weight: 800;
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    font-weight: 0;
     line-height: 1.35;
     text-align: center;
     box-shadow: 0 6px 14px rgba(60, 45, 25, 0.12);

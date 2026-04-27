@@ -21,16 +21,16 @@
   z-index: 1;
 }
 
+/* background photos for different stations */
 .station-news {
   background-image: url("@/assets/images/game/news.png");
 }
 
-.station-title,
-.task-header {
-  background: transparent;
-  box-shadow: none;
+.station-photo {
+  background-image: url("@/assets/images/game/photo.png");
 }
 
+/* Title of the level (1, 2, 3). Styled with same box as badge */
 .station-title {
   position: fixed;
   top: 0.75rem;
@@ -41,20 +41,20 @@
   margin: 0;
   padding: 0.35rem 1rem;
 
-  color: #2f2148;
-  font-size: 1.35rem;
-  font-weight: 900;
+  font-size: clamp(1rem, 1.5vw, 1.5rem);
+  font-weight: 0;
   text-align: center;
 
-  text-shadow:
-          0 2px 0 rgba(255,255,255,0.65),
-          0 8px 18px rgba(30,20,45,0.18);
-}
-
-.task-header {
-  color: #2f2148;
-  text-align: center;
-  text-shadow: 0 2px 0 rgba(255,255,255,0.6);
+  background: rgba(255, 248, 220, 0.94);
+  border: 2px dashed rgb(126, 95, 55);
+  color: #2d1b0f;
+  border-radius: 6px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .feedback-wrapper {

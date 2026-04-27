@@ -1,9 +1,9 @@
-import MultipleChoice from "@/components/game/tasks/MultipleChoice.tsx";
-import TaskHeader from "@/components/game/ui/TaskHeader.tsx";
 import {submitSingleChoiceAnswer} from "@/api/gameApi.ts";
 import type {SubmitAnswerRequest, SubmitSingleChoiceAnswerRequest} from "@/api/gameApi.ts";
 import {mapSubmitResponseToSubmitAnswer} from "@/utils/gameMapper.ts";
-import type {StationData, StationOption, SubmitAnswerResult} from "@/types/station.ts";
+import type {StationData, SubmitAnswerResult} from "@/types/station.ts";
+import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 
 type NyhetsKvartalStationProps = {
     station: StationData;
@@ -12,10 +12,10 @@ type NyhetsKvartalStationProps = {
 };
 
 function NyhetsKvartalStation({ station, onAnswer, disabled = false}: NyhetsKvartalStationProps) {
-    const handleSelect = async (option: StationOption) => {
+    const handleSumbit = async (selectedIds: number[]) => {
         const request: SubmitSingleChoiceAnswerRequest = {
             shape: "SINGLE",
-            selectedId: option.id,
+            selectedId: selectedIds[0],
         };
         try {
             const response = await submitSingleChoiceAnswer(station.questionId, request);
@@ -35,12 +35,23 @@ function NyhetsKvartalStation({ station, onAnswer, disabled = false}: NyhetsKvar
 
     return (
         <div className="nyhetskvartal-station">
-            <TaskHeader questionText={station.questionText} />
-            <MultipleChoice
-                options={station.options}
-                onSelect={handleSelect}
-                disabled={disabled}
+            <DetectiveBook
+                title={station.title || "Nyhetskvartalet"}
+                subtitle={station.questionText}
+            >
+              <PictureGrid
+                  questionId={station.questionId}
+                  options={station.options.map((option, index) => ({
+                    id: option.id,
+                    imageUrl: option.imageUrl ?? null,
+                    text: option.label ?? "",
+                    altText: option.label ?? `Alternativ ${index + 1}`,
+                  }))}
+                  onSubmit={handleSumbit}
+                  disabled={disabled}
+                  selectionMode="single"
             />
+            </DetectiveBook>
         </div>
     );
 }

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import DetectiveBook from "@/components/game/ui/DetectiveBook";
 import PictureGrid from "@/components/game/tasks/PictureGrid";
-import BgImg from '@/assets/images/game/photographer/bg.png'
 
 import { type SubmitAnswerRequest, submitMultiSelectAnswer } from "@/api/gameApi";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
@@ -58,20 +57,7 @@ export default function PhotographerStation({
     };
 
     return (
-        <div
-            style={{
-                width: "100%",
-                minHeight: "100vh",
-                backgroundImage: `url(${BgImg})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                overflow: "visible",
-            }}
-        >
+        <div className="photographer-station">
             <DetectiveBook
                 title={station.title || "Ekte, KI eller manipulert?"}
                 subtitle={station.questionText}
@@ -89,6 +75,7 @@ export default function PhotographerStation({
                     disabled={disabled || submitted}
                     correctIds={correctIds}
                     wrongIds={wrongIds}
+                    selectionMode="multiple"
                 />
             </DetectiveBook>
         </div>

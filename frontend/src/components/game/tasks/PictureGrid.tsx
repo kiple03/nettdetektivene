@@ -16,6 +16,7 @@ type PictureGridProps = {
     disabled?: boolean;
     correctIds?: number[];
     wrongIds?: number[];
+    selectionMode?: "single" | "multiple";
 };
 
 export default function PictureGrid({
@@ -25,6 +26,7 @@ export default function PictureGrid({
                                         disabled = false,
                                         correctIds = [],
                                         wrongIds = [],
+    selectionMode = "multiple",
                                     }: PictureGridProps) {
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,8 +36,21 @@ export default function PictureGrid({
         setIsSubmitting(false);
     }, [questionId]);
 
-    const toggleSelection = (id: number) => {
+    const toggleSelection = async (id: number) => {
         if (disabled || isSubmitting) return;
+
+        if (selectionMode == "single") {
+          setSelectedIds([id]);
+
+          try {
+            setIsSubmitting(true);
+            await onSubmit([id]);
+          } finally {
+            setIsSubmitting(false);
+          }
+
+          return;
+        }
 
         setSelectedIds((prev) =>
             prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -44,6 +59,7 @@ export default function PictureGrid({
 
     const handleSubmit = async () => {
         if (disabled || isSubmitting) return;
+        if (selectedIds.length === 0) return;
 
         try {
             setIsSubmitting(true);
@@ -98,8 +114,8 @@ export default function PictureGrid({
                     );
                 })}
             </div>
-
-            <div className={styles.actions}>
+          {selectionMode === "multiple" && (
+              <div className={styles.actions}>
                 <Button
                     type="button"
                     variant="fun"
@@ -107,9 +123,10 @@ export default function PictureGrid({
                     disabled={disabled || isSubmitting}
                     className={styles.submitButton}
                 >
-                    Svar
+                  Svar
                 </Button>
-            </div>
+              </div>
+          )}
         </div>
     );
 }
