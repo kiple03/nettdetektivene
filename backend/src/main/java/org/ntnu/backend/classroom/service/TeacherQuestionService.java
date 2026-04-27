@@ -6,7 +6,9 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.CreateMultipleChoiceOptionRequest;
 import org.ntnu.backend.classroom.dto.CreateTeacherQuestionRequest;
+import org.ntnu.backend.classroom.dto.UpdateTeacherQuestionRequest;
 import org.ntnu.backend.exception.LevelNotFoundException;
+import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
 import org.ntnu.backend.game.model.Level;
@@ -20,6 +22,7 @@ import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.util.OptionValidator;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
@@ -86,6 +89,47 @@ public class TeacherQuestionService {
         question.setLevel(level);
         question.setDefault(false);
         question.setClassroomId(classroomId);
+
+        return toTeacherResponse(questionRepository.save(question));
+    }
+
+    /**
+     * Updates a teacher-added question. Rejects default questions (400) and
+     * questions not belonging to the given classroom (403).
+     */
+    public TeacherQuestionResponse updateQuestion(
+            UUID classroomId, int levelId, int questionId,
+            UpdateTeacherQuestionRequest request,
+            JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+
+        Question question = questionRepository.findById(questionId)
+            .orElseThrow(() -> new QuestionNotFoundException(questionId));
+
+        if (question.getLevel().getId() != levelId) {
+            throw new QuestionNotFoundException(questionId);
+        }
+
+        if (question.isDefault()) {
+            throw new IllegalArgumentException("Cannot edit a default (seeded) question");
+        }
+
+        if (!classroomId.equals(question.getClassroomId())) {
+            throw new AccessDeniedException("Question does not belong to this classroom");
+        }
+
+        List<Option> options = buildMcOptions(request.options());
+        optionValidator.validate(options, LevelType.MULTIPLE_CHOICE);
+
+        String optionContent;
+        try {
+            optionContent = objectMapper.writeValueAsString(options);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to serialize options", e);
+        }
+
+        question.setQuestionText(request.questionText());
+        question.setOptionContent(optionContent);
 
         return toTeacherResponse(questionRepository.save(question));
     }

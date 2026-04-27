@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.CreateTeacherQuestionRequest;
+import org.ntnu.backend.classroom.dto.UpdateTeacherQuestionRequest;
 import org.ntnu.backend.classroom.service.TeacherQuestionService;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -14,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -43,5 +45,15 @@ public class TeacherQuestionController {
             @RequestBody @Valid CreateTeacherQuestionRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherQuestionService.createQuestion(classroomId, levelId, request, principal);
+    }
+
+    @PutMapping("/{questionId}")
+    public TeacherQuestionResponse updateQuestion(
+            @PathVariable UUID classroomId,
+            @PathVariable int levelId,
+            @PathVariable int questionId,
+            @RequestBody @Valid UpdateTeacherQuestionRequest request,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        return teacherQuestionService.updateQuestion(classroomId, levelId, questionId, request, principal);
     }
 }

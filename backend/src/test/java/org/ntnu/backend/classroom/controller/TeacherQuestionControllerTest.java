@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.ntnu.backend.classroom.service.TeacherQuestionService;
 import org.ntnu.backend.config.SecurityConfig;
 import org.ntnu.backend.exception.LevelNotFoundException;
+import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -283,5 +285,160 @@ class TeacherQuestionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
             .andExpect(status().isForbidden());
+    }
+
+    // PUT /{questionId} tests
+
+    @Test
+    void updateQuestion_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 1;
+        int questionId = 99;
+
+        TeacherMultipleChoiceOptionResponse opt = new TeacherMultipleChoiceOptionResponse(
+            1, "Berlin", null, false, "Berlin is Germany's capital");
+        TeacherQuestionResponse updated = new TeacherQuestionResponse(
+            questionId, LevelType.MULTIPLE_CHOICE, "Updated question?",
+            List.of(opt), false, classroomId);
+
+        when(teacherQuestionService.updateQuestion(eq(classroomId), eq(levelId), eq(questionId), any(), any()))
+            .thenReturn(updated);
+
+        String body = """
+            {
+              "questionText": "Updated question?",
+              "options": [
+                {"text": "Berlin", "imageUrl": null, "isCorrect": false, "explanation": "Berlin is Germany's capital"},
+                {"text": "Paris", "imageUrl": null, "isCorrect": true, "explanation": "Paris is France's capital"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions/" + questionId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(questionId))
+            .andExpect(jsonPath("$.questionText").value("Updated question?"))
+            .andExpect(jsonPath("$.isDefault").value(false));
+    }
+
+    @Test
+    void updateQuestion_noAuth_returns401() throws Exception {
+        String body = """
+            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + UUID.randomUUID() + "/levels/1/questions/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updateQuestion_studentRole_returns403() throws Exception {
+        String body = """
+            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + UUID.randomUUID() + "/levels/1/questions/1")
+                .with(authentication(studentAuth()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void updateQuestion_defaultQuestion_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherQuestionService.updateQuestion(eq(classroomId), eq(1), eq(1), any(), any()))
+            .thenThrow(new IllegalArgumentException("Cannot edit a default (seeded) question"));
+
+        String body = """
+            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/1/questions/1")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateQuestion_wrongClassroom_returns403() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherQuestionService.updateQuestion(eq(classroomId), eq(1), eq(5), any(), any()))
+            .thenThrow(new AccessDeniedException("Question does not belong to this classroom"));
+
+        String body = """
+            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/1/questions/5")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void updateQuestion_notFound_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherQuestionService.updateQuestion(eq(classroomId), eq(1), eq(999), any(), any()))
+            .thenThrow(new QuestionNotFoundException(999));
+
+        String body = """
+            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/1/questions/999")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateQuestion_missingQuestionText_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        String body = """
+            {"options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/1/questions/1")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateQuestion_wrongLevelId_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherQuestionService.updateQuestion(eq(classroomId), eq(999), eq(1), any(), any()))
+            .thenThrow(new QuestionNotFoundException(1));
+
+        String body = """
+            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/999/questions/1")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isNotFound());
     }
 }
