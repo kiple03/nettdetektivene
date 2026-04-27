@@ -97,3 +97,18 @@
   background: var(--accent);
   color: var(--white);
 }
+
+.tutorial-help-btn:focus-visible,
+.tutorial-next-btn:focus-visible,
+.tutorial-close:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(170, 59, 255, 0.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tutorial-next-btn,
+  .tutorial-help-btn {
+    transition: none;
+  }
+}
