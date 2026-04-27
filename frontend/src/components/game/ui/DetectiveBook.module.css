@@ -134,7 +134,7 @@
     position: relative;
     padding: 1rem 2.6rem 1rem;
     border-radius: 0px 0px 0px 0px;
-    background: linear-gradient(180deg, #fbf2df 0%, #f0e0c2 100%);
+    background: linear-gradient(180deg, #ffffff 0%, #f0e0c2 100%);
     box-shadow:
             0 18px 26px rgba(42, 28, 62, 0.18),
             inset 0 0 0 1px rgba(135, 102, 61, 0.1);

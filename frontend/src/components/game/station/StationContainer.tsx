@@ -57,11 +57,10 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
             <div className="feedback-wrapper">
               <FeedbackBox
                   isCorrect={submitResult.correct}
-                  title={submitResult.correct ? "Riktig!" : "Feil"}
                   text={submitResult.feedback}
               />
 
-              <Button variant={'fun'} onClick={onNext}>
+              <Button variant={'next'} onClick={onNext}>
                 Neste →
               </Button>
             </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import BackButton from "@/components/ui/buttons/BackButton";
 import { studentKeys } from "@/hooks/student/queryKeys";
@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/buttons/Button.tsx";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getGameLevelById, getLevelQuestions, submitLevel } from "@/api/gameApi.ts";
+import { getGameLevelById, getLevelQuestions, submitLevel, getLevelsForStop } from "@/api/gameApi.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import ConfettiComp from "@/components/ConfettiComp";
 
@@ -58,6 +58,14 @@ export default function GamePage() {
     const levelIdNum = Number(levelId);
     const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
 
+    useEffect(() => {
+        setQuestionIndex(0);
+        setSubmitResult(null);
+        setAnswers({});
+        setLevelPassed(true);
+        setDialogOpen(false);
+    }, [levelIdNum]);
+
     const { data: level, isError: levelError } = useQuery({
         queryKey: studentKeys.gameLevel(levelIdNum),
         queryFn: () => getGameLevelById(levelIdNum),
@@ -70,12 +78,23 @@ export default function GamePage() {
         enabled: validId,
     });
 
+    const { data: stopLevels = [] } = useQuery({
+        queryKey: ["stopLevels", stopId],
+        queryFn: () => getLevelsForStop(stopId!),
+        enabled: !!stopId,
+    });
+
     if (!validId) return <div>Ugyldig nivå-ID.</div>;
     if (levelError || questionsError) return <div>Noe gikk galt. Prøv igjen.</div>;
     if (isPending) return <div>Laster...</div>;
     if (questions.length === 0) return <div>Ingen spørsmål funnet.</div>;
 
     const currentQuestion = questions[questionIndex];
+
+    if (!currentQuestion) {
+        return <div>Fant ikke spørsmål for dette nivået</div>;
+    }
+
     const station = mapQuestionToStationData(currentQuestion);
 
     const handleAnswer = (result: SubmitAnswerResult, request: SubmitAnswerRequest) => {
@@ -107,6 +126,21 @@ export default function GamePage() {
 
     const handleBackToMap = () => {
         navigate(stopId ? `/map?stopId=${stopId}` : "/map");
+    };
+
+    const handleNextLevel = () => {
+        const currentLevelIndex = stopLevels.findIndex(
+            (level) => level.id === levelIdNum
+        );
+
+        const nextLevel = stopLevels[currentLevelIndex + 1];
+
+        if (nextLevel) {
+            setDialogOpen(false);
+            navigate(`/game/${nextLevel.id}?stopId=${stopId}`);
+        } else {
+            handleBackToMap();
+        }
     };
 
     return (
@@ -153,6 +187,11 @@ export default function GamePage() {
                         <Button variant="fun" type="button" onClick={handleBackToMap}>
                             Tilbake til kartet
                         </Button>
+                        {levelPassed && (
+                            <Button variant="fun" type="button" onClick={handleNextLevel}>
+                                Neste nivå →
+                            </Button>
+                        )}
                     </div>
                 </AlertDialogContent>
             </AlertDialog>
