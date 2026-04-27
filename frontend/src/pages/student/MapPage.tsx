@@ -8,6 +8,7 @@ import type { EquippedItem } from "@/types/user";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
 import mapBgFeatures from "@/assets/images/map/bg-with-features.png";
+import internettbyenLogo from "@/assets/images/map/internettbyen-logo.png";
 import { CarWithAvatar } from "@/components/map/CarWithAvatar";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
 import sharkBase from "@/assets/images/boss/shark-base.png";
@@ -261,7 +262,7 @@ export default function MapPage() {
     return (
         <div className={styles.container} ref={containerRef}>
             <div className={styles.header}>
-                <h1>Internettbyen</h1>
+                <img src={internettbyenLogo} alt="Internettbyen" className={styles.headerLogo} />
                 <p>Velg et stop</p>
             </div>
 
