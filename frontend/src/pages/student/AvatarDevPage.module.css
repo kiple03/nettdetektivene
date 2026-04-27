@@ -311,7 +311,7 @@
 
 .itemName {
   font-weight: 600;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: #3b2a10;
   width: 100%;
   text-align: center;
@@ -321,7 +321,7 @@
 }
 
 .itemCategory {
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: #7a5c30;
   text-transform: capitalize;
   margin-bottom: 4px;
@@ -358,7 +358,7 @@
 
 .equippedBadge {
   margin-top: 4px;
-  font-size: 8px;
+  font-size: 0.5rem;
   font-weight: 700;
   color: #3b2a10;
   background-color: #c8a96e;
@@ -445,4 +445,30 @@
   border-color: #8a7055;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+.editBtn:focus-visible,
+.genderButton:focus-visible,
+.nameInput:focus-visible,
+.itemButton:focus-visible,
+.saveButton:focus-visible,
+.usernameInput:focus-visible {
+  outline: 4px solid #ffbf00;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 8px rgba(255, 191, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editBtn,
+  .genderButton,
+  .itemButton,
+  .saveButton,
+  .usernameInput {
+    transition: none;
+  }
+
+  .editBtn:hover,
+  .editBtn:active {
+    transform: none;
+  }
 }

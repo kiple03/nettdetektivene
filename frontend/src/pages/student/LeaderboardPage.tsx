@@ -1,5 +1,5 @@
 import BackButton from "@/components/ui/buttons/BackButton";
-import styles from "@/pages/student/MapPage.module.css";
+import styles from "@/pages/student/LeaderboardPage.module.css";
 import { useGlobalLeaderboard } from '@/hooks/student/useLeaderboard';
 import corkBoard from '@/assets/images/studentHomeBoard/cork_board.png';
 import detectiveRoom from '@/assets/detective_room_interior.png';

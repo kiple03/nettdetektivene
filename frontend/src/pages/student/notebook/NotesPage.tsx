@@ -465,6 +465,7 @@ export default function NotesPage() {
                                                                         </p>
                                                                         <Button
                                                                             variant="destructive"
+                                                                            className={styles.deleteButton}
                                                                             onClick={() => handleDelete(note.id)}
                                                                             aria-label="Slett notat"
                                                                             style={{
