@@ -2,6 +2,7 @@ package org.ntnu.backend.config;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ntnu.backend.game.model.Level;
@@ -264,7 +265,86 @@ public class GameSeeder implements CommandLineRunner {
         });
 
     ensureQuestion(postLevel1,
-        "Hva er mistenkelig med denne e-posten?",
+        "Hva er mistenklig med eposten fra Apple?",
+        new PostOfficeQuestion(
+            new PostOfficeQuestion.Email(
+                "Apple",
+                "apple123@apple.com",
+                null,
+                "DU har vunnet en Iphone 17 PRO!",
+                "2026-02-07T13:22:00Z",
+                List.of(
+                    "Gratulerer du har vunnet en helt ny.",
+                    "Iphone 17 PRO.",
+                    "Klikk på linker under NÅ!",
+                    "",
+                    "Ikke glem det før det er for sent"
+                ),
+                List.of(
+                    new PostOfficeQuestion.Link("signup", "Klikk her", "http://fånå.no")
+                ),
+                null,
+                "Med vennlig hilsen \n Apple"
+            ),
+            List.of(
+                new PostOfficeOption("senderEmail", "senderEmail", true,  "Avsenderadressen er ikke den ekte Apple eposten."),
+                new PostOfficeOption("signup",      "link",        true,  "Du ser ikke hvilken nettside lenken tar deg."),
+                new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
+                new PostOfficeOption("body",        "body",        true, "Innholdet virker ikke ekte."),
+                new PostOfficeOption("subject",     "subject",     true, "Emnefeltet ser ut som lureri."),
+                new PostOfficeOption("signature",   "signature",   false, "Signaturen ser normalt ut.")
+            ),
+            List.of("senderEmail", "link", "body", "subject"),
+            "Spør en voksen"
+        )
+    );
+
+    ensureQuestion(postLevel1,
+        "Hva er mistenkelig med denne e-posten fra leos lekeland?",
+        new PostOfficeQuestion(
+            new PostOfficeQuestion.Email(
+                "Leo's lekeland",
+                "hello@leoslekeland.no",
+                "hello@leoslekeland.no",
+                "Velkommen til Leo's lekeland!",
+                "2026-04-24T13:22:00Z",
+                List.of(
+                    "Hei!",
+                    "Takk for din bestilling på Leos lekeland."
+                ),
+                null,
+                List.of(
+                    new PostOfficeQuestion.Image("promo", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/leos.jpg", "Logo leo's lekeland")
+                ),
+                "Hilsen Leos lekeland"
+            ),
+            List.of(
+                new PostOfficeOption("senderEmail", "senderEmail", false,  "Avsenderadressen er fra en kjent organisasjon."),
+                new PostOfficeOption("signup",      "link",        false,  "Ingen lenke."),
+                new PostOfficeOption("promo",       "image",       true, "Bildet er ikke Leos lekeland sin logo."),
+                new PostOfficeOption("body",        "body",        false, "Innholdet ser normalt ut."),
+                new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
+                new PostOfficeOption("signature",   "signature",   false, "Signaturen ser normalt ut.")
+            ),
+            List.of("image"),
+            "Spør en voksen"
+        )
+    );
+
+    Level postLevel2 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen! 2")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Finn det mistenklige i mailen! 2");
+          l.setDescription("Kan du hva som er mistenkelig i mailene?");
+          l.setLevelType(LevelType.POST_OFFICE);
+          l.setStop(stop3);
+          l.setOrder(2);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(postLevel2,
+        "Hva er mistenkelig med denne e-posten fra Skoleklubben?",
         new PostOfficeQuestion(
             new PostOfficeQuestion.Email(
                 "Skoleklubben",
@@ -282,22 +362,276 @@ public class GameSeeder implements CommandLineRunner {
                     new PostOfficeQuestion.Link("signup", "Meld deg på her", "http://skoleklubb-bygg.no")
                 ),
                 List.of(
-                    new PostOfficeQuestion.Image("promo", "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/LEGO_logo.svg/250px-LEGO_logo.svg.png", "Barn som bygger LEGO")
+                    new PostOfficeQuestion.Image("promo", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/lego.png", "Barn som bygger LEGO")
                 ),
                 "Hilsen Skoleklubben"
             ),
             List.of(
                 new PostOfficeOption("senderEmail", "senderEmail", true,  "Avsenderadressen er ikke fra en kjent organisasjon."),
-                new PostOfficeOption("signup",      "link",        true,  "Lenken peker til et ukjent nettsted."),
+                new PostOfficeOption("signup",      "link",        true,  "Lenken peker til et ukjent nettsted og du vet ikke hvor du havner."),
                 new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
                 new PostOfficeOption("body",        "body",        false, "Innholdet ser normalt ut."),
                 new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
                 new PostOfficeOption("signature",   "signature",   false, "Signaturen ser normalt ut.")
             ),
-            List.of("senderEmail", "signup"), // correctSuspicious unchanged
+            List.of("senderEmail", "signup"),
             "Spør en voksen"
         )
     );
+
+    ensureQuestion(postLevel2,
+        "Hva er mistenklig med eposten fra Roblox?",
+        new PostOfficeQuestion(
+            new PostOfficeQuestion.Email(
+                "Roblox",
+                "no-reply@roblox-support.com",
+                null,
+                "Roblox Email Reset",
+                "2026-02-07T13:22:00Z",
+                List.of(
+                    "Dear Roblox user,",
+                    "",
+                    "We noticed that you have change the email address for your Lucky account from l******@gmail.com to",
+                    "l*******@hotmail.com. Just in case you really didn't mean to change it, or you think someone else changed",
+                    "it by mistake, then we need you to click this link",
+                    "https://www.roblox.com/login/revertAccount",
+                    "to change the email back. You will also need to enter a new password. That way we will know for sure that",
+                    "your account is secure and safe. \n",
+                    "If you are happy with your new email address on Roblox your don't have to do anything! It's already set up.\n",
+                    "Please do not reply to this message if you have any question pleas email info@roblox.com",
+                    ""
+                ),
+                null,
+                null,
+                "This message was generated by https://roblox.com/"
+            ),
+            List.of(
+                new PostOfficeOption("senderEmail", "senderEmail", true,  "Den ekte Roblox-mailen er @roblox.com"),
+                new PostOfficeOption("signup",      "link",        false,  "Ingen klikkbar lenke."),
+                new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
+                new PostOfficeOption("body",        "body",        false, "Innholdet ser normalt ut, lenken er ekte og ikke en knapp."),
+                new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
+                new PostOfficeOption("signature",   "signature",   true, "Signaturen til ekte Roblox bruker roblox.com.")
+            ),
+            List.of("senderEmail", "signature"),
+            "Spør en voksen"
+        )
+    );
+
+    Level postLevel3 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen! 3")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Finn det mistenklige i mailen! 3");
+          l.setDescription("Kan du hva som er mistenkelig i mailene?");
+          l.setLevelType(LevelType.POST_OFFICE);
+          l.setStop(stop3);
+          l.setOrder(3);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(postLevel3,
+        "Hva er mistenkelig med denne e-posten fra leos lekeland?",
+        new PostOfficeQuestion(
+            new PostOfficeQuestion.Email(
+                "Leo's lekeland",
+                "hello@leoslekeland.no",
+                "hello@leoslekeland.no",
+                "Velkommen til Leo's lekeland!",
+                "2026-04-24T13:22:00Z",
+                List.of(
+                    "Hei!",
+                    "Takk for din bestilling på Leos lekeland."
+                ),
+                null,
+                List.of(
+                    new PostOfficeQuestion.Image("promo", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/leos2.jpg", "Logo leo's lekeland")
+                ),
+                "Hilsen Leos lekkeeland"
+            ),
+            List.of(
+                new PostOfficeOption("senderEmail", "senderEmail", false,  "Avsenderadressen er fra en kjent organisasjon."),
+                new PostOfficeOption("signup",      "link",        false,  "Ingen lenke."),
+                new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
+                new PostOfficeOption("body",        "body",        false, "Innholdet ser normalt ut."),
+                new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
+                new PostOfficeOption("signature",   "signature",   true, "Signaturen er ikke riktig.")
+            ),
+            List.of("signature"),
+            "Spør en voksen"
+        )
+    );
+
+    ensureQuestion(postLevel2,
+        "Hva er mistenklig med eposten fra Roblox?",
+        new PostOfficeQuestion(
+            new PostOfficeQuestion.Email(
+                "Roblox",
+                "no-reply@roblox.com",
+                null,
+                "Roblox Email Reset",
+                "2026-02-07T13:22:00Z",
+                List.of(
+                    "Dear Roblox user,",
+                    "",
+                    "We noticed that you have change the email address for your Lucky account from l******@gmail.com to",
+                    "l*******@hotmail.com. Just in case you really didn't mean to change it, or you think someone else changed",
+                    "it by mistake, please reset via the button under",
+                    "If you are happy with your new email address on Roblox your don't have to do anything! It's already set up.\n",
+                    "Please do not reply to this message if you have any question pleas email email.info@roblox.com",
+                    ""
+                ),
+                List.of(
+                    new PostOfficeQuestion.Link("reset", "Reset", "http://roblox/FakeReset")
+                ),
+                null,
+                "This message was generated by roblox.com"
+            ),
+            List.of(
+                new PostOfficeOption("senderEmail", "senderEmail", false,  "Avsendermailen er ekte"),
+                new PostOfficeOption("reset",      "link",        true,  "Lenke med knapp uten lenkeadresse er mistenkelig."),
+                new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
+                new PostOfficeOption("body",        "body",        true, "Den inneholder en uekte mail og vil at du skal trykke på en knapp."),
+                new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
+                new PostOfficeOption("signature",   "signature",   true, "Signaturen er ekte.")
+            ),
+            List.of("senderEmail", "signature"),
+            "Spør en voksen"
+        )
+    );
+  }
+
+  private void seedPasswords() {
+    Stop stop = stopRepository.findByName("Passordbanken").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Passordbanken");
+      s.setDisplayOrder(4);
+      return stopRepository.save(s);
+    });
+
+    // ---------- LEVEL 1 — password strength (new type) ----------
+    Level l1 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Lag et sterkt passord")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Lag et sterkt passord");
+          l.setDescription("Skriv inn et passord. Systemet sier fra hvor sterkt det er.");
+          l.setLevelType(LevelType.PASSWORD_STRENGTH);
+          l.setStop(stop);
+          l.setOrder(1);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l1,
+        "Lag et passord på minst 8 tegn med tall og stor bokstav.",
+        List.of(new PasswordStrengthOption(
+            1, 8, true, true, false, false,
+            "Bra! Passordet oppfyller kravene.",
+            "Passordet ditt er ikke sterkt nok."
+        ))
+    );
+
+    ensureQuestion(l1,
+        "Nå skjerper vi kravene: minst 12 tegn, med tall, stor bokstav OG symbol.",
+        List.of(new PasswordStrengthOption(
+            1, 12, true, true, false, true,
+            "Utmerket — dette er et robust passord!",
+            "Passordet ditt er ikke sterkt nok."
+        ))
+    );
+
+    ensureLevelNoteTemplate(l1, NoteCategory.PASSORD,
+        "Lange passord med blanding av store/små bokstaver, tall og symboler er vanskelige å gjette.");
+
+    // ---------- LEVEL 2 — multiple choice: what makes a good password ----------
+    Level l2 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Hva er et godt passord?")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Hva er et godt passord?");
+          l.setDescription("Velg alternativet som beskriver et godt passord.");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(2);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l2,
+        "Hvilket av passordene er tryggest?",
+        List.of(
+            new MultipleChoiceOption(1, "fotball2010",          "", false,
+                "Et ord fra ordboka pluss et årstall er lett å gjette."),
+            new MultipleChoiceOption(2, "Kj0leskap!Blå_Sky12",  "", true,
+                "Riktig! Langt, variert og uten ordbokord."),
+            new MultipleChoiceOption(3, "12345678",             "", false,
+                "Et av verdens vanligste passord — gjettes på sekunder."),
+            new MultipleChoiceOption(4, "passord",              "", false,
+                "Direkte ordet 'passord' er det første noen prøver.")
+        )
+    );
+
+    ensureQuestion(l2,
+        "Hvilken regel er VIKTIGST for et sterkt passord?",
+        List.of(
+            new MultipleChoiceOption(1, "At det er kort og lett å huske",                "", false,
+                "Korte passord gir angripere et lite søkerom."),
+            new MultipleChoiceOption(2, "At det inneholder kjælenavnet ditt",            "", false,
+                "Personlig info er lett å finne i sosiale medier."),
+            new MultipleChoiceOption(3, "At det er langt og variert, og bare brukes ett sted", "",
+                true,
+                "Riktig — lengde + unikhet per konto er det som betyr mest."),
+            new MultipleChoiceOption(4, "At det bare består av tall",                    "", false,
+                "Uten bokstaver og symboler blir søkerommet for lite.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l2, NoteCategory.PASSORD,
+        "Bruk unike passord per tjeneste, og vurder en passordbehandler.");
+
+    // ---------- LEVEL 3 — multiple choice: what to do on a leak ----------
+    Level l3 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Passordlekkasje — hva gjør du?")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Passordlekkasje — hva gjør du?");
+          l.setDescription("Velg riktig handling hvis passordet ditt er lekket.");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(3);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l3,
+        "Du ser at passordet ditt er lekket på haveibeenpwned. Hva gjør du først?",
+        List.of(
+            new MultipleChoiceOption(1, "Ignorerer det, det går nok over",         "", false,
+                "Lekkede passord testes av angripere i løpet av få timer."),
+            new MultipleChoiceOption(2, "Bytter passordet på den lekkede tjenesten og alle steder det gjenbrukes", "", true,
+                "Riktig — stopp gjenbruk først."),
+            new MultipleChoiceOption(3, "Skriver passordet på en post-it",         "", false,
+                "Dette løser ikke lekkasjen og øker fysisk risiko."),
+            new MultipleChoiceOption(4, "Sender det til en venn for råd",          "", false,
+                "Du sprer eksponeringen uten å løse problemet.")
+        )
+    );
+
+    ensureQuestion(l3,
+        "Hvilket tiltak reduserer skaden av fremtidige lekkasjer mest?",
+        List.of(
+            new MultipleChoiceOption(1, "Aldri bruke nettet",                      "", false,
+                "Urealistisk og unødvendig."),
+            new MultipleChoiceOption(2, "Slå på to-faktor-autentisering",          "", true,
+                "Riktig — selv om passordet lekkes, mangler angriperen andre faktor."),
+            new MultipleChoiceOption(3, "Bruke samme passord overalt for enkelhet","", false,
+                "Motsatt — én lekkasje kompromitterer da alle kontoer."),
+            new MultipleChoiceOption(4, "Skrive alle passord i en tekstfil på skrivebordet", "",
+                false,
+                "Malware leser slike filer trivielt.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l3, NoteCategory.PASSORD,
+        "Bytt passord og skru på 2FA så fort du oppdager lekkasje.");
   }
 
   private void ensureQuestion(Level level, String questionText, List<Option> options) {
@@ -370,138 +704,5 @@ public class GameSeeder implements CommandLineRunner {
               levelNoteTemplateRepository.save(template);
             }
         );
-  }
-
-  private void seedPasswords() {
-      Stop stop = stopRepository.findByName("Passordbanken").orElseGet(() -> {
-          Stop s = new Stop();
-          s.setName("Passordbanken");
-          s.setDisplayOrder(4);
-          return stopRepository.save(s);
-      });
-
-      // ---------- LEVEL 1 — password strength (new type) ----------
-      Level l1 = levelRepository
-          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Lag et sterkt passord")
-          .orElseGet(() -> {
-              Level l = new Level();
-              l.setTitle("Lag et sterkt passord");
-              l.setDescription("Skriv inn et passord. Systemet sier fra hvor sterkt det er.");
-              l.setLevelType(LevelType.PASSWORD_STRENGTH);
-              l.setStop(stop);
-              l.setOrder(1);
-              return levelRepository.save(l);
-          });
-
-      ensureQuestion(l1,
-          "Lag et passord på minst 8 tegn med tall og stor bokstav.",
-          List.of(new PasswordStrengthOption(
-              1, 8, true, true, false, false,
-              "Bra! Passordet oppfyller kravene.",
-              "Passordet ditt er ikke sterkt nok."
-          ))
-      );
-
-      ensureQuestion(l1,
-          "Nå skjerper vi kravene: minst 12 tegn, med tall, stor bokstav OG symbol.",
-          List.of(new PasswordStrengthOption(
-              1, 12, true, true, false, true,
-              "Utmerket — dette er et robust passord!",
-              "Passordet ditt er ikke sterkt nok."
-          ))
-      );
-
-      ensureLevelNoteTemplate(l1, NoteCategory.PASSORD,
-          "Lange passord med blanding av store/små bokstaver, tall og symboler er vanskelige å gjette.");
-
-      // ---------- LEVEL 2 — multiple choice: what makes a good password ----------
-      Level l2 = levelRepository
-          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Hva er et godt passord?")
-          .orElseGet(() -> {
-              Level l = new Level();
-              l.setTitle("Hva er et godt passord?");
-              l.setDescription("Velg alternativet som beskriver et godt passord.");
-              l.setLevelType(LevelType.MULTIPLE_CHOICE);
-              l.setStop(stop);
-              l.setOrder(2);
-              return levelRepository.save(l);
-          });
-
-      ensureQuestion(l2,
-          "Hvilket av passordene er tryggest?",
-          List.of(
-              new MultipleChoiceOption(1, "fotball2010",          "", false,
-                  "Et ord fra ordboka pluss et årstall er lett å gjette."),
-              new MultipleChoiceOption(2, "Kj0leskap!Blå_Sky12",  "", true,
-                  "Riktig! Langt, variert og uten ordbokord."),
-              new MultipleChoiceOption(3, "12345678",             "", false,
-                  "Et av verdens vanligste passord — gjettes på sekunder."),
-              new MultipleChoiceOption(4, "passord",              "", false,
-                  "Direkte ordet 'passord' er det første noen prøver.")
-          )
-      );
-
-      ensureQuestion(l2,
-          "Hvilken regel er VIKTIGST for et sterkt passord?",
-          List.of(
-              new MultipleChoiceOption(1, "At det er kort og lett å huske",                "", false,
-                  "Korte passord gir angripere et lite søkerom."),
-              new MultipleChoiceOption(2, "At det inneholder kjælenavnet ditt",            "", false,
-                  "Personlig info er lett å finne i sosiale medier."),
-              new MultipleChoiceOption(3, "At det er langt og variert, og bare brukes ett sted", "",
-  true,
-                  "Riktig — lengde + unikhet per konto er det som betyr mest."),
-              new MultipleChoiceOption(4, "At det bare består av tall",                    "", false,
-                  "Uten bokstaver og symboler blir søkerommet for lite.")
-          )
-      );
-
-      ensureLevelNoteTemplate(l2, NoteCategory.PASSORD,
-          "Bruk unike passord per tjeneste, og vurder en passordbehandler.");
-
-      // ---------- LEVEL 3 — multiple choice: what to do on a leak ----------
-      Level l3 = levelRepository
-          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Passordlekkasje — hva gjør du?")
-          .orElseGet(() -> {
-              Level l = new Level();
-              l.setTitle("Passordlekkasje — hva gjør du?");
-              l.setDescription("Velg riktig handling hvis passordet ditt er lekket.");
-              l.setLevelType(LevelType.MULTIPLE_CHOICE);
-              l.setStop(stop);
-              l.setOrder(3);
-              return levelRepository.save(l);
-          });
-
-      ensureQuestion(l3,
-          "Du ser at passordet ditt er lekket på haveibeenpwned. Hva gjør du først?",
-          List.of(
-              new MultipleChoiceOption(1, "Ignorerer det, det går nok over",         "", false,
-                  "Lekkede passord testes av angripere i løpet av få timer."),
-              new MultipleChoiceOption(2, "Bytter passordet på den lekkede tjenesten og alle steder det gjenbrukes", "", true,
-                  "Riktig — stopp gjenbruk først."),
-              new MultipleChoiceOption(3, "Skriver passordet på en post-it",         "", false,
-                  "Dette løser ikke lekkasjen og øker fysisk risiko."),
-              new MultipleChoiceOption(4, "Sender det til en venn for råd",          "", false,
-                  "Du sprer eksponeringen uten å løse problemet.")
-          )
-      );
-
-      ensureQuestion(l3,
-          "Hvilket tiltak reduserer skaden av fremtidige lekkasjer mest?",
-          List.of(
-              new MultipleChoiceOption(1, "Aldri bruke nettet",                      "", false,
-                  "Urealistisk og unødvendig."),
-              new MultipleChoiceOption(2, "Slå på to-faktor-autentisering",          "", true,
-                  "Riktig — selv om passordet lekkes, mangler angriperen andre faktor."),
-              new MultipleChoiceOption(3, "Bruke samme passord overalt for enkelhet","", false,
-                  "Motsatt — én lekkasje kompromitterer da alle kontoer."),
-              new MultipleChoiceOption(4, "Skrive alle passord i en tekstfil på skrivebordet", "",
-  false,
-                  "Malware leser slike filer trivielt.")
-          )
-      );
-
-      ensureLevelNoteTemplate(l3, NoteCategory.PASSORD,
-          "Bytt passord og skru på 2FA så fort du oppdager lekkasje.");
   }
 }

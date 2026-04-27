@@ -12,6 +12,11 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false })
   const { email } = task;
   const [selected, setSelected] = useState<string[]>([]);
 
+  const handleSubmit = () => {
+    onSubmit(selected);
+    setSelected([]);
+  };
+
   const toggleSelect = (id: string) => {
     if (disabled) return;
     setSelected((prev) =>
@@ -126,7 +131,7 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false })
         <div className="gmail-result">
           <button
               className="gmail-submit-button"
-              onClick={() => onSubmit(selected)}
+              onClick={handleSubmit}
               disabled={disabled || selected.length === 0}
           >
             Send inn svar
