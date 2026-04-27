@@ -4,9 +4,11 @@ import { useGameLevel, useLevelQuestions } from '@/hooks/teacher/useTeacherQueri
 import {
     useCreateQuestion,
     useUpdateQuestion,
+    useDeleteQuestion,
     useQuestionMutationError,
 } from '@/hooks/teacher/useTeacherMutations';
 import { QuestionEditorModal } from '@/components/teacher/questionEditor/QuestionEditorModal';
+import { DeleteQuestionDialog } from '@/components/teacher/questionEditor/DeleteQuestionDialog';
 import type { MultipleChoiceQuestionDraft } from '@/components/teacher/questionEditor/types';
 import type { TeacherQuestion } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
@@ -43,13 +45,16 @@ export default function LevelQuestionsPage() {
 
     const createMutation = useCreateQuestion(classroomId, levelId);
     const updateMutation = useUpdateQuestion(classroomId, levelId);
+    const deleteMutation = useDeleteQuestion(classroomId, levelId);
 
     const [createOpen, setCreateOpen] = useState(false);
     const [createKey, setCreateKey] = useState(0);
     const [editingQuestion, setEditingQuestion] = useState<TeacherQuestion | null>(null);
+    const [deletingQuestion, setDeletingQuestion] = useState<TeacherQuestion | null>(null);
 
     const createError = useQuestionMutationError(createMutation.error);
     const updateError = useQuestionMutationError(updateMutation.error);
+    const deleteError = useQuestionMutationError(deleteMutation.error);
 
     const isMultipleChoice = level?.levelType === 'MULTIPLE_CHOICE';
     const modalOpen = createOpen || !!editingQuestion;
@@ -60,6 +65,16 @@ export default function LevelQuestionsPage() {
     const handleCloseModal = () => {
         setCreateOpen(false);
         setEditingQuestion(null);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!deletingQuestion) return;
+        try {
+            await deleteMutation.mutateAsync(deletingQuestion.id);
+            setDeletingQuestion(null);
+        } catch {
+            // error shown via deleteError
+        }
     };
 
     const handleSave = async (draft: MultipleChoiceQuestionDraft) => {
@@ -188,7 +203,11 @@ export default function LevelQuestionsPage() {
                                                 >
                                                     Rediger
                                                 </button>
-                                                <button type="button" className="level-questions__delete-btn">
+                                                <button
+                                                    type="button"
+                                                    className="level-questions__delete-btn"
+                                                    onClick={() => { deleteMutation.reset(); setDeletingQuestion(q); }}
+                                                >
                                                     Slett
                                                 </button>
                                             </>
@@ -213,6 +232,14 @@ export default function LevelQuestionsPage() {
                     onSave={handleSave}
                 />
             )}
+
+            <DeleteQuestionDialog
+                open={!!deletingQuestion}
+                deleting={deleteMutation.isPending}
+                error={deleteError}
+                onCancel={() => { deleteMutation.reset(); setDeletingQuestion(null); }}
+                onConfirm={handleConfirmDelete}
+            />
         </div>
     );
 }

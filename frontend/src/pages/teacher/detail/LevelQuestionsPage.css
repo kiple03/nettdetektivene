@@ -271,6 +271,97 @@
     background: rgba(180, 40, 40, 0.16);
 }
 
+/* DELETE CONFIRMATION MODAL */
+.level-questions__modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.level-questions__modal {
+    background: #1e1226;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 28px 32px;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+
+.level-questions__modal-title {
+    margin: 0 0 12px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #f7f2ff;
+}
+
+.level-questions__modal-body {
+    margin: 0 0 20px;
+    font-family: sans-serif;
+    font-size: 14px;
+    color: rgba(229, 242, 217, 0.75);
+    line-height: 1.55;
+}
+
+
+.level-questions__modal-error {
+    margin: 0 0 16px;
+    font-family: sans-serif;
+    font-size: 13px;
+    color: #f87171;
+}
+
+.level-questions__modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.level-questions__modal-cancel {
+    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: transparent;
+    color: rgba(229, 242, 217, 0.75);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.level-questions__modal-cancel:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.level-questions__modal-confirm {
+    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    background: #c0392b;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.level-questions__modal-confirm:hover:not(:disabled) {
+    background: #a93226;
+}
+
+.level-questions__modal-cancel:disabled,
+.level-questions__modal-confirm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 @media (max-width: 640px) {
     .level-questions {
         padding: 16px 16px 32px;
