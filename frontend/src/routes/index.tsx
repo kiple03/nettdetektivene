@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import TeacherLayout from "@/components/layout/TeacherLayout";
 import MapPage from "../pages/student/MapPage";
-import LevelOne from "../pages/student/LevelOnePage";
 import StudentLoginPage from "@/pages/auth/StudentLoginPage";
 import TeacherLoginPage from "@/pages/auth/TeacherLoginPage";
 import FeideFake from "@/pages/auth/FeideFake";
@@ -52,10 +51,6 @@ export const router = createBrowserRouter([
     {
         path: '/map',
         element: <RequireAuth role="STUDENT"><RequireClassroom><MapPage /></RequireClassroom></RequireAuth>,
-    },
-    {
-        path: '/levelOne',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><LevelOne /></RequireClassroom></RequireAuth>,
     },
     {
         path: '/leaderboard',
