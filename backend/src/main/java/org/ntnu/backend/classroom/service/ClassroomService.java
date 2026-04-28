@@ -7,18 +7,23 @@ import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
 import org.ntnu.backend.classroom.model.ClassroomTeacherId;
 import org.ntnu.backend.classroom.model.Enrollment;
+import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.util.JoinCodeGenerator;
-import org.ntnu.backend.game.repository.LevelCompletionRepository;
+import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
+import org.ntnu.backend.security.JwtService;
+import org.ntnu.backend.security.UserPrincipal;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -33,11 +38,14 @@ public class ClassroomService {
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ClassroomTeacherRepository classroomTeacherRepository;
-    private final LevelCompletionRepository levelCompletionRepository;
     private final MysterySubmissionRepository mysterySubmissionRepository;
+    private final ClassroomCensorWordRepository classroomCensorWordRepository;
+    private final ProfanityFilterService profanityFilterService;
 
     private final ClassroomMapper classroomMapper;
     private final JoinCodeGenerator joinCodeGenerator;
+    private final MedalionService medalionService;
+    private final JwtService jwtService;
 
     /**
      * Creates a new classroom, generates a unique join code, and assigns the specified teacher as the owner.
@@ -92,9 +100,10 @@ public class ClassroomService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Klasserom ikke funnet");
         }
         mysterySubmissionRepository.deleteByEnrollmentClassroomId(id);
-        levelCompletionRepository.deleteByEnrollmentClassroomId(id);
         enrollmentRepository.deleteByClassroomId(id);
         classroomTeacherRepository.deleteByClassroomId(id);
+        classroomCensorWordRepository.deleteByClassroomId(id);
+        profanityFilterService.evictClassroomCache(id);
         classroomRepository.deleteById(id);
     }
 
@@ -109,7 +118,7 @@ public class ClassroomService {
      * @return A response object containing the details of the joined classroom.
      * @throws ResponseStatusException if the user or code is invalid, or if the user is already enrolled.
      */
-    public ClassroomResponse joinClassroom(JoinClassroomRequest request, UUID userId) {
+    public JoinClassroomResponse joinClassroom(JoinClassroomRequest request, UUID userId) {
         User student = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Bruker ikke funnet"));
@@ -133,7 +142,18 @@ public class ClassroomService {
             .build();
         enrollmentRepository.save(enrollment);
 
-        return classroomMapper.toResponse(classroom);
+        medalionService.awardInternalUsage(userId, "Hysj-hysj", "Hemmelig innpass, du kom deg inn i klasserommet");
+
+        String accessToken = jwtService.generateToken(new UserPrincipal(student), classroom.getId());
+        ClassroomResponse classroomResponse = classroomMapper.toResponse(classroom);
+        return JoinClassroomResponse.builder()
+            .id(classroomResponse.getId())
+            .title(classroomResponse.getTitle())
+            .description(classroomResponse.getDescription())
+            .joinCode(classroomResponse.getJoinCode())
+            .createdAt(classroomResponse.getCreatedAt())
+            .accessToken(accessToken)
+            .build();
     }
 
     /**
@@ -144,6 +164,18 @@ public class ClassroomService {
      */
     public ClassroomResponse getClassroom(UUID id) {
         return classroomMapper.toResponse(findOrThrow(id));
+    }
+
+    /**
+     * Returns the classroom the student is currently enrolled in, or empty if not enrolled.
+     *
+     * @param userId The student's user ID.
+     * @return An Optional containing the classroom response, or empty if not enrolled.
+     */
+    @Transactional(readOnly = true)
+    public Optional<ClassroomResponse> getMyClassroom(UUID userId) {
+        return enrollmentRepository.findByUserIdAndLeftAtIsNull(userId)
+            .map(e -> classroomMapper.toResponse(e.getClassroom()));
     }
 
     /**

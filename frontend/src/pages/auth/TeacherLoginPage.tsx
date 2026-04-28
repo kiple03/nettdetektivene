@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import { useQueryClient } from '@tanstack/react-query';
 import { register } from '@/api/authApi';
 import { setToken } from '@/stores/authStore';
 import AuthRegisterModal from '@/components/auth/AuthRegisterModal';
@@ -12,10 +13,12 @@ import {
   validatePassword,
   validatePasswordConfirm,
 } from '@/utils/validators';
+import chalkboardBg from '@/assets/images/chalkboard-background.webp';
 import './TeacherLoginPage.css';
 
 function TeacherLoginPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [showRegister, setShowRegister] = useState(false);
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -49,6 +52,7 @@ function TeacherLoginPage() {
 
     try {
       const res = await register({ email: regEmail, password: regPassword, role: 'TEACHER' });
+      queryClient.clear();
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
       navigate('/teacher');
@@ -68,7 +72,7 @@ function TeacherLoginPage() {
   };
 
   return (
-    <div className="teacher-login">
+    <div className="teacher-login" style={{ backgroundImage: `url(${chalkboardBg})` }}>
       <Link to="/" className="student-link">
         Tilbake til elevinnlogging
       </Link>

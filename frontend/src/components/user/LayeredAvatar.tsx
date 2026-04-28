@@ -1,11 +1,55 @@
 import type { EquippedItem } from '@/hooks/useUserProfile';
+import { useColoredHairSvg } from '@/hooks/useColoredHairSvg';
+
+export const SKIN_TONES: Record<string, {base: string, shadowDark: string, shadowLight: string}> = {
+  'tone_light': { base: "#f8c09b", shadowDark: "#da7e61", shadowLight: "#eba482" },
+  'tone_medium': { base: "#d2996d", shadowDark: "#b36b41", shadowLight: "#c38659" },
+  'tone_dark':   { base: "#59381c", shadowDark: "#543010", shadowLight: "#3a1d06" },
+  'tone_wacky':  { base: "#78b159", shadowDark: "#528537", shadowLight: "#679d4a" },
+};
+
+const DEFAULT_TONE = SKIN_TONES['tone_dark'];
 
 interface LayeredAvatarProps{
     items: EquippedItem[];
     size?: number;
+    circular?: boolean;
     skinToneBase?: string;
     skinToneShadowDark?: string;
     skinToneShadowLight?: string;
+    hairColor?: string;
+}
+
+interface HairSvgLayerProps {
+    item: EquippedItem;
+    zIndex: number;
+    hairColorHex: string;
+    maskStyle: React.CSSProperties;
+}
+
+function HairSvgLayer({ item, zIndex, hairColorHex, maskStyle }: HairSvgLayerProps) {
+    const { coloredSvg } = useColoredHairSvg(item.imageUrl, item.name, hairColorHex);
+
+    const containerStyle: React.CSSProperties = {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex,
+        ...maskStyle,
+    };
+
+    if (!coloredSvg) {
+        return <div style={containerStyle} />;
+    }
+
+    return (
+        <div
+            style={containerStyle}
+            dangerouslySetInnerHTML={{ __html: coloredSvg }}
+        />
+    );
 }
 
 function BaseAvatarSVG(props: React.SVGProps<SVGSVGElement>){
@@ -57,61 +101,94 @@ function BaseAvatarSVG(props: React.SVGProps<SVGSVGElement>){
 }
 
 export function LayeredAvatar({
-    items, 
+    items,
     size = 64,
-    skinToneBase = "#59381c",
-    skinToneShadowDark = "#543010",
-    skinToneShadowLight = "#3a1d06"
+    circular = true,
+    skinToneBase,
+    skinToneShadowDark,
+    skinToneShadowLight,
+    hairColor,
 }: LayeredAvatarProps){
-    const sortedItems = [...items].sort((a,b) => {
-        const order = {'body': 1, 'face': 2, 'head': 3, 'accessories': 4};
-        // @ts-expect-error category string might not exist in order object
-        return (order[a.category] || 99) - (order[b.category] || 99);
-    });
-    
-    const wrapperStyles: React.CSSProperties = { 
-        position: 'relative', 
-        width: size, 
-        height: size, 
-        borderRadius: '50%', 
-        overflow: 'hidden', 
-        backgroundColor: '#e5e7eb',
-        "--skin-base": skinToneBase,
-        "--skin-shadow-dark": skinToneShadowDark,
-        "--skin-shadow-light": skinToneShadowLight
+    const skinToneItem = items.find(i => i.category === 'skin_tone');
+    const detectedTone = (skinToneItem && SKIN_TONES[skinToneItem.name]) || DEFAULT_TONE;
+
+    const sortedItems = [...items]
+        .filter(i => i.category !== 'skin_tone')
+        .sort((a,b) => {
+            const order = {'body': 1, 'face': 2, 'hair': 3, 'head': 4, 'accessories': 5};
+            // @ts-expect-error category string might not exist in order object
+            return (order[a.category] || 99) - (order[b.category] || 99);
+        });
+
+    const equippedHat = sortedItems.find(i => i.category === 'head');
+
+    const wrapperStyles: React.CSSProperties = {
+        position: 'relative',
+        width: size,
+        height: size,
+        ...(circular ? { borderRadius: '50%', overflow: 'hidden' } : {}),
+        "--skin-base": skinToneBase ?? detectedTone.base,
+        "--skin-shadow-dark": skinToneShadowDark ?? detectedTone.shadowDark,
+        "--skin-shadow-light": skinToneShadowLight ?? detectedTone.shadowLight
     } as React.CSSProperties;
 
     return (
         <div style={wrapperStyles}>
             {/* The inline SVG base layer properly bound to the CSS variables */}
-            <BaseAvatarSVG 
+            <BaseAvatarSVG
                 style={{
-                    position: 'absolute', 
-                    top: 0, 
-                    left: 0, 
-                    width: '100%', 
-                    height: '100%', 
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
                     zIndex: 0
                 }}
             />
 
             {/* The Equipped Items */}
-            {sortedItems.map((item, index) => (
-            <img 
-                key={item.id}
-                src={item.imageUrl}
-                alt={item.name}
-                style={{
-                    position: 'absolute', 
-                    top: 0, 
-                    left: 0, 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'contain',
-                    zIndex: index + 1
-                }}
-            />
-            ))}
+            {sortedItems.map((item, index) => {
+                const maskStyle: React.CSSProperties = (item.category === 'hair' && equippedHat)
+                    ? {
+                        maskImage: `url(/assets/${equippedHat.name}_hair_mask.svg)`,
+                        WebkitMaskImage: `url(/assets/${equippedHat.name}_hair_mask.svg)`,
+                        maskSize: '100% 100%',
+                        WebkitMaskSize: '100% 100%',
+                        maskRepeat: 'no-repeat',
+                        WebkitMaskRepeat: 'no-repeat',
+                      } as React.CSSProperties
+                    : {};
+
+                if (item.category === 'hair' && hairColor) {
+                    return (
+                        <HairSvgLayer
+                            key={item.id}
+                            item={item}
+                            zIndex={index + 1}
+                            hairColorHex={hairColor}
+                            maskStyle={maskStyle}
+                        />
+                    );
+                }
+
+                return (
+                    <img
+                        key={item.id}
+                        src={item.imageUrl}
+                        alt={item.name}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                            zIndex: index + 1,
+                            ...maskStyle
+                        }}
+                    />
+                );
+            })}
         </div>
     );
 }

@@ -138,8 +138,9 @@ CREATE TABLE level_completion (
 -- One medal per stop per enrollment, earned when all tasks in that stop are completed.
 CREATE TABLE medal (
     id            CHAR(36)  PRIMARY KEY,              -- UUID
-    enrollment_id CHAR(36)  NOT NULL,
-    stop_id       CHAR(36)  NOT NULL,
+    name_         CHAR(36) NOT NULL,
+    user          CHAR(36)  NOT NULL,
+    description_  CHAR(36) NOT NULL,
     earned_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (enrollment_id, stop_id),
     FOREIGN KEY (enrollment_id) REFERENCES enrollment(id) ON DELETE CASCADE,
@@ -167,6 +168,22 @@ CREATE TABLE notepad_entry (
 -- ============================================================
 -- WEEKLY MYSTERY (per classroom, submitted via enrollment)
 -- ============================================================
+
+-- ============================================================
+-- BOSS BATTLE (per enrollment)
+-- ============================================================
+
+-- Stores the result of each boss battle attempt.
+-- Only the latest result per enrollment is used by the frontend.
+CREATE TABLE boss_battle_result (
+    id                  CHAR(36)  PRIMARY KEY,              -- UUID
+    enrollment_id       CHAR(36)  NOT NULL,
+    won                 BOOLEAN   NOT NULL,
+    time_seconds        INT       NOT NULL,
+    player_hp_remaining INT       NOT NULL,
+    completed_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (enrollment_id) REFERENCES enrollment(id) ON DELETE CASCADE
+);
 
 CREATE TABLE mystery_submission (
     id                     CHAR(36)     PRIMARY KEY,          -- UUID

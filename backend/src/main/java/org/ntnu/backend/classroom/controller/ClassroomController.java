@@ -1,11 +1,13 @@
 package org.ntnu.backend.classroom.controller;
 
 import jakarta.validation.Valid;
+import java.util.Optional;
 import java.util.UUID;
 import org.ntnu.backend.classroom.dto.*;
 import org.ntnu.backend.classroom.service.ClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,21 @@ public class ClassroomController {
         return classroomService.getClassroom(id);
     }
 
+    // ── Student endpoints ─────────────────────────────────────────────────────
+
+    /**
+     * Returns the classroom the authenticated student is currently enrolled in.
+     * Returns 204 No Content if the student is not enrolled in any classroom.
+     */
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<ClassroomResponse> getMyClassroom(
+        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        Optional<ClassroomResponse> classroom = classroomService.getMyClassroom(principal.getUserId());
+        return classroom.map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.noContent().build());
+    }
+
     // ── Student join endpoint ─────────────────────────────────────────────────
 
     /**
@@ -48,7 +65,7 @@ public class ClassroomController {
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('STUDENT')")
-    public ClassroomResponse joinClassroom(@Valid @RequestBody JoinClassroomRequest request,
+    public JoinClassroomResponse joinClassroom(@Valid @RequestBody JoinClassroomRequest request,
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return classroomService.joinClassroom(request, principal.getUserId());
     }

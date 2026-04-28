@@ -1,51 +1,57 @@
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import LogoutButton from '@/components/LogoutButton';
+import { Link, Outlet } from 'react-router-dom';
+import LogoutButton from '@/components/ui/buttons/LogoutButton';
 import { decodeToken } from '@/stores/authStore';
+import { useNotifications } from '@/hooks/teacher/useNotifications';
 import './TeacherLayout.css';
 
 export default function TeacherLayout() {
-    const location = useLocation();
-    const navigate = useNavigate();
     const username = decodeToken()?.username ?? null;
-    const isRoot = location.pathname === '/teacher';
+    const { data: notifications = [] } = useNotifications();
+    const unreadCount = notifications.filter((notification) => !notification.read).length;
 
     return (
         <div className="teacher-layout">
-            <header className="teacher-layout__navbar">
-                <div className="teacher-layout__navbar-left">
-                    {!isRoot && (
-                        <button
-                            className="teacher-layout__back"
-                            onClick={() => navigate(-1)}
-                            type="button"
-                            aria-label="Gå tilbake"
-                        >
-                            ← Tilbake
-                        </button>
-                    )}
-                </div>
-
-                <Link to="/teacher" className="teacher-layout__logo">
-                    <span className="teacher-layout__logo-icon">🔍</span>
-                    <span className="teacher-layout__logo-text">Nettdetektivene</span>
-                </Link>
-
-                <div className="teacher-layout__navbar-right">
-                    {username && (
-                        <span className="teacher-layout__username">
-                            Logget inn som <strong>{username}</strong>
+            <div className="teacher-layout__controls" aria-label="Brukermeny og varsler">
+                <Link
+                    to="/teacher/notifications"
+                    className="teacher-layout__bell"
+                    aria-label="Varsler"
+                >
+                    <BellIcon />
+                    {unreadCount > 0 && (
+                        <span className="teacher-layout__bell-badge" aria-label={`${unreadCount} uleste varsler`}>
+                            {unreadCount}
                         </span>
                     )}
-                    <LogoutButton className="teacher-layout__logout" />
-                    <Link
-                        to="/teacher/notifications"
-                        className="teacher-layout__bell"
-                        aria-label="Varsler"
-                    >
-                        <BellIcon />
-                    </Link>
-                </div>
-            </header>
+                </Link>
+
+                <details className="teacher-layout__profile-menu">
+                    <summary className="teacher-layout__profile-trigger" aria-label="Åpne profilmeny">
+                        <span className="teacher-layout__profile-avatar" aria-hidden="true">
+                            {username ? username.charAt(0).toUpperCase() : 'L'}
+                        </span>
+                        <span className="teacher-layout__profile-label">Profil</span>
+                    </summary>
+
+                    <div className="teacher-layout__dropdown" role="menu" aria-label="Profilmeny">
+                        {username && (
+                            <div className="teacher-layout__dropdown-user">Logget inn som {username}</div>
+                        )}
+
+                        <button type="button" className="teacher-layout__dropdown-item" disabled>
+                            Innstillinger (kommer snart)
+                        </button>
+
+                        <button type="button" className="teacher-layout__dropdown-item" disabled>
+                            Konto (kommer snart)
+                        </button>
+
+                        <div className="teacher-layout__dropdown-divider" />
+
+                        <LogoutButton className="teacher-layout__logout" />
+                    </div>
+                </details>
+            </div>
 
             <main className="teacher-layout__content">
                 <Outlet />

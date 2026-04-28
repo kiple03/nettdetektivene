@@ -9,18 +9,26 @@ interface Props {
 }
 
 function RequireAuth({ role, children }: Props) {
-  const { isLoggedIn, role: currentRole } = useAuth();
+  const { isLoggedIn, role: currentRole, authReady, isRefreshing } = useAuth();
   const location = useLocation();
 
+  // Hold position while:
+  // (a) startup session-probe hasn't settled yet (!authReady), OR
+  // (b) a refresh is in flight and we're not logged in (mid-session token expiry)
+  // In both cases return null rather than redirecting prematurely.
+  if (!authReady || (!isLoggedIn && isRefreshing)) {
+    return null;
+  }
+
   if (!isLoggedIn) {
-    // Redirect to the correct login page for this portal.
     const loginPath = role === 'TEACHER' ? '/laerer/login' : '/';
     return <Navigate to={loginPath} replace state={{ from: location }} />;
   }
+
   if (currentRole !== role) {
-    // Logged in but wrong role — send to their own home, never render the page.
     return <Navigate to={currentRole === 'TEACHER' ? '/teacher' : '/home'} replace />;
   }
+
   return <>{children}</>;
 }
 

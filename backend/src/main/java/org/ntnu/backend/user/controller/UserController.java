@@ -3,10 +3,13 @@ package org.ntnu.backend.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.time.Duration;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.config.openapi.ApiErrorResponse;
+import org.ntnu.backend.config.openapi.ApiErrorResponses;
+import org.ntnu.backend.config.openapi.PublicEndpoint;
 import org.ntnu.backend.user.dto.CreateUserRequest;
 import org.ntnu.backend.user.dto.LoginRequest;
 import org.ntnu.backend.user.dto.LoginResponse;
@@ -61,7 +64,9 @@ public class UserController {
   @Operation(summary = "Register a new user", description = "Creates a new user. Returns access "
       + "token and refresh token in HttpOnly cookie.")
   @ApiResponse(responseCode = "200", description = "Registration successful")
-  @ApiResponse(responseCode = "409", description = "Email already in use")
+  @ApiErrorResponse(responseCode = "409", description = "Email already in use")
+  @SecurityRequirements({})
+  @PublicEndpoint
   @PostMapping("/register")
   public ResponseEntity<LoginResponse> register(@RequestBody @Valid CreateUserRequest request) {
     LoginResponse response = userService.register(request);
@@ -83,7 +88,9 @@ public class UserController {
    */
   @Operation(summary = "Login with username and password")
   @ApiResponse(responseCode = "200", description = "Login successful")
-  @ApiResponse(responseCode = "401", description = "Login failed")
+  @ApiErrorResponse(responseCode = "401", description = "Login failed")
+  @PublicEndpoint
+  @SecurityRequirements({})
   @PostMapping("/login")
   public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest request) {
     LoginResponse response = userService.login(request);
@@ -105,8 +112,8 @@ public class UserController {
    */
   @Operation(summary = "Refresh the access token")
   @ApiResponse(responseCode = "200", description = "New access token issued")
-  @ApiResponse(responseCode = "400", description = "Missing access token cookie")
-  @ApiResponse(responseCode = "401", description = "Invalid or expired refresh token")
+  @ApiErrorResponse(responseCode = "400", description = "Missing access token cookie")
+  @ApiErrorResponse(responseCode = "401", description = "Invalid or expired refresh token")
   @PostMapping("/refresh")
   public ResponseEntity<LoginResponse> refresh(
       @CookieValue(name = "refreshToken") String refreshToken) {

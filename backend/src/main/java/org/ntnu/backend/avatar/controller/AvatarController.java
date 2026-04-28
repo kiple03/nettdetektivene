@@ -1,7 +1,7 @@
 package org.ntnu.backend.avatar.controller;
 
 import java.util.List;
-
+import java.util.Map;
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.dto.UpdateEquippedItemsRequest;
 import org.ntnu.backend.avatar.dto.UpdateUserProfileRequest;
@@ -62,11 +62,11 @@ public class AvatarController {
     }
 
     @PutMapping("/user/profile")
-    public ResponseEntity<UserProfileResponse> updateUserProfile(
+    public ResponseEntity<Map<String, String>> updateUserProfile(
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal,
         @Valid @RequestBody UpdateUserProfileRequest request) {
-        UserProfileResponse updated = userAvatarService.updateUserProfile(principal.getUserId(), request);
-        return ResponseEntity.ok(updated);
+        String accessToken = userAvatarService.updateUserProfile(principal.getUserId(), principal.getClassroomId(), request);
+        return ResponseEntity.ok(Map.of("accessToken", accessToken));
     }
 
 }

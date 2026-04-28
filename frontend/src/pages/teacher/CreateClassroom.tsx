@@ -1,6 +1,6 @@
 import { Form, Link, redirect, useActionData } from 'react-router-dom';
 import type { ActionFunctionArgs } from 'react-router-dom';
-import { createClassroom } from '@/services/teacherService.ts';
+import { createClassroom } from '@/api/teacherApi';
 import { Button } from '@/components/ui/buttons/Button.tsx';
 import './CreateClassroom.css';
 
@@ -17,7 +17,7 @@ export async function createClassroomAction({
 
   try {
     const classroom = await createClassroom(title, description);
-    return redirect(`/teacher/classroom/${classroom.id}/code`);
+    return redirect(`/teacher/classrooms/${classroom.id}/code`);
   } catch {
     return { error: 'Noe gikk galt. Prøv igjen.' };
   }

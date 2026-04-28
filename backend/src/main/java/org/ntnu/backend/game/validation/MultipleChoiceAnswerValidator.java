@@ -35,12 +35,23 @@ public class MultipleChoiceAnswerValidator implements SubmittedAnswerValidator {
               + submission.getClass().getSimpleName());
     }
 
+    List<Integer> correctOptionIds = options.stream()
+            .map(o -> (MultipleChoiceOption) o)
+            .filter(MultipleChoiceOption::isCorrect)
+            .map(MultipleChoiceOption::getId)
+            .toList();
+
     return options.stream()
-        .filter(o -> o instanceof MultipleChoiceOption mc && mc.getId() == choice.getSelectedId())
-        .map(o -> (MultipleChoiceOption) o)
-        .findFirst()
-        .map(mc -> new ValidationResult(mc.isCorrect(), mc.getExplanation()))
-        .orElseThrow(() -> new IllegalArgumentException(
-            "Option not found: " + choice.getSelectedId()));
+            .filter(o -> o instanceof MultipleChoiceOption mc && mc.getId() == choice.getSelectedId())
+            .map(o -> (MultipleChoiceOption) o)
+            .findFirst()
+            .map(mc -> new ValidationResult(
+                    mc.isCorrect(),
+                    mc.getExplanation(),
+                    correctOptionIds,
+                    List.of()
+            ))
+            .orElseThrow(() -> new IllegalArgumentException(
+                    "Option not found: " + choice.getSelectedId()));
   }
 }

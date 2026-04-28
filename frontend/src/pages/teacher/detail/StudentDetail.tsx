@@ -1,14 +1,59 @@
-import { Link, useLoaderData, useParams } from 'react-router-dom';
-import type { StudentDetail as StudentDetailType } from '@/types/classroom';
-import { Card } from '@/components/ui/cards/Cards';
+import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { useStudentDetail, useStudentProgress, useStudentMedalions, useStudentNotebook } from '@/hooks/teacher/useTeacherQueries';
+import { useUpdateStudentUsername } from '@/hooks/teacher/useTeacherMutations';
+import { teacherKeys } from '@/hooks/teacher/queryKeys';
+import { StudentDetailHeader } from '@/components/teacher/studentDetail/StudentDetailHeader';
+import { StudentDetailLevels } from '@/components/teacher/studentDetail/StudentDetailLevels';
+import { StudentNotebook } from '@/components/teacher/studentDetail/StudentNotebook';
 import './StudentDetail.css';
+import { ALL_MEDALS, getMedalImageUrl } from '@/data/allMedals';
 
 export default function StudentDetail() {
-    const data = useLoaderData() as StudentDetailType | null;
-    const { id: classroomId } = useParams<{ id: string }>();
-    const backLink = `/teacher/classroom/${classroomId}`;
+    const { id: classroomId = '', studentId = '' } = useParams<{ id: string; studentId: string }>();
+    const backLink = `/teacher/classrooms/${classroomId}`;
+    const queryClient = useQueryClient();
 
-    if (!data) {
+    const { data: studentDetail = null } = useStudentDetail(classroomId, studentId);
+    const { data: students = [] } = useStudentProgress(classroomId);
+    const { data: medalions = [] } = useStudentMedalions(classroomId, studentId);
+    const { data: notebook = null } = useStudentNotebook(classroomId, studentId);
+    const studentProfile = students.find((s) => s.userId === studentId) ?? null;
+
+    const updateUsernameMutation = useUpdateStudentUsername(classroomId);
+    const [editing, setEditing] = useState(false);
+    const [editValue, setEditValue] = useState('');
+    const [usernameError, setUsernameError] = useState<string | null>(null);
+
+    function startEdit() {
+        setEditValue(studentDetail?.username ?? '');
+        setUsernameError(null);
+        setEditing(true);
+    }
+
+    function cancelEdit() {
+        setEditing(false);
+        setUsernameError(null);
+    }
+
+    async function saveUsername() {
+        const trimmed = editValue.trim();
+        if (trimmed.length < 3) {
+            setUsernameError('Brukernavn må være minst 3 tegn.');
+            return;
+        }
+        setUsernameError(null);
+        try {
+            await updateUsernameMutation.mutateAsync({ studentId, username: trimmed });
+            await queryClient.invalidateQueries({ queryKey: teacherKeys.studentDetail(classroomId, studentId) });
+            setEditing(false);
+        } catch {
+            setUsernameError('Brukernavnet er allerede tatt eller ugyldig.');
+        }
+    }
+
+    if (!studentDetail) {
         return (
             <div className="student-detail">
                 <Link to={backLink} className="student-detail__back">← Tilbake</Link>
@@ -17,43 +62,67 @@ export default function StudentDetail() {
         );
     }
 
-    const { username, levelCompletions } = data;
+    const { username, email, enrolledAt, levelCompletions } = studentDetail;
+    const completedCount = studentDetail.totalLevelsCompleted ?? levelCompletions.length;
 
     return (
         <div className="student-detail">
-            <header className="student-detail__header">
-                <Link to={backLink} className="student-detail__back">← Tilbake</Link>
-                <h1 className="student-detail__name">{username}</h1>
-                <p className="student-detail__meta">
-                    {levelCompletions.length} nivåer fullført
-                </p>
-            </header>
+            <div className="student-detail__board-wrap">
+                <div className="student-detail__corkboard">
+                    <StudentDetailHeader
+                        backLink={backLink}
+                        username={username}
+                        email={email}
+                        enrolledAt={enrolledAt}
+                        completedCount={completedCount}
+                        avatarItems={studentProfile?.equippedItems ?? []}
+                        editing={editing}
+                        editValue={editValue}
+                        onEditValueChange={setEditValue}
+                        onStartEdit={startEdit}
+                        onCancelEdit={cancelEdit}
+                        onSaveUsername={saveUsername}
+                        savingUsername={updateUsernameMutation.isPending}
+                        usernameError={usernameError}
+                    />
 
-            <Card variant="unstyled" className="student-detail__section">
-                <h2 className="student-detail__section-title">Nivåer fullført</h2>
-                {levelCompletions.length === 0 ? (
-                    <p className="student-detail__empty">Ingen nivåer fullført ennå.</p>
-                ) : (
-                    <table className="student-detail__table">
-                        <thead>
-                        <tr>
-                            <th className="student-detail__th">Nivå</th>
-                            <th className="student-detail__th student-detail__th--right">Fullført</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {levelCompletions.map((level) => (
-                            <tr key={level.levelId} className="student-detail__tr">
-                                <td className="student-detail__td">Nivå {level.levelId}</td>
-                                <td className="student-detail__td student-detail__td--right student-detail__td--mono">
-                                    {new Date(level.completedAt).toLocaleDateString('nb-NO')}
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                )}
-            </Card>
+                    <StudentDetailLevels studentDetail={studentDetail} />
+
+                    <div className="student-detail__medals">
+                        <h2 className="student-detail__medals-title">Medaljer</h2>
+                        <div className="student-detail__medals-grid">
+                            {ALL_MEDALS.map((medal) => {
+                                const earned = medalions.find((m) => m.name === medal.name);
+                                return (
+                                    <div
+                                        key={medal.name}
+                                        className={`student-detail__medal-item${earned ? '' : ' student-detail__medal-item--locked'}`}
+                                    >
+                                        <img
+                                            src={getMedalImageUrl(medal.name)}
+                                            alt={medal.name}
+                                            className="student-detail__medal-img"
+                                        />
+                                        <p className="student-detail__medal-name">{medal.name}</p>
+                                        {earned ? (
+                                            <>
+                                                <p className="student-detail__medal-desc">{earned.description}</p>
+                                                <p className="student-detail__medal-date">
+                                                    {new Date(earned.earnedAt).toLocaleDateString('nb-NO')}
+                                                </p>
+                                            </>
+                                        ) : (
+                                            <p className="student-detail__medal-desc">Ikke opptjent ennå</p>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {notebook && <StudentNotebook notes={notebook} />}
+                </div>
+            </div>
         </div>
     );
 }

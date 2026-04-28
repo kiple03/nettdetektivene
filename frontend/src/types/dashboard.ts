@@ -6,6 +6,6 @@ export type DashboardItem = {
   top: string,
   left: string,
   image?: string;
-  size?: 'small' | 'medium' | 'large';
-
+  size?: 'small' | 'medium' | 'large',
+  circle?: string
 }

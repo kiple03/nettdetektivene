@@ -1,0 +1,184 @@
+.mc-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mc-editor__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mc-editor__label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+}
+
+.mc-editor__textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    resize: vertical;
+    font-family: inherit;
+    color: #1a1a1a;
+    line-height: 1.5;
+}
+
+.mc-editor__textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.mc-editor__options-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.mc-editor__options-hint {
+    font-size: 12px;
+    color: #888;
+}
+
+.mc-editor__options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mc-editor__option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    background: #fafafa;
+}
+
+.mc-editor__option--correct {
+    border-color: rgba(37, 150, 60, 0.35);
+    background: rgba(37, 150, 60, 0.04);
+}
+
+.mc-editor__correct-btn {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    background: #fff;
+    color: #aaa;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 6px;
+    transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.mc-editor__correct-btn--active {
+    border-color: #22863a;
+    background: #22863a;
+    color: #fff;
+}
+
+.mc-editor__correct-btn:hover:not(.mc-editor__correct-btn--active) {
+    border-color: #22863a;
+    color: #22863a;
+}
+
+.mc-editor__option-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mc-editor__input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px 10px;
+    font-size: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    border-radius: 6px;
+    font-family: inherit;
+    color: #1a1a1a;
+    background: #fff;
+}
+
+.mc-editor__input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.mc-editor__input--explanation {
+    font-size: 12px;
+    color: #555;
+}
+
+.mc-editor__remove-btn {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: transparent;
+    color: #999;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 4px;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.mc-editor__remove-btn:hover:not(:disabled) {
+    background: rgba(200, 30, 30, 0.08);
+    color: #c0392b;
+    border-color: rgba(200, 30, 30, 0.25);
+}
+
+.mc-editor__remove-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.mc-editor__add-option-btn {
+    align-self: flex-start;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1.5px dashed rgba(0, 0, 0, 0.22);
+    background: transparent;
+    color: #555;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.mc-editor__add-option-btn:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+}
+
+.mc-editor__checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+}

@@ -3,6 +3,8 @@ import badgeImg from '@/assets/images/studentHomeBoard/badge.png';
 import noteImg from '@/assets/images/studentHomeBoard/notebook.png';
 import mysteryImg from '@/assets/images/studentHomeBoard/mystery.png';
 import profileImg from '@/assets/images/studentHomeBoard/profile.png';
+import leaderBoard from '@/assets/images/studentHomeBoard/leaderBoard.png'
+import circle from '@/assets/images/studentHomeBoard/red_circle.png'
 
 import type { DashboardItem } from "@/types/dashboard.ts";
 
@@ -11,33 +13,36 @@ export const studentBoardItems: DashboardItem[] = [
     id: 'map',
     label: 'Kart',
     to: '/map',
-    top: '50%',
-    left: '50%',
+    top: '39%',
+    left: '51%',
     image: mapImg,
-    size: 'large'
+    size: 'large',
+    circle: circle
   },
   {
     id: 'badges',
     label: 'Medaljer',
     to: '/badges',
     top: '70%',
-    left: '25%',
+    left: '49%',
     image: badgeImg,
-    size: 'small'
+    size: 'medium'
   },
   {
     id: 'leaderBoard',
     label: 'Ledertavle',
     to: '/leaderboard',
-    top: '90%',
-    left: '40%'
+    top: '68%',
+    image: leaderBoard,
+    left: '34%',
+    size: 'small'
   },
   {
     id: 'notebook',
     label: 'Viktige notater!',
     to: '/notes',
-    top: '75%',
-    left: '70%',
+    top: '68%',
+    left: '66%',
     image: noteImg,
     size: 'medium'
   },
@@ -45,17 +50,17 @@ export const studentBoardItems: DashboardItem[] = [
     id: 'mystery',
     label: 'Ukens mysterium',
     to: '/weekly-mystery',
-    top: '35%',
-    left: '70%',
+    top: '34%',
+    left: '69%',
     image: mysteryImg,
-    size: 'small'
+    size: 'medium'
   },
   {
     id: 'profile',
     label: 'Profil',
     to: '/profile',
-    top: '35%',
-    left: '28%',
+    top: '34%',
+    left: '31%',
     image: profileImg,
     size: 'medium'
   }

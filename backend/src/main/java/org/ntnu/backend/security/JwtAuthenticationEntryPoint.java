@@ -1,11 +1,11 @@
 package org.ntnu.backend.security;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 import lombok.AllArgsConstructor;
+import org.ntnu.backend.config.SecurityConfig;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -14,11 +14,11 @@ import tools.jackson.databind.ObjectMapper;
 /**
  * Returns a 401 JSON response when an unauthenticated request reaches a protected endpoint.
  *
- * <p>Registered in {@link edu.ntnu.idatt2105.backend.config.SecurityConfig} as the entry point
+ * <p>Registered in {@link SecurityConfig} as the entry point
  * for authentication failures. Produces a consistent JSON error body instead of Spring's default
  * HTML error page.
  *
- * @see edu.ntnu.idatt2105.backend.config.SecurityConfig
+ * @see SecurityConfig
  */
 @Component
 @AllArgsConstructor

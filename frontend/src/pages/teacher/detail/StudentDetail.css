@@ -1,55 +1,313 @@
 .student-detail {
   width: 100%;
-  padding: 32px 40px;
+  padding: 24px 32px 40px;
   box-sizing: border-box;
   text-align: left;
+}
+
+.student-detail__board-wrap {
+  padding: 0 0 40px;
+}
+
+.student-detail__corkboard {
+  position: relative;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  background-color: #c9ad80;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 12px, rgba(0, 0, 0, 0.03) 12px, rgba(0, 0, 0, 0.03) 13px),
+    repeating-linear-gradient(90deg, transparent, transparent 12px, rgba(0, 0, 0, 0.03) 12px, rgba(0, 0, 0, 0.03) 13px);
+  border: 10px solid #7a4e2a;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 2px 12px rgba(0, 0, 0, 0.22),
+    0 12px 48px rgba(0, 0, 0, 0.5);
+  padding: 48px 28px 32px;
 }
 
 .student-detail__header {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 32px;
+  gap: 8px;
+  margin-bottom: 20px;
+  align-items: center;
+  text-align: center;
 }
 
 .student-detail__back {
+  position: fixed;
+  top: 6%;
+  left: 1.5%;
+  font-family: sans-serif;
   font-size: 14px;
-  color: var(--text);
+  font-weight: 700;
+  color: #7a5c30;
   text-decoration: none;
   width: fit-content;
 }
 
+.student-detail__avatar-ring {
+  border: 4px solid #8b6914;
+  border-radius: 50%;
+  padding: 5px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  background: #e8d5a3;
+  margin-bottom: 8px;
+}
+
 .student-detail__back:hover {
-  color: var(--accent);
+  color: #2c1a06;
 }
 
 .student-detail__name {
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--text-h);
+  font-size: 34px;
+  font-weight: 800;
+  color: #2c1a06;
   margin: 0;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.03em;
 }
 
 .student-detail__meta {
   font-size: 14px;
-  color: var(--text);
+  color: #7a5c30;
+  margin: 0;
+  font-family: sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.student-detail__username-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.student-detail__edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 2px 4px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+  line-height: 1;
+}
+
+.student-detail__edit-btn:hover {
+  opacity: 1;
+}
+
+.student-detail__username-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.student-detail__username-input {
+  font-size: 28px;
+  font-weight: 800;
+  color: #2c1a06;
+  border: 2px solid #8b6914;
+  border-radius: 6px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+  outline: none;
+  font-family: inherit;
+}
+
+.student-detail__username-input:focus {
+  border-color: #5a3218;
+  box-shadow: 0 0 0 3px rgba(90, 50, 24, 0.15);
+}
+
+.student-detail__username-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.student-detail__btn {
+  padding: 6px 16px;
+  border-radius: 6px;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.student-detail__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.student-detail__btn--save {
+  background: #5a3218;
+  color: #fdf6e3;
+}
+
+.student-detail__btn--save:hover:not(:disabled) {
+  background: #3d2010;
+}
+
+.student-detail__btn--cancel {
+  background: #e2d5bf;
+  color: #3b1a0a;
+}
+
+.student-detail__btn--cancel:hover:not(:disabled) {
+  background: #c9b99a;
+}
+
+.student-detail__username-error {
+  font-size: 13px;
+  color: #dc2626;
+  font-weight: 600;
   margin: 0;
 }
 
-/* Section cards */
-.student-detail__section {
-  background: var(--teacher-card-bg);
-  border: 1px solid var(--teacher-card-border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+.student-detail__info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 12px;
+  row-gap: 4px;
+  margin: 4px 0 0;
+  font-family: sans-serif;
+  font-size: 14px;
+  text-align: left;
+}
+
+.student-detail__info dt {
+  font-weight: 700;
+  color: #7a5c30;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.student-detail__info dd {
+  margin: 0;
+  color: #2c1a06;
+  font-weight: 500;
+}
+
+.student-detail__medals {
+  margin-top: 28px;
+}
+
+.student-detail__medals-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #2c1a06;
+  margin: 0 0 16px;
+  letter-spacing: -0.02em;
+}
+
+.student-detail__medals-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.student-detail__medal-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #f8f0dc;
+  border-radius: 6px;
+  padding: 12px;
+  width: 120px;
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.student-detail__medal-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.student-detail__medal-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2c1a06;
+  margin: 0 0 4px;
+}
+
+.student-detail__medal-desc {
+  font-size: 11px;
+  color: #7a5c30;
+  margin: 0 0 4px;
+  font-style: italic;
+}
+
+.student-detail__medal-date {
+  font-size: 11px;
+  color: #9a7a50;
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.student-detail__medal-item--locked {
+  opacity: 0.45;
+}
+
+.student-detail__medal-item--locked .student-detail__medal-img {
+  filter: grayscale(100%);
+}
+
+.student-detail__note {
+  position: relative;
+  background: #f8f0dc;
+  border: none;
+  border-radius: 4px;
+  padding: 36px 22px 24px;
+  box-shadow:
+    2px 4px 10px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+.student-detail__note-tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(1deg);
+  width: 64px;
+  height: 22px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(255, 255, 255, 0.14) 1px,
+      rgba(255, 255, 255, 0.14) 2px
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 245, 120, 0.68) 0%,
+      rgba(255, 232, 72, 0.92) 30%,
+      rgba(255, 242, 98, 0.86) 65%,
+      rgba(242, 218, 58, 0.74) 100%
+    );
+  border-radius: 3px 2px 2px 3px;
+  box-shadow:
+    0 2px 7px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.07);
+  pointer-events: none;
 }
 
 .student-detail__section-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-h);
+  font-size: 18px;
+  font-weight: 800;
+  color: #2c1a06;
   margin: 0 0 16px;
 }
 
@@ -62,12 +320,12 @@
 .student-detail__th {
   text-align: left;
   font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
+  font-weight: 800;
+  color: #9a7040;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.08em;
   padding: 0 12px 10px 0;
-  border-bottom: 1px solid var(--teacher-card-border);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .student-detail__th--right {
@@ -80,14 +338,14 @@
 }
 
 .student-detail__tr:hover {
-  background: var(--accent-bg);
+  background: rgba(0, 0, 0, 0.03);
 }
 
 .student-detail__td {
   padding: 12px 12px 12px 0;
   font-size: 14px;
-  color: var(--text-h);
-  border-bottom: 1px solid var(--teacher-card-border);
+  color: #2c1a06;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .student-detail__td--right {
@@ -118,31 +376,31 @@
 }
 
 .student-detail__badge--earned {
-  background: var(--accent-bg);
-  color: var(--accent);
-  border: 1px solid var(--accent-border);
+  background: rgba(92, 128, 75, 0.14);
+  color: #2f4a28;
+  border: 1px solid rgba(92, 128, 75, 0.22);
 }
 
 .student-detail__badge--none {
-  color: var(--text);
+  color: #7a5c30;
 }
 
 .student-detail__badge--pending {
-  background: var(--teacher-card-bg);
-  color: var(--text);
-  border: 1px solid var(--teacher-card-border);
+  background: rgba(255, 255, 255, 0.45);
+  color: #7a5c30;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .student-detail__badge--auto {
-  background: var(--accent-bg);
-  color: var(--accent);
-  border: 1px solid var(--accent-border);
+  background: rgba(92, 128, 75, 0.14);
+  color: #2f4a28;
+  border: 1px solid rgba(92, 128, 75, 0.22);
 }
 
 .student-detail__badge--student {
-  background: var(--teacher-card-bg);
-  color: var(--text-h);
-  border: 1px solid var(--teacher-card-border);
+  background: rgba(255, 255, 255, 0.45);
+  color: #2c1a06;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* Notes list */
@@ -170,18 +428,189 @@
 
 .student-detail__note-date {
   font-size: 12px;
-  color: var(--text);
+  color: #7a5c30;
 }
 
 .student-detail__note-content {
   font-size: 14px;
-  color: var(--text-h);
+  color: #2c1a06;
   margin: 0;
 }
 
 /* Empty */
 .student-detail__empty {
-  color: var(--text);
+  color: #7a5c30;
   font-size: 14px;
   margin: 0;
+}
+
+/* Notebook section */
+.student-notebook {
+  margin-top: 32px;
+}
+
+.student-notebook__title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #2c1a06;
+  margin: 0 0 20px;
+  letter-spacing: -0.02em;
+}
+
+.student-notebook__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 20px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  border: 2px dashed rgba(122, 78, 42, 0.3);
+  text-align: center;
+  color: #7a5c30;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.student-notebook__empty-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.student-notebook__empty p {
+  margin: 0;
+}
+
+/* Sticky-note grid */
+.student-notebook__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.student-notebook__card {
+  position: relative;
+  background: #fffef5;
+  border-radius: 3px;
+  width: calc(50% - 10px);
+  min-width: 200px;
+  box-shadow:
+    3px 5px 14px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  overflow: visible;
+  padding: 0;
+  /* lined-paper background */
+  background-image:
+    repeating-linear-gradient(
+      transparent,
+      transparent 24px,
+      rgba(0, 0, 0, 0.06) 24px,
+      rgba(0, 0, 0, 0.06) 25px
+    );
+  background-position: 0 44px;
+}
+
+/* Slight rotations per card position for a hand-pinned feel */
+.student-notebook__card--0 { transform: rotate(-1.4deg); }
+.student-notebook__card--1 { transform: rotate(0.7deg); }
+.student-notebook__card--2 { transform: rotate(-0.5deg); }
+
+/* Thumbtack */
+.student-notebook__pin {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e0e0e0, #9e9e9e 60%, #616161);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  z-index: 2;
+}
+
+.student-notebook__pin::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 8px;
+  background: linear-gradient(#9e9e9e, #616161);
+  border-radius: 0 0 2px 2px;
+}
+
+/* Colored header strip */
+.student-notebook__card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cat-color);
+  padding: 10px 14px;
+  border-radius: 3px 3px 0 0;
+}
+
+.student-notebook__card-emoji {
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));
+}
+
+.student-notebook__card-label {
+  font-family: 'Baloo 2', cursive;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+/* Note items */
+.student-notebook__note-list {
+  list-style: none;
+  margin: 0;
+  padding: 10px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.student-notebook__note-item {
+  font-size: 13.5px;
+  color: #2c1a06;
+  line-height: 25px;          /* matches the 25px lined-paper rule */
+  padding: 0 0 0 4px;
+  border-left: 3px solid var(--cat-color);
+  margin-bottom: 4px;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.student-notebook__note-item:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 680px) {
+  .student-notebook__card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 760px) {
+  .student-detail {
+    padding: 16px 16px 32px;
+  }
+
+  .student-detail__corkboard {
+    padding: 40px 16px 24px;
+  }
+
+  .student-detail__name {
+    font-size: 28px;
+  }
 }

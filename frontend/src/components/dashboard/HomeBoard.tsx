@@ -2,6 +2,7 @@ import BoardItem from "@/components/dashboard/BoardItem.tsx";
 import corkBoard from '../../assets/images/studentHomeBoard/cork_board.png';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './HomeBoard.css';
+import LogoutButton from "../ui/buttons/LogoutButton";
 
 type BoardItemData = {
   id: string;
@@ -22,6 +23,9 @@ function HomeBoard({ items }: HomeBoardProps) {
           {items.map((items) => (
               <BoardItem key={items.id} {...items} />
           ))}
+        </div>
+        <div style={{ position: 'absolute', bottom: '24px', left: '24px' }}>
+          <LogoutButton />
         </div>
       </div>
   );

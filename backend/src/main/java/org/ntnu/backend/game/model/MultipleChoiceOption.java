@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
 import org.ntnu.backend.game.model.enums.LevelType;
-import org.ntnu.backend.game.service.OptionParser;
-import org.ntnu.backend.game.service.OptionValidator;
+import org.ntnu.backend.game.util.OptionParser;
+import org.ntnu.backend.game.util.OptionValidator;
 
 /**
  * A single option in a {@link LevelType#MULTIPLE_CHOICE} question. Stored as JSON
@@ -39,7 +39,6 @@ public final class MultipleChoiceOption implements Option {
     @NotBlank
     private String text;
 
-    @NotBlank
     private String imageUrl;
 
     @JsonProperty("isCorrect")

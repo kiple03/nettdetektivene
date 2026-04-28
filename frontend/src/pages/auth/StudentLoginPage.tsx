@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import { register } from '@/api/authApi';
@@ -14,10 +14,12 @@ import {
 } from '@/utils/validators';
 import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
+import { useQueryClient } from '@tanstack/react-query';
 
 function StudentLoginPage() {
   const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
+  const registerButtonRef = useRef<HTMLButtonElement>(null);
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirm, setRegConfirm] = useState('');
@@ -39,6 +41,7 @@ function StudentLoginPage() {
     navigate('/auth/feide', { state: { portalRole: 'STUDENT' } });
   };
 
+  const queryClient = useQueryClient(); //for award system
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError('');
@@ -52,6 +55,9 @@ function StudentLoginPage() {
       const res = await register({ email: regEmail, password: regPassword, role: 'STUDENT' });
       setToken(res.accessToken);
       window.dispatchEvent(new Event('auth-changed'));
+
+      queryClient.clear();
+
       navigate('/avatar');
     } catch (err) {
       const axiosErr = err as AxiosError<ApiErrorBody>;
@@ -76,7 +82,9 @@ function StudentLoginPage() {
 
       <div className="student-login__card">
         <div className="student-login__paper">
-          <div className="student-login__badge">🔍</div>
+          <div className="student-login__badge">
+            <span aria-hidden={"true"}>🔍</span>
+          </div>
           <h1 className="student-login__title">Nettdetektivene</h1>
           <p className="student-login__subtitle">
             Bli med og beskytt internettbyen!
@@ -91,6 +99,7 @@ function StudentLoginPage() {
           </div>
 
           <button
+            ref={registerButtonRef}
             className="student-login__register-btn"
             onClick={() => setShowRegister(true)}
           >
@@ -105,6 +114,7 @@ function StudentLoginPage() {
             subtitle="Registrer deg for å bli en nettdetektiv!"
             submitLabel="Opprett konto"
             onClose={() => setShowRegister(false)}
+            returnFocusRef={registerButtonRef}
             onSubmit={handleRegister}
             error={regError}
             fieldErrors={regFieldErrors}

@@ -22,7 +22,7 @@ public class LoginResponse {
    * Short-lived JWT used to authenticate API requests.
    * Attach as {@code Authorization: Bearer <accessToken>} on each request.
    */
-  @Schema(description = "Short-lived JWT access token")
+  @Schema(description = "Short-lived JWT access token", example = "jwt.for.user")
   private String accessToken;
 
   /**

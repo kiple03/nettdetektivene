@@ -1,4 +1,5 @@
 import clientApi from './client';
+import { setToken } from '@/stores/authStore';
 import type { EquippedItem, UserProfile } from '@/types/user';
 
 // Raw response types from backend (internal, not exported)
@@ -18,6 +19,7 @@ interface RawInventoryItem {
 interface RawUserProfile {
   username: string;
   equippedItems: RawEquippedItem[];
+  hairColor?: string;
 }
 
 
@@ -34,6 +36,7 @@ function mapUserProfile(raw: RawUserProfile): UserProfile {
   return {
     username: raw.username,
     equippedItems: raw.equippedItems.map(mapEquippedItem),
+    hairColor: raw.hairColor,
   };
 }
 
@@ -47,7 +50,8 @@ export const saveAvatarOutfit = async (itemIds: string[]) => {
   return response.data;
 }
 
-export const updateUserProfile = async (username: string) => {
-  const response = await clientApi.put('/user/profile', { username });
-  return response.data;
+export const updateUserProfile = async (username: string, hairColor?: string): Promise<void> => {
+  const response = await clientApi.put<{ accessToken: string }>('/user/profile', { username, hairColor });
+  setToken(response.data.accessToken);
+  window.dispatchEvent(new Event('auth-changed'));
 };

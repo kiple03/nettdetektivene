@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getClassroomSummaries, getClassroom } from '../services/teacherService';
+import { getClassroomSummaries, getClassroom } from '../api/teacherApi';
 
 vi.mock('../api/client', () => ({
   default: {
@@ -17,9 +17,11 @@ const RAW_SUMMARY = {
   joinCode: 'ABC123',
   createdAt: '2025-01-01T10:00:00',
   studentCount: 3,
-  assignmentCount: 8,
-  completedCount: 5,
+  totalStops: 10,
+  avgStopPosition: 5,
   progressPercent: 63,
+  avgScore: 42,
+  teacherUsernames: ['teacher-a'],
 };
 
 const RAW_DETAIL = {
@@ -49,9 +51,11 @@ describe('getClassroomSummaries', () => {
         joinCode: 'ABC123',
         createdAt: '2025-01-01T10:00:00',
         studentCount: 3,
-        assignmentCount: 8,
-        completedCount: 5,
+        totalStops: 10,
+        avgStopPosition: 5,
         progressPercent: 63,
+        avgScore: 42,
+        teacherUsernames: ['teacher-a'],
       },
     ]);
   });

@@ -126,6 +126,12 @@
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>3.0.2</version>
     </dependency>
+      <dependency>
+          <groupId>org.testng</groupId>
+          <artifactId>testng</artifactId>
+          <version>7.5.1</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
   <build>

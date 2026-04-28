@@ -1,6 +1,6 @@
 package org.ntnu.backend.classroom.dto;
 
-import java.util.List;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,5 +13,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public class StudentDetailResponse {
     private String username;
-    private List<LevelCompletionEntry> completions;
+    private String email;
+    private Instant enrolledAt;
+    private String currentStopName;
+    private int currentLevelOrder;
+    private int totalLevelsCompleted;
+    private boolean gameCompleted;
 }

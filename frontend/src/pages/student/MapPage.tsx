@@ -1,16 +1,18 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "./MapPage.module.css";
-import BackButton from "@/components/ui/buttons/backButton/BackButton.tsx";
+import { type CSSProperties, useState, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import { getGameStops } from "@/api/gameApi";
+import { studentKeys } from "@/hooks/student/queryKeys";
+import type { EquippedItem } from "@/types/user";
 import styles from "./MapPage.module.css";
+import { StopMap } from "@/components/map/StopMap";
+import { MAP_STOPS, type StopData } from "@/data/mapStops";
+import internettbyenLogo from "@/assets/images/map/internettbyen-logo.png";
+import detektivkontoret from "@/assets/images/map/detektivkontoret.png";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
-import detektivkontoret from "@/assets/images/map/detektivkontoret.svg";
-import fotografen from "@/assets/images/map/fotografen.svg";
-import markedsplassen from "@/assets/images/map/markedsplassen.svg";
-import moteplassen from "@/assets/images/map/møteplassen.svg";
-import nyhetskvartalet from "@/assets/images/map/nyhetskvartalet.svg";
-import passordbanken from "@/assets/images/map/passordbanken.svg";
-import postkontoret from "@/assets/images/map/postkontoret.svg";
+import sharkBase from "@/assets/images/boss/shark-base.png";
+import { CarWithAvatar } from "@/components/map/CarWithAvatar";
 import {
     AlertDialog,
     AlertDialogContent,
@@ -19,163 +21,159 @@ import {
 } from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
-
-interface Level {
-    step: string;
-    title: string;
-    route: string;
-    x: string;
-    y: string;
-    icon: string;
-    unlocked: boolean;
-}
-
-const levels: Level[] = [
-    {
-        step: "1",
-        title: "Nyhetskvartalet",
-        route: "/game",
-        x: "8%",
-        y: "46%",
-        icon: nyhetskvartalet,
-        unlocked: true,
-    },
-    {
-        step: "2",
-        title: "Fotografen",
-        route: "/levelTwo",
-        x: "27%",
-        y: "28%",
-        icon: fotografen,
-        unlocked: false,
-    },
-    {
-        step: "3",
-        title: "Postkontoret",
-        route: "/levelThree",
-        x: "34%",
-        y: "63%",
-        icon: postkontoret,
-        unlocked: false,
-    },
-    {
-        step: "4",
-        title: "Passordbanken",
-        route: "/levelFour",
-        x: "53%",
-        y: "33%",
-        icon: passordbanken,
-        unlocked: false,
-    },
-    {
-        step: "5",
-        title: "Markedsplassen",
-        route: "/levelFive",
-        x: "61%",
-        y: "11%",
-        icon: markedsplassen,
-        unlocked: false,
-    },
-    {
-        step: "6",
-        title: "Den sosiale møteplassen",
-        route: "/levelSix",
-        x: "72%",
-        y: "78%",
-        icon: moteplassen,
-        unlocked: false,
-    },
-    {
-        step: "7",
-        title: "Datasenteret",
-        route: "/levelFinal",
-        x: "84%",
-        y: "39%",
-        icon: datasenteret,
-        unlocked: false,
-    },
-];
+import { StopLevelsModal } from "@/components/map/StopLevelsModal";
 
 export default function MapPage() {
-    const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
-    const [lockedLevelTitle, setLockedLevelTitle] = useState("");
-    const navigate = useNavigate();
+    const { data: profile } = useUserProfile();
+    const { data: backendStops = [] } = useQuery({ queryKey: studentKeys.gameStops, queryFn: getGameStops });
 
-    const handleLevelClick = (level: Level) => {
-        if (level.unlocked) {
-            // Navigate directly when the user clicks the unlocked icon
-            navigate(level.route);
-            return;
-        }
-
-        setLockedLevelTitle(level.title);
-        setLockedDialogOpen(true);
+    const isUnlocked = (title: string) => {
+        if (!backendStops.length) return false;
+        const backend = backendStops.find(s => s?.name?.toLowerCase() === title.toLowerCase());
+        return backend ? !backend.locked : false;
     };
 
+    const stopIdByTitle = Object.fromEntries(backendStops.map(s => [s.name, s.id]));
+    const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const autoStopId = Number(searchParams.get("levelId")) || null;
+    const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
+    const [lockedStopTitle, setLockedStopTitle] = useState("");
+    const [adminBypassInput, setAdminBypassInput] = useState("");
+    const [currentPathOffset, setCurrentPathOffset] = useState("5%");
+    const [animating, setAnimating] = useState(false);
+    const [carReversed, setCarReversed] = useState(false);
+    const [carOffsetPath, setCarOffsetPath] = useState<string | null>(null);
+    const [manualPendingStop, setManualPendingStop] = useState<StopData | null>(null);
+
+    const autoStop = useMemo(() => {
+        if (!autoStopId || !backendStops.length) return null;
+        const match = backendStops.find(s => s.id === autoStopId);
+        if (!match) return null;
+        return MAP_STOPS.find(l => l.title === match.name) ?? null;
+    }, [autoStopId, backendStops]);
+
+    const pendingStop = manualPendingStop ?? autoStop;
+
+    const animateTo = (offset: string, onDone: () => void) => {
+        if (animating) return;
+        if (offset === currentPathOffset) { onDone(); return; }
+        setCarReversed(parseFloat(offset) < parseFloat(currentPathOffset));
+        setAnimating(true);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setCurrentPathOffset(offset);
+                setTimeout(() => { setAnimating(false); setCarReversed(false); onDone(); }, 1200);
+            });
+        });
+    };
+
+    const handleAdminBypassInput = (value: string) => {
+        setAdminBypassInput(value);
+        if (value === "admin") {
+            setLockedDialogOpen(false);
+            setAdminBypassInput("");
+            navigate("/boss");
+        }
+    };
+
+    const handleStopClick = (stop: StopData) => {
+        animateTo(stop.pathOffset, () => {
+            if (isUnlocked(stop.title)) {
+                setManualPendingStop(stop);
+            } else {
+                setLockedStopTitle(stop.title);
+                setLockedDialogOpen(true);
+            }
+        });
+    };
+
+    const handleBackClick = () => animateTo("0%", () => navigate("/home"));
+
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <h1>Velg nivå</h1>
-                <p>Velge neste nivå</p>
-            </div>
-
-            <div className={styles.levelGrid}>
-                <BackButton
-                    className={styles.hotspot}
-                    style={{ top: "6%", left: "1.5%" }}
-                    ariaLabel="Gå tilbake"
-                >
-                    <div className={styles.iconWrapper}>
-                        <img
-                            src={detektivkontoret}
-                            alt="Tilbake til Detektivkontoret"
-                            className={styles.icon}
-                        />
+        <>
+            <StopMap
+                stops={MAP_STOPS}
+                onStopClick={handleStopClick}
+                onBackClick={handleBackClick}
+                backIcon={<img src={detektivkontoret} alt="Tilbake til Detektivkontoret" className={styles.icon} />}
+                onCarPathReady={setCarOffsetPath}
+                header={
+                    <div className={styles.header}>
+                        <img src={internettbyenLogo} alt="Internettbyen" className={styles.headerLogo} />
+                        <p>Velg et stop</p>
                     </div>
-                </BackButton>
-
-                {levels.map((level) => (
-                    <button
-                        key={level.step}
-                        type="button"
-                        className={styles.hotspot}
-                        style={{ top: level.y, left: level.x }}
-                        onClick={() => handleLevelClick(level)}
-                        aria-label={level.title}
-                    >
-                        <div className={styles.iconWrapper}>
+                }
+                renderStopIcon={(stop) => {
+                    if (stop.title === "Datasenteret" && !isUnlocked(stop.title)) {
+                        return (
+                            <>
+                                <div className={styles.datasenteretIcons}>
+                                    <img src={datasenteret} alt="Datasenteret" className={`${styles.icon} ${styles.lockedIcon}`} />
+                                    <div className={styles.sharkWrapper}>
+                                        <img src={sharkBase} alt="Shark" className={`${styles.icon} ${styles.sharkSilhouette}`} />
+                                        <span className={styles.sharkQuestionMark}>?</span>
+                                    </div>
+                                </div>
+                                <LockBadge />
+                            </>
+                        );
+                    }
+                    return (
+                        <>
                             <img
-                                src={level.icon}
-                                alt={level.title}
-                                className={`${styles.icon} ${!level.unlocked ? styles.lockedIcon : ""}`}
+                                src={stop.icon}
+                                alt={stop.title}
+                                className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.lockedIcon : ""}`}
                             />
+                            {!isUnlocked(stop.title) && <LockBadge />}
+                        </>
+                    );
+                }}
+            >
+                <div
+                    className={`${styles.car} ${animating ? styles.carAnimating : ""}`}
+                    style={{
+                        "--car-offset": currentPathOffset,
+                        ...(carOffsetPath ? { offsetPath: `path("${carOffsetPath}")` } : {}),
+                    } as CSSProperties}
+                >
+                    <div className={carReversed ? styles.carFlipped : undefined}>
+                        <CarWithAvatar items={equippedItems} size={140} hairColor={profile?.hairColor} />
+                    </div>
+                </div>
+            </StopMap>
 
-                            {!level.unlocked && <LockBadge />}
-                        </div>
-                    </button>
-                ))}
-            </div>
+            <StopLevelsModal
+                stop={pendingStop ? { title: pendingStop.title, stopId: stopIdByTitle[pendingStop.title] ?? null } : null}
+                onClose={() => {
+                    setManualPendingStop(null);
+                    if (searchParams.has("levelId")) setSearchParams({});
+                }}
+            />
 
-            <AlertDialog open={lockedDialogOpen} onOpenChange={setLockedDialogOpen}>
+            <AlertDialog open={lockedDialogOpen} onOpenChange={(open) => { setLockedDialogOpen(open); if (!open) setAdminBypassInput(""); }}>
                 <AlertDialogContent>
                     <AlertDialogTitle>Nivå låst 🔒</AlertDialogTitle>
-
                     <AlertDialogDescription>
-                        {lockedLevelTitle} er ikke åpnet ennå. Du må fullføre de tidligere nivåene først.
+                        {lockedStopTitle} er ikke åpnet ennå. Du må fullføre de tidligere nivåene først.
                     </AlertDialogDescription>
-
+                    {lockedStopTitle === "Datasenteret" && (
+                        <input
+                            type="text"
+                            className={styles.adminBypassInput}
+                            value={adminBypassInput}
+                            onChange={(e) => handleAdminBypassInput(e.target.value)}
+                            autoComplete="off"
+                            aria-label="admin"
+                        />
+                    )}
                     <div className={styles.dialogActions}>
-                        <Button
-                            variant="fun"
-                            type="button"
-                            onClick={() => setLockedDialogOpen(false)}
-                        >
-                            Lukk
-                        </Button>
+                        <Button variant="fun" type="button" onClick={() => setLockedDialogOpen(false)}>Lukk</Button>
                     </div>
                 </AlertDialogContent>
             </AlertDialog>
-        </div>
+        </>
     );
-
 }

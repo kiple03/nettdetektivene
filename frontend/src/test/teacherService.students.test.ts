@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getStudentProgress } from '../services/teacherService';
+import { getStudentProgress } from '../api/teacherApi';
 
 vi.mock('../api/client', () => ({
   default: {
@@ -13,8 +13,11 @@ const mockedGet = apiClient.get as ReturnType<typeof vi.fn>;
 const RAW_STUDENT = {
   userId: 'user-uuid-1',
   username: 'alice',
-  levelsCompleted: 3,
+  email: 'alice@example.com',
+  currentStopDisplayOrder: 3,
+  totalStops: 10,
   medalsEarned: 3,
+  score: 150,
 };
 
 beforeEach(() => {
@@ -32,8 +35,12 @@ describe('getStudentProgress', () => {
       {
         userId: 'user-uuid-1',
         username: 'alice',
-        levelsCompleted: 3,
+        email: 'alice@example.com',
+        currentStopDisplayOrder: 3,
+        totalStops: 10,
         medalsEarned: 3,
+        score: 150,
+        equippedItems: [],
       },
     ]);
   });
@@ -45,7 +52,15 @@ describe('getStudentProgress', () => {
   });
 
   it('maps multiple students correctly', async () => {
-    const raw2 = { userId: 'user-uuid-2', username: 'bob', levelsCompleted: 1, medalsEarned: 1 };
+    const raw2 = {
+      userId: 'user-uuid-2',
+      username: 'bob',
+      email: 'bob@example.com',
+      currentStopDisplayOrder: 1,
+      totalStops: 10,
+      medalsEarned: 1,
+      score: 50,
+    };
     mockedGet.mockResolvedValueOnce({ data: [RAW_STUDENT, raw2] });
 
     const result = await getStudentProgress('classroom-uuid-1');
@@ -54,8 +69,12 @@ describe('getStudentProgress', () => {
     expect(result[1]).toEqual({
       userId: 'user-uuid-2',
       username: 'bob',
-      levelsCompleted: 1,
+      email: 'bob@example.com',
+      currentStopDisplayOrder: 1,
+      totalStops: 10,
       medalsEarned: 1,
+      score: 50,
+      equippedItems: [],
     });
   });
 

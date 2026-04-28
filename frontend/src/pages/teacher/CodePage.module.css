@@ -1,13 +1,11 @@
+/* ── Page shell ──────────────────────────────────────────────── */
 .page {
     position: relative;
     min-height: 100vh;
     background:
-            radial-gradient(circle at top right, rgba(251, 191, 36, 0.14), transparent 28%),
-            radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.12), transparent 24%),
-            linear-gradient(180deg, #2a1035 0%, #3a112d 45%, #2a0b26 100%);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+        radial-gradient(circle at top right, rgba(251, 191, 36, 0.14), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.12), transparent 24%),
+        linear-gradient(180deg, #2a1035 0%, #3a112d 45%, #2a0b26 100%);
     overflow: hidden;
 }
 
@@ -39,454 +37,259 @@
 }
 
 @keyframes floatGlow {
-    0%, 100% {
-        transform: translateY(0) scale(1);
-    }
-    50% {
-        transform: translateY(-28px) scale(1.05);
-    }
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%       { transform: translateY(-28px) scale(1.05); }
 }
 
 .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.10);
+    background: rgba(0, 0, 0, 0.08);
     backdrop-filter: blur(2px);
 }
 
+/* ── Back button (subtle, top-left, teachers only) ───────────── */
+.backLink {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.45);
+    font-family: sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 13px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.backLink:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Dashboard button (below board) ─────────────────────────── */
+.dashboardLink {
+    display: block;
+    margin: 28px auto 0;
+    background: rgba(251, 191, 36, 0.18);
+    border: 1px solid rgba(251, 191, 36, 0.35);
+    border-radius: 8px;
+    color: rgba(255, 220, 100, 0.85);
+    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.dashboardLink:hover {
+    background: rgba(251, 191, 36, 0.32);
+    color: #fbbf24;
+}
+
+/* ── Centered wrapper ────────────────────────────────────────── */
 .wrapper {
     position: relative;
     z-index: 1;
-    width: 100%;
     min-height: 100vh;
-    padding: 36px 24px 40px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
 }
 
-.backButton {
-    align-self: flex-start;
-    margin: 0 0 20px;
-    padding: 10px 16px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.88);
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    backdrop-filter: blur(8px);
-    transition: all 0.2s ease;
-}
-
-.backButton:hover {
-    background: rgba(255, 255, 255, 0.22);
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
-}
-
-.topBox {
-    width: 100%;
-    max-width: 540px;
-    margin: 0 auto 26px;
-    padding: 20px;
-    text-align: center;
-    border-radius: 8px;
+/* ── Board (single wooden-framed card) ───────────────────────── */
+.board {
     position: relative;
+    width: 100%;
+    max-width: 1120px;
     background:
-            radial-gradient(circle at 15% 25%, rgba(90, 50, 20, 0.12) 1px, transparent 1px),
-            radial-gradient(circle at 75% 60%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
-            radial-gradient(circle at 40% 80%, rgba(160, 110, 60, 0.08) 1.5px, transparent 1.5px),
-            radial-gradient(circle at 85% 15%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
-            radial-gradient(ellipse at 20% 50%, rgba(139, 90, 43, 0.10) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 30%, rgba(160, 100, 40, 0.08) 0%, transparent 45%),
-            radial-gradient(ellipse at 50% 90%, rgba(120, 70, 30, 0.07) 0%, transparent 40%),
-            repeating-conic-gradient(
-                    rgba(139, 90, 43, 0.07) 0% 25%,
-                    transparent 0% 50%
-            ) 0 0 / 12px 12px,
-            repeating-conic-gradient(
-                    rgba(100, 60, 25, 0.05) 0% 25%,
-                    transparent 0% 50%
-            ) 6px 6px / 18px 18px,
-            linear-gradient(
-                    145deg,
-                    #c4956a 0%,
-                    #b8865a 15%,
-                    #c9986d 30%,
-                    #b07a4a 50%,
-                    #c4916a 65%,
-                    #ba8858 80%,
-                    #c09060 100%
-            );
-    border: 12px solid #6b3e1f;
+        radial-gradient(circle at 15% 25%, rgba(90, 50, 20, 0.12) 1px, transparent 1px),
+        radial-gradient(circle at 75% 60%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
+        radial-gradient(circle at 40% 80%, rgba(160, 110, 60, 0.08) 1.5px, transparent 1.5px),
+        radial-gradient(circle at 85% 15%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
+        radial-gradient(ellipse at 20% 50%, rgba(139, 90, 43, 0.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(160, 100, 40, 0.08) 0%, transparent 45%),
+        repeating-conic-gradient(rgba(139, 90, 43, 0.07) 0% 25%, transparent 0% 50%) 0 0 / 12px 12px,
+        repeating-conic-gradient(rgba(100, 60, 25, 0.05) 0% 25%, transparent 0% 50%) 6px 6px / 18px 18px,
+        linear-gradient(145deg, #c4956a 0%, #b8865a 15%, #c9986d 30%, #b07a4a 50%, #c4916a 65%, #c09060 100%);
+    border: 14px solid #6b3e1f;
+    border-radius: 8px;
     box-shadow:
-            0 20px 60px rgba(0, 0, 0, 0.45),
-            inset 0 2px 10px rgba(0, 0, 0, 0.15),
-            4px 4px 0 #5a3218;
+        0 28px 70px rgba(0, 0, 0, 0.55),
+        5px 5px 0 #5a3218,
+        inset 0 2px 10px rgba(0, 0, 0, 0.15);
 }
 
-.topBox::after {
-    content: '';
+/* Red pin at top center */
+.pin {
     position: absolute;
-    top: -2px;
+    top: -11px;
     left: 50%;
     transform: translateX(-50%);
-    width: 22px;
-    height: 22px;
-    background: radial-gradient(circle at 35% 35%, #ef4444, #b91c1c);
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    box-shadow:
-            0 2px 6px rgba(0, 0, 0, 0.35),
-            inset 0 -2px 3px rgba(0, 0, 0, 0.2);
+    background: radial-gradient(circle at 35% 35%, #ef4444, #b91c1c);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45), inset 0 -2px 3px rgba(0, 0, 0, 0.2);
     z-index: 10;
 }
 
-.topBox > * {
-    position: relative;
-    z-index: 1;
-}
-
-.topBox::before {
-    content: '';
-    position: absolute;
-    inset: 12px;
+/* ── Paper inside the board ──────────────────────────────────── */
+.boardInner {
+    margin: 16px;
+    background: linear-gradient(170deg, #fdf6e3 0%, #f5ecda 40%, #faf0de 70%, #f3e8d0 100%);
     border-radius: 2px;
-    background:
-            radial-gradient(circle at 10% 20%, rgba(160, 130, 90, 0.10) 1px, transparent 1px),
-            radial-gradient(circle at 55% 10%, rgba(140, 110, 70, 0.08) 1.5px, transparent 1.5px),
-            radial-gradient(circle at 80% 45%, rgba(160, 130, 90, 0.09) 1px, transparent 1px),
-            radial-gradient(circle at 30% 75%, rgba(140, 110, 70, 0.07) 2px, transparent 2px),
-            radial-gradient(circle at 90% 85%, rgba(160, 130, 90, 0.08) 1px, transparent 1px),
-            radial-gradient(ellipse at 15% 60%, rgba(180, 150, 100, 0.08) 0%, transparent 50%),
-            radial-gradient(ellipse at 75% 25%, rgba(170, 140, 90, 0.07) 0%, transparent 45%),
-            radial-gradient(ellipse at 50% 90%, rgba(180, 150, 100, 0.06) 0%, transparent 40%),
-            linear-gradient(170deg, #fdf6e3 0%, #f5ecda 40%, #faf0de 70%, #f3e8d0 100%);
-    box-shadow:
-            2px 3px 8px rgba(0, 0, 0, 0.15),
-            inset 0 0 40px rgba(139, 90, 43, 0.06);
-    z-index: 0;
+    padding: 46px 40px 54px;
+    text-align: center;
+    box-shadow: inset 0 0 40px rgba(139, 90, 43, 0.05), 2px 3px 8px rgba(0, 0, 0, 0.12);
 }
 
-.topTitle {
-    position: relative;
-    margin: 12px 0 10px;
-    font-size: 2rem;
-    font-weight: 800;
-    line-height: 1.2;
-    color: #3b1a0a;
-    text-align: center;
+/* ── Text content ────────────────────────────────────────────── */
+.classTitle {
     font-family: 'Georgia', serif;
+    font-size: 3.1rem;
+    font-weight: 800;
+    color: #3b1a0a;
+    margin: 0 0 8px;
+    line-height: 1.2;
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
 }
 
-.topText {
-    position: relative;
-    margin: 0 auto;
-    max-width: 380px;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #6b4c30;
-    text-align: center;
-    font-weight: 600;
+.subtitle {
+    font-family: sans-serif;
+    font-size: 1.15rem;
+    color: #7a5c30;
     font-style: italic;
+    font-weight: 500;
+    margin: 0;
 }
 
-.bottomSection {
-    position: relative;
-    width: 100%;
-    max-width: 540px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+.divider {
+    width: 55%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(107, 62, 31, 0.28), transparent);
+    margin: 28px auto;
 }
 
-.formBox {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    padding: 20px;
-    border-radius: 8px;
-    background:
-            radial-gradient(circle at 15% 25%, rgba(90, 50, 20, 0.12) 1px, transparent 1px),
-            radial-gradient(circle at 75% 60%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
-            radial-gradient(circle at 40% 80%, rgba(160, 110, 60, 0.08) 1.5px, transparent 1.5px),
-            radial-gradient(circle at 85% 15%, rgba(90, 50, 20, 0.10) 1px, transparent 1px),
-            radial-gradient(ellipse at 20% 50%, rgba(139, 90, 43, 0.10) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 30%, rgba(160, 100, 40, 0.08) 0%, transparent 45%),
-            radial-gradient(ellipse at 50% 90%, rgba(120, 70, 30, 0.07) 0%, transparent 40%),
-            repeating-conic-gradient(
-                    rgba(139, 90, 43, 0.07) 0% 25%,
-                    transparent 0% 50%
-            ) 0 0 / 12px 12px,
-            repeating-conic-gradient(
-                    rgba(100, 60, 25, 0.05) 0% 25%,
-                    transparent 0% 50%
-            ) 6px 6px / 18px 18px,
-            linear-gradient(
-                    145deg,
-                    #c4956a 0%,
-                    #b8865a 15%,
-                    #c9986d 30%,
-                    #b07a4a 50%,
-                    #c4916a 65%,
-                    #ba8858 80%,
-                    #c09060 100%
-            );
-    border: 12px solid #6b3e1f;
-    box-shadow:
-            0 20px 60px rgba(0, 0, 0, 0.45),
-            inset 0 2px 10px rgba(0, 0, 0, 0.15),
-            4px 4px 0 #5a3218;
-}
-
-.formBox::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 22px;
-    height: 22px;
-    background: radial-gradient(circle at 35% 35%, #ef4444, #b91c1c);
-    border-radius: 50%;
-    box-shadow:
-            0 2px 6px rgba(0, 0, 0, 0.35),
-            inset 0 -2px 3px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-}
-
-.formBox > * {
-    position: relative;
-    z-index: 1;
-}
-
-.formBox::before {
-    content: '';
-    position: absolute;
-    inset: 12px;
-    border-radius: 2px;
-    background:
-            radial-gradient(circle at 10% 20%, rgba(160, 130, 90, 0.10) 1px, transparent 1px),
-            radial-gradient(circle at 55% 10%, rgba(140, 110, 70, 0.08) 1.5px, transparent 1.5px),
-            radial-gradient(circle at 80% 45%, rgba(160, 130, 90, 0.09) 1px, transparent 1px),
-            radial-gradient(circle at 30% 75%, rgba(140, 110, 70, 0.07) 2px, transparent 2px),
-            radial-gradient(circle at 90% 85%, rgba(160, 130, 90, 0.08) 1px, transparent 1px),
-            radial-gradient(ellipse at 15% 60%, rgba(180, 150, 100, 0.08) 0%, transparent 50%),
-            radial-gradient(ellipse at 75% 25%, rgba(170, 140, 90, 0.07) 0%, transparent 45%),
-            radial-gradient(ellipse at 50% 90%, rgba(180, 150, 100, 0.06) 0%, transparent 40%),
-            linear-gradient(170deg, #fdf6e3 0%, #f5ecda 40%, #faf0de 70%, #f3e8d0 100%);
-    box-shadow:
-            2px 3px 8px rgba(0, 0, 0, 0.15),
-            inset 0 0 40px rgba(139, 90, 43, 0.06);
-    z-index: 0;
-}
-
-.label {
-    display: block;
-    width: 100%;
-    margin: 14px 0 22px;
-    font-size: 2.1rem;
+.codeLabel {
+    font-family: sans-serif;
+    font-size: 0.85rem;
     font-weight: 800;
-    line-height: 1.2;
-    color: #3b1a0a;
-    text-align: center;
-    font-family: 'Georgia', serif;
-    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.35);
-}
-
-.codeDisplayWrapper {
-    position: relative;
-    width: 100%;
-    max-width: 360px;
-    margin: 0 auto;
-}
-
-.codeDisplay {
-    width: 100%;
-    min-height: 78px;
-    padding: 0 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: rgba(107, 62, 31, 0.08);
-    border: 2.5px dashed #8b6340;
-    border-radius: 6px;
-    box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.45),
-            0 4px 10px rgba(107, 62, 31, 0.12);
-}
-
-.codeSlot {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.codeChar {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 18px;
-    height: 32px;
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 1;
-    user-select: text;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
+    color: #9a7040;
+    margin: 0 0 28px;
 }
 
-.codeFilled {
-    color: #3b1a0a;
+/* ── Code row ────────────────────────────────────────────────── */
+.codeRow {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 22px;
 }
 
-.codePlaceholder {
-    color: #b29a84;
-}
-
-.codeDash {
-    min-width: 12px;
-    margin: 0 2px;
-    color: #8b6340;
-    font-weight: 700;
-}
-
-.innerDetective {
-    position: absolute;
-    top: 50%;
-    width: 42px;
+.detective {
+    width: 86px;
     height: auto;
-    transform: translateY(-50%);
-    pointer-events: none;
-    z-index: 2;
-    filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.18));
+    flex-shrink: 0;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.22));
+    margin-bottom: 4px;
 }
 
-.leftDetective {
-    left: 10px;
+.detectiveRight {
+    transform: scaleX(-1);
 }
 
-.rightDetective {
-    right: 10px;
-    transform: translateY(-50%) scaleX(-1);
-}
-
-.buttonWrapper {
-    width: 100%;
+/* ── Letter tiles ────────────────────────────────────────────── */
+.tiles {
     display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Wider gap between char 3 and char 4 */
+.tileSpacer {
+    width: 26px;
+    flex-shrink: 0;
+}
+
+.tile {
+    width: 82px;
+    height: 98px;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin-top: 24px;
-}
-
-.fortsettButton {
-    width: 100%;
-    max-width: 360px;
-    padding: 16px 24px;
-    font-size: 1.02rem;
-    font-weight: 700;
-    color: #fdf6e3;
-    background: linear-gradient(135deg, #5a3218 0%, #6b3e1f 40%, #7a4a28 100%);
-    border: 2px solid #4a2810;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.25s ease;
+    font-family: 'Georgia', serif;
+    font-size: 3.35rem;
+    font-weight: 800;
+    color: #3b1a0a;
+    background: linear-gradient(150deg, #fdf6e3 0%, #f0e4c8 60%, #e8d8b8 100%);
+    border-radius: 7px;
+    border: 2.5px solid #8b6340;
     box-shadow:
-            0 3px 10px rgba(74, 40, 16, 0.35),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+        0 5px 0 #6b4820,
+        0 8px 16px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.45);
+    user-select: text;
 }
 
-.fortsettButton:hover {
-    background: linear-gradient(135deg, #4a2810 0%, #5a3218 40%, #6b3e1f 100%);
-    transform: translateY(-3px) rotate(0.3deg);
-    box-shadow: 0 8px 25px rgba(74, 40, 16, 0.45);
-}
-
-.fortsettButton:active {
-    transform: translateY(-1px);
-}
-
-@media (max-width: 760px) {
-    .wrapper {
-        padding: 20px 16px 28px;
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .board {
+        border-width: 10px;
     }
 
-    .backButton {
-        margin-bottom: 16px;
+    .boardInner {
+        margin: 12px;
+        padding: 30px 16px 38px;
     }
 
-    .topBox {
-        margin-bottom: 20px;
-        padding: 16px;
-        border-width: 8px;
+    .pin {
+        width: 20px;
+        height: 20px;
     }
 
-    .formBox {
-        padding: 16px;
-        border-width: 8px;
+    .classTitle {
+        font-size: 2.1rem;
     }
 
-    .topBox::before,
-    .formBox::before {
-        inset: 8px;
-    }
-
-    .topTitle {
-        font-size: 1.7rem;
-    }
-
-    .topText {
+    .subtitle {
         font-size: 0.95rem;
     }
 
-    .label {
-        font-size: 1.7rem;
-        margin-top: 10px;
+    .codeRow {
+        gap: 12px;
     }
 
-    .codeDisplayWrapper {
-        max-width: 100%;
+    .detective {
+        width: 58px;
     }
 
-    .codeDisplay {
-        min-height: 68px;
-        padding: 0 50px;
+    .tiles {
         gap: 6px;
     }
 
-    .innerDetective {
-        width: 34px;
+    .tile {
+        width: 54px;
+        height: 66px;
+        font-size: 2.1rem;
+        border-radius: 5px;
     }
 
-    .leftDetective {
-        left: 8px;
-    }
-
-    .rightDetective {
-        right: 8px;
-    }
-
-    .codeChar {
-        min-width: 14px;
-        font-size: 1.15rem;
-    }
-
-    .codeDash {
-        min-width: 10px;
-    }
-
-    .buttonWrapper {
-        margin-top: 20px;
-    }
-
-    .fortsettButton {
-        max-width: 100%;
-        font-size: 0.95rem;
-        padding: 14px 18px;
+    .tileSpacer {
+        width: 14px;
     }
 }
