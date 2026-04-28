@@ -162,7 +162,7 @@ public class GameController {
           + "with validating all answers to all the levels question is correct. "
           + "Should only be called when a user has all the right answers to a level"
   )
-  @ApiResponse(responseCode = "200", description = "All correct answers, user progress is updated")
+  @ApiResponse(responseCode = "204", description = "All correct answers, user progress is updated")
   @ApiErrorResponse(responseCode = "400", description = "Malformed list of answers")
   @ApiErrorResponse(responseCode = "404", description = "Level was not found")
   @ApiErrorResponse(responseCode = "500", description = "User has no progression relation in db")
