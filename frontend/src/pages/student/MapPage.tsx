@@ -8,7 +8,7 @@ import type { EquippedItem } from "@/types/user";
 import styles from "./MapPage.module.css";
 import { StopMap } from "@/components/map/StopMap";
 import { MAP_STOPS, type StopData } from "@/data/mapStops";
-import detektivkontoret from "@/assets/images/map/detektivkontoret.svg";
+import detektivkontoret from "@/assets/images/map/detektivkontoret.png";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import { CarWithAvatar } from "@/components/map/CarWithAvatar";
