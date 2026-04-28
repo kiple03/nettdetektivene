@@ -1,4 +1,4 @@
-package org.ntnu.backend.medalion;
+package org.ntnu.backend.medalion.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -22,7 +22,6 @@ import org.ntnu.backend.medalion.dto.AwardMedalionRequest;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.medalion.model.Medalion;
 import org.ntnu.backend.medalion.repository.MedalionRepository;
-import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.web.server.ResponseStatusException;
