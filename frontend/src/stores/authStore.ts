@@ -76,3 +76,17 @@ export function getRole(): Role | null {
 export function getClassroomId(): string | null {
   return decodeToken()?.classroomId ?? null;
 }
+
+// Ready once the startup session-restore attempt has settled.
+// Starts true when: no token to restore, token is already valid, or explicit logout.
+// Starts false only when: an access token exists but has expired (needs a refresh probe).
+let _authReady: boolean = !getToken() || isLoggedIn() || isSessionEnded();
+
+export function isAuthReady(): boolean {
+  return _authReady;
+}
+
+export function setAuthReady(): void {
+  _authReady = true;
+  window.dispatchEvent(new Event('auth-changed'));
+}

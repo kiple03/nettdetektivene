@@ -26,8 +26,15 @@ apiClient.interceptors.request.use((config) => {
 type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
 let refreshInFlight: Promise<string | null> | null = null;
+let _isRefreshing = false;
+
+export function isRefreshInFlight(): boolean {
+  return _isRefreshing;
+}
 
 async function performRefresh(): Promise<string | null> {
+  _isRefreshing = true;
+  window.dispatchEvent(new Event('auth-refreshing'));
   try {
     const res = await axios.post<{ accessToken: string }>(
       `${apiClient.defaults.baseURL}/auth/refresh`,
@@ -40,25 +47,37 @@ async function performRefresh(): Promise<string | null> {
   } catch {
     localStorage.removeItem('token');
     return null;
+  } finally {
+    _isRefreshing = false;
+    window.dispatchEvent(new Event('auth-refreshing'));
   }
 }
 
-/** Starts a refresh if none is in flight, otherwise joins the existing one.
- *  Short-circuits if the token in localStorage is already valid — prevents a
- *  second HTTP call when the interceptor already refreshed before this runs. */
-export function sharedRefresh(): Promise<string | null> {
-  if (tokenIsValid()) {
-    return Promise.resolve(localStorage.getItem('token'));
-  }
-  if (isSessionEnded()) {
-    return Promise.resolve(null);
-  }
+/**
+ * Starts a refresh if none is in flight, otherwise joins the existing one.
+ * Skips the "token still valid" check — use for proactive refresh where the
+ * token is intentionally not yet expired.
+ */
+export function forceRefresh(): Promise<string | null> {
+  if (isSessionEnded()) return Promise.resolve(null);
   if (!refreshInFlight) {
     refreshInFlight = performRefresh().finally(() => {
       refreshInFlight = null;
     });
   }
   return refreshInFlight;
+}
+
+/**
+ * Short-circuits if the token in localStorage is already valid — prevents a
+ * redundant HTTP call when the token hasn't expired yet.
+ * Falls through to forceRefresh() so both share the same in-flight lock.
+ */
+export function sharedRefresh(): Promise<string | null> {
+  if (tokenIsValid()) {
+    return Promise.resolve(localStorage.getItem('token'));
+  }
+  return forceRefresh();
 }
 
 /** Returns the login page for the current path so unauthenticated redirects land on the right portal. */
