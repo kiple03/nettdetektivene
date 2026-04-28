@@ -69,6 +69,7 @@ public class GameSeeder implements CommandLineRunner {
     deduplicateLevelNoteTemplates();
     seedNews();
     seedPost();
+    seedPhoto();
     seedPasswords();
     seedMarkedsplassen();
     log.info("GameSeeder: done");
@@ -278,6 +279,7 @@ public class GameSeeder implements CommandLineRunner {
       l.setTitle("Ekte, KI eller manipulert?");
       l.setDescription("Se nøye på bildet og velg riktig svar.");
       l.setLevelType(LevelType.PICTURE_QUIZ);
+      l.setOrder(1);
       l.setStop(stop);
       return levelRepository.save(l);
     });

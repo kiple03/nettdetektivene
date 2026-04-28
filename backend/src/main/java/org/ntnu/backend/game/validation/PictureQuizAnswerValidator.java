@@ -66,8 +66,8 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
                 .toList();
 
         Set<Integer> validOptionIds = pq.stream()
-                .map(PictureQuizOption::getId)
-                .collect(Collectors.toSet());
+            .map(PictureQuizOption::id)
+            .collect(Collectors.toSet());
 
         for (Integer selectedId : selectedIds) {
             if (!validOptionIds.contains(selectedId)) {
@@ -77,7 +77,7 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
 
         List<Integer> correctOptionIds = pq.stream()
                 .filter(PictureQuizOption::isCorrect)
-                .map(PictureQuizOption::getId)
+                .map(PictureQuizOption::id)
                 .toList();
 
         Set<Integer> correctIdSet = Set.copyOf(correctOptionIds);
@@ -91,14 +91,14 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
         String explanation = isCorrect
                 ? pq.stream()
                   .filter(PictureQuizOption::isCorrect)
-                  .map(PictureQuizOption::getExplanation)
+                  .map(PictureQuizOption::explanation)
                   .filter(explanationText -> explanationText != null && !explanationText.isBlank())
                   .findFirst()
                   .orElse(null)
                 : pq.stream()
-                  .filter(option -> selectedIds.contains(option.getId()))
+                  .filter(option -> selectedIds.contains(option.id()))
                   .filter(option -> !option.isCorrect())
-                  .map(PictureQuizOption::getExplanation)
+                  .map(PictureQuizOption::explanation)
                   .filter(explanationText -> explanationText != null && !explanationText.isBlank())
                   .findFirst()
                   .orElse(null);

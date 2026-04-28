@@ -41,6 +41,10 @@
   background-image: url("@/assets/images/game/password.png");
 }
 
+.station-marketplace {
+  background-image: url("@/assets/images/game/marked.png");
+}
+
 /* Title of the level (1, 2, 3). Styled with same box as badge */
 .station-title {
   position: fixed;
@@ -179,6 +183,11 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Markedplace */
+
+.markedsplassen station {
 }
 
 /* -------- POSTOFFICE - email -------- */

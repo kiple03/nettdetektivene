@@ -2,6 +2,7 @@ package org.ntnu.backend.game.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
 
 /**
@@ -41,11 +42,4 @@ public record PictureQuizOption(
         @NotBlank
         String explanation
 
-) implements Option {
-  // getter
-    public int getId()          { return id; }
-    public String getText()     { return text; }
-    public String getImageUrl() { return imageUrl; }
-    public boolean isCorrect()  { return isCorrect; }
-    public String getExplanation() { return explanation; }
-}
+) implements Option {}
