@@ -7,12 +7,23 @@ export interface MultipleChoiceOptionDraft {
 }
 
 export interface MultipleChoiceQuestionDraft {
+  kind: 'MULTIPLE_CHOICE';
   questionText: string;
   options: MultipleChoiceOptionDraft[];
 }
 
+// Discriminated union — extend with additional arms as new types are added
+export type QuestionDraft = MultipleChoiceQuestionDraft;
+
 export function makeOptionId(): string {
   return crypto.randomUUID();
+}
+
+export function validateDraft(draft: QuestionDraft): string[] {
+  switch (draft.kind) {
+    case 'MULTIPLE_CHOICE':
+      return validateMultipleChoiceDraft(draft);
+  }
 }
 
 export function validateMultipleChoiceDraft(draft: MultipleChoiceQuestionDraft): string[] {
@@ -38,6 +49,7 @@ export function validateMultipleChoiceDraft(draft: MultipleChoiceQuestionDraft):
 
 export function emptyMultipleChoiceDraft(): MultipleChoiceQuestionDraft {
   return {
+    kind: 'MULTIPLE_CHOICE',
     questionText: '',
     options: [
       { id: makeOptionId(), text: '', isCorrect: true, explanation: '', imageUrl: null },

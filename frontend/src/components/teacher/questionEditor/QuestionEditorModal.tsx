@@ -1,25 +1,24 @@
 import { useState } from 'react';
 import { QuestionEditor } from './QuestionEditor';
-import { emptyMultipleChoiceDraft, validateMultipleChoiceDraft } from './types';
-import type { MultipleChoiceQuestionDraft } from './types';
+import { emptyMultipleChoiceDraft, validateDraft } from './types';
+import type { QuestionDraft } from './types';
 import './QuestionEditorModal.css';
 
 interface Props {
   mode: 'create' | 'edit';
-  levelType: string;
-  initialValue?: MultipleChoiceQuestionDraft;
+  initialValue?: QuestionDraft;
   saving: boolean;
   error: string | null;
   onClose: () => void;
-  onSave: (draft: MultipleChoiceQuestionDraft) => void;
+  onSave: (draft: QuestionDraft) => void;
 }
 
-export function QuestionEditorModal({ mode, levelType, initialValue, saving, error, onClose, onSave }: Props) {
-  const [draft, setDraft] = useState<MultipleChoiceQuestionDraft>(initialValue ?? emptyMultipleChoiceDraft());
+export function QuestionEditorModal({ mode, initialValue, saving, error, onClose, onSave }: Props) {
+  const [draft, setDraft] = useState<QuestionDraft>(initialValue ?? emptyMultipleChoiceDraft());
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const handleSave = () => {
-    const errors = validateMultipleChoiceDraft(draft);
+    const errors = validateDraft(draft);
     if (errors.length > 0) {
       setValidationErrors(errors);
       return;
@@ -41,7 +40,7 @@ export function QuestionEditorModal({ mode, levelType, initialValue, saving, err
         </div>
 
         <div className="q-modal__body">
-          <QuestionEditor levelType={levelType} value={draft} onChange={setDraft} />
+          <QuestionEditor value={draft} onChange={setDraft} />
 
           {validationErrors.length > 0 && (
             <ul className="q-modal__errors">

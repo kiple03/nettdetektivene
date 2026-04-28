@@ -413,11 +413,14 @@ export interface QuestionOptionPayload {
   explanation: string;
 }
 
-export interface CreateQuestionPayload {
+export interface CreateMultipleChoiceQuestionPayload {
   questionText: string;
   levelType: 'MULTIPLE_CHOICE';
   options: QuestionOptionPayload[];
 }
+
+// Discriminated union — extend with additional arms as new types are added
+export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload;
 
 export interface UpdateQuestionPayload {
   questionText: string;

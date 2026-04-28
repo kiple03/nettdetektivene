@@ -1,19 +1,14 @@
 import { MultipleChoiceEditor } from './MultipleChoiceEditor';
-import type { MultipleChoiceQuestionDraft } from './types';
+import type { QuestionDraft } from './types';
 
 interface Props {
-  levelType: string;
-  value: MultipleChoiceQuestionDraft;
-  onChange: (v: MultipleChoiceQuestionDraft) => void;
+  value: QuestionDraft;
+  onChange: (v: QuestionDraft) => void;
 }
 
-export function QuestionEditor({ levelType, value, onChange }: Props) {
-  if (levelType === 'MULTIPLE_CHOICE') {
-    return <MultipleChoiceEditor value={value} onChange={onChange} />;
+export function QuestionEditor({ value, onChange }: Props) {
+  switch (value.kind) {
+    case 'MULTIPLE_CHOICE':
+      return <MultipleChoiceEditor value={value} onChange={v => onChange(v)} />;
   }
-  return (
-    <p style={{ fontSize: '14px', color: '#666', fontStyle: 'italic', margin: 0 }}>
-      Redigering er ikke tilgjengelig for denne spørsmålstypen ennå.
-    </p>
-  );
 }

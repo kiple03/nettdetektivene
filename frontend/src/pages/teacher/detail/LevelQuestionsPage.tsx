@@ -9,7 +9,7 @@ import {
 } from '@/hooks/teacher/useTeacherMutations';
 import { QuestionEditorModal } from '@/components/teacher/questionEditor/QuestionEditorModal';
 import { DeleteQuestionDialog } from '@/components/teacher/questionEditor/DeleteQuestionDialog';
-import type { MultipleChoiceQuestionDraft } from '@/components/teacher/questionEditor/types';
+import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
 import type { TeacherQuestion } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
 
@@ -23,8 +23,11 @@ const LEVEL_TYPE_LABELS: Record<string, string> = {
     TUTORIAL: 'Opplæring',
 };
 
-function questionToInitialDraft(q: TeacherQuestion): MultipleChoiceQuestionDraft {
+const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE']);
+
+function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     return {
+        kind: 'MULTIPLE_CHOICE',
         questionText: q.questionText,
         options: (q.options ?? []).map(o => ({
             id: o.id.toString(),
@@ -57,7 +60,7 @@ export default function LevelQuestionsPage() {
     const updateError = useQuestionMutationError(updateMutation.error);
     const deleteError = useQuestionMutationError(deleteMutation.error);
 
-    const isMultipleChoice = level?.levelType === 'MULTIPLE_CHOICE';
+    const isSupportedType = SUPPORTED_TYPES.has(level?.levelType ?? '');
     const modalOpen = createOpen || !!editingQuestion;
     const modalMode: 'create' | 'edit' = editingQuestion ? 'edit' : 'create';
     const modalSaving = createMutation.isPending || updateMutation.isPending;
@@ -78,34 +81,38 @@ export default function LevelQuestionsPage() {
         }
     };
 
-    const handleSave = async (draft: MultipleChoiceQuestionDraft) => {
-        const options = draft.options.map(o => ({
-            text: o.text,
-            imageUrl: o.imageUrl,
-            isCorrect: o.isCorrect,
-            explanation: o.explanation,
-        }));
-
-        if (editingQuestion) {
-            try {
-                await updateMutation.mutateAsync({
-                    questionId: editingQuestion.id,
-                    payload: { questionText: draft.questionText, options },
-                });
-                setEditingQuestion(null);
-            } catch {
-                // error shown via updateError
-            }
-        } else {
-            try {
-                await createMutation.mutateAsync({
-                    questionText: draft.questionText,
-                    levelType: 'MULTIPLE_CHOICE',
-                    options,
-                });
-                setCreateOpen(false);
-            } catch {
-                // error shown via createError
+    const handleSave = async (draft: QuestionDraft) => {
+        switch (draft.kind) {
+            case 'MULTIPLE_CHOICE': {
+                const options = draft.options.map(o => ({
+                    text: o.text,
+                    imageUrl: o.imageUrl,
+                    isCorrect: o.isCorrect,
+                    explanation: o.explanation,
+                }));
+                if (editingQuestion) {
+                    try {
+                        await updateMutation.mutateAsync({
+                            questionId: editingQuestion.id,
+                            payload: { questionText: draft.questionText, options },
+                        });
+                        setEditingQuestion(null);
+                    } catch {
+                        // error shown via updateError
+                    }
+                } else {
+                    try {
+                        await createMutation.mutateAsync({
+                            questionText: draft.questionText,
+                            levelType: 'MULTIPLE_CHOICE',
+                            options,
+                        });
+                        setCreateOpen(false);
+                    } catch {
+                        // error shown via createError
+                    }
+                }
+                break;
             }
         }
     };
@@ -160,8 +167,8 @@ export default function LevelQuestionsPage() {
                         <button
                             type="button"
                             className="level-questions__preview-btn"
-                            disabled={!isMultipleChoice}
-                            title={isMultipleChoice ? 'Forhåndsvis som elev' : 'Kun mulig for flervalg-nivåer'}
+                            disabled={!isSupportedType}
+                            title={isSupportedType ? 'Forhåndsvis som elev' : 'Kun mulig for støttede spørsmålstyper'}
                             onClick={() => navigate(`/teacher/classrooms/${classroomId}/levels/${levelId}/preview`)}
                         >
                             Forhåndsvis som elev
@@ -169,8 +176,8 @@ export default function LevelQuestionsPage() {
                         <button
                             type="button"
                             className="level-questions__add-btn"
-                            disabled={!isMultipleChoice}
-                            title={isMultipleChoice ? 'Legg til spørsmål' : 'Kun mulig for flervalg-nivåer'}
+                            disabled={!isSupportedType}
+                            title={isSupportedType ? 'Legg til spørsmål' : 'Kun mulig for støttede spørsmålstyper'}
                             onClick={() => { setCreateOpen(true); setCreateKey(k => k + 1); }}
                         >
                             + Legg til spørsmål
@@ -234,7 +241,6 @@ export default function LevelQuestionsPage() {
                 <QuestionEditorModal
                     key={editingQuestion?.id ?? `create-${createKey}`}
                     mode={modalMode}
-                    levelType={level?.levelType ?? ''}
                     initialValue={editingQuestion ? questionToInitialDraft(editingQuestion) : undefined}
                     saving={modalSaving}
                     error={modalError}

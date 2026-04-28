@@ -8,13 +8,14 @@ import StationRenderer from '@/components/game/station/StationRenderer';
 import { STATION_TYPE } from '@/types/station';
 import type { StationData, SubmitAnswerResult } from '@/types/station';
 import type { TeacherQuestion } from '@/api/teacherApi';
-import type { MultipleChoiceQuestionDraft } from '@/components/teacher/questionEditor/types';
+import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
 import type { SubmitAnswerRequest } from '@/api/gameApi';
 import '@/components/game/ui/game.css';
 import './TeacherLevelPreviewPage.css';
 
-function questionToInitialDraft(q: TeacherQuestion): MultipleChoiceQuestionDraft {
+function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     return {
+        kind: 'MULTIPLE_CHOICE',
         questionText: q.questionText,
         options: (q.options ?? []).map(o => ({
             id: o.id.toString(),
@@ -100,22 +101,27 @@ export default function TeacherLevelPreviewPage() {
         setSubmitResult(result);
     };
 
-    const handleSave = async (draft: MultipleChoiceQuestionDraft) => {
+    const handleSave = async (draft: QuestionDraft) => {
         if (!editingQuestion) return;
-        const options = draft.options.map(o => ({
-            text: o.text,
-            imageUrl: o.imageUrl,
-            isCorrect: o.isCorrect,
-            explanation: o.explanation,
-        }));
-        try {
-            await updateMutation.mutateAsync({
-                questionId: editingQuestion.id,
-                payload: { questionText: draft.questionText, options },
-            });
-            setEditingQuestion(null);
-        } catch {
-            // error shown via updateError
+        switch (draft.kind) {
+            case 'MULTIPLE_CHOICE': {
+                const options = draft.options.map(o => ({
+                    text: o.text,
+                    imageUrl: o.imageUrl,
+                    isCorrect: o.isCorrect,
+                    explanation: o.explanation,
+                }));
+                try {
+                    await updateMutation.mutateAsync({
+                        questionId: editingQuestion.id,
+                        payload: { questionText: draft.questionText, options },
+                    });
+                    setEditingQuestion(null);
+                } catch {
+                    // error shown via updateError
+                }
+                break;
+            }
         }
     };
 
@@ -173,7 +179,6 @@ export default function TeacherLevelPreviewPage() {
                 <QuestionEditorModal
                     key={editingQuestion.id}
                     mode="edit"
-                    levelType="MULTIPLE_CHOICE"
                     initialValue={questionToInitialDraft(editingQuestion)}
                     saving={updateMutation.isPending}
                     error={updateError}
