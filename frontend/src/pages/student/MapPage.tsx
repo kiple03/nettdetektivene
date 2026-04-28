@@ -7,10 +7,12 @@ import { studentKeys } from "@/hooks/student/queryKeys";
 import type { EquippedItem } from "@/types/user";
 import styles from "./MapPage.module.css";
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
+import mapBgFeatures from "@/assets/images/map/bg-with-features.png";
+import internettbyenLogo from "@/assets/images/map/internettbyen-logo.png";
 import { CarWithAvatar } from "@/components/map/CarWithAvatar";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
 import sharkBase from "@/assets/images/boss/shark-base.png";
-import detektivkontoret from "@/assets/images/map/detektivkontoret.svg";
+import detektivkontoret from "@/assets/images/map/detektivkontoret.png";
 import fotografen from "@/assets/images/map/fotografen.svg";
 import markedsplassen from "@/assets/images/map/markedsplassen.svg";
 import moteplassen from "@/assets/images/map/møteplassen.svg";
@@ -260,12 +262,12 @@ export default function MapPage() {
     return (
         <div className={styles.container} ref={containerRef}>
             <div className={styles.header}>
-                <h1>Internettbyen</h1>
-                <p>Velg et stop</p>
+                <img src={internettbyenLogo} alt="Internettbyen" className={styles.headerLogo} />
             </div>
 
             <div className={styles.mapInner}>
             <MapBg ref={svgRef} className={styles.mapBg} preserveAspectRatio="xMidYMid slice" />
+            <img src={mapBgFeatures} alt="" aria-hidden="true" className={styles.mapBgOverlay} />
 
             <div className={styles.stopGrid}>
                 <div

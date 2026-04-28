@@ -95,11 +95,18 @@
 }
 
 .card:hover {
+    z-index: 1;
     transform: translateY(-3px) rotate(0deg);
     box-shadow:
             0 3px 0 rgba(255, 255, 255, 0.9) inset,
             0 14px 24px rgba(79, 57, 32, 0.22),
             0 28px 46px rgba(71, 48, 27, 0.18);
+}
+
+.card:hover .image{
+    transform: scale(2.5);
+    z-index: 9;
+
 }
 
 /* teipbitene */
