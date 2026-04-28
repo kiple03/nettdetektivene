@@ -19,7 +19,7 @@ function ProfilePage() {
       <img src={detectiveRoom} alt="" className={styles.bg} />
 
       <BackButton
-        className={mapStyles.hotspot}
+        className={mapStyles.backBtn}
         style={{ position: "fixed", top: "6%", left: "1.5%", zIndex: 10 }}
         ariaLabel="Gå tilbake"
       />
