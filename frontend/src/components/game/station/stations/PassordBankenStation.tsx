@@ -3,6 +3,9 @@ import type { StationData, SubmitAnswerResult } from "@/types/station"
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
 import TaskHeader from "../../ui/TaskHeader";
 import PasswordInput from "../../tasks/PasswordInput";
+import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import passwordImg1 from "@/assets/images/game/passord1.png"
+import passwordImg2 from "@/assets/images/game/passord2.png"
 
 type Props = {
     station: StationData;
@@ -25,10 +28,36 @@ function PassordBankenStation({station, onAnswer, disabled = false}: Props){
         }
     }
 
+    // obs dette er litt hardkodet mtp bilde for spm 1 og 2
+    const passwordImageByQuestionId: Record<number, string> = {
+        421: passwordImg1,
+        422: passwordImg2,
+    }
+
+    const passwordImage = passwordImageByQuestionId[station.questionId]
+
     return(
         <div className="passordbanken-station">
-            <TaskHeader questionText={station.questionText}/>
-            <PasswordInput rule={station.options[0]} onSubmit={handleSubmit} disabled={disabled}/>
+            <DetectiveBook
+                title={station.title || "Passordbanken"}
+                subtitle={station.questionText}
+            >
+                <div className="password-layout">
+                    {passwordImage && (
+                        <div className="password-left">
+                            <img src={passwordImage} alt="" />
+                        </div>
+                    )}
+
+                    <div className="password-right">
+                        <TaskHeader questionText={station.questionText}/>
+                        <PasswordInput rule={station.options[0]}
+                                       onSubmit={handleSubmit}
+                                       disabled={disabled}
+                        />
+                    </div>
+                </div>
+            </DetectiveBook>
         </div>
     )
 }

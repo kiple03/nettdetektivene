@@ -38,6 +38,7 @@ function PasswordInput({
             />
 
             <button
+                className="submitButton"
                 type="button"
                 onClick={() => onSubmit(pw)}
                 disabled={disabled || pw.length === 0}
