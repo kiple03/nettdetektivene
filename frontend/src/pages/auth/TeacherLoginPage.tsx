@@ -13,6 +13,7 @@ import {
   validatePassword,
   validatePasswordConfirm,
 } from '@/utils/validators';
+import chalkboardBg from '@/assets/images/chalkboard-background.webp';
 import './TeacherLoginPage.css';
 
 function TeacherLoginPage() {
@@ -71,7 +72,7 @@ function TeacherLoginPage() {
   };
 
   return (
-    <div className="teacher-login">
+    <div className="teacher-login" style={{ backgroundImage: `url(${chalkboardBg})` }}>
       <Link to="/" className="student-link">
         Tilbake til elevinnlogging
       </Link>
