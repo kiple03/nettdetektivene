@@ -57,6 +57,21 @@
     object-fit: contain;
 }
 
+/* grid for markedplace*/
+.gridFourOptionsMarketplace {
+    align-items: center;
+    gap: 1rem 3rem;
+}
+
+.gridFourOptionsMarketplace .card {
+    height: 70%;
+    padding: 0.1rem;
+}
+
+.gridFourOptionsMarketplace .imageFrame {
+    max-height: 200px;
+}
+
 .card {
     display: flex;
     flex-direction: column;

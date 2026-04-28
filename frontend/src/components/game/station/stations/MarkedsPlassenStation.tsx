@@ -5,6 +5,7 @@ import type { StationData, SubmitAnswerResult } from "@/types/station.ts";
 import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 import ClassifyItems from "@/components/game/tasks/ClassifyItems.tsx";
+import styles from "@/components/game/tasks/PictureGrid.module.css";
 
 type Props = {
     station: StationData;
@@ -69,6 +70,7 @@ function MarkedsplassenStation({ station, onAnswer, disabled = false }: Props) {
                         onSubmit={handleSingleChoice}
                         disabled={disabled}
                         selectionMode="single"
+                        gridClassName={styles.gridFourOptionsMarketplace}
                     />
                 )}
             </DetectiveBook>

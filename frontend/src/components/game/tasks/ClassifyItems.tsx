@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/buttons/Button";
 import type { StationOption } from "@/types/station";
 import styles from "./ClassifyItems.module.css";
+import styles1 from "./PictureGrid.module.css";
 
 type Props = {
     options: StationOption[];
@@ -65,9 +66,9 @@ export default function ClassifyItems({ options, onSubmit, disabled = false }: P
                     variant="fun"
                     onClick={handleSubmit}
                     disabled={!allAnswered || disabled || isSubmitting}
-                    className={styles.submitButton}
+                    className={styles1.submitButton}
                 >
-                    Svar 🔍
+                    Svar
                 </Button>
             </div>
         </div>
