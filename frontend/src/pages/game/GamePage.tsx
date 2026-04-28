@@ -154,7 +154,7 @@ export default function GamePage() {
     };
 
     const handleBackToMap = () => {
-        navigate(stopId ? `/map?stopId=${stopId}` : "/map");
+        navigate(stopId ? `/map?levelId=${stopId}` : "/map");
     };
 
     const handleNextLevel = () => {
