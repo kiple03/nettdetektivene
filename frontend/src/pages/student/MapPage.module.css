@@ -46,7 +46,7 @@
 
 .headerLogo {
   display: block;
-  height: 80px;
+  height: 140px;
   width: auto;
   object-fit: contain;
 }
@@ -243,7 +243,7 @@
   }
 
   .headerLogo {
-    height: 48px;
+    height: 80px;
   }
 
   .header p {
