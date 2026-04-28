@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { joinClassroom } from '@/api/classroomApi';
-import { refreshToken } from '@/api/authApi';
 
 function mapJoinError(error: unknown): string {
     const status = (error as AxiosError).response?.status;
@@ -15,10 +14,7 @@ function mapJoinError(error: unknown): string {
 
 export function useJoinClassroom() {
     const mutation = useMutation({
-        mutationFn: async (joinCode: string) => {
-            await joinClassroom(joinCode);
-            await refreshToken();
-        },
+        mutationFn: (joinCode: string) => joinClassroom(joinCode),
     });
 
     return {

@@ -34,6 +34,7 @@
 
 .station-post {
   background-image: url("@/assets/images/game/post.png");
+  background-size: cover;
 }
 
 .station-password {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { PostkontoretTask } from "@/types/email.ts";
 import "@/components/game/ui/game.css";
+import styles from "@/components/game/tasks/PictureGrid.module.css";
 
 interface Props {
   task: PostkontoretTask;
@@ -130,7 +131,7 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false })
 
         <div className="gmail-result">
           <button
-              className="gmail-submit-button"
+              className={styles.submitButton}
               onClick={handleSubmit}
               disabled={disabled || selected.length === 0}
           >

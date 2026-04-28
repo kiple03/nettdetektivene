@@ -5,7 +5,7 @@ import { studentKeys } from "@/hooks/student/queryKeys";
 import { mapQuestionToStationData } from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
 import StationRenderer from "@/components/game/station/StationRenderer.tsx";
-import type { SubmitAnswerResult } from "@/types/station";
+import { STATION_TYPE, type SubmitAnswerResult, type StationType } from "@/types/station";
 import "@/components/game/ui/game.css";
 import {
     AlertDialog,
@@ -22,19 +22,31 @@ import ConfettiComp from "@/components/ConfettiComp";
 import useSound from "use-sound";
 import victorySound from "@/assets/sounds/victorySound.mp3";
 
+const STOP_TO_TYPE: Record<string, StationType> = {
+    "Nyhetskvartalet": STATION_TYPE.NEWS,
+    "Fotografen": STATION_TYPE.PHOTO,
+    "Passordbanken": STATION_TYPE.PASSWORD,
+    "Postkontoret": STATION_TYPE.POST,
+    "Markedsplassen": STATION_TYPE.MARKETPLACE,
+};
 
 export default function GamePage() {
     const { levelId } = useParams<{ levelId: string }>();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const stopId = Number(searchParams.get("stopId")) || null;
+
     const [questionIndex, setQuestionIndex] = useState(0);
     const [submitResult, setSubmitResult] = useState<SubmitAnswerResult | null>(null);
     const [levelPassed, setLevelPassed] = useState(true);
     const [dialogOpen, setDialogOpen] = useState(false);
+
     const [answers, setAnswers] = useState<Record<number, SubmitAnswerRequest>>({});
     const queryClient = useQueryClient();
     const [playVictory] = useSound(victorySound);
+
+    const levelIdNum = Number(levelId);
+    const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
 
     const submitLevelMutation = useMutation({
         mutationFn: () => submitLevel(levelIdNum, {
@@ -55,9 +67,6 @@ export default function GamePage() {
             setDialogOpen(true);
         },
     });
-
-    const levelIdNum = Number(levelId);
-    const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
 
     useEffect(() => {
         setQuestionIndex(0);
@@ -101,8 +110,8 @@ export default function GamePage() {
         );
     }
 
-    if (isPending) {
-        return (
+    if (isPending || !level) {
+    return (
             <div role="status" aria-live="polite">
                 Laster...
             </div>
@@ -117,14 +126,17 @@ export default function GamePage() {
         );
     }
 
-    const currentQuestion = questions[questionIndex];
 
-    if (!currentQuestion) {
+  const currentQuestion = questions[questionIndex];
+
+  if (!currentQuestion) {
         return <div>Fant ikke spørsmål for dette nivået</div>;
     }
 
-    const station = mapQuestionToStationData(currentQuestion);
+  const stationType = STOP_TO_TYPE[level.stopName];
+  if (!stationType) throw new Error(`No station type for stop: "${level.stopName}"`);
 
+  const station = mapQuestionToStationData(currentQuestion, stationType);
     const handleAnswer = (result: SubmitAnswerResult, request: SubmitAnswerRequest) => {
         setSubmitResult(result);
         setAnswers((prev) => ({ ...prev, [currentQuestion.id]: request }));

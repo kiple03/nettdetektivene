@@ -8,6 +8,12 @@
   justify-content: center;
 }
 
+.backBtn{
+  position: fixed;
+  top: 6%;
+    left: 1.5%;
+}
+
 .bg {
   position: absolute;
   inset: 0;

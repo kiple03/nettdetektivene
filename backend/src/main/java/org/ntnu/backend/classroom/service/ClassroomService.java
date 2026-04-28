@@ -14,6 +14,8 @@ import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.util.JoinCodeGenerator;
 import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
+import org.ntnu.backend.security.JwtService;
+import org.ntnu.backend.security.UserPrincipal;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.ntnu.backend.user.service.ProfanityFilterService;
@@ -43,6 +45,7 @@ public class ClassroomService {
     private final ClassroomMapper classroomMapper;
     private final JoinCodeGenerator joinCodeGenerator;
     private final MedalionService medalionService;
+    private final JwtService jwtService;
 
     /**
      * Creates a new classroom, generates a unique join code, and assigns the specified teacher as the owner.
@@ -115,7 +118,7 @@ public class ClassroomService {
      * @return A response object containing the details of the joined classroom.
      * @throws ResponseStatusException if the user or code is invalid, or if the user is already enrolled.
      */
-    public ClassroomResponse joinClassroom(JoinClassroomRequest request, UUID userId) {
+    public JoinClassroomResponse joinClassroom(JoinClassroomRequest request, UUID userId) {
         User student = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "Bruker ikke funnet"));
@@ -138,11 +141,19 @@ public class ClassroomService {
             .classroom(classroom)
             .build();
         enrollmentRepository.save(enrollment);
-        
+
         medalionService.awardInternalUsage(userId, "Hysj-hysj", "Hemmelig innpass, du kom deg inn i klasserommet");
 
-
-        return classroomMapper.toResponse(classroom);
+        String accessToken = jwtService.generateToken(new UserPrincipal(student), classroom.getId());
+        ClassroomResponse classroomResponse = classroomMapper.toResponse(classroom);
+        return JoinClassroomResponse.builder()
+            .id(classroomResponse.getId())
+            .title(classroomResponse.getTitle())
+            .description(classroomResponse.getDescription())
+            .joinCode(classroomResponse.getJoinCode())
+            .createdAt(classroomResponse.getCreatedAt())
+            .accessToken(accessToken)
+            .build();
     }
 
     /**

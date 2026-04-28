@@ -12,12 +12,11 @@ export default function LeaderboardPage() {
 
   return (
     <div className={styles.page} style={{ backgroundImage: `url(${detectiveRoom})` }}>
+      <BackButton
+        className={styles.backBtn}
+        ariaLabel="Gå tilbake"
+      />
       <div className={styles.board} style={{ backgroundImage: `url(${corkBoard})` }}>
-        <BackButton
-          className={styles.backBtn}
-          ariaLabel="Gå tilbake"
-        />
-
         <div className={styles.note}>
           <div className={styles.tape} />
           <h1 className={styles.title}>
