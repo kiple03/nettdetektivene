@@ -12,7 +12,7 @@ import internettbyenLogo from "@/assets/images/map/internettbyen-logo.png";
 import { CarWithAvatar } from "@/components/map/CarWithAvatar";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
 import sharkBase from "@/assets/images/boss/shark-base.png";
-import detektivkontoret from "@/assets/images/map/detektivkontoret.svg";
+import detektivkontoret from "@/assets/images/map/detektivkontoret.png";
 import fotografen from "@/assets/images/map/fotografen.svg";
 import markedsplassen from "@/assets/images/map/markedsplassen.svg";
 import moteplassen from "@/assets/images/map/møteplassen.svg";
