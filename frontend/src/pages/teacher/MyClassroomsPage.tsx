@@ -78,9 +78,6 @@ export default function MyClassroomsPage() {
                     <span className="bottom-nav-chip bottom-nav-chip--active">
                         Mine klasserom
                     </span>
-                    <Link to="/teacher/map" className="bottom-nav-chip">
-                        Kart
-                    </Link>
                     <Link to="/teacher/leaderboard" className="bottom-nav-chip">
                         Ledertavle
                     </Link>

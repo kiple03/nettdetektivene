@@ -134,7 +134,7 @@ class GameControllerTest {
             new MultipleChoiceOptionResponse(2, "Option B", "img2.jpg")
     );
 
-    when(questionService.getQuestionsForLevel(anyInt())).thenReturn(List.of(
+    when(questionService.getQuestionsForLevel(anyInt(), any())).thenReturn(List.of(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which is real?", options, null)
     ));
 
@@ -151,7 +151,7 @@ class GameControllerTest {
             new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg")
     );
 
-    when(questionService.getQuestionsForLevel(anyInt())).thenReturn(List.of(
+    when(questionService.getQuestionsForLevel(anyInt(), any())).thenReturn(List.of(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Test?", options, null)
     ));
 

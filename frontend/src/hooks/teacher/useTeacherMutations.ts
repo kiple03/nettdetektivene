@@ -12,10 +12,14 @@ import {
     featureMysterySubmission,
     addCensorWord,
     deleteCensorWord,
+    createQuestion,
+    updateQuestion,
+    deleteQuestion,
+    uploadImage,
 } from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
 import type { ClassroomDetail, CoTeacher, MysterySubmissionResponse, StudentSummary } from '@/types/classroom';
-import type { CensorWord } from '@/api/teacherApi';
+import type { CensorWord, TeacherQuestion, CreateQuestionPayload, UpdateQuestionPayload, TeacherImage } from '@/api/teacherApi';
 
 export function useUpdateClassroom(classroomId: string) {
     const queryClient = useQueryClient();
@@ -194,6 +198,69 @@ export function useCensorWordError(error: unknown): string | null {
     if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) return 'Ordet finnes allerede i listen.';
         if (error.response?.status === 400) return 'Ugyldig ord. Maks 50 tegn.';
+    }
+    return 'Noe gikk galt. Prøv igjen.';
+}
+
+export function useCreateQuestion(classroomId: string, levelId: number) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (payload: CreateQuestionPayload) => createQuestion(classroomId, levelId, payload),
+        onSuccess: (created: TeacherQuestion) => {
+            queryClient.setQueryData<TeacherQuestion[]>(
+                teacherKeys.levelQuestions(classroomId, levelId),
+                (prev) => [...(prev ?? []), created],
+            );
+        },
+    });
+}
+
+export function useUpdateQuestion(classroomId: string, levelId: number) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ questionId, payload }: { questionId: number; payload: UpdateQuestionPayload }) =>
+            updateQuestion(classroomId, levelId, questionId, payload),
+        onSuccess: (updated: TeacherQuestion) => {
+            queryClient.setQueryData<TeacherQuestion[]>(
+                teacherKeys.levelQuestions(classroomId, levelId),
+                (prev) => prev?.map((q) => (q.id === updated.id ? updated : q)) ?? [],
+            );
+        },
+    });
+}
+
+export function useDeleteQuestion(classroomId: string, levelId: number) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (questionId: number) => deleteQuestion(classroomId, levelId, questionId),
+        onSuccess: (_: void, questionId: number) => {
+            queryClient.setQueryData<TeacherQuestion[]>(
+                teacherKeys.levelQuestions(classroomId, levelId),
+                (prev) => prev?.filter((q) => q.id !== questionId) ?? [],
+            );
+        },
+    });
+}
+
+export function useUploadImage() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (file: File) => uploadImage(file),
+        onSuccess: (newImage: TeacherImage) => {
+            queryClient.setQueryData<TeacherImage[]>(
+                teacherKeys.images,
+                (prev) => [newImage, ...(prev ?? [])],
+            );
+        },
+    });
+}
+
+export function useQuestionMutationError(error: unknown): string | null {
+    if (!error) return null;
+    if (axios.isAxiosError(error)) {
+        if (error.response?.status === 400) return 'Ugyldig spørsmålsdata. Sjekk at alle felt er fylt ut.';
+        if (error.response?.status === 403) return 'Du har ikke tilgang til dette klasserommet.';
+        if (error.response?.status === 404) return 'Spørsmålet eller nivået ble ikke funnet.';
     }
     return 'Noe gikk galt. Prøv igjen.';
 }

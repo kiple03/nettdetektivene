@@ -23,8 +23,8 @@ public class OptionParserTest {
   void parseMultipleChoice_validJson_returnsListOfOptions() {
     String json = """
     [
-      { "id": 1, "text": "A", "imageUrl": "https://example.com/a.jpg", "isCorrect": false, "explanation": "Reason A" },
-      { "id": 2, "text": "B", "imageUrl": "https://example.com/b.jpg", "isCorrect": true, "explanation": "Reason B" }
+      { "id": 1, "text": "A", "imageUrl": "/images/1", "isCorrect": false, "explanation": "Reason A" },
+      { "id": 2, "text": "B", "imageUrl": "/images/2", "isCorrect": true, "explanation": "Reason B" }
     ]
     """;
 

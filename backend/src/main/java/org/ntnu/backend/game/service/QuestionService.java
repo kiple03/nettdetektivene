@@ -1,6 +1,7 @@
 package org.ntnu.backend.game.service;
 
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.QuestionResponse;
@@ -15,6 +16,7 @@ import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidator;
 import org.ntnu.backend.game.validation.ValidationResult;
+import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.stereotype.Service;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
 
@@ -94,9 +96,12 @@ public class QuestionService {
     );
   }
 
-  public List<QuestionResponse> getQuestionsForLevel(int levelId) {
-    return questionRepository.findByLevelIdOrderByIdAsc(levelId)
-        .stream()
+  public List<QuestionResponse> getQuestionsForLevel(int levelId, JwtAuthenticatedPrincipal principal) {
+    UUID classroomId = principal.getClassroomId();
+    List<Question> questions = (principal.isStudent() && classroomId != null)
+        ? questionRepository.findByLevelIdForClassroom(levelId, classroomId)
+        : questionRepository.findByLevelIdAndClassroomIdIsNull(levelId);
+    return questions.stream()
         .map(gameMapper::toQuestionResponse)
         .toList();
   }

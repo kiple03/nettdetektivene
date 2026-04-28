@@ -10,7 +10,6 @@ import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
-import org.ntnu.backend.game.util.OptionValidator;
 
 public class OptionValidatorTest {
 
@@ -20,8 +19,30 @@ public class OptionValidatorTest {
   @Test
   void validateMultipleChoice_validOptions_passes() {
     List<Option> options = List.of(
-        new MultipleChoiceOption(1, "A", "https://example.com/1.jpg", false, "Reason A"),
-        new MultipleChoiceOption(2, "B", "https://example.com/b.jpg", true, "Reason B")
+        new MultipleChoiceOption(1, "A", "/images/1", false, "Reason A"),
+        new MultipleChoiceOption(2, "B", "/images/2", true, "Reason B")
+    );
+
+    assertDoesNotThrow(() ->
+        validator.validate(options, LevelType.MULTIPLE_CHOICE)
+    );
+  }
+
+  @Test
+  void validateMultipleChoice_nullImageUrl_passes() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, "A", null, true, "Reason")
+    );
+
+    assertDoesNotThrow(() ->
+        validator.validate(options, LevelType.MULTIPLE_CHOICE)
+    );
+  }
+
+  @Test
+  void validateMultipleChoice_externalImageUrl_passes() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, "A", "https://example.com/img.jpg", true, "Reason")
     );
 
     assertDoesNotThrow(() ->
@@ -32,8 +53,8 @@ public class OptionValidatorTest {
   @Test
   void validateMultipleChoice_noCorrectAnswer_throws() {
     List<Option> options = List.of(
-        new MultipleChoiceOption(1, "A", "", false, "Reason A"),
-        new MultipleChoiceOption(2, "B", "", false, "Reason B")
+        new MultipleChoiceOption(1, "A", null, false, "Reason A"),
+        new MultipleChoiceOption(2, "B", null, false, "Reason B")
     );
 
     assertThrows(
@@ -45,8 +66,8 @@ public class OptionValidatorTest {
   @Test
   void validateMultipleChoice_multipleCorrectAnswers_throws() {
     List<Option> options = List.of(
-        new MultipleChoiceOption(1, "A", "", true, "Reason A"),
-        new MultipleChoiceOption(2, "B", "", true, "Reason B")
+        new MultipleChoiceOption(1, "A", null, true, "Reason A"),
+        new MultipleChoiceOption(2, "B", null, true, "Reason B")
     );
 
     assertThrows(
@@ -58,7 +79,7 @@ public class OptionValidatorTest {
   @Test
   void validateMultipleChoice_missingExplanation_throws() {
     List<Option> options = List.of(
-        new MultipleChoiceOption(1, "A", "", true, "")
+        new MultipleChoiceOption(1, "A", null, true, "")
     );
 
     assertThrows(
@@ -70,22 +91,13 @@ public class OptionValidatorTest {
   @Test
   void validateMultipleChoice_nullText_throws() {
     List<Option> options = List.of(
-        new MultipleChoiceOption(1, null, "https://example.com/a.jpg", true, "Reason")
+        new MultipleChoiceOption(1, null, "/images/1", true, "Reason")
     );
 
     assertThrows(
         OptionValidationException.class,
         () -> validator.validate(options, LevelType.MULTIPLE_CHOICE)
     );
-  }
-
-  @Test
-  void validateMultipleChoice_nullImageUrl_passes() {
-    List<Option> options = List.of(
-        new MultipleChoiceOption(1, "A", null, true, "Reason")
-    );
-
-    assertDoesNotThrow(() -> validator.validate(options, LevelType.MULTIPLE_CHOICE));
   }
 
   @Test
@@ -97,4 +109,43 @@ public class OptionValidatorTest {
         () -> validator.validate(options, LevelType.MULTIPLE_CHOICE)
     );
   }
+
+  @Test
+  void validateTextQuiz_validOptions_passes() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, "A", null, true, "Reason A"),
+        new MultipleChoiceOption(2, "B", null, false, "Reason B")
+    );
+
+    assertDoesNotThrow(() ->
+        validator.validate(options, LevelType.TEXT_QUIZ)
+    );
+  }
+
+  @Test
+  void validateTextQuiz_noCorrectAnswer_throws() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, "A", null, false, "Reason A"),
+        new MultipleChoiceOption(2, "B", null, false, "Reason B")
+    );
+
+    assertThrows(
+        OptionValidationException.class,
+        () -> validator.validate(options, LevelType.TEXT_QUIZ)
+    );
+  }
+
+  @Test
+  void validateTextQuiz_multipleCorrectAnswers_throws() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, "A", null, true, "Reason A"),
+        new MultipleChoiceOption(2, "B", null, true, "Reason B")
+    );
+
+    assertThrows(
+        OptionValidationException.class,
+        () -> validator.validate(options, LevelType.TEXT_QUIZ)
+    );
+  }
+
 }

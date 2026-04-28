@@ -5,8 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import jakarta.validation.Validation;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +28,9 @@ import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.util.OptionValidator;
 import org.ntnu.backend.game.validation.MultipleChoiceAnswerValidator;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
+import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
+import org.ntnu.backend.user.model.enums.RoleEnum;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.util.ReflectionTestUtils;
 import tools.jackson.databind.ObjectMapper;
 
@@ -40,9 +45,9 @@ class QuestionServiceTest {
 
   private static final String VALID_OPTIONS_JSON = """
         [
-          {"id": 1, "text": "Wrong answer", "imageUrl": "https://example.com/a.jpg", "isCorrect": false, "explanation": "This is wrong"},
-          {"id": 2, "text": "Right answer", "imageUrl": "https://example.com/b.jpg", "isCorrect": true, "explanation": "This is correct"},
-          {"id": 3, "text": "Also wrong", "imageUrl": "https://example.com/c.jpg", "isCorrect": false, "explanation": "This is also wrong"}
+          {"id": 1, "text": "Wrong answer", "imageUrl": "/images/1", "isCorrect": false, "explanation": "This is wrong"},
+          {"id": 2, "text": "Right answer", "imageUrl": "/images/2", "isCorrect": true, "explanation": "This is correct"},
+          {"id": 3, "text": "Also wrong", "imageUrl": "/images/3", "isCorrect": false, "explanation": "This is also wrong"}
         ]
         """;
 
@@ -115,18 +120,28 @@ class QuestionServiceTest {
 
   // ===== getQuestionsForLevel =====
 
+  private JwtAuthenticatedPrincipal teacherPrincipal() {
+    Collection<SimpleGrantedAuthority> auth = List.of(new SimpleGrantedAuthority("ROLE_TEACHER"));
+    return new JwtAuthenticatedPrincipal("teacher@test.no", UUID.randomUUID(), RoleEnum.TEACHER, null, auth);
+  }
+
+  private JwtAuthenticatedPrincipal studentPrincipal(UUID classroomId) {
+    Collection<SimpleGrantedAuthority> auth = List.of(new SimpleGrantedAuthority("ROLE_STUDENT"));
+    return new JwtAuthenticatedPrincipal("student@test.no", UUID.randomUUID(), RoleEnum.STUDENT, classroomId, auth);
+  }
+
   @Test
-  void getQuestionsForLevel_returnsAll() {
+  void getQuestionsForLevel_teacher_returnsDefaultsOnly() {
     Question q2 = new Question();
     q2.setId(2);
     q2.setQuestionText("Second question");
     q2.setOptionContent(VALID_OPTIONS_JSON);
     q2.setLevel(testQuestion.getLevel());
 
-    when(questionRepository.findByLevelIdOrderByIdAsc(1))
+    when(questionRepository.findByLevelIdAndClassroomIdIsNull(1))
         .thenReturn(List.of(testQuestion, q2));
 
-    List<QuestionResponse> result = questionService.getQuestionsForLevel(1);
+    List<QuestionResponse> result = questionService.getQuestionsForLevel(1, teacherPrincipal());
 
     assertThat(result).hasSize(2);
     assertThat(result.get(0).questionText()).isEqualTo("Which is correct?");
@@ -134,13 +149,44 @@ class QuestionServiceTest {
   }
 
   @Test
-  void getQuestionsForLevel_noQuestions_returnsEmpty() {
-    when(questionRepository.findByLevelIdOrderByIdAsc(99))
+  void getQuestionsForLevel_teacher_noQuestions_returnsEmpty() {
+    when(questionRepository.findByLevelIdAndClassroomIdIsNull(99))
         .thenReturn(List.of());
 
-    List<QuestionResponse> result = questionService.getQuestionsForLevel(99);
+    List<QuestionResponse> result = questionService.getQuestionsForLevel(99, teacherPrincipal());
 
     assertThat(result).isEmpty();
+  }
+
+  @Test
+  void getQuestionsForLevel_student_mergesDefaultAndClassroomQuestions() {
+    UUID classroomId = UUID.randomUUID();
+
+    Question classroomQ = new Question();
+    classroomQ.setId(2);
+    classroomQ.setQuestionText("Teacher-added question");
+    classroomQ.setOptionContent(VALID_OPTIONS_JSON);
+    classroomQ.setLevel(testQuestion.getLevel());
+    classroomQ.setClassroomId(classroomId);
+
+    when(questionRepository.findByLevelIdForClassroom(1, classroomId))
+        .thenReturn(List.of(testQuestion, classroomQ));
+
+    List<QuestionResponse> result = questionService.getQuestionsForLevel(1, studentPrincipal(classroomId));
+
+    assertThat(result).hasSize(2);
+    assertThat(result.get(0).questionText()).isEqualTo("Which is correct?");
+    assertThat(result.get(1).questionText()).isEqualTo("Teacher-added question");
+  }
+
+  @Test
+  void getQuestionsForLevel_student_noClassroom_returnsDefaultsOnly() {
+    when(questionRepository.findByLevelIdAndClassroomIdIsNull(1))
+        .thenReturn(List.of(testQuestion));
+
+    List<QuestionResponse> result = questionService.getQuestionsForLevel(1, studentPrincipal(null));
+
+    assertThat(result).hasSize(1);
   }
 
   // ===== submitAnswer =====
