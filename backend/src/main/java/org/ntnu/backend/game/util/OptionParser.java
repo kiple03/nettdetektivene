@@ -1,18 +1,15 @@
 package org.ntnu.backend.game.util;
 
-import org.ntnu.backend.exception.OptionValidationException;
-import org.ntnu.backend.game.model.PictureQuizOption;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
-import org.ntnu.backend.game.model.PostOfficeQuestion;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.ntnu.backend.exception.InvalidOptionFormatException;
+import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
+import org.ntnu.backend.game.model.PictureQuizOption;
+import org.ntnu.backend.game.model.PostOfficeQuestion;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
