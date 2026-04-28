@@ -11,7 +11,7 @@ import { QuestionEditorModal } from '@/components/teacher/questionEditor/Questio
 import { DeleteQuestionDialog } from '@/components/teacher/questionEditor/DeleteQuestionDialog';
 import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
 import { emptyDraftForType, makeOptionId } from '@/components/teacher/questionEditor/types';
-import type { TeacherQuestion, TeacherClassifyItemsOption } from '@/api/teacherApi';
+import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherPasswordStrengthOption } from '@/api/teacherApi';
 import { getImageDisplayUrl } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
 
@@ -20,13 +20,14 @@ const LEVEL_TYPE_LABELS: Record<string, string> = {
     TEXT_QUIZ: 'Tekstquiz',
     PICTURE_QUIZ: 'Bildequiz',
     CLASSIFY_ITEMS: 'Klassifisering',
+    PASSWORD_STRENGTH: 'Passordstyrke',
     MINIGAME: 'Minispill',
     POST_OFFICE: 'Postkasse',
     BOSS_BATTLE: 'Sjefskamp',
     TUTORIAL: 'Opplæring',
 };
 
-const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE', 'PICTURE_QUIZ', 'CLASSIFY_ITEMS']);
+const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE', 'PICTURE_QUIZ', 'CLASSIFY_ITEMS', 'PASSWORD_STRENGTH']);
 
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     switch (q.levelType) {
@@ -43,6 +44,20 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
                     correctLabel: o.correctLabel,
                     explanation: o.explanation,
                 })),
+            };
+        }
+        case 'PASSWORD_STRENGTH': {
+            const ps = (q.options as TeacherPasswordStrengthOption[])[0];
+            return {
+                kind: 'PASSWORD_STRENGTH',
+                questionText: q.questionText,
+                minLength: ps?.minLength ?? 8,
+                requireDigit: ps?.requireDigit ?? false,
+                requireUpper: ps?.requireUpper ?? false,
+                requireLower: ps?.requireLower ?? false,
+                requireSymbol: ps?.requireSymbol ?? false,
+                successFeedback: ps?.successFeedback ?? '',
+                failureFeedback: ps?.failureFeedback ?? '',
             };
         }
         default: {
@@ -68,6 +83,21 @@ function renderQuestionOptions(q: TeacherQuestion) {
         return (
             <p className="level-questions__ci-summary">
                 {ciOptions.length} elementer · kategorier: {labels.join(', ')}
+            </p>
+        );
+    }
+    if (q.levelType === 'PASSWORD_STRENGTH') {
+        const ps = (q.options as TeacherPasswordStrengthOption[])[0];
+        if (!ps) return null;
+        const activeFlags = [
+            ps.requireDigit && 'siffer',
+            ps.requireUpper && 'stor bokstav',
+            ps.requireLower && 'liten bokstav',
+            ps.requireSymbol && 'spesialtegn',
+        ].filter(Boolean).join(', ');
+        return (
+            <p className="level-questions__ci-summary">
+                Min {ps.minLength} tegn{activeFlags ? ` · ${activeFlags}` : ''}
             </p>
         );
     }
@@ -227,6 +257,35 @@ export default function LevelQuestionsPage() {
                             labels: draft.labels,
                             items,
                         });
+                        setCreateOpen(false);
+                    } catch {
+                        // error shown via createError
+                    }
+                }
+                break;
+            }
+            case 'PASSWORD_STRENGTH': {
+                const psPayload = {
+                    levelType: 'PASSWORD_STRENGTH' as const,
+                    questionText: draft.questionText,
+                    minLength: draft.minLength,
+                    requireDigit: draft.requireDigit,
+                    requireUpper: draft.requireUpper,
+                    requireLower: draft.requireLower,
+                    requireSymbol: draft.requireSymbol,
+                    successFeedback: draft.successFeedback,
+                    failureFeedback: draft.failureFeedback,
+                };
+                if (editingQuestion) {
+                    try {
+                        await updateMutation.mutateAsync({ questionId: editingQuestion.id, payload: psPayload });
+                        setEditingQuestion(null);
+                    } catch {
+                        // error shown via updateError
+                    }
+                } else {
+                    try {
+                        await createMutation.mutateAsync(psPayload);
                         setCreateOpen(false);
                     } catch {
                         // error shown via createError

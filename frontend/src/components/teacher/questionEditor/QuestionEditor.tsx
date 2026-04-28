@@ -1,6 +1,7 @@
 import { MultipleChoiceEditor } from './MultipleChoiceEditor';
 import { PictureQuizEditor } from './PictureQuizEditor';
 import { ClassifyItemsEditor } from './ClassifyItemsEditor';
+import { PasswordStrengthEditor } from './PasswordStrengthEditor';
 import type { QuestionDraft } from './types';
 
 interface Props {
@@ -16,5 +17,7 @@ export function QuestionEditor({ value, onChange }: Props) {
       return <PictureQuizEditor value={value} onChange={v => onChange(v)} />;
     case 'CLASSIFY_ITEMS':
       return <ClassifyItemsEditor value={value} onChange={v => onChange(v)} />;
+    case 'PASSWORD_STRENGTH':
+      return <PasswordStrengthEditor value={value} onChange={v => onChange(v)} />;
   }
 }

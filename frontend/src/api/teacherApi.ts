@@ -26,11 +26,22 @@ export interface TeacherClassifyItemsOption {
   explanation: string;
 }
 
+export interface TeacherPasswordStrengthOption {
+  id: number;
+  minLength: number;
+  requireDigit: boolean;
+  requireUpper: boolean;
+  requireLower: boolean;
+  requireSymbol: boolean;
+  successFeedback: string;
+  failureFeedback: string;
+}
+
 export interface TeacherQuestion {
   id: number;
   levelType: string;
   questionText: string;
-  options: TeacherQuestionOption[] | TeacherClassifyItemsOption[];
+  options: TeacherQuestionOption[] | TeacherClassifyItemsOption[] | TeacherPasswordStrengthOption[];
   isDefault: boolean;
   classroomId: string | null;
 }
@@ -453,8 +464,20 @@ export interface CreateClassifyItemsQuestionPayload {
   items: ClassifyItemsItemPayload[];
 }
 
+export interface CreatePasswordStrengthQuestionPayload {
+  questionText: string;
+  levelType: 'PASSWORD_STRENGTH';
+  minLength: number;
+  requireDigit: boolean;
+  requireUpper: boolean;
+  requireLower: boolean;
+  requireSymbol: boolean;
+  successFeedback: string;
+  failureFeedback: string;
+}
+
 // Discriminated union — extend with additional arms as new types are added
-export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload | CreatePictureQuizQuestionPayload | CreateClassifyItemsQuestionPayload;
+export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload | CreatePictureQuizQuestionPayload | CreateClassifyItemsQuestionPayload | CreatePasswordStrengthQuestionPayload;
 
 export interface UpdateMultipleChoiceQuestionPayload {
   levelType: 'MULTIPLE_CHOICE';
@@ -475,8 +498,20 @@ export interface UpdateClassifyItemsQuestionPayload {
   items: ClassifyItemsItemPayload[];
 }
 
+export interface UpdatePasswordStrengthQuestionPayload {
+  levelType: 'PASSWORD_STRENGTH';
+  questionText: string;
+  minLength: number;
+  requireDigit: boolean;
+  requireUpper: boolean;
+  requireLower: boolean;
+  requireSymbol: boolean;
+  successFeedback: string;
+  failureFeedback: string;
+}
+
 // Discriminated union — extend with additional arms as new types are added
-export type UpdateQuestionPayload = UpdateMultipleChoiceQuestionPayload | UpdatePictureQuizQuestionPayload | UpdateClassifyItemsQuestionPayload;
+export type UpdateQuestionPayload = UpdateMultipleChoiceQuestionPayload | UpdatePictureQuizQuestionPayload | UpdateClassifyItemsQuestionPayload | UpdatePasswordStrengthQuestionPayload;
 
 export async function createQuestion(classroomId: string, levelId: number, payload: CreateQuestionPayload): Promise<TeacherQuestion> {
   const res = await apiClient.post<TeacherQuestion>(

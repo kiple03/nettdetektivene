@@ -40,8 +40,20 @@ export interface ClassifyItemsQuestionDraft {
   items: ClassifyItemsItemDraft[];
 }
 
+export interface PasswordStrengthQuestionDraft {
+  kind: 'PASSWORD_STRENGTH';
+  questionText: string;
+  minLength: number;
+  requireDigit: boolean;
+  requireUpper: boolean;
+  requireLower: boolean;
+  requireSymbol: boolean;
+  successFeedback: string;
+  failureFeedback: string;
+}
+
 // Discriminated union — extend with additional arms as new types are added
-export type QuestionDraft = MultipleChoiceQuestionDraft | PictureQuizQuestionDraft | ClassifyItemsQuestionDraft;
+export type QuestionDraft = MultipleChoiceQuestionDraft | PictureQuizQuestionDraft | ClassifyItemsQuestionDraft | PasswordStrengthQuestionDraft;
 
 export function makeOptionId(): string {
   return crypto.randomUUID();
@@ -55,6 +67,8 @@ export function validateDraft(draft: QuestionDraft): string[] {
       return validatePictureQuizDraft(draft);
     case 'CLASSIFY_ITEMS':
       return validateClassifyItemsDraft(draft);
+    case 'PASSWORD_STRENGTH':
+      return validatePasswordStrengthDraft(draft);
   }
 }
 
@@ -118,6 +132,29 @@ export function validateClassifyItemsDraft(draft: ClassifyItemsQuestionDraft): s
   return errors;
 }
 
+export function validatePasswordStrengthDraft(draft: PasswordStrengthQuestionDraft): string[] {
+  const errors: string[] = [];
+  if (!draft.questionText.trim()) errors.push('Spørsmålstekst er påkrevd.');
+  if (draft.minLength < 1 || draft.minLength > 64) errors.push('Min. lengde må være mellom 1 og 64.');
+  if (!draft.successFeedback.trim()) errors.push('Tilbakemelding ved suksess er påkrevd.');
+  if (!draft.failureFeedback.trim()) errors.push('Tilbakemelding ved feil er påkrevd.');
+  return errors;
+}
+
+export function emptyPasswordStrengthDraft(): PasswordStrengthQuestionDraft {
+  return {
+    kind: 'PASSWORD_STRENGTH',
+    questionText: '',
+    minLength: 8,
+    requireDigit: false,
+    requireUpper: false,
+    requireLower: false,
+    requireSymbol: false,
+    successFeedback: '',
+    failureFeedback: '',
+  };
+}
+
 export function emptyMultipleChoiceDraft(): MultipleChoiceQuestionDraft {
   return {
     kind: 'MULTIPLE_CHOICE',
@@ -155,6 +192,8 @@ export function emptyDraftForType(levelType: string): QuestionDraft {
       return emptyPictureQuizDraft();
     case 'CLASSIFY_ITEMS':
       return emptyClassifyItemsDraft();
+    case 'PASSWORD_STRENGTH':
+      return emptyPasswordStrengthDraft();
     default:
       return emptyMultipleChoiceDraft();
   }
