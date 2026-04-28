@@ -22,6 +22,7 @@ import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.TeacherOptionResponse;
+import org.ntnu.backend.game.dto.TeacherPictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -445,6 +446,108 @@ class TeacherQuestionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))
             .andExpect(status().isNotFound());
+    }
+
+    // PICTURE_QUIZ create/update tests
+
+    @Test
+    void createPictureQuizQuestion_returnsCreated() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 2;
+
+        TeacherPictureQuizOptionResponse opt1 = new TeacherPictureQuizOptionResponse(
+            1, "Ekte", "https://example.com/photo.jpg", true, "Dette er et ekte bilde");
+        TeacherPictureQuizOptionResponse opt2 = new TeacherPictureQuizOptionResponse(
+            2, "Falsk", "https://example.com/fake.jpg", false, "Dette er AI-generert");
+        TeacherQuestionResponse created = new TeacherQuestionResponse(
+            55, LevelType.PICTURE_QUIZ, "Er dette bildet ekte?",
+            List.<TeacherOptionResponse>of(opt1, opt2), false, classroomId);
+
+        when(teacherQuestionService.createQuestion(eq(classroomId), eq(levelId), any(), any()))
+            .thenReturn(created);
+
+        String body = """
+            {
+              "questionText": "Er dette bildet ekte?",
+              "levelType": "PICTURE_QUIZ",
+              "options": [
+                {"text": "Ekte", "imageUrl": "https://example.com/photo.jpg", "isCorrect": true, "explanation": "Dette er et ekte bilde"},
+                {"text": "Falsk", "imageUrl": "https://example.com/fake.jpg", "isCorrect": false, "explanation": "Dette er AI-generert"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(55))
+            .andExpect(jsonPath("$.levelType").value("PICTURE_QUIZ"))
+            .andExpect(jsonPath("$.options[0].text").value("Ekte"))
+            .andExpect(jsonPath("$.options[0].isCorrect").value(true))
+            .andExpect(jsonPath("$.options[0].imageUrl").value("https://example.com/photo.jpg"));
+    }
+
+    @Test
+    void updatePictureQuizQuestion_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 2;
+        int questionId = 55;
+
+        TeacherPictureQuizOptionResponse opt = new TeacherPictureQuizOptionResponse(
+            1, "Ekte", "https://example.com/updated.jpg", true, "Oppdatert forklaring");
+        TeacherQuestionResponse updated = new TeacherQuestionResponse(
+            questionId, LevelType.PICTURE_QUIZ, "Oppdatert spørsmål?",
+            List.<TeacherOptionResponse>of(opt), false, classroomId);
+
+        when(teacherQuestionService.updateQuestion(eq(classroomId), eq(levelId), eq(questionId), any(), any()))
+            .thenReturn(updated);
+
+        String body = """
+            {
+              "questionText": "Oppdatert spørsmål?",
+              "levelType": "PICTURE_QUIZ",
+              "options": [
+                {"text": "Ekte", "imageUrl": "https://example.com/updated.jpg", "isCorrect": true, "explanation": "Oppdatert forklaring"},
+                {"text": "Falsk", "imageUrl": "https://example.com/fake.jpg", "isCorrect": false, "explanation": "Feil"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions/" + questionId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(questionId))
+            .andExpect(jsonPath("$.levelType").value("PICTURE_QUIZ"))
+            .andExpect(jsonPath("$.options[0].imageUrl").value("https://example.com/updated.jpg"));
+    }
+
+    @Test
+    void createPictureQuizQuestion_missingImageUrl_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        String body = """
+            {
+              "questionText": "Er dette bildet ekte?",
+              "levelType": "PICTURE_QUIZ",
+              "options": [
+                {"text": "Ekte", "imageUrl": "", "isCorrect": true, "explanation": "Forklaring"},
+                {"text": "Falsk", "imageUrl": "https://example.com/fake.jpg", "isCorrect": false, "explanation": "Forklaring"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/2/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
     }
 
     // DELETE /{questionId} tests
