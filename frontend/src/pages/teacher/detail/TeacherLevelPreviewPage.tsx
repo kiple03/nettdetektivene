@@ -9,7 +9,7 @@ import { STATION_TYPE } from '@/types/station';
 import type { StationData, SubmitAnswerResult } from '@/types/station';
 import type { TeacherQuestion } from '@/api/teacherApi';
 import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
-import type { SubmitAnswerRequest } from '@/api/gameApi';
+import type { SubmitAnswerRequest, LevelType } from '@/api/gameApi';
 import '@/components/game/ui/game.css';
 import './TeacherLevelPreviewPage.css';
 
@@ -31,6 +31,7 @@ function mapToStation(q: TeacherQuestion): StationData {
     return {
         questionId: q.id,
         type: STATION_TYPE.NEWS,
+        levelType: q.levelType as LevelType,
         title: 'Nyhetskvartal',
         questionText: q.questionText,
         options: q.options.map(o => ({
