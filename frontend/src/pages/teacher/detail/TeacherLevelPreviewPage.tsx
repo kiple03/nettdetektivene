@@ -14,17 +14,19 @@ import '@/components/game/ui/game.css';
 import './TeacherLevelPreviewPage.css';
 
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
-    return {
-        kind: 'MULTIPLE_CHOICE',
-        questionText: q.questionText,
-        options: (q.options ?? []).map(o => ({
-            id: o.id.toString(),
-            text: o.text ?? '',
-            isCorrect: o.isCorrect,
-            explanation: o.explanation ?? '',
-            imageUrl: o.imageUrl,
-        })),
-    };
+    const options = (q.options ?? []).map(o => ({
+        id: o.id.toString(),
+        text: o.text ?? '',
+        isCorrect: o.isCorrect,
+        explanation: o.explanation ?? '',
+        imageUrl: o.imageUrl,
+    }));
+    switch (q.levelType) {
+        case 'PICTURE_QUIZ':
+            return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
+        default:
+            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options };
+    }
 }
 
 function mapToStation(q: TeacherQuestion): StationData {
@@ -115,7 +117,25 @@ export default function TeacherLevelPreviewPage() {
                 try {
                     await updateMutation.mutateAsync({
                         questionId: editingQuestion.id,
-                        payload: { questionText: draft.questionText, options },
+                        payload: { levelType: 'MULTIPLE_CHOICE', questionText: draft.questionText, options },
+                    });
+                    setEditingQuestion(null);
+                } catch {
+                    // error shown via updateError
+                }
+                break;
+            }
+            case 'PICTURE_QUIZ': {
+                const options = draft.options.map(o => ({
+                    text: o.text,
+                    imageUrl: o.imageUrl ?? '',
+                    isCorrect: o.isCorrect,
+                    explanation: o.explanation,
+                }));
+                try {
+                    await updateMutation.mutateAsync({
+                        questionId: editingQuestion.id,
+                        payload: { levelType: 'PICTURE_QUIZ', questionText: draft.questionText, options },
                     });
                     setEditingQuestion(null);
                 } catch {

@@ -10,7 +10,9 @@ import {
 import { QuestionEditorModal } from '@/components/teacher/questionEditor/QuestionEditorModal';
 import { DeleteQuestionDialog } from '@/components/teacher/questionEditor/DeleteQuestionDialog';
 import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
+import { emptyDraftForType } from '@/components/teacher/questionEditor/types';
 import type { TeacherQuestion } from '@/api/teacherApi';
+import { getImageDisplayUrl } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
 
 const LEVEL_TYPE_LABELS: Record<string, string> = {
@@ -23,20 +25,22 @@ const LEVEL_TYPE_LABELS: Record<string, string> = {
     TUTORIAL: 'Opplæring',
 };
 
-const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE']);
+const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE', 'PICTURE_QUIZ']);
 
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
-    return {
-        kind: 'MULTIPLE_CHOICE',
-        questionText: q.questionText,
-        options: (q.options ?? []).map(o => ({
-            id: o.id.toString(),
-            text: o.text ?? '',
-            isCorrect: o.isCorrect,
-            explanation: o.explanation ?? '',
-            imageUrl: o.imageUrl,
-        })),
-    };
+    const options = (q.options ?? []).map(o => ({
+        id: o.id.toString(),
+        text: o.text ?? '',
+        isCorrect: o.isCorrect,
+        explanation: o.explanation ?? '',
+        imageUrl: o.imageUrl,
+    }));
+    switch (q.levelType) {
+        case 'PICTURE_QUIZ':
+            return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
+        default:
+            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options };
+    }
 }
 
 export default function LevelQuestionsPage() {
@@ -94,7 +98,7 @@ export default function LevelQuestionsPage() {
                     try {
                         await updateMutation.mutateAsync({
                             questionId: editingQuestion.id,
-                            payload: { questionText: draft.questionText, options },
+                            payload: { levelType: 'MULTIPLE_CHOICE', questionText: draft.questionText, options },
                         });
                         setEditingQuestion(null);
                     } catch {
@@ -105,6 +109,37 @@ export default function LevelQuestionsPage() {
                         await createMutation.mutateAsync({
                             questionText: draft.questionText,
                             levelType: 'MULTIPLE_CHOICE',
+                            options,
+                        });
+                        setCreateOpen(false);
+                    } catch {
+                        // error shown via createError
+                    }
+                }
+                break;
+            }
+            case 'PICTURE_QUIZ': {
+                const options = draft.options.map(o => ({
+                    text: o.text,
+                    imageUrl: o.imageUrl ?? '',
+                    isCorrect: o.isCorrect,
+                    explanation: o.explanation,
+                }));
+                if (editingQuestion) {
+                    try {
+                        await updateMutation.mutateAsync({
+                            questionId: editingQuestion.id,
+                            payload: { levelType: 'PICTURE_QUIZ', questionText: draft.questionText, options },
+                        });
+                        setEditingQuestion(null);
+                    } catch {
+                        // error shown via updateError
+                    }
+                } else {
+                    try {
+                        await createMutation.mutateAsync({
+                            questionText: draft.questionText,
+                            levelType: 'PICTURE_QUIZ',
                             options,
                         });
                         setCreateOpen(false);
@@ -199,6 +234,13 @@ export default function LevelQuestionsPage() {
                                                         key={opt.id}
                                                         className={`level-questions__option${opt.isCorrect ? ' level-questions__option--correct' : ''}`}
                                                     >
+                                                        {q.levelType === 'PICTURE_QUIZ' && opt.imageUrl && (
+                                                            <img
+                                                                src={getImageDisplayUrl(opt.imageUrl)}
+                                                                alt={opt.text ?? ''}
+                                                                className="level-questions__option-thumb"
+                                                            />
+                                                        )}
                                                         {opt.text}
                                                         {opt.isCorrect && (
                                                             <span className="level-questions__correct-mark"> ✓</span>
@@ -241,7 +283,7 @@ export default function LevelQuestionsPage() {
                 <QuestionEditorModal
                     key={editingQuestion?.id ?? `create-${createKey}`}
                     mode={modalMode}
-                    initialValue={editingQuestion ? questionToInitialDraft(editingQuestion) : undefined}
+                    initialValue={editingQuestion ? questionToInitialDraft(editingQuestion) : emptyDraftForType(level?.levelType ?? 'MULTIPLE_CHOICE')}
                     saving={modalSaving}
                     error={modalError}
                     onClose={handleCloseModal}

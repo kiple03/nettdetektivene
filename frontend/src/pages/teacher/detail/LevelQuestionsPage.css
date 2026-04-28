@@ -243,6 +243,16 @@
     font-weight: 800;
 }
 
+.level-questions__option-thumb {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-right: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 /* ITEM ACTIONS */
 .level-questions__item-actions {
     display: flex;

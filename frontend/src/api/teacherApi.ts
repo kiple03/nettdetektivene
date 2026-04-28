@@ -413,19 +413,42 @@ export interface QuestionOptionPayload {
   explanation: string;
 }
 
+export interface PictureQuizOptionPayload {
+  text: string;
+  imageUrl: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
 export interface CreateMultipleChoiceQuestionPayload {
   questionText: string;
   levelType: 'MULTIPLE_CHOICE';
   options: QuestionOptionPayload[];
 }
 
-// Discriminated union — extend with additional arms as new types are added
-export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload;
+export interface CreatePictureQuizQuestionPayload {
+  questionText: string;
+  levelType: 'PICTURE_QUIZ';
+  options: PictureQuizOptionPayload[];
+}
 
-export interface UpdateQuestionPayload {
+// Discriminated union — extend with additional arms as new types are added
+export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload | CreatePictureQuizQuestionPayload;
+
+export interface UpdateMultipleChoiceQuestionPayload {
+  levelType: 'MULTIPLE_CHOICE';
   questionText: string;
   options: QuestionOptionPayload[];
 }
+
+export interface UpdatePictureQuizQuestionPayload {
+  levelType: 'PICTURE_QUIZ';
+  questionText: string;
+  options: PictureQuizOptionPayload[];
+}
+
+// Discriminated union — extend with additional arms as new types are added
+export type UpdateQuestionPayload = UpdateMultipleChoiceQuestionPayload | UpdatePictureQuizQuestionPayload;
 
 export async function createQuestion(classroomId: string, levelId: number, payload: CreateQuestionPayload): Promise<TeacherQuestion> {
   const res = await apiClient.post<TeacherQuestion>(
