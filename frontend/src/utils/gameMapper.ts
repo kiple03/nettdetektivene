@@ -10,31 +10,17 @@ import {
 function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationType {
   switch (levelType) {
     case "MULTIPLE_CHOICE":
-      return STATION_TYPE.NEWS; //legge til flere etter hvert
+      return STATION_TYPE.NEWS;
     case "POST_OFFICE":
       return STATION_TYPE.POST;
     case "PICTURE_QUIZ":
       return STATION_TYPE.PHOTO;
+
     case "PASSWORD_STRENGTH":
       return STATION_TYPE.PASSWORD;
 
     default:
       return STATION_TYPE.NEWS;
-  }
-}
-
-function mapQuestionToStationTitle(levelType: GameQuestion["levelType"]): string {
-  switch (levelType) {
-    case "MULTIPLE_CHOICE":
-      return "Nyhetskvartal";
-    case "POST_OFFICE":
-      return "Postkontoret"
-    case "PICTURE_QUIZ":
-      return "Fotografen";
-    case "PASSWORD_STRENGTH":
-      return "Passordbanken";
-    default:
-      return "Stasjon";
   }
 }
 
@@ -48,14 +34,17 @@ export function mapOptionToStation(option: QuestionOption): StationOption {
     requireUpper:  option.requireUpper,
     requireLower:  option.requireLower,
     requireSymbol: option.requireSymbol,
+    key: option.key,
+    labels: option.labels,
   };
 }
 
-export function mapQuestionToStationData(question: GameQuestion): StationData {
+export function mapQuestionToStationData(question: GameQuestion, type?: StationType): StationData {
   return {
     questionId: question.id,
-    type: mapLevelToStationType(question.levelType),
-    title: mapQuestionToStationTitle(question.levelType),
+    type: type ?? mapLevelToStationType(question.levelType),
+    levelType: question.levelType,
+    title: "",
     questionText: question.questionText,
     options: question.options.map(mapOptionToStation),
     email: question.email

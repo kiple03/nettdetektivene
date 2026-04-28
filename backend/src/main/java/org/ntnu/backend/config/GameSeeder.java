@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.PostOfficeOption;
@@ -69,8 +70,7 @@ public class GameSeeder implements CommandLineRunner {
     seedNews();
     seedPost();
     seedPasswords();
-    seedPasswords();
-    seedPhoto();
+    seedMarkedsplassen();
     log.info("GameSeeder: done");
   }
 
@@ -893,5 +893,177 @@ public class GameSeeder implements CommandLineRunner {
 
       ensureLevelNoteTemplate(l3, NoteCategory.PASSORD,
           "Bytt passord og skru på 2FA så fort du oppdager lekkasje.");
+  }
+
+  private void seedMarkedsplassen() {
+    Stop stop = stopRepository.findByName("Markedsplassen").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Markedsplassen");
+      s.setDisplayOrder(5);
+      return stopRepository.save(s);
+    });
+
+    Level l1 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Er denne nettbutikken trygg?")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Er denne nettbutikken trygg?");
+          l.setDescription("Du har funnet noen nettbutikker. Se nøye på tilbudene og vurder om du bør handle der.");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(1);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l1,
+        "Du finner en nettbutikk som heter 'SuperBillig-Shop.xyz'. De har 90% rabatt på ALT, ingen kontaktinformasjon, og nettsiden ser ut som den ble laget i går. Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Kjøpe – dette er et godt tilbud!", null, false,
+                "Denne nettbutikken har mange varseltegn. 90% rabatt på alt er nesten alltid for godt til å være sant."),
+            new MultipleChoiceOption(2, "Undersøke mer først", null, false,
+                "Det er bra å være forsiktig, men denne butikken har så mange røde flagg at det er best å holde seg unna."),
+            new MultipleChoiceOption(3, "Ikke handle – dette virker utrygt", null, true,
+                "Riktig! Butikken har 90% rabatt på alt, ingen kontaktinfo og en merkelig nettadresse. Dette er typiske tegn på svindel.")
+        )
+    );
+
+    ensureQuestion(l1,
+        "En nettbutikk selger populære sko til halv pris. Siden ser profesjonell ut, men alle anmeldelsene er 5 stjerner og skrevet på samme dag. Du finner ikke noe info om hvem som eier butikken. Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Kjøpe – det ser fint ut", null, false,
+                "Selv om siden ser pen ut, bør du være forsiktig. Alle anmeldelsene er skrevet på samme dag, og det finnes ingen informasjon om hvem som driver butikken."),
+            new MultipleChoiceOption(2, "Undersøke mer først", null, true,
+                "Riktig! Butikken ser grei ut ved første øyekast, men det er noen ting som bør sjekkes nærmere – som anmeldelsene og manglende info om selskapet."),
+            new MultipleChoiceOption(3, "Ikke handle – dette virker utrygt", null, false,
+                "Det er lurt å være forsiktig, men her er det bedre å undersøke mer først. Noen av tegnene kan ha en forklaring.")
+        )
+    );
+
+    ensureQuestion(l1,
+        "Du finner en nettbutikk med norsk organisasjonsnummer, telefonnummer og e-post på kontaktsiden. Nettadressen starter med hengelås og slutter på '.no'. Anmeldelsene ser ekte ut med både gode og dårlige tilbakemeldinger. Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Kjøpe – dette ser trygt ut", null, true,
+                "Riktig! Denne butikken har organisasjonsnummer, kontaktinfo, sikker betaling og ekte anmeldelser. Dette er tegn på en trygg nettbutikk."),
+            new MultipleChoiceOption(2, "Undersøke mer først", null, false,
+                "Det er alltid lurt å være forsiktig, men denne butikken viser alle tegnene på at den er trygg og seriøs."),
+            new MultipleChoiceOption(3, "Ikke handle – jeg stoler ikke på nettbutikker", null, false,
+                "Denne butikken er faktisk trygg! Den har kontaktinfo, organisasjonsnummer, hengelås i nettleseren og ekte anmeldelser. Det er viktig å kunne kjenne igjen trygge butikker også.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l1, NoteCategory.NETT,
+        "Sjekk alltid kontaktinfo, nettadresse og anmeldelser før du handler på nett. Hvis noe virker for godt til å være sant, er det ofte det.");
+    Level l2 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Hva er mistenkelig?")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Hva er mistenkelig?");
+          l.setDescription("Noe er galt med disse nettbutikkene. Kan du finne ut hva som er mistenkelig?");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(2);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l2,
+        "En nettbutikk selger jakker til 50 kr. Nettadressen er 'www.billige-jakker-norge.ru'. Hva er mest mistenkelig?",
+        List.of(
+            new MultipleChoiceOption(1, "Prisen er lav", null, false,
+                "Lave priser kan være mistenkelig, men det finnes ekte tilbud. Det mest mistenkelige her er nettadressen."),
+            new MultipleChoiceOption(2, "Nettadressen ender på .ru", null, true,
+                "Riktig! En norsk nettbutikk bør ha en norsk nettadresse. '.ru' er russisk, og det er rart for en butikk som later som den er norsk."),
+            new MultipleChoiceOption(3, "De selger jakker", null, false,
+                "Det er ingenting galt med å selge jakker. Se nøyere på nettadressen!")
+        )
+    );
+
+    ensureQuestion(l2,
+        "Du finner en nettbutikk med mange gode anmeldelser, men alle er skrevet av 'Bruker123' med litt forskjellig tekst. Hva er mistenkelig?",
+        List.of(
+            new MultipleChoiceOption(1, "Butikken har anmeldelser", null, false,
+                "Det er bra at en butikk har anmeldelser! Problemet er at de alle ser ut til å komme fra samme person."),
+            new MultipleChoiceOption(2, "Alle anmeldelsene er fra samme bruker", null, true,
+                "Riktig! Ekte anmeldelser kommer fra mange forskjellige personer. Når alle er fra samme bruker, er de sannsynligvis falske."),
+            new MultipleChoiceOption(3, "Teksten er litt forskjellig", null, false,
+                "Det er normalt at anmeldelser har forskjellig tekst. Problemet er hvem som har skrevet dem.")
+        )
+    );
+
+    ensureQuestion(l2,
+        "En nettbutikk tilbyr kun betaling med gavekort eller kryptovaluta. Hva er mistenkelig?",
+        List.of(
+            new MultipleChoiceOption(1, "At butikken finnes på nett", null, false,
+                "Det er helt vanlig å handle på nett. Det mistenkelige er betalingsmåten."),
+            new MultipleChoiceOption(2, "Betalingsmåten – du kan ikke spore pengene", null, true,
+                "Riktig! Trygge nettbutikker tilbyr vanlige betalingsmetoder som Vipps, kort eller faktura. Gavekort og krypto kan ikke spores, så du får aldri pengene tilbake."),
+            new MultipleChoiceOption(3, "At de tar betaling i det hele tatt", null, false,
+                "Alle butikker tar betaling. Det mistenkelige er hvilke betalingsmåter de tilbyr.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l2, NoteCategory.NETT,
+        "Sjekk nettadressen, hvem som har skrevet anmeldelsene, og om betalingsmåtene er trygge.");
+
+
+    Level l3 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nettbutikk-eksperten")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Nettbutikk-eksperten");
+          l.setDescription("Gå gjennom nettbutikken og vurder hvert element.");
+          l.setLevelType(LevelType.CLASSIFY_ITEMS);
+          l.setStop(stop);
+          l.setOrder(3);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l3,
+        "Du har funnet nettbutikken 'ElektroTilbud'. Hva tror du om hvert element?",
+        List.of(
+            new ClassifyItemsOption("url", "Nettadressen er www.elektrotilbud.xyz",
+                List.of("Ekte norsk butikk", "Utenlandsk side", "Ukjent domene"),
+                "Ukjent domene",
+                ".xyz er ikke et norsk domene. Norske butikker bruker vanligvis .no — et ukjent domene betyr at du bør være ekstra forsiktig."),
+            new ClassifyItemsOption("reviews", "Alle 200 anmeldelsene er 5 stjerner og lagt inn samme dag",
+                List.of("Ekte anmeldelser", "Kjøpte anmeldelser", "Ansatte som har skrevet"),
+                "Kjøpte anmeldelser",
+                "200 perfekte anmeldelser på én dag er nesten helt sikkert kjøpt. Ekte anmeldelser kommer over tid fra forskjellige folk."),
+            new ClassifyItemsOption("contact", "Kontaktsiden har telefonnummer, e-post og besøksadresse",
+                List.of("Vanlig for nettbutikker", "Uvanlig mye info", "Sikkert falsk info"),
+                "Vanlig for nettbutikker",
+                "Seriøse butikker har alltid kontaktinfo. Du kan ringe eller besøke dem hvis noe går galt."),
+            new ClassifyItemsOption("payment", "Betaling kun via kryptovaluta",
+                List.of("Moderne betalingsløsning", "Uvanlig for norske butikker", "Helt normalt"),
+                "Uvanlig for norske butikker",
+                "Norske nettbutikker tilbyr alltid Vipps, kort eller faktura. Kun krypto betyr at pengene ikke kan spores tilbake.")
+        )
+    );
+
+    ensureQuestion(l3,
+        "Du ser en annonse for 'GamerShop' på sosiale medier. Hva tenker du om hvert element?",
+        List.of(
+            new ClassifyItemsOption("ad", "Annonsen sier 'KUN I DAG: 90% på alt!'",
+                List.of("Vanlig tilbud", "Lokketilbud", "Sesongkampanje"),
+                "Lokketilbud",
+                "90% rabatt på alt er urealistisk. Slike tilbud skaper hastverk så du handler uten å tenke."),
+            new ClassifyItemsOption("spelling", "Nettsiden har skrivefeil som 'bestil nå' og 'levaringtid'",
+                List.of("Norsk dialekt", "Dårlig oversettelse", "Vanlige skrivefeil"),
+                "Dårlig oversettelse",
+                "Mange slike feil tyder på at siden er automatisk oversatt fra et annet språk — vanlig for svindelbutikker."),
+            new ClassifyItemsOption("price", "En PlayStation 5 koster vanlig butikkpris",
+                List.of("For dyrt", "Rettferdig pris", "Mistenkelig billig"),
+                "Rettferdig pris",
+                "Normal pris er faktisk et godt tegn! Svindelbutikker lokker med urealistisk lave priser."),
+            new ClassifyItemsOption("return", "Det finnes ingen informasjon om retur eller angrerett",
+                List.of("Normalt for nettbutikker", "Bryter norsk lov", "Betyr gratis retur"),
+                "Bryter norsk lov",
+                "Norske nettbutikker er pålagt å tilby 14 dagers angrerett. Manglende info om dette er et alvorlig rødt flagg.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l3, NoteCategory.NETT,
+        "Vurder hele nettbutikken samlet: nettadresse, priser, anmeldelser, betaling og returrett. Én trygg detalj betyr ikke at alt er trygt.");
+
+
   }
 }

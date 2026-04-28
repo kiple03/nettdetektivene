@@ -2,6 +2,7 @@ package org.ntnu.backend.game.mapper;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.game.dto.ClassifyItemsOptionResponse;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
@@ -10,6 +11,7 @@ import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.OptionResponse;
 import org.ntnu.backend.game.dto.PasswordStrengthOptionResponse;
+import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
@@ -53,6 +55,7 @@ public class GameMapper {
         level.getId(),
         level.getTitle(),
         level.getDescription(),
+        level.getStop().getName(),
         level.getLevelType(),
         level.getOrder(),
         locked
@@ -100,7 +103,13 @@ public class GameMapper {
               pq.getImageUrl()
       );
       case PasswordStrengthOption p -> new PasswordStrengthOptionResponse(
-        p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol());
+        p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol()
+      );
+      case ClassifyItemsOption ci -> new ClassifyItemsOptionResponse(
+          ci.getKey(),
+          ci.getText(),
+          ci.getLabels()
+      );
     };
   }
 }

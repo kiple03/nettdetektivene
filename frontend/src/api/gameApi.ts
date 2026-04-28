@@ -1,12 +1,13 @@
 import client from "./client"
-import type {EmailContent} from "@/types/email.ts";
+import type { EmailContent } from "@/types/email";
 
-export type LevelType = "PICTURE_QUIZ" | "POST_OFFICE" | "MULTIPLE_CHOICE" | "PASSWORD_STRENGTH"// legge til flere oppgavetyper senere
+export type LevelType = "MULTIPLE_CHOICE" | "PICTURE_QUIZ"| "PASSWORD_STRENGTH" | "CLASSIFY_ITEMS" | "POST_OFFICE"// legge til flere oppgavetyper senere
 
 export type SubmitAnswerRequest =
     | SubmitSingleChoiceAnswerRequest
     | SubmitMultiSelectAnswerRequest
     | SubmitPasswordStrengthAnswerRequest
+    | SubmitPerItemAnswerRequest
     | SubmitMultiChoiceAnswerRequest;
 
 export interface GameStop {
@@ -20,6 +21,9 @@ export interface QuestionOption {
   id: number;
   text?: string
   imageUrl?: string;
+
+  key?: string;
+  labels?: string[];
 
   //For PASSWORD
   minLength?: number;
@@ -41,6 +45,7 @@ export interface GameLevel {
   id: number;
   title: string;
   description: string;
+  stopName: string;
   levelType: LevelType;
   locked: boolean;
 }
@@ -75,6 +80,18 @@ export interface SubmitPasswordStrengthAnswerRequest{
   shape: "PASSWORD";
   password: string;
 }
+
+export interface SubmitPerItemAnswerRequest {
+    shape: "PER_ITEM";
+    answers: Record<string, string>;
+}
+
+export const submitPerItemAnswer = async (
+    questionId: number, body: SubmitPerItemAnswerRequest
+): Promise<SubmitAnswerResponse> => {
+    const response = await client.post(`/game/questions/${questionId}/submit`, body);
+    return response.data;
+};
 
 export const submitLevel = async (
   levelId: number,
