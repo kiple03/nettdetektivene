@@ -1,11 +1,12 @@
 package org.ntnu.backend.classroom.dto;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-public record UpdateTeacherQuestionRequest(
-    @NotBlank String questionText,
-    @NotEmpty List<@Valid CreateMultipleChoiceOptionRequest> options
-) {}
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "levelType", visible = true)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = UpdateMultipleChoiceQuestionRequest.class, name = "MULTIPLE_CHOICE"),
+})
+public interface UpdateTeacherQuestionRequest {
+    String questionText();
+}

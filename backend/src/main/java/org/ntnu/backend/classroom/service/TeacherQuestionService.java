@@ -2,14 +2,18 @@ package org.ntnu.backend.classroom.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.CreateMultipleChoiceOptionRequest;
+import org.ntnu.backend.classroom.dto.CreateMultipleChoiceQuestionRequest;
 import org.ntnu.backend.classroom.dto.CreateTeacherQuestionRequest;
+import org.ntnu.backend.classroom.dto.UpdateMultipleChoiceQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateTeacherQuestionRequest;
 import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.TeacherOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
@@ -30,6 +34,8 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class TeacherQuestionService {
 
+    private static final Set<LevelType> SUPPORTED_TYPES = Set.of(LevelType.MULTIPLE_CHOICE);
+
     private final QuestionRepository questionRepository;
     private final LevelRepository levelRepository;
     private final ClassroomAuthorizationService classroomAuthorizationService;
@@ -37,10 +43,6 @@ public class TeacherQuestionService {
     private final OptionValidator optionValidator;
     private final ObjectMapper objectMapper;
 
-    /**
-     * Returns all questions for a level visible to the teacher: default questions
-     * (is_default=true) plus this classroom's teacher-added questions.
-     */
     public List<TeacherQuestionResponse> listQuestionsForTeacher(
             UUID classroomId, int levelId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
@@ -50,10 +52,6 @@ public class TeacherQuestionService {
             .toList();
     }
 
-    /**
-     * Creates a teacher-added question for a classroom level.
-     * Only {@link LevelType#MULTIPLE_CHOICE} levels are supported this iteration.
-     */
     public TeacherQuestionResponse createQuestion(
             UUID classroomId, int levelId,
             CreateTeacherQuestionRequest request,
@@ -63,25 +61,20 @@ public class TeacherQuestionService {
         Level level = levelRepository.findById(levelId)
             .orElseThrow(() -> new LevelNotFoundException(levelId));
 
-        if (level.getLevelType() != LevelType.MULTIPLE_CHOICE) {
+        LevelType type = level.getLevelType();
+        if (!SUPPORTED_TYPES.contains(type)) {
             throw new IllegalArgumentException(
-                "Only MULTIPLE_CHOICE levels support teacher-added questions");
+                "Level type " + type + " does not support teacher-added questions");
         }
 
-        if (request.levelType() != level.getLevelType()) {
-            throw new IllegalArgumentException(
-                "Request levelType " + request.levelType() + " does not match level type " + level.getLevelType());
-        }
+        List<Option> options = switch (request) {
+            case CreateMultipleChoiceQuestionRequest mc -> buildMcOptions(mc.options());
+            default -> throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
+        };
 
-        List<Option> options = buildMcOptions(request.options());
-        optionValidator.validate(options, LevelType.MULTIPLE_CHOICE);
+        optionValidator.validate(options, type);
 
-        String optionContent;
-        try {
-            optionContent = objectMapper.writeValueAsString(options);
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to serialize options", e);
-        }
+        String optionContent = serialize(options);
 
         Question question = new Question();
         question.setQuestionText(request.questionText());
@@ -93,10 +86,6 @@ public class TeacherQuestionService {
         return toTeacherResponse(questionRepository.save(question));
     }
 
-    /**
-     * Updates a teacher-added question. Rejects default questions (400) and
-     * questions not belonging to the given classroom (403).
-     */
     public TeacherQuestionResponse updateQuestion(
             UUID classroomId, int levelId, int questionId,
             UpdateTeacherQuestionRequest request,
@@ -109,35 +98,28 @@ public class TeacherQuestionService {
         if (question.getLevel().getId() != levelId) {
             throw new QuestionNotFoundException(questionId);
         }
-
         if (question.isDefault()) {
             throw new IllegalArgumentException("Cannot edit a default (seeded) question");
         }
-
         if (!classroomId.equals(question.getClassroomId())) {
             throw new AccessDeniedException("Question does not belong to this classroom");
         }
 
-        List<Option> options = buildMcOptions(request.options());
-        optionValidator.validate(options, LevelType.MULTIPLE_CHOICE);
+        LevelType type = question.getLevel().getLevelType();
 
-        String optionContent;
-        try {
-            optionContent = objectMapper.writeValueAsString(options);
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to serialize options", e);
-        }
+        List<Option> options = switch (request) {
+            case UpdateMultipleChoiceQuestionRequest mc -> buildMcOptions(mc.options());
+            default -> throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
+        };
+
+        optionValidator.validate(options, type);
 
         question.setQuestionText(request.questionText());
-        question.setOptionContent(optionContent);
+        question.setOptionContent(serialize(options));
 
         return toTeacherResponse(questionRepository.save(question));
     }
 
-    /**
-     * Deletes a teacher-added question. Rejects default questions (400) and
-     * questions not belonging to the given classroom (403).
-     */
     public void deleteQuestion(
             UUID classroomId, int levelId, int questionId,
             JwtAuthenticatedPrincipal principal) {
@@ -149,11 +131,9 @@ public class TeacherQuestionService {
         if (question.getLevel().getId() != levelId) {
             throw new QuestionNotFoundException(questionId);
         }
-
         if (question.isDefault()) {
             throw new IllegalArgumentException("Cannot delete a default (seeded) question");
         }
-
         if (!classroomId.equals(question.getClassroomId())) {
             throw new AccessDeniedException("Question does not belong to this classroom");
         }
@@ -170,11 +150,20 @@ public class TeacherQuestionService {
         return options;
     }
 
+    private String serialize(List<Option> options) {
+        try {
+            return objectMapper.writeValueAsString(options);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to serialize options", e);
+        }
+    }
+
     private TeacherQuestionResponse toTeacherResponse(Question question) {
         LevelType type = question.getLevel().getLevelType();
-        List<TeacherMultipleChoiceOptionResponse> options = type == LevelType.MULTIPLE_CHOICE
-            ? toMcOptions(optionParser.parse(question.getOptionContent(), type))
-            : List.of();
+        List<TeacherOptionResponse> options = switch (type) {
+            case MULTIPLE_CHOICE -> toMcOptions(optionParser.parse(question.getOptionContent(), type));
+            default -> List.of();
+        };
         return new TeacherQuestionResponse(
             question.getId(),
             type,
@@ -185,9 +174,9 @@ public class TeacherQuestionService {
         );
     }
 
-    private List<TeacherMultipleChoiceOptionResponse> toMcOptions(List<Option> options) {
+    private List<TeacherOptionResponse> toMcOptions(List<Option> options) {
         return options.stream()
-            .map(opt -> {
+            .<TeacherOptionResponse>map(opt -> {
                 MultipleChoiceOption mc = (MultipleChoiceOption) opt;
                 return new TeacherMultipleChoiceOptionResponse(
                     mc.getId(),

@@ -21,6 +21,7 @@ import org.ntnu.backend.config.SecurityConfig;
 import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.TeacherOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -76,7 +77,7 @@ class TeacherQuestionControllerTest {
             1, "Paris", null, true, "Paris is the capital");
         TeacherQuestionResponse question = new TeacherQuestionResponse(
             42, LevelType.MULTIPLE_CHOICE, "What is the capital of France?",
-            List.of(opt), true, null);
+            List.<TeacherOptionResponse>of(opt), true, null);
 
         when(teacherQuestionService.listQuestionsForTeacher(eq(classroomId), eq(levelId), any()))
             .thenReturn(List.of(question));
@@ -143,7 +144,7 @@ class TeacherQuestionControllerTest {
             1, "Paris", null, true, "Paris is the capital");
         TeacherQuestionResponse created = new TeacherQuestionResponse(
             99, LevelType.MULTIPLE_CHOICE, "What is the capital of France?",
-            List.of(opt), false, classroomId);
+            List.<TeacherOptionResponse>of(opt), false, classroomId);
 
         when(teacherQuestionService.createQuestion(eq(classroomId), eq(levelId), any(), any()))
             .thenReturn(created);
@@ -303,7 +304,7 @@ class TeacherQuestionControllerTest {
             1, "Berlin", null, false, "Berlin is Germany's capital");
         TeacherQuestionResponse updated = new TeacherQuestionResponse(
             questionId, LevelType.MULTIPLE_CHOICE, "Updated question?",
-            List.of(opt), false, classroomId);
+            List.<TeacherOptionResponse>of(opt), false, classroomId);
 
         when(teacherQuestionService.updateQuestion(eq(classroomId), eq(levelId), eq(questionId), any(), any()))
             .thenReturn(updated);
@@ -311,6 +312,7 @@ class TeacherQuestionControllerTest {
         String body = """
             {
               "questionText": "Updated question?",
+              "levelType": "MULTIPLE_CHOICE",
               "options": [
                 {"text": "Berlin", "imageUrl": null, "isCorrect": false, "explanation": "Berlin is Germany's capital"},
                 {"text": "Paris", "imageUrl": null, "isCorrect": true, "explanation": "Paris is France's capital"}
@@ -343,7 +345,7 @@ class TeacherQuestionControllerTest {
     @Test
     void updateQuestion_studentRole_returns403() throws Exception {
         String body = """
-            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            {"questionText": "Q?", "levelType": "MULTIPLE_CHOICE", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
             """;
 
         mockMvc.perform(put("/teacher/classrooms/" + UUID.randomUUID() + "/levels/1/questions/1")
@@ -362,7 +364,7 @@ class TeacherQuestionControllerTest {
             .thenThrow(new IllegalArgumentException("Cannot edit a default (seeded) question"));
 
         String body = """
-            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            {"questionText": "Q?", "levelType": "MULTIPLE_CHOICE", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
             """;
 
         mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/1/questions/1")
@@ -381,7 +383,7 @@ class TeacherQuestionControllerTest {
             .thenThrow(new AccessDeniedException("Question does not belong to this classroom"));
 
         String body = """
-            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            {"questionText": "Q?", "levelType": "MULTIPLE_CHOICE", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
             """;
 
         mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/1/questions/5")
@@ -400,7 +402,7 @@ class TeacherQuestionControllerTest {
             .thenThrow(new QuestionNotFoundException(999));
 
         String body = """
-            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            {"questionText": "Q?", "levelType": "MULTIPLE_CHOICE", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
             """;
 
         mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/1/questions/999")
@@ -416,7 +418,7 @@ class TeacherQuestionControllerTest {
         UUID classroomId = UUID.randomUUID();
 
         String body = """
-            {"options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            {"levelType": "MULTIPLE_CHOICE", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
             """;
 
         mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/1/questions/1")
@@ -435,7 +437,7 @@ class TeacherQuestionControllerTest {
             .thenThrow(new QuestionNotFoundException(1));
 
         String body = """
-            {"questionText": "Q?", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
+            {"questionText": "Q?", "levelType": "MULTIPLE_CHOICE", "options": [{"text": "A", "isCorrect": true, "explanation": "yes"}]}
             """;
 
         mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/999/questions/1")
