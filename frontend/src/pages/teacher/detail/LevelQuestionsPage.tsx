@@ -10,8 +10,8 @@ import {
 import { QuestionEditorModal } from '@/components/teacher/questionEditor/QuestionEditorModal';
 import { DeleteQuestionDialog } from '@/components/teacher/questionEditor/DeleteQuestionDialog';
 import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
-import { emptyDraftForType } from '@/components/teacher/questionEditor/types';
-import type { TeacherQuestion } from '@/api/teacherApi';
+import { emptyDraftForType, makeOptionId } from '@/components/teacher/questionEditor/types';
+import type { TeacherQuestion, TeacherClassifyItemsOption } from '@/api/teacherApi';
 import { getImageDisplayUrl } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
 
@@ -19,28 +19,82 @@ const LEVEL_TYPE_LABELS: Record<string, string> = {
     MULTIPLE_CHOICE: 'Flervalg',
     TEXT_QUIZ: 'Tekstquiz',
     PICTURE_QUIZ: 'Bildequiz',
+    CLASSIFY_ITEMS: 'Klassifisering',
     MINIGAME: 'Minispill',
     POST_OFFICE: 'Postkasse',
     BOSS_BATTLE: 'Sjefskamp',
     TUTORIAL: 'Opplæring',
 };
 
-const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE', 'PICTURE_QUIZ']);
+const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE', 'PICTURE_QUIZ', 'CLASSIFY_ITEMS']);
 
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
-    const options = (q.options ?? []).map(o => ({
-        id: o.id.toString(),
-        text: o.text ?? '',
-        isCorrect: o.isCorrect,
-        explanation: o.explanation ?? '',
-        imageUrl: o.imageUrl,
-    }));
     switch (q.levelType) {
-        case 'PICTURE_QUIZ':
-            return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
-        default:
+        case 'CLASSIFY_ITEMS': {
+            const ciOptions = q.options as TeacherClassifyItemsOption[];
+            const labels = ciOptions.length > 0 ? ciOptions[0].labels : ['', ''];
+            return {
+                kind: 'CLASSIFY_ITEMS',
+                questionText: q.questionText,
+                labels,
+                items: ciOptions.map(o => ({
+                    id: makeOptionId(),
+                    text: o.text,
+                    correctLabel: o.correctLabel,
+                    explanation: o.explanation,
+                })),
+            };
+        }
+        default: {
+            const options = (q.options as import('@/api/teacherApi').TeacherQuestionOption[]).map(o => ({
+                id: o.id.toString(),
+                text: o.text ?? '',
+                isCorrect: o.isCorrect,
+                explanation: o.explanation ?? '',
+                imageUrl: o.imageUrl,
+            }));
+            if (q.levelType === 'PICTURE_QUIZ') {
+                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
+            }
             return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options };
+        }
     }
+}
+
+function renderQuestionOptions(q: TeacherQuestion) {
+    if (q.levelType === 'CLASSIFY_ITEMS') {
+        const ciOptions = q.options as TeacherClassifyItemsOption[];
+        const labels = ciOptions.length > 0 ? ciOptions[0].labels : [];
+        return (
+            <p className="level-questions__ci-summary">
+                {ciOptions.length} elementer · kategorier: {labels.join(', ')}
+            </p>
+        );
+    }
+    if (q.options.length === 0) return null;
+    const stdOptions = q.options as import('@/api/teacherApi').TeacherQuestionOption[];
+    return (
+        <ul className="level-questions__options">
+            {stdOptions.map(opt => (
+                <li
+                    key={opt.id}
+                    className={`level-questions__option${opt.isCorrect ? ' level-questions__option--correct' : ''}`}
+                >
+                    {q.levelType === 'PICTURE_QUIZ' && opt.imageUrl && (
+                        <img
+                            src={getImageDisplayUrl(opt.imageUrl)}
+                            alt={opt.text ?? ''}
+                            className="level-questions__option-thumb"
+                        />
+                    )}
+                    {opt.text}
+                    {opt.isCorrect && (
+                        <span className="level-questions__correct-mark"> ✓</span>
+                    )}
+                </li>
+            ))}
+        </ul>
+    );
 }
 
 export default function LevelQuestionsPage() {
@@ -149,6 +203,37 @@ export default function LevelQuestionsPage() {
                 }
                 break;
             }
+            case 'CLASSIFY_ITEMS': {
+                const items = draft.items.map(it => ({
+                    text: it.text,
+                    correctLabel: it.correctLabel,
+                    explanation: it.explanation,
+                }));
+                if (editingQuestion) {
+                    try {
+                        await updateMutation.mutateAsync({
+                            questionId: editingQuestion.id,
+                            payload: { levelType: 'CLASSIFY_ITEMS', questionText: draft.questionText, labels: draft.labels, items },
+                        });
+                        setEditingQuestion(null);
+                    } catch {
+                        // error shown via updateError
+                    }
+                } else {
+                    try {
+                        await createMutation.mutateAsync({
+                            questionText: draft.questionText,
+                            levelType: 'CLASSIFY_ITEMS',
+                            labels: draft.labels,
+                            items,
+                        });
+                        setCreateOpen(false);
+                    } catch {
+                        // error shown via createError
+                    }
+                }
+                break;
+            }
         }
     };
 
@@ -227,28 +312,7 @@ export default function LevelQuestionsPage() {
                                 <li key={q.id} className="level-questions__item">
                                     <div className="level-questions__item-body">
                                         <p className="level-questions__item-text">{q.questionText}</p>
-                                        {q.options.length > 0 && (
-                                            <ul className="level-questions__options">
-                                                {q.options.map(opt => (
-                                                    <li
-                                                        key={opt.id}
-                                                        className={`level-questions__option${opt.isCorrect ? ' level-questions__option--correct' : ''}`}
-                                                    >
-                                                        {q.levelType === 'PICTURE_QUIZ' && opt.imageUrl && (
-                                                            <img
-                                                                src={getImageDisplayUrl(opt.imageUrl)}
-                                                                alt={opt.text ?? ''}
-                                                                className="level-questions__option-thumb"
-                                                            />
-                                                        )}
-                                                        {opt.text}
-                                                        {opt.isCorrect && (
-                                                            <span className="level-questions__correct-mark"> ✓</span>
-                                                        )}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
+                                        {renderQuestionOptions(q)}
                                     </div>
                                     <div className="level-questions__item-actions">
                                         {q.isDefault ? (

@@ -18,11 +18,19 @@ export interface TeacherQuestionOption {
   explanation: string | null;
 }
 
+export interface TeacherClassifyItemsOption {
+  key: string;
+  text: string;
+  labels: string[];
+  correctLabel: string;
+  explanation: string;
+}
+
 export interface TeacherQuestion {
   id: number;
   levelType: string;
   questionText: string;
-  options: TeacherQuestionOption[];
+  options: TeacherQuestionOption[] | TeacherClassifyItemsOption[];
   isDefault: boolean;
   classroomId: string | null;
 }
@@ -432,8 +440,21 @@ export interface CreatePictureQuizQuestionPayload {
   options: PictureQuizOptionPayload[];
 }
 
+export interface ClassifyItemsItemPayload {
+  text: string;
+  correctLabel: string;
+  explanation: string;
+}
+
+export interface CreateClassifyItemsQuestionPayload {
+  questionText: string;
+  levelType: 'CLASSIFY_ITEMS';
+  labels: string[];
+  items: ClassifyItemsItemPayload[];
+}
+
 // Discriminated union — extend with additional arms as new types are added
-export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload | CreatePictureQuizQuestionPayload;
+export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload | CreatePictureQuizQuestionPayload | CreateClassifyItemsQuestionPayload;
 
 export interface UpdateMultipleChoiceQuestionPayload {
   levelType: 'MULTIPLE_CHOICE';
@@ -447,8 +468,15 @@ export interface UpdatePictureQuizQuestionPayload {
   options: PictureQuizOptionPayload[];
 }
 
+export interface UpdateClassifyItemsQuestionPayload {
+  levelType: 'CLASSIFY_ITEMS';
+  questionText: string;
+  labels: string[];
+  items: ClassifyItemsItemPayload[];
+}
+
 // Discriminated union — extend with additional arms as new types are added
-export type UpdateQuestionPayload = UpdateMultipleChoiceQuestionPayload | UpdatePictureQuizQuestionPayload;
+export type UpdateQuestionPayload = UpdateMultipleChoiceQuestionPayload | UpdatePictureQuizQuestionPayload | UpdateClassifyItemsQuestionPayload;
 
 export async function createQuestion(classroomId: string, levelId: number, payload: CreateQuestionPayload): Promise<TeacherQuestion> {
   const res = await apiClient.post<TeacherQuestion>(

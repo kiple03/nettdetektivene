@@ -1,5 +1,6 @@
 import { MultipleChoiceEditor } from './MultipleChoiceEditor';
 import { PictureQuizEditor } from './PictureQuizEditor';
+import { ClassifyItemsEditor } from './ClassifyItemsEditor';
 import type { QuestionDraft } from './types';
 
 interface Props {
@@ -13,5 +14,7 @@ export function QuestionEditor({ value, onChange }: Props) {
       return <MultipleChoiceEditor value={value} onChange={v => onChange(v)} />;
     case 'PICTURE_QUIZ':
       return <PictureQuizEditor value={value} onChange={v => onChange(v)} />;
+    case 'CLASSIFY_ITEMS':
+      return <ClassifyItemsEditor value={value} onChange={v => onChange(v)} />;
   }
 }

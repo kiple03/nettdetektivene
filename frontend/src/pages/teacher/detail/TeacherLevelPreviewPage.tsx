@@ -7,36 +7,72 @@ import StationContainer from '@/components/game/station/StationContainer';
 import StationRenderer from '@/components/game/station/StationRenderer';
 import { STATION_TYPE } from '@/types/station';
 import type { StationData, SubmitAnswerResult } from '@/types/station';
-import type { TeacherQuestion } from '@/api/teacherApi';
+import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherQuestionOption } from '@/api/teacherApi';
 import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
+import { makeOptionId } from '@/components/teacher/questionEditor/types';
 import type { SubmitAnswerRequest, LevelType } from '@/api/gameApi';
 import '@/components/game/ui/game.css';
 import './TeacherLevelPreviewPage.css';
 
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
-    const options = (q.options ?? []).map(o => ({
-        id: o.id.toString(),
-        text: o.text ?? '',
-        isCorrect: o.isCorrect,
-        explanation: o.explanation ?? '',
-        imageUrl: o.imageUrl,
-    }));
     switch (q.levelType) {
-        case 'PICTURE_QUIZ':
-            return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
-        default:
+        case 'CLASSIFY_ITEMS': {
+            const ciOptions = q.options as TeacherClassifyItemsOption[];
+            const labels = ciOptions.length > 0 ? ciOptions[0].labels : ['', ''];
+            return {
+                kind: 'CLASSIFY_ITEMS',
+                questionText: q.questionText,
+                labels,
+                items: ciOptions.map(o => ({
+                    id: makeOptionId(),
+                    text: o.text,
+                    correctLabel: o.correctLabel,
+                    explanation: o.explanation,
+                })),
+            };
+        }
+        default: {
+            const stdOptions = q.options as TeacherQuestionOption[];
+            const options = stdOptions.map(o => ({
+                id: o.id.toString(),
+                text: o.text ?? '',
+                isCorrect: o.isCorrect,
+                explanation: o.explanation ?? '',
+                imageUrl: o.imageUrl,
+            }));
+            if (q.levelType === 'PICTURE_QUIZ') {
+                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
+            }
             return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options };
+        }
     }
 }
 
 function mapToStation(q: TeacherQuestion): StationData {
+    if (q.levelType === 'CLASSIFY_ITEMS') {
+        const ciOptions = q.options as TeacherClassifyItemsOption[];
+        return {
+            questionId: q.id,
+            type: STATION_TYPE.NEWS,
+            levelType: q.levelType as LevelType,
+            title: 'Nyhetskvartal',
+            questionText: q.questionText,
+            options: ciOptions.map((o, i) => ({
+                id: i,
+                label: o.text,
+                key: o.key,
+                labels: o.labels,
+            })),
+        };
+    }
+    const stdOptions = q.options as TeacherQuestionOption[];
     return {
         questionId: q.id,
         type: STATION_TYPE.NEWS,
         levelType: q.levelType as LevelType,
         title: 'Nyhetskvartal',
         questionText: q.questionText,
-        options: q.options.map(o => ({
+        options: stdOptions.map(o => ({
             id: o.id,
             label: o.text ?? 'Velg',
             imageUrl: o.imageUrl ?? undefined,
@@ -136,6 +172,23 @@ export default function TeacherLevelPreviewPage() {
                     await updateMutation.mutateAsync({
                         questionId: editingQuestion.id,
                         payload: { levelType: 'PICTURE_QUIZ', questionText: draft.questionText, options },
+                    });
+                    setEditingQuestion(null);
+                } catch {
+                    // error shown via updateError
+                }
+                break;
+            }
+            case 'CLASSIFY_ITEMS': {
+                const items = draft.items.map(it => ({
+                    text: it.text,
+                    correctLabel: it.correctLabel,
+                    explanation: it.explanation,
+                }));
+                try {
+                    await updateMutation.mutateAsync({
+                        questionId: editingQuestion.id,
+                        payload: { levelType: 'CLASSIFY_ITEMS', questionText: draft.questionText, labels: draft.labels, items },
                     });
                     setEditingQuestion(null);
                 } catch {

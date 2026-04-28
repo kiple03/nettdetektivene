@@ -26,8 +26,22 @@ export interface PictureQuizQuestionDraft {
   options: PictureQuizOptionDraft[];
 }
 
+export interface ClassifyItemsItemDraft {
+  id: string;
+  text: string;
+  correctLabel: string;
+  explanation: string;
+}
+
+export interface ClassifyItemsQuestionDraft {
+  kind: 'CLASSIFY_ITEMS';
+  questionText: string;
+  labels: string[];
+  items: ClassifyItemsItemDraft[];
+}
+
 // Discriminated union — extend with additional arms as new types are added
-export type QuestionDraft = MultipleChoiceQuestionDraft | PictureQuizQuestionDraft;
+export type QuestionDraft = MultipleChoiceQuestionDraft | PictureQuizQuestionDraft | ClassifyItemsQuestionDraft;
 
 export function makeOptionId(): string {
   return crypto.randomUUID();
@@ -39,6 +53,8 @@ export function validateDraft(draft: QuestionDraft): string[] {
       return validateMultipleChoiceDraft(draft);
     case 'PICTURE_QUIZ':
       return validatePictureQuizDraft(draft);
+    case 'CLASSIFY_ITEMS':
+      return validateClassifyItemsDraft(draft);
   }
 }
 
@@ -87,6 +103,21 @@ export function validatePictureQuizDraft(draft: PictureQuizQuestionDraft): strin
   return errors;
 }
 
+export function validateClassifyItemsDraft(draft: ClassifyItemsQuestionDraft): string[] {
+  const errors: string[] = [];
+  if (!draft.questionText.trim()) errors.push('Spørsmålstekst er påkrevd.');
+  if (draft.labels.length < 2) errors.push('Minst 2 kategorier er påkrevd.');
+  if (draft.labels.some(l => !l.trim())) errors.push('Alle kategorier må ha tekst.');
+  if (draft.items.length < 1) errors.push('Minst 1 element er påkrevd.');
+  if (draft.items.some(it => !it.text.trim())) errors.push('Alle elementer må ha tekst.');
+  if (draft.items.some(it => !it.explanation.trim())) errors.push('Alle elementer må ha forklaring.');
+  const labelSet = new Set(draft.labels.filter(l => l.trim()));
+  if (draft.items.some(it => !labelSet.has(it.correctLabel))) {
+    errors.push('Alle elementer må tilhøre en gyldig kategori.');
+  }
+  return errors;
+}
+
 export function emptyMultipleChoiceDraft(): MultipleChoiceQuestionDraft {
   return {
     kind: 'MULTIPLE_CHOICE',
@@ -109,10 +140,21 @@ export function emptyPictureQuizDraft(): PictureQuizQuestionDraft {
   };
 }
 
+export function emptyClassifyItemsDraft(): ClassifyItemsQuestionDraft {
+  return {
+    kind: 'CLASSIFY_ITEMS',
+    questionText: '',
+    labels: ['', ''],
+    items: [{ id: makeOptionId(), text: '', correctLabel: '', explanation: '' }],
+  };
+}
+
 export function emptyDraftForType(levelType: string): QuestionDraft {
   switch (levelType) {
     case 'PICTURE_QUIZ':
       return emptyPictureQuizDraft();
+    case 'CLASSIFY_ITEMS':
+      return emptyClassifyItemsDraft();
     default:
       return emptyMultipleChoiceDraft();
   }
