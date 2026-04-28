@@ -48,47 +48,40 @@ function AuthRegisterModal({
   const [showConfirm, setShowConfirm] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
+    useEffect(() => {
+        if (!open) return;
 
-    const modal = modalRef.current;
-    if (!modal) return;
+        const modal = modalRef.current;
+        if (!modal) return;
 
-    const focusableElements = modal.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
+        const focusableElements = modal.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
 
-    const firstFocusable = focusableElements[0];
-    const lastFocusable = focusableElements[focusableElements.length - 1];
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
 
-    firstFocusable?.focus();
+        firstFocusable?.focus();
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-        return;
-      }
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') { onClose(); return; }
+            if (event.key !== 'Tab' || focusableElements.length === 0) return;
+            if (event.shiftKey && document.activeElement === firstFocusable) {
+                event.preventDefault();
+                lastFocusable.focus();
+            }
+            if (!event.shiftKey && document.activeElement === lastFocusable) {
+                event.preventDefault();
+                firstFocusable.focus();
+            }
+        };
 
-      if (event.key !== 'Tab' || focusableElements.length === 0) return;
-
-      if (event.shiftKey && document.activeElement === firstFocusable) {
-        event.preventDefault();
-        lastFocusable.focus();
-      }
-
-      if (!event.shiftKey && document.activeElement === lastFocusable) {
-        event.preventDefault();
-        firstFocusable.focus();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      returnFocusRef?.current?.focus();
-    };
-  }, [open, onClose, returnFocusRef]);
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            returnFocusRef?.current?.focus();
+        };
+    }, [open]);
 
   if (!open) return null;
 
