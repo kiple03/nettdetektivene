@@ -52,8 +52,21 @@ export interface PasswordStrengthQuestionDraft {
   failureFeedback: string;
 }
 
+export interface TextQuizOptionDraft {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+export interface TextQuizQuestionDraft {
+  kind: 'TEXT_QUIZ';
+  questionText: string;
+  options: TextQuizOptionDraft[];
+}
+
 // Discriminated union — extend with additional arms as new types are added
-export type QuestionDraft = MultipleChoiceQuestionDraft | PictureQuizQuestionDraft | ClassifyItemsQuestionDraft | PasswordStrengthQuestionDraft;
+export type QuestionDraft = MultipleChoiceQuestionDraft | PictureQuizQuestionDraft | ClassifyItemsQuestionDraft | PasswordStrengthQuestionDraft | TextQuizQuestionDraft;
 
 export function makeOptionId(): string {
   return crypto.randomUUID();
@@ -69,6 +82,8 @@ export function validateDraft(draft: QuestionDraft): string[] {
       return validateClassifyItemsDraft(draft);
     case 'PASSWORD_STRENGTH':
       return validatePasswordStrengthDraft(draft);
+    case 'TEXT_QUIZ':
+      return validateTextQuizDraft(draft);
   }
 }
 
@@ -186,6 +201,39 @@ export function emptyClassifyItemsDraft(): ClassifyItemsQuestionDraft {
   };
 }
 
+export function validateTextQuizDraft(draft: TextQuizQuestionDraft): string[] {
+  const errors: string[] = [];
+  if (!draft.questionText.trim()) {
+    errors.push('Spørsmålstekst er påkrevd.');
+  }
+  if (draft.options.length < 2) {
+    errors.push('Minst 2 alternativer er påkrevd.');
+    return errors;
+  }
+  const correctCount = draft.options.filter(o => o.isCorrect).length;
+  if (correctCount !== 1) {
+    errors.push('Nøyaktig ett alternativ må markeres som riktig.');
+  }
+  if (draft.options.some(o => !o.text.trim())) {
+    errors.push('Alle alternativer må ha tekst.');
+  }
+  if (draft.options.some(o => !o.explanation.trim())) {
+    errors.push('Alle alternativer må ha forklaring (vises til eleven etter svar).');
+  }
+  return errors;
+}
+
+export function emptyTextQuizDraft(): TextQuizQuestionDraft {
+  return {
+    kind: 'TEXT_QUIZ',
+    questionText: '',
+    options: [
+      { id: makeOptionId(), text: '', isCorrect: true, explanation: '' },
+      { id: makeOptionId(), text: '', isCorrect: false, explanation: '' },
+    ],
+  };
+}
+
 export function emptyDraftForType(levelType: string): QuestionDraft {
   switch (levelType) {
     case 'PICTURE_QUIZ':
@@ -194,6 +242,8 @@ export function emptyDraftForType(levelType: string): QuestionDraft {
       return emptyClassifyItemsDraft();
     case 'PASSWORD_STRENGTH':
       return emptyPasswordStrengthDraft();
+    case 'TEXT_QUIZ':
+      return emptyTextQuizDraft();
     default:
       return emptyMultipleChoiceDraft();
   }

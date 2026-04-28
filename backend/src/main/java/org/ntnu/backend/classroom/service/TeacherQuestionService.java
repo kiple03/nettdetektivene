@@ -13,11 +13,14 @@ import org.ntnu.backend.classroom.dto.CreatePasswordStrengthQuestionRequest;
 import org.ntnu.backend.classroom.dto.CreatePictureQuizOptionRequest;
 import org.ntnu.backend.classroom.dto.CreatePictureQuizQuestionRequest;
 import org.ntnu.backend.classroom.dto.CreateTeacherQuestionRequest;
+import org.ntnu.backend.classroom.dto.CreateTextQuizOptionRequest;
+import org.ntnu.backend.classroom.dto.CreateTextQuizQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateClassifyItemsQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateMultipleChoiceQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdatePasswordStrengthQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdatePictureQuizQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateTeacherQuestionRequest;
+import org.ntnu.backend.classroom.dto.UpdateTextQuizQuestionRequest;
 import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.TeacherClassifyItemsOptionResponse;
@@ -26,6 +29,7 @@ import org.ntnu.backend.game.dto.TeacherOptionResponse;
 import org.ntnu.backend.game.dto.TeacherPasswordStrengthOptionResponse;
 import org.ntnu.backend.game.dto.TeacherPictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
+import org.ntnu.backend.game.dto.TeacherTextQuizOptionResponse;
 import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
@@ -48,7 +52,7 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class TeacherQuestionService {
 
-    private static final Set<LevelType> SUPPORTED_TYPES = Set.of(LevelType.MULTIPLE_CHOICE, LevelType.PICTURE_QUIZ, LevelType.CLASSIFY_ITEMS, LevelType.PASSWORD_STRENGTH);
+    private static final Set<LevelType> SUPPORTED_TYPES = Set.of(LevelType.MULTIPLE_CHOICE, LevelType.PICTURE_QUIZ, LevelType.CLASSIFY_ITEMS, LevelType.PASSWORD_STRENGTH, LevelType.TEXT_QUIZ);
 
     private final QuestionRepository questionRepository;
     private final LevelRepository levelRepository;
@@ -86,6 +90,7 @@ public class TeacherQuestionService {
             case CreatePictureQuizQuestionRequest pq -> buildPqOptions(pq.options());
             case CreateClassifyItemsQuestionRequest ci -> buildCiOptions(ci.labels(), ci.items());
             case CreatePasswordStrengthQuestionRequest ps -> buildPsOptions(ps);
+            case CreateTextQuizQuestionRequest tq -> buildTqOptions(tq.options());
             default -> throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
         };
 
@@ -129,6 +134,7 @@ public class TeacherQuestionService {
             case UpdatePictureQuizQuestionRequest pq -> buildPqOptions(pq.options());
             case UpdateClassifyItemsQuestionRequest ci -> buildCiOptions(ci.labels(), ci.items());
             case UpdatePasswordStrengthQuestionRequest ps -> buildPsOptions(ps);
+            case UpdateTextQuizQuestionRequest tq -> buildTqOptions(tq.options());
             default -> throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
         };
 
@@ -194,6 +200,15 @@ public class TeacherQuestionService {
             ps.requireLower(), ps.requireSymbol(), ps.successFeedback(), ps.failureFeedback()));
     }
 
+    private List<Option> buildTqOptions(List<CreateTextQuizOptionRequest> dtos) {
+        List<Option> options = new ArrayList<>();
+        for (int i = 0; i < dtos.size(); i++) {
+            CreateTextQuizOptionRequest dto = dtos.get(i);
+            options.add(new MultipleChoiceOption(i + 1, dto.text(), null, dto.isCorrect(), dto.explanation()));
+        }
+        return options;
+    }
+
     private List<Option> buildPsOptions(UpdatePasswordStrengthQuestionRequest ps) {
         return List.of(new PasswordStrengthOption(
             1, ps.minLength(), ps.requireDigit(), ps.requireUpper(),
@@ -215,6 +230,7 @@ public class TeacherQuestionService {
             case PICTURE_QUIZ       -> toPqOptions(optionParser.parse(question.getOptionContent(), type));
             case CLASSIFY_ITEMS     -> toCiOptions(optionParser.parse(question.getOptionContent(), type));
             case PASSWORD_STRENGTH  -> toPsOptions(optionParser.parse(question.getOptionContent(), type));
+            case TEXT_QUIZ          -> toTqOptions(optionParser.parse(question.getOptionContent(), type));
             default -> List.of();
         };
         return new TeacherQuestionResponse(
@@ -247,11 +263,11 @@ public class TeacherQuestionService {
             .<TeacherOptionResponse>map(opt -> {
                 PictureQuizOption pq = (PictureQuizOption) opt;
                 return new TeacherPictureQuizOptionResponse(
-                    pq.getId(),
-                    pq.getText(),
-                    pq.getImageUrl(),
+                    pq.id(),
+                    pq.text(),
+                    pq.imageUrl(),
                     pq.isCorrect(),
-                    pq.getExplanation()
+                    pq.explanation()
                 );
             })
             .toList();
@@ -267,6 +283,20 @@ public class TeacherQuestionService {
                     ci.getLabels(),
                     ci.getCorrectLabel(),
                     ci.getExplanation()
+                );
+            })
+            .toList();
+    }
+
+    private List<TeacherOptionResponse> toTqOptions(List<Option> options) {
+        return options.stream()
+            .<TeacherOptionResponse>map(opt -> {
+                MultipleChoiceOption mc = (MultipleChoiceOption) opt;
+                return new TeacherTextQuizOptionResponse(
+                    mc.getId(),
+                    mc.getText(),
+                    mc.isCorrect(),
+                    mc.getExplanation()
                 );
             })
             .toList();
