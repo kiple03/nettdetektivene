@@ -2,11 +2,13 @@ package org.ntnu.backend.game.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import jakarta.validation.Validation;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,11 +23,13 @@ import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.enums.LevelType;
+import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.util.OptionValidator;
 import org.ntnu.backend.game.validation.MultipleChoiceAnswerValidator;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
+import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.test.util.ReflectionTestUtils;
 import tools.jackson.databind.ObjectMapper;
 
@@ -33,8 +37,11 @@ import tools.jackson.databind.ObjectMapper;
 class QuestionServiceTest {
 
   @Mock private QuestionRepository questionRepository;
+  @Mock private ProgressService progressService;
+  @Mock private LevelRepository levelRepository;
 
   private QuestionService questionService;
+
 
   private Question testQuestion;
 
@@ -45,22 +52,21 @@ class QuestionServiceTest {
           {"id": 3, "text": "Also wrong", "imageUrl": "https://example.com/c.jpg", "isCorrect": false, "explanation": "This is also wrong"}
         ]
         """;
+  private static final UUID TEST_USER_ID = UUID.randomUUID();
+  private static final RoleEnum TEST_ROLE = RoleEnum.STUDENT;
 
   @BeforeEach
   void setUp() {
-    // Build real dependency chain: validator -> parser -> mapper
     OptionValidator optionValidator = new OptionValidator(
         Validation.buildDefaultValidatorFactory().getValidator());
     OptionParser optionParser = new OptionParser(new ObjectMapper(), optionValidator);
     GameMapper gameMapper = new GameMapper(optionParser);
 
-    // Build real validator registry with the real validator
     SubmittedAnswerValidatorRegistry registry = new SubmittedAnswerValidatorRegistry(
         List.of(new MultipleChoiceAnswerValidator()));
 
     questionService = new QuestionService(
-        questionRepository, gameMapper, optionParser, registry);
-
+        questionRepository, gameMapper, optionParser, registry, levelRepository, progressService);
     // Build a test question with real JSON
     Stop stop = new Stop();
     stop.setId(1);
@@ -75,6 +81,9 @@ class QuestionServiceTest {
     testQuestion.setQuestionText("Which is correct?");
     testQuestion.setOptionContent(VALID_OPTIONS_JSON);
     testQuestion.setLevel(level);
+
+    when(progressService.isLevelAccessible(any(UUID.class), any(RoleEnum.class), any(Level.class)))
+        .thenReturn(true);
   }
 
   // ===== getQuestionById =====
@@ -83,7 +92,7 @@ class QuestionServiceTest {
   void getQuestionById_found_returnsStrippedResponse() {
     when(questionRepository.findById(1)).thenReturn(Optional.of(testQuestion));
 
-    QuestionResponse result = questionService.getQuestionById(1);
+    QuestionResponse result = questionService.getQuestionById(1, TEST_USER_ID, TEST_ROLE);
 
     assertThat(result.id()).isEqualTo(1);
     assertThat(result.questionText()).isEqualTo("Which is correct?");
@@ -95,7 +104,7 @@ class QuestionServiceTest {
   void getQuestionById_optionsDontLeakAnswers() {
     when(questionRepository.findById(1)).thenReturn(Optional.of(testQuestion));
 
-    QuestionResponse result = questionService.getQuestionById(1);
+    QuestionResponse result = questionService.getQuestionById(1, TEST_USER_ID, TEST_ROLE);
 
     // Response DTO only has id, text, imageUrl — no isCorrect or explanation
     // This is enforced by the type system, but we verify the response
@@ -109,7 +118,7 @@ class QuestionServiceTest {
   void getQuestionById_notFound_throws() {
     when(questionRepository.findById(99)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> questionService.getQuestionById(99))
+    assertThatThrownBy(() -> questionService.getQuestionById(99, TEST_USER_ID, TEST_ROLE))
         .isInstanceOf(QuestionNotFoundException.class);
   }
 
@@ -126,7 +135,7 @@ class QuestionServiceTest {
     when(questionRepository.findByLevelIdOrderByIdAsc(1))
         .thenReturn(List.of(testQuestion, q2));
 
-    List<QuestionResponse> result = questionService.getQuestionsForLevel(1);
+    List<QuestionResponse> result = questionService.getQuestionsForLevel(1, TEST_USER_ID, TEST_ROLE);
 
     assertThat(result).hasSize(2);
     assertThat(result.get(0).questionText()).isEqualTo("Which is correct?");
@@ -138,7 +147,7 @@ class QuestionServiceTest {
     when(questionRepository.findByLevelIdOrderByIdAsc(99))
         .thenReturn(List.of());
 
-    List<QuestionResponse> result = questionService.getQuestionsForLevel(99);
+    List<QuestionResponse> result = questionService.getQuestionsForLevel(99, TEST_USER_ID, TEST_ROLE);
 
     assertThat(result).isEmpty();
   }
@@ -152,7 +161,7 @@ class QuestionServiceTest {
     SingleChoiceAnswer answer = new SingleChoiceAnswer();
     ReflectionTestUtils.setField(answer, "selectedId", 2);
 
-    SubmitAnswerResponse result = questionService.submitAnswer(1, answer);
+    SubmitAnswerResponse result = questionService.submitAnswer(1, answer, TEST_USER_ID, TEST_ROLE);
 
     assertThat(result.correct()).isTrue();
     assertThat(result.feedback()).isEqualTo("This is correct");
@@ -165,7 +174,7 @@ class QuestionServiceTest {
     SingleChoiceAnswer answer = new SingleChoiceAnswer();
     ReflectionTestUtils.setField(answer, "selectedId", 1);
 
-    SubmitAnswerResponse result = questionService.submitAnswer(1, answer);
+    SubmitAnswerResponse result = questionService.submitAnswer(1, answer, TEST_USER_ID, TEST_ROLE);
 
     assertThat(result.correct()).isFalse();
     assertThat(result.feedback()).isEqualTo("This is wrong");
@@ -178,7 +187,7 @@ class QuestionServiceTest {
     SingleChoiceAnswer answer = new SingleChoiceAnswer();
     ReflectionTestUtils.setField(answer, "selectedId", 3);
 
-    SubmitAnswerResponse result = questionService.submitAnswer(1, answer);
+    SubmitAnswerResponse result = questionService.submitAnswer(1, answer, TEST_USER_ID, TEST_ROLE);
 
     assertThat(result.correct()).isFalse();
     assertThat(result.feedback()).isEqualTo("This is also wrong");
@@ -191,7 +200,7 @@ class QuestionServiceTest {
     SingleChoiceAnswer answer = new SingleChoiceAnswer();
     ReflectionTestUtils.setField(answer, "selectedId", 99);
 
-    assertThatThrownBy(() -> questionService.submitAnswer(1, answer))
+    assertThatThrownBy(() -> questionService.submitAnswer(1, answer, TEST_USER_ID, TEST_ROLE))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
@@ -202,7 +211,7 @@ class QuestionServiceTest {
     SingleChoiceAnswer answer = new SingleChoiceAnswer();
     ReflectionTestUtils.setField(answer, "selectedId", 1);
 
-    assertThatThrownBy(() -> questionService.submitAnswer(99, answer))
+    assertThatThrownBy(() -> questionService.submitAnswer(99, answer, TEST_USER_ID, TEST_ROLE))
         .isInstanceOf(QuestionNotFoundException.class);
   }
 }

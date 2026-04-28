@@ -918,10 +918,10 @@ public class GameSeeder implements CommandLineRunner {
         });
 
     ensureQuestion(l1,
-        "Du finner en nettbutikk som heter 'SuperBillig-Shop.xyz'. De har 90% rabatt på ALT, ingen kontaktinformasjon, og nettsiden ser ut som den ble laget i går. Hva gjør du?",
+        "Du finner en nettbutikk som heter 'SuperBillig-Shop.xyz'. De har 90% rabatt på alle varer. Du finner ingen kontaktinformasjon, og nettsiden ser ut som den ble laget i går. Hva gjør du?",
         List.of(
-            new MultipleChoiceOption(1, "Kjøpe – dette er et godt tilbud!", null, false,
-                "Denne nettbutikken har mange varseltegn. 90% rabatt på alt er nesten alltid for godt til å være sant."),
+            new MultipleChoiceOption(1, "Kjøper, dette er et godt tilbud!", null, false,
+                "90% er mistenkelig, men jeg kjøper en vare jeg har lyst på. Nettsiden er tross alt nosrk."),
             new MultipleChoiceOption(2, "Undersøke mer først", null, false,
                 "Det er bra å være forsiktig, men denne butikken har så mange røde flagg at det er best å holde seg unna."),
             new MultipleChoiceOption(3, "Ikke handle – dette virker utrygt", null, true,
@@ -932,23 +932,23 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(l1,
         "En nettbutikk selger populære sko til halv pris. Siden ser profesjonell ut, men alle anmeldelsene er 5 stjerner og skrevet på samme dag. Du finner ikke noe info om hvem som eier butikken. Hva gjør du?",
         List.of(
-            new MultipleChoiceOption(1, "Kjøpe – det ser fint ut", null, false,
+            new MultipleChoiceOption(1, "Undersøke mer først", null, true,
+                "Riktig! Butikken ser grei ut ved første øyekast, men det er noen ting som bør sjekkes nærmere, som anmeldelsene og manglende info om selskapet."),
+            new MultipleChoiceOption(2, "Kjøpe, nettsiden ser profejsonell ut", null, false,
                 "Selv om siden ser pen ut, bør du være forsiktig. Alle anmeldelsene er skrevet på samme dag, og det finnes ingen informasjon om hvem som driver butikken."),
-            new MultipleChoiceOption(2, "Undersøke mer først", null, true,
-                "Riktig! Butikken ser grei ut ved første øyekast, men det er noen ting som bør sjekkes nærmere – som anmeldelsene og manglende info om selskapet."),
-            new MultipleChoiceOption(3, "Ikke handle – dette virker utrygt", null, false,
+            new MultipleChoiceOption(3, "Dette virker utrygt, her skal jeg ikke handle", null, false,
                 "Det er lurt å være forsiktig, men her er det bedre å undersøke mer først. Noen av tegnene kan ha en forklaring.")
         )
     );
 
     ensureQuestion(l1,
-        "Du finner en nettbutikk med norsk organisasjonsnummer, telefonnummer og e-post på kontaktsiden. Nettadressen starter med hengelås og slutter på '.no'. Anmeldelsene ser ekte ut med både gode og dårlige tilbakemeldinger. Hva gjør du?",
+        "Du finner en nettbutikk med norsk organisasjonsnummer, telefonnummer og e-post på kontaktsiden. Nettadressen starter med hengelås og slutter på '.no'. Anmeldelsene gir både gode og dårlige tilbakemeldinger. Hva gjør du?",
         List.of(
-            new MultipleChoiceOption(1, "Kjøpe – dette ser trygt ut", null, true,
+            new MultipleChoiceOption(1, "Kjøpe,  dette ser trygt ut", null, true,
                 "Riktig! Denne butikken har organisasjonsnummer, kontaktinfo, sikker betaling og ekte anmeldelser. Dette er tegn på en trygg nettbutikk."),
             new MultipleChoiceOption(2, "Undersøke mer først", null, false,
                 "Det er alltid lurt å være forsiktig, men denne butikken viser alle tegnene på at den er trygg og seriøs."),
-            new MultipleChoiceOption(3, "Ikke handle – jeg stoler ikke på nettbutikker", null, false,
+            new MultipleChoiceOption(3, "Ikke handle, jeg stoler ikke på nettbutikker", null, false,
                 "Denne butikken er faktisk trygg! Den har kontaktinfo, organisasjonsnummer, hengelås i nettleseren og ekte anmeldelser. Det er viktig å kunne kjenne igjen trygge butikker også.")
         )
     );
@@ -982,7 +982,7 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(l2,
         "Du finner en nettbutikk med mange gode anmeldelser, men alle er skrevet av 'Bruker123' med litt forskjellig tekst. Hva er mistenkelig?",
         List.of(
-            new MultipleChoiceOption(1, "Butikken har anmeldelser", null, false,
+            new MultipleChoiceOption(1, "Butikken har med anmeldelser", null, false,
                 "Det er bra at en butikk har anmeldelser! Problemet er at de alle ser ut til å komme fra samme person."),
             new MultipleChoiceOption(2, "Alle anmeldelsene er fra samme bruker", null, true,
                 "Riktig! Ekte anmeldelser kommer fra mange forskjellige personer. Når alle er fra samme bruker, er de sannsynligvis falske."),
@@ -996,10 +996,10 @@ public class GameSeeder implements CommandLineRunner {
         List.of(
             new MultipleChoiceOption(1, "At butikken finnes på nett", null, false,
                 "Det er helt vanlig å handle på nett. Det mistenkelige er betalingsmåten."),
-            new MultipleChoiceOption(2, "Betalingsmåten – du kan ikke spore pengene", null, true,
-                "Riktig! Trygge nettbutikker tilbyr vanlige betalingsmetoder som Vipps, kort eller faktura. Gavekort og krypto kan ikke spores, så du får aldri pengene tilbake."),
-            new MultipleChoiceOption(3, "At de tar betaling i det hele tatt", null, false,
-                "Alle butikker tar betaling. Det mistenkelige er hvilke betalingsmåter de tilbyr.")
+            new MultipleChoiceOption(2, "Betalingsmåten, du kan ikke spore pengene", null, true,
+                "Riktig! Trygge nettbutikker tilbyr vanlige betalingsmetoder som Vipps, kort eller faktura. Gavekort og kryptovalutta kan ikke spores, så du får aldri pengene tilbake."),
+            new MultipleChoiceOption(3, "At de tar betaling med gavekort", null, false,
+                "Å tillate bruk av gavekort er ikke mistenkelig i seg selv, men eller at betaling med f.eks. kort ikke er tilgjengelig.")
         )
     );
 
@@ -1020,18 +1020,18 @@ public class GameSeeder implements CommandLineRunner {
         });
 
     ensureQuestion(l3,
-        "Du har funnet nettbutikken 'ElektroTilbud'. Hva tror du om hvert element?",
+        "Du har funnet nettbutikken 'ElektroTilbud'. Hva tenker du om følgende observasjoner?",
         List.of(
-            new ClassifyItemsOption("url", "Nettadressen er www.elektrotilbud.xyz",
+            new ClassifyItemsOption("url", "Nettadressen er www.elektrotilbud.fun",
                 List.of("Ekte norsk butikk", "Utenlandsk side", "Ukjent domene"),
                 "Ukjent domene",
-                ".xyz er ikke et norsk domene. Norske butikker bruker vanligvis .no — et ukjent domene betyr at du bør være ekstra forsiktig."),
-            new ClassifyItemsOption("reviews", "Alle 200 anmeldelsene er 5 stjerner og lagt inn samme dag",
-                List.of("Ekte anmeldelser", "Kjøpte anmeldelser", "Ansatte som har skrevet"),
+                ".xyz er ikke et norsk domene. Norske butikker bruker vanligvis .no, et ukjent domene betyr at du bør være ekstra forsiktig."),
+            new ClassifyItemsOption("reviews", "Alle 2000 anmeldelsene er 5 stjerner og lagt inn i løpet av et par dager",
+                List.of("Ekte anmeldelser", "Kjøpte anmeldelser", "Må ha utrolig høy kvalitet på varene sine"),
                 "Kjøpte anmeldelser",
                 "200 perfekte anmeldelser på én dag er nesten helt sikkert kjøpt. Ekte anmeldelser kommer over tid fra forskjellige folk."),
             new ClassifyItemsOption("contact", "Kontaktsiden har telefonnummer, e-post og besøksadresse",
-                List.of("Vanlig for nettbutikker", "Uvanlig mye info", "Sikkert falsk info"),
+                List.of("Vanlig for nettbutikker", "Uvanlig mye info, mistenkelig", "Hvem bruker e-post?", "Irrelevant informasjon for å vite om nettsiden er ekte"),
                 "Vanlig for nettbutikker",
                 "Seriøse butikker har alltid kontaktinfo. Du kan ringe eller besøke dem hvis noe går galt."),
             new ClassifyItemsOption("payment", "Betaling kun via kryptovaluta",
