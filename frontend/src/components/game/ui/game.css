@@ -34,6 +34,11 @@
 
 .station-post {
   background-image: url("@/assets/images/game/post.png");
+  background-size: cover;
+}
+
+.station-password {
+  background-image: url("@/assets/images/game/password.png");
 }
 
 .station-marketplace {
@@ -182,10 +187,48 @@
 
 /* Markedplace */
 
-.markedsplassen-station {
+.markedsplassen station {
 }
 
-/* Email */
+/* -------- POSTOFFICE - email -------- */
+
+/* black frame to mimic a computer screen */
+.monitor-frame {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 18px;
+
+  background: #9d9fa3;
+  border: 8px solid #464649;
+  border-radius: 14px;
+  box-shadow:
+      0 25px 50px rgba(0, 0, 0, 0.6),
+      0 0 30px rgba(120, 130, 140, 0.25), /* myk grå glow */
+      inset 0 0 20px rgba(255, 255, 255, 0.12); /* lys inni */
+}
+
+.monitor-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+
+  background: linear-gradient(
+      120deg,
+      rgba(255,255,255,0.08) 0%,
+      rgba(255,255,255,0.02) 40%,
+      transparent 60%
+  );
+}
+
+.monitor-frame .gmail-wrapper {
+  margin: 0;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .gmail-wrapper {
   max-width: 720px;
   margin: 24px auto;
@@ -371,4 +414,62 @@
   padding: 6px 10px;
   border-radius: 4px;
   font-size: 13px;
+}
+
+/* -------- PASSWORD -------- */
+
+.passordbanken-station {
+  width: 100%;
+}
+
+.passordbanken-station .task-header {
+  width: 100%;
+  text-align: center;
+}
+
+.passordbanken-station form,
+.passordbanken-station .password-input,
+.passordbanken-station .password-task {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.passordbanken-station ul {
+  list-style-position: inside;
+  padding-left: 0;
+  text-align: center;
+}
+
+.passordbanken-station li {
+  text-align: left;
+}
+
+.password-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 2rem;
+}
+
+.password-left {
+  display: flex;
+  justify-content: center;
+}
+
+.password-left img {
+  max-width: 300px;
+  width: 100%;
+  padding-bottom: 80px;
+}
+
+.password-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 80px;
+  gap: 1.5rem;
 }

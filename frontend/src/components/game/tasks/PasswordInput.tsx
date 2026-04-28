@@ -1,5 +1,6 @@
 import type { StationOption } from "@/types/station";
 import { useState } from "react";
+import styles from "@/components/game/tasks/PictureGrid.module.css";
 
 type PasswordInputProps = {
     rule: StationOption;
@@ -38,6 +39,7 @@ function PasswordInput({
             />
 
             <button
+                className={styles.submitButton}
                 type="button"
                 onClick={() => onSubmit(pw)}
                 disabled={disabled || pw.length === 0}

@@ -1,10 +1,12 @@
 import { submitPasswordStrengthAnswer, submitSingleChoiceAnswer, type SubmitAnswerRequest, type SubmitPasswordStrengthAnswerRequest, type SubmitSingleChoiceAnswerRequest } from "@/api/gameApi";
 import type { StationData, SubmitAnswerResult } from "@/types/station";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
-import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 import TaskHeader from "../../ui/TaskHeader";
 import PasswordInput from "../../tasks/PasswordInput";
+import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import passwordImg1 from "@/assets/images/game/passord1.png"
+import passwordImg2 from "@/assets/images/game/passord2.png"
 
 type Props = {
     station: StationData;
@@ -41,36 +43,63 @@ function PassordBankenStation({ station, onAnswer, disabled = false }: Props) {
         }
     };
 
-    if (station.levelType === "PASSWORD_STRENGTH") {
-        return (
-            <div className="passordbanken-station">
-                <TaskHeader questionText={station.questionText} />
-                <PasswordInput rule={station.options[0]} onSubmit={handlePasswordSubmit} disabled={disabled} />
-            </div>
-        );
-    }
+  // Midlertidig hardkodet mtp bilde for spørsmålene i level 1
+  const passwordImageByQuestionId: Record<number, string> = {
+    12: passwordImg1,
+    13: passwordImg2,
+  }
 
+  const passwordImage = passwordImageByQuestionId[station.questionId]
+
+  if (station.levelType === "PASSWORD_STRENGTH") {
     return (
         <div className="passordbanken-station">
-            <DetectiveBook
-                title={station.title || "Passordbanken"}
-                subtitle={station.questionText}
-            >
-                <PictureGrid
-                    questionId={station.questionId}
-                    options={station.options.map((option, index) => ({
-                        id: option.id,
-                        imageUrl: option.imageUrl ?? null,
-                        text: option.label ?? "",
-                        altText: option.label ?? `Alternativ ${index + 1}`,
-                    }))}
-                    onSubmit={handleSingleChoice}
+          <DetectiveBook
+              title={station.title || "Passordbanken"}
+              subtitle={station.questionText}
+          >
+            <div className={`password-layout ${passwordImage ? "" : "password-layout-no-image"}`}>
+              {passwordImage && (
+                  <div className="password-left">
+                    <img src={passwordImage} alt="" />
+                  </div>
+              )}
+
+              <div className="password-right">
+                <TaskHeader questionText={station.questionText} />
+                <PasswordInput
+                    rule={station.options[0]}
+                    onSubmit={handlePasswordSubmit}
                     disabled={disabled}
-                    selectionMode="single"
                 />
-            </DetectiveBook>
+              </div>
+            </div>
+          </DetectiveBook>
         </div>
     );
+  }
+
+  return (
+      <div className="passordbanken-station">
+        <DetectiveBook
+            title={station.title || "Passordbanken"}
+            subtitle={station.questionText}
+        >
+          <PictureGrid
+              questionId={station.questionId}
+              options={station.options.map((option, index) => ({
+                id: option.id,
+                imageUrl: option.imageUrl ?? null,
+                text: option.label ?? "",
+                altText: option.label ?? `Alternativ ${index + 1}`,
+              }))}
+              onSubmit={handleSingleChoice}
+              disabled={disabled}
+              selectionMode="single"
+          />
+        </DetectiveBook>
+      </div>
+  );
 }
 
 export default PassordBankenStation;

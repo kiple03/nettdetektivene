@@ -14,11 +14,7 @@ type PhotographerStationProps = {
     disabled?: boolean;
 };
 
-export default function PhotographerStation({
-                                                station,
-                                                onAnswer,
-                                                disabled = false,
-                                            }: PhotographerStationProps) {
+export default function PhotographerStation({ station, onAnswer, disabled = false,}: PhotographerStationProps) {
     const [correctIds, setCorrectIds] = useState<number[]>([]);
     const [wrongIds, setWrongIds] = useState<number[]>([]);
     const [submitted, setSubmitted] = useState(false);
