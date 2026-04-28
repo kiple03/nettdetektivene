@@ -110,4 +110,42 @@ public class OptionValidatorTest {
     );
   }
 
+  @Test
+  void validateTextQuiz_validOptions_passes() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, "A", null, true, "Reason A"),
+        new MultipleChoiceOption(2, "B", null, false, "Reason B")
+    );
+
+    assertDoesNotThrow(() ->
+        validator.validate(options, LevelType.TEXT_QUIZ)
+    );
+  }
+
+  @Test
+  void validateTextQuiz_noCorrectAnswer_throws() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, "A", null, false, "Reason A"),
+        new MultipleChoiceOption(2, "B", null, false, "Reason B")
+    );
+
+    assertThrows(
+        OptionValidationException.class,
+        () -> validator.validate(options, LevelType.TEXT_QUIZ)
+    );
+  }
+
+  @Test
+  void validateTextQuiz_multipleCorrectAnswers_throws() {
+    List<Option> options = List.of(
+        new MultipleChoiceOption(1, "A", null, true, "Reason A"),
+        new MultipleChoiceOption(2, "B", null, true, "Reason B")
+    );
+
+    assertThrows(
+        OptionValidationException.class,
+        () -> validator.validate(options, LevelType.TEXT_QUIZ)
+    );
+  }
+
 }

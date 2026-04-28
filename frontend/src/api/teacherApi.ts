@@ -37,11 +37,18 @@ export interface TeacherPasswordStrengthOption {
   failureFeedback: string;
 }
 
+export interface TeacherTextQuizOption {
+  id: number;
+  text: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
 export interface TeacherQuestion {
   id: number;
   levelType: string;
   questionText: string;
-  options: TeacherQuestionOption[] | TeacherClassifyItemsOption[] | TeacherPasswordStrengthOption[];
+  options: TeacherQuestionOption[] | TeacherClassifyItemsOption[] | TeacherPasswordStrengthOption[] | TeacherTextQuizOption[];
   isDefault: boolean;
   classroomId: string | null;
 }
@@ -372,12 +379,13 @@ export async function getStudentMedalions(classroomId: string, studentId: string
 }
 
 export async function getStudentNotebook(classroomId: string, studentId: string): Promise<NotesData> {
-  const res = await apiClient.get<{ reflections?: Record<string, any[]>; levelNotes?: Record<string, any[]> }>(
+  type RawNotebook = { reflections?: Parameters<typeof toNotesMap>[0]; levelNotes?: Parameters<typeof toNotesMap>[0] };
+  const res = await apiClient.get<RawNotebook>(
     `/teacher/classrooms/${classroomId}/students/${studentId}/notebook`,
   );
   return {
-    reflections: toNotesMap(res.data.reflections as any),
-    levelNotes: toNotesMap(res.data.levelNotes as any),
+    reflections: toNotesMap(res.data.reflections),
+    levelNotes: toNotesMap(res.data.levelNotes),
   };
 }
 
@@ -476,8 +484,20 @@ export interface CreatePasswordStrengthQuestionPayload {
   failureFeedback: string;
 }
 
+export interface TextQuizOptionPayload {
+  text: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+export interface CreateTextQuizQuestionPayload {
+  questionText: string;
+  levelType: 'TEXT_QUIZ';
+  options: TextQuizOptionPayload[];
+}
+
 // Discriminated union — extend with additional arms as new types are added
-export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload | CreatePictureQuizQuestionPayload | CreateClassifyItemsQuestionPayload | CreatePasswordStrengthQuestionPayload;
+export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload | CreatePictureQuizQuestionPayload | CreateClassifyItemsQuestionPayload | CreatePasswordStrengthQuestionPayload | CreateTextQuizQuestionPayload;
 
 export interface UpdateMultipleChoiceQuestionPayload {
   levelType: 'MULTIPLE_CHOICE';
@@ -510,8 +530,14 @@ export interface UpdatePasswordStrengthQuestionPayload {
   failureFeedback: string;
 }
 
+export interface UpdateTextQuizQuestionPayload {
+  levelType: 'TEXT_QUIZ';
+  questionText: string;
+  options: TextQuizOptionPayload[];
+}
+
 // Discriminated union — extend with additional arms as new types are added
-export type UpdateQuestionPayload = UpdateMultipleChoiceQuestionPayload | UpdatePictureQuizQuestionPayload | UpdateClassifyItemsQuestionPayload | UpdatePasswordStrengthQuestionPayload;
+export type UpdateQuestionPayload = UpdateMultipleChoiceQuestionPayload | UpdatePictureQuizQuestionPayload | UpdateClassifyItemsQuestionPayload | UpdatePasswordStrengthQuestionPayload | UpdateTextQuizQuestionPayload;
 
 export async function createQuestion(classroomId: string, levelId: number, payload: CreateQuestionPayload): Promise<TeacherQuestion> {
   const res = await apiClient.post<TeacherQuestion>(

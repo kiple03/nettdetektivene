@@ -26,6 +26,7 @@ import org.ntnu.backend.game.dto.TeacherOptionResponse;
 import org.ntnu.backend.game.dto.TeacherPasswordStrengthOptionResponse;
 import org.ntnu.backend.game.dto.TeacherPictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
+import org.ntnu.backend.game.dto.TeacherTextQuizOptionResponse;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.security.JwtAuthenticationEntryPoint;
@@ -649,6 +650,144 @@ class TeacherQuestionControllerTest {
             """;
 
         mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/3/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
+    }
+
+    // TEXT_QUIZ create/update tests
+
+    @Test
+    void createTextQuizQuestion_returnsCreated() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 5;
+
+        TeacherTextQuizOptionResponse opt1 = new TeacherTextQuizOptionResponse(1, "Paris", true, "Paris is the capital");
+        TeacherTextQuizOptionResponse opt2 = new TeacherTextQuizOptionResponse(2, "Berlin", false, "Berlin is Germany's capital");
+        TeacherQuestionResponse created = new TeacherQuestionResponse(
+            101, LevelType.TEXT_QUIZ, "Hva er hovedstaden i Frankrike?",
+            List.<TeacherOptionResponse>of(opt1, opt2), false, classroomId);
+
+        when(teacherQuestionService.createQuestion(eq(classroomId), eq(levelId), any(), any()))
+            .thenReturn(created);
+
+        String body = """
+            {
+              "questionText": "Hva er hovedstaden i Frankrike?",
+              "levelType": "TEXT_QUIZ",
+              "options": [
+                {"text": "Paris", "isCorrect": true, "explanation": "Paris is the capital"},
+                {"text": "Berlin", "isCorrect": false, "explanation": "Berlin is Germany's capital"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(101))
+            .andExpect(jsonPath("$.levelType").value("TEXT_QUIZ"))
+            .andExpect(jsonPath("$.options[0].text").value("Paris"))
+            .andExpect(jsonPath("$.options[0].isCorrect").value(true));
+    }
+
+    @Test
+    void updateTextQuizQuestion_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 5;
+        int questionId = 101;
+
+        TeacherTextQuizOptionResponse opt = new TeacherTextQuizOptionResponse(1, "Paris", true, "Oppdatert forklaring");
+        TeacherQuestionResponse updated = new TeacherQuestionResponse(
+            questionId, LevelType.TEXT_QUIZ, "Oppdatert spørsmål?",
+            List.<TeacherOptionResponse>of(opt), false, classroomId);
+
+        when(teacherQuestionService.updateQuestion(eq(classroomId), eq(levelId), eq(questionId), any(), any()))
+            .thenReturn(updated);
+
+        String body = """
+            {
+              "questionText": "Oppdatert spørsmål?",
+              "levelType": "TEXT_QUIZ",
+              "options": [
+                {"text": "Paris", "isCorrect": true, "explanation": "Oppdatert forklaring"},
+                {"text": "Berlin", "isCorrect": false, "explanation": "Feil"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions/" + questionId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(questionId))
+            .andExpect(jsonPath("$.levelType").value("TEXT_QUIZ"))
+            .andExpect(jsonPath("$.options[0].text").value("Paris"));
+    }
+
+    @Test
+    void createTextQuizQuestion_emptyOptions_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        String body = """
+            {
+              "questionText": "Hva er svaret?",
+              "levelType": "TEXT_QUIZ",
+              "options": []
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/5/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createTextQuizQuestion_missingQuestionText_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        String body = """
+            {
+              "levelType": "TEXT_QUIZ",
+              "options": [
+                {"text": "Paris", "isCorrect": true, "explanation": "capital"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/5/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createTextQuizQuestion_blankOptionText_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        String body = """
+            {
+              "questionText": "Hva er svaret?",
+              "levelType": "TEXT_QUIZ",
+              "options": [
+                {"text": "", "isCorrect": true, "explanation": "capital"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/5/questions")
                 .with(authentication(teacherAuth(teacherId)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))

@@ -11,7 +11,7 @@ import { QuestionEditorModal } from '@/components/teacher/questionEditor/Questio
 import { DeleteQuestionDialog } from '@/components/teacher/questionEditor/DeleteQuestionDialog';
 import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
 import { emptyDraftForType, makeOptionId } from '@/components/teacher/questionEditor/types';
-import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherPasswordStrengthOption } from '@/api/teacherApi';
+import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherPasswordStrengthOption, TeacherTextQuizOption } from '@/api/teacherApi';
 import { getImageDisplayUrl } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
 
@@ -27,7 +27,7 @@ const LEVEL_TYPE_LABELS: Record<string, string> = {
     TUTORIAL: 'Opplæring',
 };
 
-const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE', 'PICTURE_QUIZ', 'CLASSIFY_ITEMS', 'PASSWORD_STRENGTH']);
+const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE', 'PICTURE_QUIZ', 'CLASSIFY_ITEMS', 'PASSWORD_STRENGTH', 'TEXT_QUIZ']);
 
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     switch (q.levelType) {
@@ -59,6 +59,15 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
                 successFeedback: ps?.successFeedback ?? '',
                 failureFeedback: ps?.failureFeedback ?? '',
             };
+        }
+        case 'TEXT_QUIZ': {
+            const tqOptions = (q.options as TeacherTextQuizOption[]).map(o => ({
+                id: o.id.toString(),
+                text: o.text,
+                isCorrect: o.isCorrect,
+                explanation: o.explanation,
+            }));
+            return { kind: 'TEXT_QUIZ', questionText: q.questionText, options: tqOptions };
         }
         default: {
             const options = (q.options as import('@/api/teacherApi').TeacherQuestionOption[]).map(o => ({
@@ -286,6 +295,36 @@ export default function LevelQuestionsPage() {
                 } else {
                     try {
                         await createMutation.mutateAsync(psPayload);
+                        setCreateOpen(false);
+                    } catch {
+                        // error shown via createError
+                    }
+                }
+                break;
+            }
+            case 'TEXT_QUIZ': {
+                const options = draft.options.map(o => ({
+                    text: o.text,
+                    isCorrect: o.isCorrect,
+                    explanation: o.explanation,
+                }));
+                if (editingQuestion) {
+                    try {
+                        await updateMutation.mutateAsync({
+                            questionId: editingQuestion.id,
+                            payload: { levelType: 'TEXT_QUIZ', questionText: draft.questionText, options },
+                        });
+                        setEditingQuestion(null);
+                    } catch {
+                        // error shown via updateError
+                    }
+                } else {
+                    try {
+                        await createMutation.mutateAsync({
+                            questionText: draft.questionText,
+                            levelType: 'TEXT_QUIZ',
+                            options,
+                        });
                         setCreateOpen(false);
                     } catch {
                         // error shown via createError
