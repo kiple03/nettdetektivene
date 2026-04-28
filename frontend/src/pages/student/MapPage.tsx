@@ -8,6 +8,7 @@ import type { EquippedItem } from "@/types/user";
 import styles from "./MapPage.module.css";
 import { StopMap } from "@/components/map/StopMap";
 import { MAP_STOPS, type StopData } from "@/data/mapStops";
+import internettbyenLogo from "@/assets/images/map/internettbyen-logo.png";
 import detektivkontoret from "@/assets/images/map/detektivkontoret.png";
 import datasenteret from "@/assets/images/map/datasenteret.svg";
 import sharkBase from "@/assets/images/boss/shark-base.png";
@@ -100,7 +101,7 @@ export default function MapPage() {
                 onCarPathReady={setCarOffsetPath}
                 header={
                     <div className={styles.header}>
-                        <h1>Internettbyen</h1>
+                        <img src={internettbyenLogo} alt="Internettbyen" className={styles.headerLogo} />
                         <p>Velg et stop</p>
                     </div>
                 }

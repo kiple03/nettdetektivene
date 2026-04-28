@@ -1,5 +1,6 @@
 import { type ReactNode, useCallback, useRef, useState } from 'react';
 import MapBg from "@/assets/images/map/static_map_bg.svg?react";
+import mapBgFeatures from "@/assets/images/map/bg-with-features.png";
 import type { StopData } from '@/data/mapStops';
 import styles from './StopMap.module.css';
 
@@ -125,6 +126,7 @@ export function StopMap({
 
             <div className={styles.mapInner}>
                 <MapBg ref={svgRef} className={styles.mapBg} preserveAspectRatio="xMidYMid slice" />
+                <img src={mapBgFeatures} alt="" aria-hidden="true" className={styles.mapBgOverlay} />
 
                 <div className={styles.stopGrid}>
                     {children}

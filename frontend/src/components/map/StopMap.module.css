@@ -21,6 +21,17 @@
   z-index: 0;
 }
 
+.mapBgOverlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  object-fit: cover;
+  object-position: center center;
+  pointer-events: none;
+}
+
 .stopGrid {
   position: absolute;
   inset: 0;
