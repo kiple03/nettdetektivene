@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.dto.UpdateUserProfileRequest;
 import org.ntnu.backend.avatar.dto.UserProfileResponse;
+import org.ntnu.backend.security.JwtService;
+import org.ntnu.backend.security.UserPrincipal;
 import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.model.UserInventoryItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
@@ -39,6 +41,7 @@ public class UserAvatarService {
     private final ProfanityFilterService profanityFilter;
     private final NotificationService notificationService;
     private final ClassroomCensorWordRepository classroomCensorWordRepository;
+    private final JwtService jwtService;
 
     private String imageUrl(AvatarItem item) {
         String file = item.getImageFile();
@@ -153,7 +156,7 @@ public class UserAvatarService {
     }
 
     @Transactional
-    public UserProfileResponse updateUserProfile(UUID userId, UUID classroomId, UpdateUserProfileRequest request) {
+    public String updateUserProfile(UUID userId, UUID classroomId, UpdateUserProfileRequest request) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -173,7 +176,8 @@ public class UserAvatarService {
             user.setHairColor(request.hairColor());
         }
         userRepository.save(user);
-        return getUserProfile(userId);
+
+        return jwtService.generateToken(new UserPrincipal(user), classroomId);
     }
 }
 

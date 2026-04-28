@@ -8,15 +8,7 @@ import { StudentDetailHeader } from '@/components/teacher/studentDetail/StudentD
 import { StudentDetailLevels } from '@/components/teacher/studentDetail/StudentDetailLevels';
 import { StudentNotebook } from '@/components/teacher/studentDetail/StudentNotebook';
 import './StudentDetail.css';
-
-const ALL_MEDALS = [
-    { name: 'Rekruttert detektiv',                              imageUrl: '/assets/medalions/Rekruttert detektiv.svg' },
-    { name: 'Hysj-hysj',                                       imageUrl: '/assets/medalions/Hysj-hysj.svg' },
-    { name: 'Breaking news - Du avslørte alle falske nyheter',  imageUrl: '/assets/medalions/Breaking news - Du avslørte alle falske nyheter.svg' },
-    { name: 'Fanget på kamera - Du gjennomskuet bildene!',      imageUrl: '/assets/medalions/Fanget på kamera - Du gjennomskuet bildene!.svg' },
-    { name: 'Ikke klikk! - Du gjennomskuet falske eposter',     imageUrl: '/assets/medalions/Ikke klikk! - Du gjennomskuet falske eposter.svg' },
-    { name: 'platinum',                                         imageUrl: '/assets/medalions/platinum.svg' },
-];
+import { ALL_MEDALS, getMedalImageUrl } from '@/data/allMedals';
 
 export default function StudentDetail() {
     const { id: classroomId = '', studentId = '' } = useParams<{ id: string; studentId: string }>();
@@ -107,7 +99,7 @@ export default function StudentDetail() {
                                         className={`student-detail__medal-item${earned ? '' : ' student-detail__medal-item--locked'}`}
                                     >
                                         <img
-                                            src={medal.imageUrl}
+                                            src={getMedalImageUrl(medal.name)}
                                             alt={medal.name}
                                             className="student-detail__medal-img"
                                         />

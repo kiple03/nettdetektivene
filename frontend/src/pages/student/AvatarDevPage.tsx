@@ -8,7 +8,6 @@ import {
   type EquippedItem,
   useUpdateUserProfile,
 } from '@/hooks/useUserProfile';
-import { refreshToken } from '@/api/authApi';
 import { getClassroomId } from '@/stores/authStore';
 import styles from './AvatarDevPage.module.css';
 import {useNavigate} from "react-router-dom";
@@ -188,8 +187,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     saveOutfit(itemIds);
 
     updateUserProfile({ username: `Detektiv ${trimmed}`, hairColor: hairColorHex }, {
-      onSuccess: async () => {
-        await refreshToken();
+      onSuccess: () => {
         navigate(getClassroomId() ? '/home' : '/join-with-code');
       },
       onError: (err) => {
