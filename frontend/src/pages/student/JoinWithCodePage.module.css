@@ -467,8 +467,6 @@
 
 .logoutBtn {
     position: absolute;
-    top: 1px;
-    right: 1px;
     bottom: auto;
     left: auto;
     z-index: 10;
