@@ -1,4 +1,5 @@
 import client from "./client"
+import type { EmailContent } from "@/types/email";
 
 export type LevelType = "MULTIPLE_CHOICE" | "PICTURE_QUIZ"| "PASSWORD_STRENGTH" | "CLASSIFY_ITEMS" | "POST_OFFICE"// legge til flere oppgavetyper senere
 
