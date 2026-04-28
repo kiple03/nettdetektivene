@@ -94,7 +94,8 @@ public class GameController {
   public List<QuestionResponse> getQuestionsForLevel(
       @PathVariable int levelId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return questionService.getQuestionsForLevel(levelId);
+    return questionService.getQuestionsForLevel(
+        levelId, principal.getUserId(), principal.getRole());
   }
 
   /**
