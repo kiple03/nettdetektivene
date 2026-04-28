@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = CreateMultipleChoiceQuestionRequest.class, name = "MULTIPLE_CHOICE"),
     @JsonSubTypes.Type(value = CreatePictureQuizQuestionRequest.class, name = "PICTURE_QUIZ"),
+    @JsonSubTypes.Type(value = CreateClassifyItemsQuestionRequest.class, name = "CLASSIFY_ITEMS"),
 })
 public interface CreateTeacherQuestionRequest {
     String questionText();

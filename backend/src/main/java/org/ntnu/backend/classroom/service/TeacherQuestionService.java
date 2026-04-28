@@ -5,20 +5,25 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.classroom.dto.CreateClassifyItemsItemRequest;
+import org.ntnu.backend.classroom.dto.CreateClassifyItemsQuestionRequest;
 import org.ntnu.backend.classroom.dto.CreateMultipleChoiceOptionRequest;
 import org.ntnu.backend.classroom.dto.CreateMultipleChoiceQuestionRequest;
 import org.ntnu.backend.classroom.dto.CreatePictureQuizOptionRequest;
 import org.ntnu.backend.classroom.dto.CreatePictureQuizQuestionRequest;
 import org.ntnu.backend.classroom.dto.CreateTeacherQuestionRequest;
+import org.ntnu.backend.classroom.dto.UpdateClassifyItemsQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateMultipleChoiceQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdatePictureQuizQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateTeacherQuestionRequest;
 import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.exception.QuestionNotFoundException;
+import org.ntnu.backend.game.dto.TeacherClassifyItemsOptionResponse;
 import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.TeacherOptionResponse;
 import org.ntnu.backend.game.dto.TeacherPictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
+import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
@@ -39,7 +44,7 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class TeacherQuestionService {
 
-    private static final Set<LevelType> SUPPORTED_TYPES = Set.of(LevelType.MULTIPLE_CHOICE, LevelType.PICTURE_QUIZ);
+    private static final Set<LevelType> SUPPORTED_TYPES = Set.of(LevelType.MULTIPLE_CHOICE, LevelType.PICTURE_QUIZ, LevelType.CLASSIFY_ITEMS);
 
     private final QuestionRepository questionRepository;
     private final LevelRepository levelRepository;
@@ -75,6 +80,7 @@ public class TeacherQuestionService {
         List<Option> options = switch (request) {
             case CreateMultipleChoiceQuestionRequest mc -> buildMcOptions(mc.options());
             case CreatePictureQuizQuestionRequest pq -> buildPqOptions(pq.options());
+            case CreateClassifyItemsQuestionRequest ci -> buildCiOptions(ci.labels(), ci.items());
             default -> throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
         };
 
@@ -116,6 +122,7 @@ public class TeacherQuestionService {
         List<Option> options = switch (request) {
             case UpdateMultipleChoiceQuestionRequest mc -> buildMcOptions(mc.options());
             case UpdatePictureQuizQuestionRequest pq -> buildPqOptions(pq.options());
+            case UpdateClassifyItemsQuestionRequest ci -> buildCiOptions(ci.labels(), ci.items());
             default -> throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
         };
 
@@ -166,6 +173,15 @@ public class TeacherQuestionService {
         return options;
     }
 
+    private List<Option> buildCiOptions(List<String> labels, List<CreateClassifyItemsItemRequest> dtos) {
+        List<Option> options = new ArrayList<>();
+        for (int i = 0; i < dtos.size(); i++) {
+            CreateClassifyItemsItemRequest dto = dtos.get(i);
+            options.add(new ClassifyItemsOption("item-" + (i + 1), dto.text(), labels, dto.correctLabel(), dto.explanation()));
+        }
+        return options;
+    }
+
     private String serialize(List<Option> options) {
         try {
             return objectMapper.writeValueAsString(options);
@@ -179,6 +195,7 @@ public class TeacherQuestionService {
         List<TeacherOptionResponse> options = switch (type) {
             case MULTIPLE_CHOICE -> toMcOptions(optionParser.parse(question.getOptionContent(), type));
             case PICTURE_QUIZ    -> toPqOptions(optionParser.parse(question.getOptionContent(), type));
+            case CLASSIFY_ITEMS  -> toCiOptions(optionParser.parse(question.getOptionContent(), type));
             default -> List.of();
         };
         return new TeacherQuestionResponse(
@@ -216,6 +233,21 @@ public class TeacherQuestionService {
                     pq.getImageUrl(),
                     pq.isCorrect(),
                     pq.getExplanation()
+                );
+            })
+            .toList();
+    }
+
+    private List<TeacherOptionResponse> toCiOptions(List<Option> options) {
+        return options.stream()
+            .<TeacherOptionResponse>map(opt -> {
+                ClassifyItemsOption ci = (ClassifyItemsOption) opt;
+                return new TeacherClassifyItemsOptionResponse(
+                    ci.getKey(),
+                    ci.getText(),
+                    ci.getLabels(),
+                    ci.getCorrectLabel(),
+                    ci.getExplanation()
                 );
             })
             .toList();

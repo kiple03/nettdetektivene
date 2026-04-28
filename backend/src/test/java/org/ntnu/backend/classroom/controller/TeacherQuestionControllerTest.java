@@ -20,6 +20,7 @@ import org.ntnu.backend.classroom.service.TeacherQuestionService;
 import org.ntnu.backend.config.SecurityConfig;
 import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.exception.QuestionNotFoundException;
+import org.ntnu.backend.game.dto.TeacherClassifyItemsOptionResponse;
 import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.TeacherOptionResponse;
 import org.ntnu.backend.game.dto.TeacherPictureQuizOptionResponse;
@@ -544,6 +545,109 @@ class TeacherQuestionControllerTest {
             """;
 
         mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/2/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
+    }
+
+    // CLASSIFY_ITEMS create/update tests
+
+    @Test
+    void createClassifyItemsQuestion_returnsCreated() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 3;
+
+        TeacherClassifyItemsOptionResponse opt1 = new TeacherClassifyItemsOptionResponse(
+            "item-1", "Phishing-epost", List.of("Farlig", "Trygg"), "Farlig", "Inneholder mistenkelig lenke");
+        TeacherClassifyItemsOptionResponse opt2 = new TeacherClassifyItemsOptionResponse(
+            "item-2", "Melding fra bank", List.of("Farlig", "Trygg"), "Trygg", "Offisiell melding");
+        TeacherQuestionResponse created = new TeacherQuestionResponse(
+            77, LevelType.CLASSIFY_ITEMS, "Sorter disse meldingene",
+            List.<TeacherOptionResponse>of(opt1, opt2), false, classroomId);
+
+        when(teacherQuestionService.createQuestion(eq(classroomId), eq(levelId), any(), any()))
+            .thenReturn(created);
+
+        String body = """
+            {
+              "questionText": "Sorter disse meldingene",
+              "levelType": "CLASSIFY_ITEMS",
+              "labels": ["Farlig", "Trygg"],
+              "items": [
+                {"text": "Phishing-epost", "correctLabel": "Farlig", "explanation": "Inneholder mistenkelig lenke"},
+                {"text": "Melding fra bank", "correctLabel": "Trygg", "explanation": "Offisiell melding"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(77))
+            .andExpect(jsonPath("$.levelType").value("CLASSIFY_ITEMS"))
+            .andExpect(jsonPath("$.options[0].key").value("item-1"))
+            .andExpect(jsonPath("$.options[0].correctLabel").value("Farlig"))
+            .andExpect(jsonPath("$.options[1].correctLabel").value("Trygg"));
+    }
+
+    @Test
+    void updateClassifyItemsQuestion_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 3;
+        int questionId = 77;
+
+        TeacherClassifyItemsOptionResponse opt = new TeacherClassifyItemsOptionResponse(
+            "item-1", "Oppdatert tekst", List.of("Farlig", "Trygg"), "Farlig", "Oppdatert forklaring");
+        TeacherQuestionResponse updated = new TeacherQuestionResponse(
+            questionId, LevelType.CLASSIFY_ITEMS, "Oppdatert spørsmål",
+            List.<TeacherOptionResponse>of(opt), false, classroomId);
+
+        when(teacherQuestionService.updateQuestion(eq(classroomId), eq(levelId), eq(questionId), any(), any()))
+            .thenReturn(updated);
+
+        String body = """
+            {
+              "questionText": "Oppdatert spørsmål",
+              "levelType": "CLASSIFY_ITEMS",
+              "labels": ["Farlig", "Trygg"],
+              "items": [
+                {"text": "Oppdatert tekst", "correctLabel": "Farlig", "explanation": "Oppdatert forklaring"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions/" + questionId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(questionId))
+            .andExpect(jsonPath("$.levelType").value("CLASSIFY_ITEMS"))
+            .andExpect(jsonPath("$.options[0].key").value("item-1"));
+    }
+
+    @Test
+    void createClassifyItemsQuestion_tooFewLabels_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        String body = """
+            {
+              "questionText": "Sorter disse",
+              "levelType": "CLASSIFY_ITEMS",
+              "labels": ["Farlig"],
+              "items": [
+                {"text": "Phishing-epost", "correctLabel": "Farlig", "explanation": "Forklaring"}
+              ]
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/3/questions")
                 .with(authentication(teacherAuth(teacherId)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body))

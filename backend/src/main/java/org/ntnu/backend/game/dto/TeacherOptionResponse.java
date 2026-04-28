@@ -7,5 +7,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = TeacherMultipleChoiceOptionResponse.class, name = "MULTIPLE_CHOICE"),
     @JsonSubTypes.Type(value = TeacherPictureQuizOptionResponse.class, name = "PICTURE_QUIZ"),
+    @JsonSubTypes.Type(value = TeacherClassifyItemsOptionResponse.class, name = "CLASSIFY_ITEMS"),
 })
 public interface TeacherOptionResponse {}
