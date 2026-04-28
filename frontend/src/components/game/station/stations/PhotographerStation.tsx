@@ -31,7 +31,7 @@ export default function PhotographerStation({
 
     const handleSubmit = async (selectedIds: number[]) => {
         const request: SubmitAnswerRequest = {
-            shape: "MULTIPLE_CHOICE",
+            shape: "MULTI",
             selectedIds,
         };
 

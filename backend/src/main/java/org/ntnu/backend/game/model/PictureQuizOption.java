@@ -42,7 +42,7 @@ public record PictureQuizOption(
         String explanation
 
 ) implements Option {
-
+  // getter
     public int getId()          { return id; }
     public String getText()     { return text; }
     public String getImageUrl() { return imageUrl; }

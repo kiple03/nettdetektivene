@@ -1,6 +1,6 @@
 .button {
     border: none;
-    border-radius: 14px;
+    border-radius: 3px;
     padding: 12px 18px;
     font-size: 1rem;
     font-weight: 700;
@@ -34,6 +34,20 @@
     background: linear-gradient(135deg, #ffd166, #8ecae6, #95d5b2);
     color: #243b53;
     box-shadow: 0 8px 16px rgba(59, 130, 246, 0.14);
+}
+
+.next {
+    background: rgba(255, 248, 220, 0.94);
+    border: 2px dashed rgb(99, 75, 44);
+    color: #2d1b0f;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    text-align: center;
+
+    box-shadow:
+        0 22px 44px rgba(35, 24, 48, 0.25),
+        inset 0 1px 0 rgba(255,255,255,0.38);
 }
 
 .unstyled {

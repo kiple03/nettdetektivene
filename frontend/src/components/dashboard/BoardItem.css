@@ -28,7 +28,6 @@
   left: 0px;
 }
 
-/* TODO: make different sizes of board item! */
 /* different sizes of board items */
 .board-item-large .board-item-img {
   width: 400px;
@@ -43,9 +42,24 @@
 }
 
 .board-item-small .board-item-img {
-  width: 300px;
+  width: 140px;
   margin-bottom: 6px;
   pointer-events: none;
+}
+
+/* red circle over map */
+.board-item-img-wrapper {
+  position: relative;
+}
+
+.map-circle {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: 122%;
+  transform: translate(-50%, -50%) rotate(-6deg);
+  pointer-events: none;
+  opacity: 0.9;
 }
 
 /* left tape */
@@ -91,4 +105,10 @@
   transform: translate(-50%, -50%) scale(0.8); 
   z-index: 10; 
   pointer-events: none; 
+}
+
+.board-item-wrapper:focus-visible {
+  outline: 3px solid #1a73e8;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 8px rgba(26,115,232,0.25);
 }

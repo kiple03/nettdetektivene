@@ -1,13 +1,13 @@
 import client from "./client"
 
-export type LevelType = "MULTIPLE_CHOICE" | "PICTURE_QUIZ"| "PASSWORD_STRENGTH" | "CLASSIFY_ITEMS" // legge til flere oppgavetyper senere
+export type LevelType = "MULTIPLE_CHOICE" | "PICTURE_QUIZ"| "PASSWORD_STRENGTH" | "CLASSIFY_ITEMS" | "POST_OFFICE"// legge til flere oppgavetyper senere
 
 export type SubmitAnswerRequest =
     | SubmitSingleChoiceAnswerRequest
     | SubmitMultiSelectAnswerRequest
     | SubmitPasswordStrengthAnswerRequest
     | SubmitPerItemAnswerRequest
-
+    | SubmitMultiChoiceAnswerRequest;
 
 export interface GameStop {
   id: number;
@@ -37,6 +37,7 @@ export interface GameQuestion {
   levelType: LevelType;
   questionText: string;
   options: QuestionOption[];
+  email?: EmailContent;
 }
 
 export interface GameLevel {
@@ -54,7 +55,7 @@ export interface SubmitSingleChoiceAnswerRequest {
 }
 
 export interface SubmitMultiSelectAnswerRequest {
-  shape: "MULTIPLE_CHOICE";
+  shape: "MULTI";
   selectedIds: number[];
 }
 
@@ -147,3 +148,15 @@ export const submitPasswordStrengthAnswer = async (
     return response.data;
   }
 
+export interface SubmitMultiChoiceAnswerRequest {
+  shape: "MULTI";
+  selectedIds: string[];
+}
+
+export async function submitMultiChoiceAnswer(
+    questionId: number,
+    request: SubmitMultiChoiceAnswerRequest
+) {
+  const response = await client.post(`/game/questions/${questionId}/submit`, request);
+  return response.data;
+}

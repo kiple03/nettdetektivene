@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/buttons/Button.tsx'
 import TutorialOverlay from "@/components/game/tutorial/TutorialOverlay.tsx";
 import { TUTORIAL_STEPS, hasSeenTutorial } from "@/components/game/tutorial/tutorialContent.ts";
 import useSound from "use-sound";
-import CorrectFx from '@/assets/sounds/CorrectAnswerII.mp3';
-import IncorrectFx from '@/assets/sounds/IncorrectAnswer.wav';
+import CorrectFx from '@/assets/sounds/IncorrectAnswer.wav';
+import IncorrectFx from '@/assets/sounds/CorrectAnswerII.mp3';
 
 type Props = {
   title: string;
@@ -18,11 +18,11 @@ type Props = {
 
 function StationContainer({ title, type, children, submitResult, onNext }: Props) {
   const [tutorialOpen, setTutorialOpen] = useState(() => !hasSeenTutorial(type));
-  
+
   const [playCorrect] = useSound(CorrectFx);
   const [playWomp] = useSound(IncorrectFx)
   useEffect(() => {
-    if(submitResult?.correct) playCorrect(); 
+    if(submitResult?.correct) playCorrect();
     else if(submitResult?.feedback) playWomp();
   }, [submitResult]);
 
@@ -57,17 +57,20 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
             <div className="feedback-wrapper">
               <FeedbackBox
                   isCorrect={submitResult.correct}
-                  title={submitResult.correct ? "Riktig!" : "Feil"}
                   text={submitResult.feedback}
               />
 
-              <Button variant={'fun'} onClick={onNext}>
+              <Button
+                  variant="next"
+                  onClick={onNext}
+                  aria-label="Gå videre"
+              >
                 Neste →
               </Button>
             </div>
         )}
       </div>
-  );
+  )
 }
 
 export default StationContainer;

@@ -19,21 +19,21 @@
     width: 120px;
     height: 120px;
     object-fit: contain;
-  }                                                                                                                                                                                  
-                  
+  }
+
   .medalion-toast__title {
-    font-weight: bold;    
+    font-weight: bold;
     font-size: 0.8rem;
-    color: goldenrod; 
-  }                                                                                                                                                                                  
+    color: #7a4f00;
+  }
    
   .medalion-toast__name {                                                                                                                                                            
     font-weight: bold;   
   }                   
    
   .medalion-toast__description {
-    font-size: 0.85rem;                                                                                                                                                              
-    color: gray;       
+    font-size: 0.85rem;
+    color: #4b5563;
   }                                                                                                                                                                                  
                   
   @keyframes slideIn {

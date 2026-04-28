@@ -2,7 +2,10 @@ package org.ntnu.backend.medalion.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.ntnu.backend.medalion.dto.AwardMedalionRequest;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.medalion.model.Medalion;
@@ -13,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
 import lombok.RequiredArgsConstructor;
 
 
@@ -37,6 +41,25 @@ public class MedalionService {
         return medalionRepository.findByUserId(user).stream()
             .map(this::toResponse)
             .toList();
+    }
+
+    /**
+     * Returns medal counts for a batch of users.
+     *
+     * @param userIds user IDs to count medals for
+     * @return map keyed by user id with medal count values
+     */
+    public Map<UUID, Integer> getMedalCountsForUsers(List<UUID> userIds) {
+        if (userIds.isEmpty()) {
+            return Map.of();
+        }
+
+        return medalionRepository.countByUserIds(userIds).stream()
+            .collect(Collectors.toMap(
+                MedalionRepository.UserMedalCount::getUserId,
+                count -> Math.toIntExact(count.getMedalCount()),
+                (left, right) -> left
+            ));
     }
 
     /**

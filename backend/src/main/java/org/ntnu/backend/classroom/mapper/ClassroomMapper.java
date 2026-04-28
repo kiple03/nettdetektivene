@@ -1,5 +1,7 @@
 package org.ntnu.backend.classroom.mapper;
 
+import java.util.List;
+
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
@@ -11,7 +13,6 @@ import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.springframework.stereotype.Component;
-import java.util.List;
 
 /**
  * Mapper Component. It translates data between database models and DTO's.
@@ -75,13 +76,11 @@ public class ClassroomMapper {
   public ClassroomSummaryResponse toSummary(
       Classroom classroom,
       long studentCount,
-      int totalLevelsInGame,
-      int completedCount,
+      int totalStops,
+      double avgStopPosition,
       int avgScore
   ) {
-
-    long possible = (long) totalLevelsInGame * studentCount;
-    int progressPercent = possible > 0 ? (int) (completedCount * 100L / possible) : 0;
+    int progressPercent = totalStops > 0 ? (int) Math.round(avgStopPosition * 100.0 / totalStops) : 0;
 
     return ClassroomSummaryResponse.builder()
         .id(classroom.getId().toString())
@@ -90,8 +89,8 @@ public class ClassroomMapper {
         .joinCode(classroom.getJoinCode())
         .createdAt(classroom.getCreatedAt())
         .studentCount(studentCount)
-        .assignmentCount(totalLevelsInGame)
-        .completedCount(completedCount)
+        .totalStops(totalStops)
+        .avgStopPosition(avgStopPosition)
         .avgScore(avgScore)
         .progressPercent(progressPercent)
         .build();
@@ -107,17 +106,21 @@ public class ClassroomMapper {
     Enrollment enrollment,
     ProgressSummaryResponse progress,
     int score,
+    int medalsEarned,
+    int totalStops,
     List<EquippedItemDto> equippedItems) {
 
-    int levelsCompleted = progress != null ? progress.totalLevelsCompleted() : 0;
-    return new StudentProgressResponse(
-        enrollment.getUser().getId().toString(),
-        enrollment.getUser().getUsername(),
-        levelsCompleted,
-        levelsCompleted,
-        score,
-        equippedItems
-    );
+    int currentStopDisplayOrder = progress != null ? progress.currentStopDisplayOrder() : 0;
+    return StudentProgressResponse.builder()
+        .userId(enrollment.getUser().getId().toString())
+        .username(enrollment.getUser().getUsername())
+        .email(enrollment.getUser().getEmail())
+        .currentStopDisplayOrder(currentStopDisplayOrder)
+        .totalStops(totalStops)
+        .score(score)
+        .medalsEarned(medalsEarned)
+        .equippedItems(equippedItems)
+        .build();
   }
 
   /**

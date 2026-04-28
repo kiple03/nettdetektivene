@@ -11,7 +11,8 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
   switch (levelType) {
     case "MULTIPLE_CHOICE":
       return STATION_TYPE.NEWS;
-
+    case "POST_OFFICE":
+      return STATION_TYPE.POST;
     case "PICTURE_QUIZ":
       return STATION_TYPE.PHOTO;
 
@@ -46,7 +47,8 @@ export function mapQuestionToStationData(question: GameQuestion, type?: StationT
     title: "",
     questionText: question.questionText,
     options: question.options.map(mapOptionToStation),
-  };
+    email: question.email
+  }
 }
 
 export function mapSubmitResponseToSubmitAnswer(

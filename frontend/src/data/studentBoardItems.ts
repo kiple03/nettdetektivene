@@ -3,6 +3,8 @@ import badgeImg from '@/assets/images/studentHomeBoard/badge.png';
 import noteImg from '@/assets/images/studentHomeBoard/notebook.png';
 import mysteryImg from '@/assets/images/studentHomeBoard/mystery.png';
 import profileImg from '@/assets/images/studentHomeBoard/profile.png';
+import leaderBoard from '@/assets/images/studentHomeBoard/leaderBoard.png'
+import circle from '@/assets/images/studentHomeBoard/red_circle.png'
 
 import type { DashboardItem } from "@/types/dashboard.ts";
 
@@ -14,7 +16,8 @@ export const studentBoardItems: DashboardItem[] = [
     top: '39%',
     left: '51%',
     image: mapImg,
-    size: 'large'
+    size: 'large',
+    circle: circle
   },
   {
     id: 'badges',
@@ -23,14 +26,16 @@ export const studentBoardItems: DashboardItem[] = [
     top: '70%',
     left: '49%',
     image: badgeImg,
-    size: 'small'
+    size: 'medium'
   },
   {
     id: 'leaderBoard',
     label: 'Ledertavle',
     to: '/leaderboard',
-    top: '80%',
-    left: '33%'
+    top: '68%',
+    image: leaderBoard,
+    left: '34%',
+    size: 'small'
   },
   {
     id: 'notebook',
@@ -48,7 +53,7 @@ export const studentBoardItems: DashboardItem[] = [
     top: '34%',
     left: '69%',
     image: mysteryImg,
-    size: 'small'
+    size: 'medium'
   },
   {
     id: 'profile',

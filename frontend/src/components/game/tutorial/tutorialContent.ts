@@ -81,6 +81,22 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
         description: "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
     },
 ],
+  [STATION_TYPE.POST]: [
+    {
+      title: "Post 🔒",
+      description: "Her skal du lære om trygge email.",
+    },
+    {
+      title: "Slik svarer du",
+      description:
+          "Les hele eposten, og trykk på alle mistenkelige elemeter.",
+    },
+    {
+      title: "Lurt å vite",
+      description:
+          "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
+    },
+  ],
 };
 
 const storageKey = (type: StationType) => `nettdetektivene_tutorial_${type}`;

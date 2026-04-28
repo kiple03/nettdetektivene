@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.dto.ClassifyItemsOptionResponse;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
 import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
@@ -14,6 +15,8 @@ import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PostOfficeOption;
+import org.ntnu.backend.game.model.PostOfficeQuestion;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.Question;
@@ -71,11 +74,17 @@ public class GameMapper {
             .map(this::toOptionResponse)
             .toList();
 
+    PostOfficeQuestion.Email email = null;
+    if (type == LevelType.POST_OFFICE) {
+      email = optionParser.parsePostOfficeQuestion(question.getOptionContent()).getEmail();
+    }
+
     return new QuestionResponse(
-            question.getId(),
-            question.getLevel().getLevelType(),
-            question.getQuestionText(),
-            optionResponses
+        question.getId(),
+        question.getLevel().getLevelType(),
+        question.getQuestionText(),
+        optionResponses,
+        email
     );
   }
 
@@ -86,6 +95,8 @@ public class GameMapper {
               mc.getText(),
               mc.getImageUrl()
       );
+      case PostOfficeOption o -> new PostOfficeOptionResponse(o.getId(), o.getType());
+
       case PictureQuizOption pq -> new PictureQuizOptionResponse(
               pq.getId(),
               pq.getText(),

@@ -5,6 +5,7 @@ import org.ntnu.backend.game.model.PictureQuizOption;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
+import org.ntnu.backend.game.model.PostOfficeQuestion;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +68,11 @@ public class OptionParser {
                   mapper.readValue(json, new TypeReference<>() {});
           yield new ArrayList<>(list);
         }
+        case POST_OFFICE -> {
+          PostOfficeQuestion question = mapper.readValue(json, PostOfficeQuestion.class);
+          yield new ArrayList<>(question.getOptions());
+        }
+
         case PASSWORD_STRENGTH -> {
           List<PasswordStrengthOption> list = mapper.readValue(json, new TypeReference<>() {});
           yield new ArrayList<>(list);
@@ -80,7 +86,7 @@ public class OptionParser {
         case MINIGAME -> null;
         case BOSS_BATTLE -> null;
         case TUTORIAL   -> null;
-        case POST_OFFICE -> null;
+        default -> null;
       };
     } catch (JacksonException e) {
       throw new InvalidOptionFormatException("Invalid JSON for " + type + ": " + e.getMessage());
@@ -88,5 +94,9 @@ public class OptionParser {
 
     validator.validate(options, type);
     return options;
+  }
+
+  public PostOfficeQuestion parsePostOfficeQuestion(String json) {
+    return mapper.readValue(json, PostOfficeQuestion.class);
   }
 }

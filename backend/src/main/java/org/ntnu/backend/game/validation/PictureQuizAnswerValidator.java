@@ -56,8 +56,10 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
         }
 
         Set<Integer> selectedIds = choice.getSelectedIds() == null
-                ? Set.of()
-                : Set.copyOf(choice.getSelectedIds());
+            ? Set.of()
+            : choice.getSelectedIds().stream()
+                .map(Integer::parseInt)
+                .collect(Collectors.toSet());
 
         List<PictureQuizOption> pq = options.stream()
                 .map(o -> (PictureQuizOption) o)

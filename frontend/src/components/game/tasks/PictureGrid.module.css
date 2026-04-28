@@ -218,15 +218,15 @@
 
 .submitButton {
     position: relative;
-    min-width: 300px;
+    min-width: 200px;
     min-height: 66px;
     padding: 0 2.6rem;
     border: 3px solid #c8a05c;
-    border-radius: 999px;
+    border-radius: 6px;
     background: linear-gradient(180deg, #4d3372 0%, #34224d 100%);
     color: #f7ecd8;
-    font-size: 1.25rem;
-    font-weight: 900;
+    font-size: 1.3rem;
+    font-weight: 700;
     letter-spacing: 0.02em;
     box-shadow:
             0 14px 24px rgba(42, 28, 62, 0.28),
