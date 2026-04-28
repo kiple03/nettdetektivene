@@ -9,11 +9,13 @@ import org.ntnu.backend.classroom.dto.CreateClassifyItemsItemRequest;
 import org.ntnu.backend.classroom.dto.CreateClassifyItemsQuestionRequest;
 import org.ntnu.backend.classroom.dto.CreateMultipleChoiceOptionRequest;
 import org.ntnu.backend.classroom.dto.CreateMultipleChoiceQuestionRequest;
+import org.ntnu.backend.classroom.dto.CreatePasswordStrengthQuestionRequest;
 import org.ntnu.backend.classroom.dto.CreatePictureQuizOptionRequest;
 import org.ntnu.backend.classroom.dto.CreatePictureQuizQuestionRequest;
 import org.ntnu.backend.classroom.dto.CreateTeacherQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateClassifyItemsQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateMultipleChoiceQuestionRequest;
+import org.ntnu.backend.classroom.dto.UpdatePasswordStrengthQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdatePictureQuizQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateTeacherQuestionRequest;
 import org.ntnu.backend.exception.LevelNotFoundException;
@@ -21,12 +23,14 @@ import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.TeacherClassifyItemsOptionResponse;
 import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.TeacherOptionResponse;
+import org.ntnu.backend.game.dto.TeacherPasswordStrengthOptionResponse;
 import org.ntnu.backend.game.dto.TeacherPictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
 import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -44,7 +48,7 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class TeacherQuestionService {
 
-    private static final Set<LevelType> SUPPORTED_TYPES = Set.of(LevelType.MULTIPLE_CHOICE, LevelType.PICTURE_QUIZ, LevelType.CLASSIFY_ITEMS);
+    private static final Set<LevelType> SUPPORTED_TYPES = Set.of(LevelType.MULTIPLE_CHOICE, LevelType.PICTURE_QUIZ, LevelType.CLASSIFY_ITEMS, LevelType.PASSWORD_STRENGTH);
 
     private final QuestionRepository questionRepository;
     private final LevelRepository levelRepository;
@@ -81,6 +85,7 @@ public class TeacherQuestionService {
             case CreateMultipleChoiceQuestionRequest mc -> buildMcOptions(mc.options());
             case CreatePictureQuizQuestionRequest pq -> buildPqOptions(pq.options());
             case CreateClassifyItemsQuestionRequest ci -> buildCiOptions(ci.labels(), ci.items());
+            case CreatePasswordStrengthQuestionRequest ps -> buildPsOptions(ps);
             default -> throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
         };
 
@@ -123,6 +128,7 @@ public class TeacherQuestionService {
             case UpdateMultipleChoiceQuestionRequest mc -> buildMcOptions(mc.options());
             case UpdatePictureQuizQuestionRequest pq -> buildPqOptions(pq.options());
             case UpdateClassifyItemsQuestionRequest ci -> buildCiOptions(ci.labels(), ci.items());
+            case UpdatePasswordStrengthQuestionRequest ps -> buildPsOptions(ps);
             default -> throw new IllegalArgumentException("Unsupported request type: " + request.getClass().getSimpleName());
         };
 
@@ -182,6 +188,18 @@ public class TeacherQuestionService {
         return options;
     }
 
+    private List<Option> buildPsOptions(CreatePasswordStrengthQuestionRequest ps) {
+        return List.of(new PasswordStrengthOption(
+            1, ps.minLength(), ps.requireDigit(), ps.requireUpper(),
+            ps.requireLower(), ps.requireSymbol(), ps.successFeedback(), ps.failureFeedback()));
+    }
+
+    private List<Option> buildPsOptions(UpdatePasswordStrengthQuestionRequest ps) {
+        return List.of(new PasswordStrengthOption(
+            1, ps.minLength(), ps.requireDigit(), ps.requireUpper(),
+            ps.requireLower(), ps.requireSymbol(), ps.successFeedback(), ps.failureFeedback()));
+    }
+
     private String serialize(List<Option> options) {
         try {
             return objectMapper.writeValueAsString(options);
@@ -193,9 +211,10 @@ public class TeacherQuestionService {
     private TeacherQuestionResponse toTeacherResponse(Question question) {
         LevelType type = question.getLevel().getLevelType();
         List<TeacherOptionResponse> options = switch (type) {
-            case MULTIPLE_CHOICE -> toMcOptions(optionParser.parse(question.getOptionContent(), type));
-            case PICTURE_QUIZ    -> toPqOptions(optionParser.parse(question.getOptionContent(), type));
-            case CLASSIFY_ITEMS  -> toCiOptions(optionParser.parse(question.getOptionContent(), type));
+            case MULTIPLE_CHOICE    -> toMcOptions(optionParser.parse(question.getOptionContent(), type));
+            case PICTURE_QUIZ       -> toPqOptions(optionParser.parse(question.getOptionContent(), type));
+            case CLASSIFY_ITEMS     -> toCiOptions(optionParser.parse(question.getOptionContent(), type));
+            case PASSWORD_STRENGTH  -> toPsOptions(optionParser.parse(question.getOptionContent(), type));
             default -> List.of();
         };
         return new TeacherQuestionResponse(
@@ -251,5 +270,19 @@ public class TeacherQuestionService {
                 );
             })
             .toList();
+    }
+
+    private List<TeacherOptionResponse> toPsOptions(List<Option> options) {
+        PasswordStrengthOption ps = (PasswordStrengthOption) options.get(0);
+        return List.of(new TeacherPasswordStrengthOptionResponse(
+            ps.getId(),
+            ps.getMinLength(),
+            ps.isRequireDigit(),
+            ps.isRequireUpper(),
+            ps.isRequireLower(),
+            ps.isRequireSymbol(),
+            ps.getSuccessFeedback(),
+            ps.getFailureFeedback()
+        ));
     }
 }

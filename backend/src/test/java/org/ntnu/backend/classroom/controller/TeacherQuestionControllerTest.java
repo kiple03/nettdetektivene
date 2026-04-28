@@ -23,6 +23,7 @@ import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.TeacherClassifyItemsOptionResponse;
 import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.TeacherOptionResponse;
+import org.ntnu.backend.game.dto.TeacherPasswordStrengthOptionResponse;
 import org.ntnu.backend.game.dto.TeacherPictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.TeacherQuestionResponse;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -746,5 +747,167 @@ class TeacherQuestionControllerTest {
         mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/levels/1/questions/1")
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isForbidden());
+    }
+
+    // PASSWORD_STRENGTH create/update tests
+
+    @Test
+    void createPasswordStrengthQuestion_returnsCreated() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 4;
+
+        TeacherPasswordStrengthOptionResponse opt = new TeacherPasswordStrengthOptionResponse(
+            1, 8, true, true, false, false, "Bra passord!", "For svakt passord.");
+        TeacherQuestionResponse created = new TeacherQuestionResponse(
+            88, LevelType.PASSWORD_STRENGTH, "Lag et sterkt passord",
+            List.<TeacherOptionResponse>of(opt), false, classroomId);
+
+        when(teacherQuestionService.createQuestion(eq(classroomId), eq(levelId), any(), any()))
+            .thenReturn(created);
+
+        String body = """
+            {
+              "questionText": "Lag et sterkt passord",
+              "levelType": "PASSWORD_STRENGTH",
+              "minLength": 8,
+              "requireDigit": true,
+              "requireUpper": true,
+              "requireLower": false,
+              "requireSymbol": false,
+              "successFeedback": "Bra passord!",
+              "failureFeedback": "For svakt passord."
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(88))
+            .andExpect(jsonPath("$.levelType").value("PASSWORD_STRENGTH"))
+            .andExpect(jsonPath("$.options[0].minLength").value(8))
+            .andExpect(jsonPath("$.options[0].requireDigit").value(true))
+            .andExpect(jsonPath("$.options[0].successFeedback").value("Bra passord!"));
+    }
+
+    @Test
+    void updatePasswordStrengthQuestion_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        int levelId = 4;
+        int questionId = 88;
+
+        TeacherPasswordStrengthOptionResponse opt = new TeacherPasswordStrengthOptionResponse(
+            1, 12, true, true, true, true, "Perfekt!", "Prøv igjen.");
+        TeacherQuestionResponse updated = new TeacherQuestionResponse(
+            questionId, LevelType.PASSWORD_STRENGTH, "Oppdatert passordoppgave",
+            List.<TeacherOptionResponse>of(opt), false, classroomId);
+
+        when(teacherQuestionService.updateQuestion(eq(classroomId), eq(levelId), eq(questionId), any(), any()))
+            .thenReturn(updated);
+
+        String body = """
+            {
+              "questionText": "Oppdatert passordoppgave",
+              "levelType": "PASSWORD_STRENGTH",
+              "minLength": 12,
+              "requireDigit": true,
+              "requireUpper": true,
+              "requireLower": true,
+              "requireSymbol": true,
+              "successFeedback": "Perfekt!",
+              "failureFeedback": "Prøv igjen."
+            }
+            """;
+
+        mockMvc.perform(put("/teacher/classrooms/" + classroomId + "/levels/" + levelId + "/questions/" + questionId)
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(questionId))
+            .andExpect(jsonPath("$.levelType").value("PASSWORD_STRENGTH"))
+            .andExpect(jsonPath("$.options[0].minLength").value(12))
+            .andExpect(jsonPath("$.options[0].requireSymbol").value(true));
+    }
+
+    @Test
+    void createPasswordStrengthQuestion_missingFeedback_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        String body = """
+            {
+              "questionText": "Lag et sterkt passord",
+              "levelType": "PASSWORD_STRENGTH",
+              "minLength": 8,
+              "requireDigit": true,
+              "requireUpper": false,
+              "requireLower": false,
+              "requireSymbol": false,
+              "successFeedback": "",
+              "failureFeedback": "For svakt."
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/4/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createPasswordStrengthQuestion_minLengthTooHigh_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        String body = """
+            {
+              "questionText": "Lag et sterkt passord",
+              "levelType": "PASSWORD_STRENGTH",
+              "minLength": 65,
+              "requireDigit": false,
+              "requireUpper": false,
+              "requireLower": false,
+              "requireSymbol": false,
+              "successFeedback": "Bra!",
+              "failureFeedback": "For svakt."
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/4/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createPasswordStrengthQuestion_minLengthZero_returns400() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        String body = """
+            {
+              "questionText": "Lag et sterkt passord",
+              "levelType": "PASSWORD_STRENGTH",
+              "minLength": 0,
+              "requireDigit": false,
+              "requireUpper": false,
+              "requireLower": false,
+              "requireSymbol": false,
+              "successFeedback": "Bra!",
+              "failureFeedback": "For svakt."
+            }
+            """;
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/levels/4/questions")
+                .with(authentication(teacherAuth(teacherId)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body))
+            .andExpect(status().isBadRequest());
     }
 }
