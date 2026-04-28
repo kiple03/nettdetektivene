@@ -59,9 +59,14 @@ public class QuestionService {
    * @return the question with valid options for the client
    * @throws QuestionNotFoundException if no question exists with this ID
    */
-  public QuestionResponse getQuestionById(int id) {
+  public QuestionResponse getQuestionById(int id, UUID userId, RoleEnum role) {
     Question question = questionRepository.findById(id)
         .orElseThrow(() -> new QuestionNotFoundException(id));
+
+    if (!progressService.isLevelAccessible(userId, role, question.getLevel())) {
+      throw new LevelLockedException(question.getLevel().getId());
+    }
+
     return gameMapper.toQuestionResponse(question);
   }
 
@@ -84,10 +89,15 @@ public class QuestionService {
    * @throws QuestionNotFoundException if no question exists with this ID
    * @throws IllegalArgumentException if the submission shape doesn't match
    *         the level type, or the selected option ID doesn't exist.
+   * @throws LevelLockedException if the question is in a level which is not accessible
    */
-  public SubmitAnswerResponse submitAnswer(int questionId, SubmitAnswerRequest request) {
+  public SubmitAnswerResponse submitAnswer(int questionId, SubmitAnswerRequest request, UUID userId, RoleEnum role) {
     Question question = questionRepository.findById(questionId)
         .orElseThrow(() -> new QuestionNotFoundException(questionId));
+
+    if (!progressService.isLevelAccessible(userId, role, question.getLevel())) {
+      throw new LevelLockedException(question.getLevel().getId());
+    }
 
     LevelType type = question.getLevel().getLevelType();
     List<Option> options = optionParser.parse(question.getOptionContent(), type);
@@ -96,10 +106,10 @@ public class QuestionService {
     ValidationResult result = validator.validate(options, request);
 
     return new SubmitAnswerResponse(
-            result.correct(),
-            result.feedback(),
-            result.correctOptionIds(),
-            result.wrongSelectedOptionIds()
+        result.correct(),
+        result.feedback(),
+        result.correctOptionIds(),
+        result.wrongSelectedOptionIds()
     );
   }
 

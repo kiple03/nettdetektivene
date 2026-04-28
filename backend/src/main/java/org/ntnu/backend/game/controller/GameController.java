@@ -129,7 +129,7 @@ public class GameController {
       @PathVariable int questionId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal
   ) {
-    return questionService.getQuestionById(questionId);
+    return questionService.getQuestionById(questionId, principal.getUserId(), principal.getRole());
   }
 
 
@@ -154,7 +154,8 @@ public class GameController {
       @PathVariable int questionId,
       @RequestBody SubmitAnswerRequest request,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return questionService.submitAnswer(questionId, request);
+    return questionService.submitAnswer(questionId, request,
+        principal.getUserId(), principal.getRole());
   }
 
   @Operation(
