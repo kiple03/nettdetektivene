@@ -22,9 +22,11 @@ function AuthSessionRefresher() {
   // routing decisions are made. setAuthReady() is in finally so routing always unblocks.
   useEffect(() => {
     if (!isAuthReady()) {
-      void sharedRefresh().finally(() => {
-        setAuthReady();
-      });
+      // .catch swallows the rejection so void doesn't leave an unhandled rejection.
+      // setAuthReady() always runs — routing must unblock regardless of outcome.
+      void sharedRefresh()
+        .catch(() => {})
+        .finally(() => setAuthReady());
     }
   }, []); // runs once on mount
 
