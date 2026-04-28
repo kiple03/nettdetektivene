@@ -98,9 +98,9 @@ public class GameMapper {
       case PostOfficeOption o -> new PostOfficeOptionResponse(o.getId(), o.getType());
 
       case PictureQuizOption pq -> new PictureQuizOptionResponse(
-              pq.getId(),
-              pq.getText(),
-              pq.getImageUrl()
+              pq.id(),
+              pq.text(),
+              pq.imageUrl()
       );
       case PasswordStrengthOption p -> new PasswordStrengthOptionResponse(
         p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol()
