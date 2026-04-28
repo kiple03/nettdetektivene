@@ -263,7 +263,6 @@ export default function MapPage() {
         <div className={styles.container} ref={containerRef}>
             <div className={styles.header}>
                 <img src={internettbyenLogo} alt="Internettbyen" className={styles.headerLogo} />
-                <p>Velg et stop</p>
             </div>
 
             <div className={styles.mapInner}>
