@@ -104,6 +104,11 @@
   object-fit: contain;
 }
 
+.locked {
+  opacity: 0.35;
+  filter: grayscale(100%);
+}
+
 .medalName {
   margin: 0;
   font-size: 0.95rem;
