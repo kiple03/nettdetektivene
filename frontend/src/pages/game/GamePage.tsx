@@ -26,6 +26,7 @@ const STOP_TO_TYPE: Record<string, StationType> = {
     "Nyhetskvartalet": STATION_TYPE.NEWS,
     "Fotografen": STATION_TYPE.PHOTO,
     "Passordbanken": STATION_TYPE.PASSWORD,
+    "Postkontoret": STATION_TYPE.POST,
     "Markedsplassen": STATION_TYPE.MARKETPLACE,
 };
 
@@ -109,8 +110,8 @@ export default function GamePage() {
         );
     }
 
-    if (isPending) {
-        return (
+    if (isPending || !level) {
+    return (
             <div role="status" aria-live="polite">
                 Laster...
             </div>

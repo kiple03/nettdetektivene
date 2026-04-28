@@ -1,6 +1,8 @@
-import { submitPasswordStrengthAnswer, type SubmitAnswerRequest, type SubmitPasswordStrengthAnswerRequest } from "@/api/gameApi";
-import type { StationData, SubmitAnswerResult } from "@/types/station"
+import { submitPasswordStrengthAnswer, submitSingleChoiceAnswer, type SubmitAnswerRequest, type SubmitPasswordStrengthAnswerRequest, type SubmitSingleChoiceAnswerRequest } from "@/api/gameApi";
+import type { StationData, SubmitAnswerResult } from "@/types/station";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
+import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 import TaskHeader from "../../ui/TaskHeader";
 import PasswordInput from "../../tasks/PasswordInput";
 
@@ -10,26 +12,65 @@ type Props = {
     disabled?: boolean;
 };
 
-function PassordBankenStation({station, onAnswer, disabled = false}: Props){
-    const handleSubmit = async (password: string) => {
+function PassordBankenStation({ station, onAnswer, disabled = false }: Props) {
+    const handlePasswordSubmit = async (password: string) => {
         const request: SubmitPasswordStrengthAnswerRequest = {
             shape: "PASSWORD",
             password,
         };
-        try{
+        try {
             const response = await submitPasswordStrengthAnswer(station.questionId, request);
             onAnswer(mapSubmitResponseToSubmitAnswer(response), request);
-        } catch(error:any){
-            console.error("Feil ved innsending ", error);
-            onAnswer({correct: false, feedback: error.response?.data?.message || "Noe gikk galt ved innsending"}, request);
+        } catch (error: any) {
+            console.error("Feil ved innsending", error);
+            onAnswer({ correct: false, feedback: error.response?.data?.message || "Noe gikk galt ved innsending" }, request);
         }
+    };
+
+    const handleSingleChoice = async (selectedIds: number[]) => {
+        const request: SubmitSingleChoiceAnswerRequest = {
+            shape: "SINGLE",
+            selectedId: selectedIds[0],
+        };
+        try {
+            const response = await submitSingleChoiceAnswer(station.questionId, request);
+            onAnswer(mapSubmitResponseToSubmitAnswer(response), request);
+        } catch (error: any) {
+            console.error("Feil ved innsending", error);
+            onAnswer({ correct: false, feedback: error.response?.data?.message || "Noe gikk galt ved innsending" }, request);
+        }
+    };
+
+    if (station.levelType === "PASSWORD_STRENGTH") {
+        return (
+            <div className="passordbanken-station">
+                <TaskHeader questionText={station.questionText} />
+                <PasswordInput rule={station.options[0]} onSubmit={handlePasswordSubmit} disabled={disabled} />
+            </div>
+        );
     }
 
-    return(
+    return (
         <div className="passordbanken-station">
-            <TaskHeader questionText={station.questionText}/>
-            <PasswordInput rule={station.options[0]} onSubmit={handleSubmit} disabled={disabled}/>
+            <DetectiveBook
+                title={station.title || "Passordbanken"}
+                subtitle={station.questionText}
+            >
+                <PictureGrid
+                    questionId={station.questionId}
+                    options={station.options.map((option, index) => ({
+                        id: option.id,
+                        imageUrl: option.imageUrl ?? null,
+                        text: option.label ?? "",
+                        altText: option.label ?? `Alternativ ${index + 1}`,
+                    }))}
+                    onSubmit={handleSingleChoice}
+                    disabled={disabled}
+                    selectionMode="single"
+                />
+            </DetectiveBook>
         </div>
-    )
+    );
 }
+
 export default PassordBankenStation;

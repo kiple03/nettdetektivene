@@ -11,37 +11,37 @@ type MultipleChoiceProps = {
 function MultipleChoice({ question, options, onSelect, disabled = false }: MultipleChoiceProps) {
   const hasImages = options.some(o => o.imageUrl);
 
-    return (
-        <fieldset className={hasImages ? "photo-task" : "optionsContainer"}>
-          {question && (
-              <legend className="photo-task__legend">
-                {question}
-              </legend>
-          )}
+  return (
+      <fieldset className={hasImages ? "photo-task" : "optionsContainer"}>
+        {question && (
+            <legend className="photo-task__legend">
+              {question}
+            </legend>
+        )}
 
-          {options.map((option) =>
-              option.imageUrl ? (
-                  <ImageOptionCard
-                      key={option.id}
-                      imageUrl={option.imageUrl}
-                      imageAlt={option.label}
-                      buttonLabel={option.label}
-                      onSelect={() => onSelect(option)}
-                      disabled={disabled}
-                  />
-              ) : (
-                  <button
-                      key={option.id}
-                      type="button"
-                      className="optionButton"
-                      onClick={() => onSelect(option)}
-                      disabled={disabled}
-                  >
-                    {option.label}
-                  </button>
-              )
-          )}
-        </fieldset>
+        {options.map((option) =>
+            option.imageUrl ? (
+                <ImageOptionCard
+                    key={option.id}
+                    imageUrl={option.imageUrl}
+                    imageAlt={option.label}
+                    buttonLabel={option.label}
+                    onSelect={() => onSelect(option)}
+                    disabled={disabled}
+                />
+            ) : (
+                <button
+                    key={option.id}
+                    type="button"
+                    className="optionButton"
+                    onClick={() => onSelect(option)}
+                    disabled={disabled}
+                >
+                  {option.label}
+                </button>
+            )
+        )}
+      </fieldset>
     );
 }
 
