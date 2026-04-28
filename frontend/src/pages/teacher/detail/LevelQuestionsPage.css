@@ -250,12 +250,12 @@
 }
 
 .level-questions__option-thumb {
-    width: 36px;
-    height: 36px;
+    width: 160px;
+    height: 120px;
     object-fit: cover;
-    border-radius: 4px;
-    vertical-align: middle;
-    margin-right: 8px;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto 6px;
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 

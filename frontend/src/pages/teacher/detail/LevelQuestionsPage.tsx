@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useGameLevel, useLevelQuestions } from '@/hooks/teacher/useTeacherQueries';
 import {
     useCreateQuestion,
@@ -140,6 +140,11 @@ export default function LevelQuestionsPage() {
     const { classroomId = '', levelId: levelIdStr = '' } = useParams<{ classroomId: string; levelId: string }>();
     const levelId = parseInt(levelIdStr, 10);
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const stopId = searchParams.get('stopId');
+    const backUrl = stopId
+        ? `/teacher/classrooms/${classroomId}/map?stopId=${stopId}`
+        : `/teacher/classrooms/${classroomId}`;
 
     const { data: level, isLoading: levelLoading, isError: levelError } = useGameLevel(levelId);
     const { data: questions = [], isLoading: questionsLoading, isError: questionsError } = useLevelQuestions(classroomId, levelId);
@@ -338,7 +343,7 @@ export default function LevelQuestionsPage() {
     if (isNaN(levelId) || !classroomId) {
         return (
             <div className="level-questions">
-                <Link to="/teacher" className="level-questions__back">← Tilbake</Link>
+                <Link to={backUrl} className="level-questions__back">← Tilbake</Link>
                 <p className="level-questions__loading">Ugyldig adresse.</p>
             </div>
         );
@@ -347,7 +352,7 @@ export default function LevelQuestionsPage() {
     if (levelError || questionsError) {
         return (
             <div className="level-questions">
-                <Link to={`/teacher/classrooms/${classroomId}`} className="level-questions__back">← Tilbake til klassen</Link>
+                <Link to={backUrl} className="level-questions__back">← Tilbake</Link>
                 <p className="level-questions__loading">Kunne ikke laste spørsmål. Prøv igjen.</p>
             </div>
         );
@@ -363,8 +368,8 @@ export default function LevelQuestionsPage() {
 
     return (
         <div className="level-questions">
-            <Link to={`/teacher/classrooms/${classroomId}`} className="level-questions__back">
-                ← Tilbake til klassen
+            <Link to={backUrl} className="level-questions__back">
+                ← Tilbake
             </Link>
 
             <div className="level-questions__header">

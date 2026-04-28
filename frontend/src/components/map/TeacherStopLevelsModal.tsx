@@ -58,7 +58,7 @@ export function TeacherStopLevelsModal({ stop, classroomId, onClose }: TeacherSt
                                 <button
                                     type="button"
                                     className={styles.levelButton}
-                                    onClick={() => navigate(`/teacher/classrooms/${classroomId}/levels/${level.id}/questions`)}
+                                    onClick={() => navigate(`/teacher/classrooms/${classroomId}/levels/${level.id}/questions?stopId=${stop.stopId}`)}
                                 >
                                     <span className={styles.levelTitle}>{level.title}</span>
                                     {level.description && (

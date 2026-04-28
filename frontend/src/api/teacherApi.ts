@@ -568,13 +568,13 @@ export interface TeacherImage {
 
 interface RawUploadedImage {
   id: number;
+  url: string;
   originalFilename: string;
-  contentType: string;
-  size: number;
   uploadedAt: string;
 }
 
 export function getImageDisplayUrl(imageUrl: string): string {
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) return imageUrl;
   const base = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api';
   return `${base}${imageUrl}`;
 }
@@ -587,10 +587,12 @@ export async function listMyImages(): Promise<TeacherImage[]> {
 export async function uploadImage(file: File): Promise<TeacherImage> {
   const formData = new FormData();
   formData.append('file', file);
-  const res = await apiClient.post<RawUploadedImage>('/images', formData);
+  const res = await apiClient.post<RawUploadedImage>('/images', formData, {
+    headers: { 'Content-Type': undefined },
+  });
   return {
     id: res.data.id,
-    url: `/images/${res.data.id}`,
+    url: res.data.url,
     originalFilename: res.data.originalFilename,
     uploadedAt: res.data.uploadedAt,
   };

@@ -11,7 +11,6 @@ import org.ntnu.backend.image.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -43,9 +42,11 @@ public class ImageService {
     private final S3Client s3Client;
     private final ImageRepository imageRepository;
 
-    /** Name of the S3 bucket, injected from the {@code s3.bucket} property. */
     @Value("${s3.bucket}")
     private String bucketName;
+
+    @Value("${s3.public-base-url}")
+    private String publicBaseUrl;
 
     /**
      * Constructs an {@code ImageService} with the given S3 client and image repository.
@@ -71,21 +72,19 @@ public class ImageService {
      * @throws IOException      if reading the file bytes fails
      * @throws RuntimeException if the file is empty, an unsupported type, or exceeds 5 MB
      */
-    public ImageEntity uploadImage(MultipartFile file, UUID uploadedByUserId) throws IOException {
+    public TeacherImageResponse uploadImage(MultipartFile file, UUID uploadedByUserId) throws IOException {
         validateImage(file);
         ensureBucketExists();
 
         String extension = getFileExtension(file.getOriginalFilename());
-        String objectKey = "images/" + UUID.randomUUID() + extension;
-
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(objectKey)
-                .contentType(file.getContentType())
-                .build();
+        String objectKey = UUID.randomUUID() + extension;
 
         s3Client.putObject(
-                putObjectRequest,
+                PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(objectKey)
+                        .contentType(file.getContentType())
+                        .build(),
                 RequestBody.fromBytes(file.getBytes())
         );
 
@@ -97,48 +96,20 @@ public class ImageService {
         image.setUploadedAt(LocalDateTime.now());
         image.setUploadedByUserId(uploadedByUserId);
 
-        return imageRepository.save(image);
+        ImageEntity saved = imageRepository.save(image);
+        return new TeacherImageResponse(saved.getId(), buildPublicUrl(objectKey),
+                saved.getOriginalFilename(), saved.getUploadedAt());
     }
 
     public List<TeacherImageResponse> getTeacherImages(UUID teacherId) {
         return imageRepository.findByUploadedByUserIdOrderByUploadedAtDesc(teacherId).stream()
-                .map(img -> new TeacherImageResponse(img.getId(), "/images/" + img.getId(),
+                .map(img -> new TeacherImageResponse(img.getId(), buildPublicUrl(img.getObjectKey()),
                         img.getOriginalFilename(), img.getUploadedAt()))
                 .toList();
     }
 
-    /**
-     * Streams the raw image bytes from S3 for the given image ID.
-     *
-     * <p>The caller is responsible for closing the returned {@link ResponseInputStream}
-     * after use to release the underlying HTTP connection.
-     *
-     * @param imageId the database ID of the image to retrieve
-     * @return a streaming response containing the image bytes and S3 response metadata
-     * @throws RuntimeException if no image with the given ID exists in the database
-     */
-    public ResponseInputStream<GetObjectResponse> getImage(Long imageId) {
-        ImageEntity image = imageRepository.findById(imageId)
-                .orElseThrow(() -> new RuntimeException("Image not found"));
-
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(image.getObjectKey())
-                .build();
-
-        return s3Client.getObject(getObjectRequest);
-    }
-
-    /**
-     * Returns the database metadata for the given image without fetching its content from S3.
-     *
-     * @param imageId the database ID of the image
-     * @return the {@link ImageEntity} containing filename, content type, size, and upload time
-     * @throws RuntimeException if no image with the given ID exists
-     */
-    public ImageEntity getImageMetadata(Long imageId) {
-        return imageRepository.findById(imageId)
-                .orElseThrow(() -> new RuntimeException("Image not found"));
+    private String buildPublicUrl(String objectKey) {
+        return publicBaseUrl + "/" + bucketName + "/" + objectKey;
     }
 
     /**

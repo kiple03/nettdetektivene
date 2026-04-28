@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getGameStops } from '@/api/gameApi';
 import { useClassroom } from '@/hooks/teacher/useTeacherQueries';
@@ -10,15 +10,39 @@ import styles from './TeacherMapPage.module.css';
 
 export default function TeacherMapPage() {
     const { classroomId = '' } = useParams<{ classroomId: string }>();
+    const [searchParams, setSearchParams] = useSearchParams();
     const { data: classroom } = useClassroom(classroomId);
     const { data: backendStops = [] } = useQuery({ queryKey: ['game', 'stops'], queryFn: getGameStops });
 
     const stopIdByTitle = Object.fromEntries(backendStops.map(s => [s.name, s.id]));
+    const stopById = Object.fromEntries(backendStops.map(s => [s.id, s]));
 
-    const [pendingStop, setPendingStop] = useState<TeacherStopInfo | null>(null);
+    // Stops with no backend ID (coming-soon) use local state since there's no ID to put in the URL
+    const [comingSoonStop, setComingSoonStop] = useState<TeacherStopInfo | null>(null);
+
+    const urlStopIdStr = searchParams.get('stopId');
+    const urlStopId = urlStopIdStr ? parseInt(urlStopIdStr) : null;
+
+    const pendingStop: TeacherStopInfo | null =
+        comingSoonStop ??
+        (urlStopId != null
+            ? { title: stopById[urlStopId]?.name ?? `Stopp ${urlStopId}`, stopId: urlStopId }
+            : null);
 
     const handleStopClick = (stop: StopData) => {
-        setPendingStop({ title: stop.title, stopId: stopIdByTitle[stop.title] ?? null });
+        const stopId = stopIdByTitle[stop.title] ?? null;
+        if (stopId != null) {
+            setComingSoonStop(null);
+            setSearchParams({ stopId: String(stopId) }, { replace: true });
+        } else {
+            setSearchParams({}, { replace: true });
+            setComingSoonStop({ title: stop.title, stopId: null });
+        }
+    };
+
+    const handleClose = () => {
+        setComingSoonStop(null);
+        setSearchParams({}, { replace: true });
     };
 
     return (
@@ -40,7 +64,7 @@ export default function TeacherMapPage() {
             <TeacherStopLevelsModal
                 stop={pendingStop}
                 classroomId={classroomId}
-                onClose={() => setPendingStop(null)}
+                onClose={handleClose}
             />
         </>
     );

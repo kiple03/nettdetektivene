@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.ntnu.backend.config.SecurityConfig;
-import org.ntnu.backend.image.ImageEntity;
 import org.ntnu.backend.image.dto.TeacherImageResponse;
 import org.ntnu.backend.image.service.ImageService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -67,14 +66,14 @@ class ImageControllerTest {
         UUID teacherId = UUID.randomUUID();
         LocalDateTime now = LocalDateTime.now();
 
-        TeacherImageResponse img = new TeacherImageResponse(1L, "/images/1", "photo.png", now);
+        TeacherImageResponse img = new TeacherImageResponse(1L, "http://s3.example.com/bucket/uuid.png", "photo.png", now);
         when(imageService.getTeacherImages(eq(teacherId))).thenReturn(List.of(img));
 
         mockMvc.perform(get("/teacher/images")
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].url").value("/images/1"))
+            .andExpect(jsonPath("$[0].url").value("http://s3.example.com/bucket/uuid.png"))
             .andExpect(jsonPath("$[0].originalFilename").value("photo.png"));
     }
 
@@ -127,20 +126,16 @@ class ImageControllerTest {
         UUID teacherId = UUID.randomUUID();
         MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "img".getBytes());
 
-        ImageEntity saved = new ImageEntity();
-        saved.setId(5L);
-        saved.setOriginalFilename("test.png");
-        saved.setContentType("image/png");
-        saved.setSize(3L);
-        saved.setUploadedAt(LocalDateTime.now());
-        saved.setUploadedByUserId(teacherId);
+        TeacherImageResponse response = new TeacherImageResponse(
+                5L, "http://s3.example.com/bucket/uuid.png", "test.png", LocalDateTime.now());
 
-        when(imageService.uploadImage(any(), eq(teacherId))).thenReturn(saved);
+        when(imageService.uploadImage(any(), eq(teacherId))).thenReturn(response);
 
         mockMvc.perform(multipart("/images").file(file)
                 .with(authentication(teacherAuth(teacherId)))
                 .contentType(MediaType.MULTIPART_FORM_DATA))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(5));
+            .andExpect(jsonPath("$.id").value(5))
+            .andExpect(jsonPath("$.url").value("http://s3.example.com/bucket/uuid.png"));
     }
 }
