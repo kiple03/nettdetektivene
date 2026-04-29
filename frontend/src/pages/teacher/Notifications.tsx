@@ -108,9 +108,6 @@ export default function Notifications() {
         <div className="teacher-corkboard__pin" />
 
         <header className="notifs__header">
-          <button className="notifs__back-btn" onClick={() => navigate(-1)}>
-            ← Tilbake
-          </button>
           <div className="notifs__title-row">
             <h1 className="notifs__title">Varsler</h1>
             {unreadCount > 0 && <span className="notifs__unread-badge">{unreadCount}</span>}

@@ -1,9 +1,7 @@
-import { Link } from 'react-router-dom';
 import { LayeredAvatar } from '@/components/user/LayeredAvatar';
 import type { EquippedItem } from '@/hooks/useUserProfile';
 
 type StudentDetailHeaderProps = {
-    backLink: string;
     username: string;
     email: string | null;
     enrolledAt: string | null;
@@ -20,7 +18,7 @@ type StudentDetailHeaderProps = {
 };
 
 export function StudentDetailHeader({
-    backLink, username, email, enrolledAt, completedCount, avatarItems,
+    username, email, enrolledAt, completedCount, avatarItems,
     editing, editValue, onEditValueChange, onStartEdit, onCancelEdit, onSaveUsername,
     savingUsername, usernameError,
 }: StudentDetailHeaderProps) {
@@ -34,7 +32,7 @@ export function StudentDetailHeader({
             <div className="student-detail__avatar-ring">
                 <LayeredAvatar items={avatarItems} size={132} />
             </div>
-            <Link to={backLink} className="student-detail__back">← Tilbake</Link>
+
 
             {editing ? (
                 <div className="student-detail__username-edit">

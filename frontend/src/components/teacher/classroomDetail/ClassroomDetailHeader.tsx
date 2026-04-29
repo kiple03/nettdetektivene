@@ -28,6 +28,15 @@ export function ClassroomDetailHeader({
 }: ClassroomDetailHeaderProps) {
     return (
         <header className="classroom-detail__header">
+            <svg aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0 }}>
+                <defs>
+                    <filter id="chalk-effect" x="-5%" y="-5%" width="110%" height="110%">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="4" seed="8" result="noise" />
+                        <feDisplacementMap in="SourceGraphic" in2="noise" scale="5" xChannelSelector="R" yChannelSelector="G" result="rough" />
+                        <feColorMatrix in="rough" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.92 0" />
+                    </filter>
+                </defs>
+            </svg>
             {editMode ? (
                 <div className="classroom-detail__title-edit">
                     {saveError && (
@@ -64,7 +73,7 @@ export function ClassroomDetailHeader({
                 </div>
             ) : (
                 <div className="classroom-detail__title-wrap">
-                    <h1 className="classroom-detail__title">{title}</h1>
+                    <h1 className="classroom-detail__title">Klasse {title}</h1>
                     <div className="classroom-detail__title-actions">
                         <button
                             className="classroom-detail__pencil"

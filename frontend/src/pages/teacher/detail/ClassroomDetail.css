@@ -6,31 +6,6 @@
   color: #fff;
 }
 
-/* BACK BUTTON */
-.classroom-detail__back {
-  display: inline-flex;
-  align-items: center;
-  position: fixed;
-  top: 6%;
-  left: 1.5%;
-  z-index: 50;
-  gap: 6px;
-  font-family: sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(229, 242, 217, 0.5);
-  text-decoration: none;
-  padding: 6px 12px 6px 8px;
-  border-radius: 8px;
-  transition: color 0.15s, background 0.15s;
-}
-
-.classroom-detail__back:hover {
-  color: rgba(229, 242, 217, 0.9);
-  background: rgba(255, 255, 255, 0.06);
-}
 
 /* HEADER */
 .classroom-detail__header {
@@ -39,6 +14,8 @@
   gap: 14px;
   margin: 0 auto 28px;
   max-width: 1440px;
+  align-items: center;
+  text-align: center;
 }
 
 .classroom-detail__title-wrap {
@@ -49,15 +26,13 @@
 
 .classroom-detail__title {
   margin: 0;
-  font-family: "Georgia", "Times New Roman", serif;
-  font-size: 52px;
-  font-weight: 700;
-  letter-spacing: -.03em;
-  color: #f7f2ff;
-  text-shadow:
-    1px 1px 0 rgba(0, 0, 0, 0.5),
-    2px 2px 6px rgba(0, 0, 0, 0.35),
-    0 0 30px rgba(255, 255, 255, 0.05);
+  font-family: 'Walter Turncoat', cursive;
+  font-size: 68px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: none;
+  filter: url(#chalk-effect);
 }
 
 /* Grouped pill containing pencil + divider + trash */
