@@ -80,11 +80,11 @@ export default function MapPage() {
     };
 
     const handleStopClick = (stop: StopData) => {
-        if (stop.title === "Datasenteret" && isUnlocked(stop.title)) {
-            navigate("/boss");
-            return;
-        }
         animateTo(stop.pathOffset, () => {
+            if (stop.title === "Datasenteret" && isUnlocked(stop.title)) {
+                navigate("/boss");
+                return;
+            }
             if (isUnlocked(stop.title)) {
                 setManualPendingStop(stop);
             } else {
