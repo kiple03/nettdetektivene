@@ -164,7 +164,7 @@ public class ProgressService {
     Stop completedStop = progress.getCurrentStop();
     advanceToNextLevel(progress);
 
-    if(progress.isGameCompleted()){
+    if (progress.isGameCompleted()){
       medalionService.awardInternalUsage(userId, "platinum", "Du fanget skurken");
     } else if(progress.getCurrentStop().getId() != completedStop.getId()){
       awardStopCompletionMedal(userId, completedStop);
@@ -225,6 +225,10 @@ public class ProgressService {
             UserProgress::getId,
             progress -> progressMapper.toSummary(progress, stopLevelCounts, totalLevelsInGame)
         ));
+  }
+
+  public boolean isBossUnlocked(UUID userId) {
+    return getProgressOrThrow(userId).isGameCompleted();
   }
 
   /**
