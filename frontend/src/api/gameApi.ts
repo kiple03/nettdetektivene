@@ -47,6 +47,7 @@ export interface GameLevel {
   description: string;
   stopName: string;
   levelType: LevelType;
+  order: number;
   locked: boolean;
 }
 

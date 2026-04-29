@@ -6,7 +6,8 @@ public record PasswordStrengthOptionResponse (
     boolean requireDigit,
     boolean requireUpper,
     boolean requireLower,
-    boolean requireSymbol
+    boolean requireSymbol,
+    String imageUrl
 ) implements OptionResponse {
 }
  

@@ -162,10 +162,10 @@
     transform: rotate(12deg);
 }
 
-/* Title of the station */
+/* Level title */
 .title {
     margin: 0;
-    font-size: clamp(1rem, 2vw, 2rem);
+    font-size: clamp(1rem, 1.4vw, 1.4rem);
     line-height: 0.92;
     text-align: center;
 }

@@ -19,7 +19,10 @@ public final class PasswordStrengthOption implements Option {
     @JsonProperty("requireLower") private boolean requireLower;
     @JsonProperty("requireSymbol") private boolean requireSymbol;
 
+    private String imageUrl;
+
     //For server only
     @NotBlank private String successFeedback;
     @NotBlank private String failureFeedback;
+
 }

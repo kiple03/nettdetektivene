@@ -166,10 +166,10 @@ public class GameSeeder implements CommandLineRunner {
     });
 
     Level level1 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 1")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte eller falskt? 1");
+          l.setTitle("Ekte eller falskt?");
           l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
           l.setLevelType(LevelType.MULTIPLE_CHOICE);
           l.setStop(stop);
@@ -200,10 +200,10 @@ public class GameSeeder implements CommandLineRunner {
 
 
     Level level2 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 2")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte eller falskt? 2");
+          l.setTitle("Ekte eller falskt?");
           l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
           l.setLevelType(LevelType.MULTIPLE_CHOICE);
           l.setStop(stop);
@@ -228,10 +228,10 @@ public class GameSeeder implements CommandLineRunner {
     );
 
     Level level3 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 3")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte eller falskt? 3");
+          l.setTitle("Ekte eller falskt?");
           l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
           l.setLevelType(LevelType.MULTIPLE_CHOICE);
           l.setStop(stop);
@@ -332,10 +332,10 @@ public class GameSeeder implements CommandLineRunner {
     );
 
     Level level2 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert? 2")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte, KI eller manipulert? 2");
+          l.setTitle("Ekte, KI eller manipulert?");
           l.setDescription("Se nøye på bildet og velg riktig svar.");
           l.setLevelType(LevelType.PICTURE_QUIZ);
           l.setStop(stop);
@@ -384,10 +384,10 @@ public class GameSeeder implements CommandLineRunner {
     );
 
     Level level3 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert? 3")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte, KI eller manipulert? 3");
+          l.setTitle("Ekte, KI eller manipulert?");
           l.setDescription("Se nøye på bildet og velg riktig svar.");
           l.setLevelType(LevelType.PICTURE_QUIZ);
           l.setStop(stop);
@@ -427,10 +427,10 @@ public class GameSeeder implements CommandLineRunner {
     });
 
     Level postLevel1 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen! 1")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen!")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Finn det mistenklige i mailen! 1");
+          l.setTitle("Finn det mistenklige i mailen!");
           l.setDescription("Kan du hva som er mistenkelig i mailene?");
           l.setLevelType(LevelType.POST_OFFICE);
           l.setStop(stop3);
@@ -506,10 +506,10 @@ public class GameSeeder implements CommandLineRunner {
     );
 
     Level postLevel2 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen! 2")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen!")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Finn det mistenklige i mailen! 2");
+          l.setTitle("Finn det mistenklige i mailen!");
           l.setDescription("Kan du hva som er mistenkelig i mailene?");
           l.setLevelType(LevelType.POST_OFFICE);
           l.setStop(stop3);
@@ -593,10 +593,10 @@ public class GameSeeder implements CommandLineRunner {
     );
 
     Level postLevel3 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen! 3")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen!")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Finn det mistenklige i mailen! 3");
+          l.setTitle("Finn det mistenklige i mailen!");
           l.setDescription("Kan du hva som er mistenkelig i mailene?");
           l.setLevelType(LevelType.POST_OFFICE);
           l.setStop(stop3);
@@ -792,7 +792,7 @@ public class GameSeeder implements CommandLineRunner {
       ensureQuestion(l1,
           "Lag et passord på minst 8 tegn med tall og stor bokstav.",
           List.of(new PasswordStrengthOption(
-              1, 8, true, true, false, false,
+              1, 8, true, true, false, false, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/passord1.png",
               "Bra! Passordet oppfyller kravene.",
               "Passordet ditt er ikke sterkt nok."
           ))
@@ -801,7 +801,7 @@ public class GameSeeder implements CommandLineRunner {
       ensureQuestion(l1,
           "Nå skjerper vi kravene: minst 12 tegn, med tall, stor bokstav OG symbol.",
           List.of(new PasswordStrengthOption(
-              1, 12, true, true, false, true,
+              1, 12, true, true, false, true, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/passord2.png",
               "Utmerket — dette er et robust passord!",
               "Passordet ditt er ikke sterkt nok."
           ))
