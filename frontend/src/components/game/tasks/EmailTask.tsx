@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { PostkontoretTask } from "@/types/email.ts";
-import "@/components/game/ui/game.css";
+import "@/components/game/ui_game/game.css";
 import styles from "@/components/game/tasks/PictureGrid.module.css";
 import type { SubmitResult } from "@/types/station.ts";
 
