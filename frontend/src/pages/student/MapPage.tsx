@@ -11,6 +11,7 @@ import { MAP_STOPS, type StopData } from "@/data/mapStops";
 import internettbyenLogo from "@/assets/images/map/internettbyen-logo.png";
 import detektivkontoret from "@/assets/images/map/detektivkontoret.png";
 import { CarWithAvatar } from "@/components/map/CarWithAvatar";
+import sharkBase from "@/assets/images/boss/shark-base.png";
 import {
     AlertDialog,
     AlertDialogContent,
