@@ -28,6 +28,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MedalionService {
+    private static final Map<String, String> MEDAL_IMAGE_OVERRIDES = Map.of(
+        "Den sosiale møteplassen", "/assets/medalions/social-meetingplace.png"
+    );
+
     private final MedalionRepository medalionRepository;
     private final UserRepository userRepository;
 
@@ -113,12 +117,16 @@ public class MedalionService {
      * @return the mapped response DTO
      */
     private MedalionResponse toResponse(Medalion medalion){
+        String imageUrl = MEDAL_IMAGE_OVERRIDES.getOrDefault(
+            medalion.getName(),
+            "/assets/medalions/" + medalion.getName() + ".svg"
+        );
         return MedalionResponse.builder()
             .id(medalion.getId())
             .name(medalion.getName())
             .description(medalion.getDescription())
             .earnedAt(medalion.getEarned_at())
-            .imageUrl("/assets/medalions/" + medalion.getName() + ".svg")
+            .imageUrl(imageUrl)
             .build();
     }
 
