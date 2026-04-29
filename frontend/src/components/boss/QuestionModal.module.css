@@ -1,6 +1,6 @@
 @property --countdown {
     syntax: '<integer>';
-    initial-value: 10;
+    initial-value: 30;
     inherits: false;
 }
 
@@ -10,7 +10,7 @@
 }
 
 @keyframes tick {
-    from { --countdown: 10; }
+    from { --countdown: 30; }
     to   { --countdown: 0;  }
 }
 
@@ -61,13 +61,13 @@
     gap: 6px;
 }
 
-/* Animates --countdown from 10→0, displays it via CSS counter */
+/* Animates --countdown from 30→0, displays it via CSS counter */
 .timerNum {
     display: block;
     font-size: 1.6rem;
     font-weight: bold;
     font-variant-numeric: tabular-nums;
-    animation: tick 10s steps(10, end) forwards;
+    animation: tick 30s steps(30, end) forwards;
 }
 
 .timerNum::before {
@@ -80,7 +80,7 @@
     height: 14px;
     border-radius: 7px;
     background: #4caf50;
-    animation: depleteBar 10s linear forwards;
+    animation: depleteBar 30s linear forwards;
 }
 
 .btnRow {
