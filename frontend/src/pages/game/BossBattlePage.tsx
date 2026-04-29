@@ -53,6 +53,7 @@ export default function BossBattlePage() {
             if (next <= 0) {
                 const secs = captureTime();
                 setFinalSeconds(secs);
+                setCurrentSprite(sharkHurt);
                 saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
                     .catch((err) => console.error("Failed to save boss battle result", err));
                 setPhase("victory");
@@ -73,6 +74,11 @@ export default function BossBattlePage() {
         setPhase("battle");
     };
 
+    const replayVictory = () => {
+        setCurrentSprite(sharkHurt);
+        setPhase("victory");
+    };
+
     const resetBattle = () => {
         setPlayerHp(MAX_HP);
         setBossHp(MAX_HP);
@@ -83,7 +89,7 @@ export default function BossBattlePage() {
     };
 
     const isIntroPhase = phase === "intro" || phase === "intro-fading";
-    const showBoss = isIntroPhase || phase === "battle" || phase === "attacking";
+    const showBoss = isIntroPhase || phase === "battle" || phase === "attacking" || phase === "victory";
     const showPlayer = (!isIntroPhase || introPlayerRevealed) && (phase !== "victory" && phase !== "victory-screen" && phase !== "defeat" && phase !== "defeat-screen");
     const showBattle = phase === "battle" || phase === "attacking";
     const bossSprite = bossHurt ? sharkHurt : currentSprite;
@@ -94,7 +100,7 @@ export default function BossBattlePage() {
             {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
             {showBoss && (
                 <div className={styles.bossCharArea}>
-                    <BossCharacter sprite={bossSprite} isHurt={bossHurt}/>
+                    <BossCharacter sprite={bossSprite} isHurt={bossHurt} isVictory={phase === "victory"} />
                     {showBattle && (
                         <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
                     )}
@@ -115,6 +121,7 @@ export default function BossBattlePage() {
                     phase={phase}
                     onAnswer={handleAnswer}
                     onSpriteChange={setCurrentSprite}
+                    onReplayVictory={replayVictory}
                 />
             </div>
 

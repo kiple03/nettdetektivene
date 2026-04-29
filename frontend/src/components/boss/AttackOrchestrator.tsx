@@ -78,9 +78,10 @@ interface Props {
     phase: string;
     onAnswer: (correct: boolean) => void;
     onSpriteChange: (sprite: string) => void;
+    onReplayVictory?: () => void;
 }
 
-export function AttackOrchestrator({ phase, onAnswer, onSpriteChange }: Props) {
+export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVictory }: Props) {
     const [innerPhase, setInnerPhase] = useState<InnerPhase>("waiting");
     const [currentAttack, setCurrentAttack] = useState<ResolvedAttack | null>(null);
     const [currentQuestion, setCurrentQuestion] = useState<GameQuestion | null>(null);
@@ -159,6 +160,14 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange }: Props) {
                         >
                             -1 HP shark
                         </button>
+                        {onReplayVictory && (
+                            <button
+                                className={styles.adminButton}
+                                onClick={onReplayVictory}
+                            >
+                                🏆 Replay win
+                            </button>
+                        )}
                     </div>
                 </div>,
                 document.body
