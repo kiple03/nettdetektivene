@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
+import org.ntnu.backend.exception.BossLockedException;
 import org.ntnu.backend.game.dto.BossBattleResultResponse;
 import org.ntnu.backend.game.dto.BossBattleSaveRequest;
 import org.ntnu.backend.game.model.BossBattleResult;
@@ -39,6 +40,9 @@ class BossBattleServiceTest {
     @Mock
     private MedalionService medalionService;
 
+    @Mock
+    private ProgressService progressService;
+
     @InjectMocks
     private BossBattleService bossBattleService;
 
@@ -49,6 +53,8 @@ class BossBattleServiceTest {
 
         Enrollment enrollment = mock(Enrollment.class);
         BossBattleSaveRequest request = new BossBattleSaveRequest(true, 120, 45);
+
+        when(progressService.boosFightUnlocked(userId)).thenReturn(true);
 
         when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, userId))
                 .thenReturn(Optional.of(enrollment));
@@ -79,11 +85,10 @@ class BossBattleServiceTest {
         BossBattleSaveRequest request = new BossBattleSaveRequest(false, 80, 0);
 
         assertThatThrownBy(() -> bossBattleService.saveResult(userId, null, request))
-                .isInstanceOf(ResponseStatusException.class)
+                .isInstanceOf(BossLockedException.class)
                 .satisfies(error -> {
-                    ResponseStatusException exception = (ResponseStatusException) error;
-                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-                    assertThat(exception.getReason()).isEqualTo("No classroom assigned");
+                    BossLockedException exception = (BossLockedException) error;
+                    assertThat(exception.getStatus()).isEqualTo(HttpStatus.FORBIDDEN);
                 });
 
         verifyNoInteractions(enrollmentRepository);
@@ -100,12 +105,13 @@ class BossBattleServiceTest {
         when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, userId))
                 .thenReturn(Optional.empty());
 
+        lenient().when(progressService.boosFightUnlocked(userId)).thenReturn(true);
+
         assertThatThrownBy(() -> bossBattleService.saveResult(userId, classroomId, request))
                 .isInstanceOf(ResponseStatusException.class)
                 .satisfies(error -> {
                     ResponseStatusException exception = (ResponseStatusException) error;
                     assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-                    assertThat(exception.getReason()).isEqualTo("Not enrolled in classroom");
                 });
 
         verify(bossBattleResultRepository, never()).save(any());
