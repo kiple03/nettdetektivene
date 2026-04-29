@@ -96,3 +96,17 @@ export function subscribeMute(cb: (muted: boolean) => void): () => void {
     muteSubscribers.add(cb);
     return () => { muteSubscribers.delete(cb); };
 }
+
+// Vite HMR: when this module is disposed (file saved during dev), stop all audio
+// elements held by the old instance so they don't keep playing alongside the new ones.
+if (import.meta.hot) {
+    import.meta.hot.dispose(() => {
+        Object.values(audioByTrack).forEach(audio => {
+            if (audio) {
+                audio.pause();
+                audio.src = '';
+            }
+        });
+        muteSubscribers.clear();
+    });
+}

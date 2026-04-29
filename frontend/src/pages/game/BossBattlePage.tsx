@@ -20,6 +20,16 @@ type Phase = "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "vict
 
 const MAX_HP = 5;
 
+// Stable ref callback — defined outside the component so React doesn't re-fire on every render.
+// Switches to boss music on mount, restores background music on unmount.
+function bossPageMusicRef(el: HTMLDivElement | null) {
+    if (el !== null) {
+        playMusic('boss');
+    } else if (getCurrentTrack() === 'boss') {
+        playMusic('background');
+    }
+}
+
 export default function BossBattlePage() {
     const { data: profile } = useUserProfile();
     const equippedItems = profile?.equippedItems ?? [];
@@ -33,17 +43,7 @@ export default function BossBattlePage() {
     const [introPlayerRevealed, setIntroPlayerRevealed] = useState(false);
     const startTimeRef = useRef<number | null>(null);
 
-    // Cleanup: when boss page unmounts, restore background music if boss was playing
-    const cleanupRef = (el: HTMLDivElement | null) => {
-        if (el === null && getCurrentTrack() === 'boss') {
-            playMusic('background');
-        }
-    };
-
-    const beginFade = () => {
-        playMusic('boss');
-        setPhase("intro-fading");
-    };
+    const beginFade = () => setPhase("intro-fading");
 
     const startBattle = () => {
         startTimeRef.current = Date.now();
@@ -109,7 +109,7 @@ export default function BossBattlePage() {
 
     return (
         <div className={styles.arena}>
-            <div ref={cleanupRef} style={{ display: 'none' }} />
+            <div ref={bossPageMusicRef} style={{ display: 'none' }} />
             <div className={styles.arenaBg} style={{ backgroundImage: `url(${arenaBg})` }} />
             {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
             {showBoss && (
