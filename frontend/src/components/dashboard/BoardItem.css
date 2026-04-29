@@ -11,38 +11,38 @@
 
 .board-item {
   position: relative;
-  width: 120px;
+  width: 12vw;
   min-height: 30px;
-  padding: 12px 10px;
+  padding: 1% 0.8%;
   background: #ffffff;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.20);
   text-decoration: none;
   color: #222;
-  font-size: 18px;
+  font-size: clamp(10px, 1.2vw, 18px);
   font-family: Rockwell;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  top: -50px;
-  left: 0px;
+  top: -3vw;
+  left: 0;
 }
 
 /* different sizes of board items */
 .board-item-large .board-item-img {
-  width: 400px;
+  width: 35vw;
   margin-bottom: 6px;
   pointer-events: none;
 }
 
 .board-item-medium .board-item-img {
-  width: 350px;
+  width: 25vw;
   margin-bottom: 6px;
   pointer-events: none;
 }
 
 .board-item-small .board-item-img {
-  width: 140px;
+  width: 10vw;
   margin-bottom: 6px;
   pointer-events: none;
 }
@@ -104,7 +104,7 @@
   left: 50%;
   transform: translate(-50%, -50%) scale(0.8); 
   z-index: 10; 
-  pointer-events: none; 
+  pointer-events: none;
 }
 
 .board-item-wrapper:focus-visible {
