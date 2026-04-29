@@ -10,12 +10,12 @@ import SosialeMoteplassenStation from "./stations/SosialeMoteplassenStation";
 
 type StationRendererProps = {
   station: StationData;
-  levelTitle: string;
+  levelTitle?: string;
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
 };
 
-function StationRenderer({ station, levelTitle, onAnswer, disabled = false }: StationRendererProps) {
+function StationRenderer({ station, levelTitle = station.title ?? "Nivå", onAnswer, disabled = false }: StationRendererProps) {
   switch (station.type) {
     case STATION_TYPE.NEWS:
       return (
