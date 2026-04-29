@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Check, Trash2 } from 'lucide-react';
 import type { TeacherNotification, TeacherNotificationType } from '@/api/notificationApi';
 import { useClassroomSummaries } from '@/hooks/teacher/useTeacherQueries';
 import { useDeleteNotification, useMarkAsRead, useNotifications } from '@/hooks/teacher/useNotifications';
@@ -40,6 +41,7 @@ function formatDayKey(dateString: string): string {
   return new Date(dateString).toISOString().slice(0, 10);
 }
 
+
 export default function Notifications() {
   const navigate = useNavigate();
   const [classroomFilter, setClassroomFilter] = useState<string>('all');
@@ -75,6 +77,7 @@ export default function Notifications() {
     if (!notification.read && !markAsReadMutation.isPending) {
       markAsReadMutation.mutate(notification.id);
     }
+    navigate(`/teacher/classrooms/${notification.classroomId}/students/${notification.studentId}`);
   }
 
   function handleDelete(notificationId: string) {
@@ -159,16 +162,34 @@ export default function Notifications() {
                           <p className="notifs__message">{notification.message}</p>
                         </div>
 
-                        <button
-                          type="button"
-                          className="notifs__dismiss-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(notification.id);
-                          }}
-                        >
-                          Avvis
-                        </button>
+                        <div className="notifs__actions">
+                          {!notification.read && (
+                            <button
+                              type="button"
+                              className="notifs__action-btn"
+                              aria-label="Merk som lest"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!markAsReadMutation.isPending) {
+                                  markAsReadMutation.mutate(notification.id);
+                                }
+                              }}
+                            >
+                              <Check size={16} />
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className="notifs__action-btn notifs__action-btn--delete"
+                            aria-label="Slett varsel"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(notification.id);
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </li>
                     );
                   })}
