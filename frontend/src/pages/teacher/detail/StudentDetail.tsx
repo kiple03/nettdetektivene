@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useStudentDetail, useStudentProgress, useStudentMedalions, useStudentNotebook } from '@/hooks/teacher/useTeacherQueries';
 import { useUpdateStudentUsername } from '@/hooks/teacher/useTeacherMutations';
@@ -12,7 +12,6 @@ import { ALL_MEDALS, getMedalImageUrl } from '@/data/allMedals';
 
 export default function StudentDetail() {
     const { id: classroomId = '', studentId = '' } = useParams<{ id: string; studentId: string }>();
-    const backLink = `/teacher/classrooms/${classroomId}`;
     const queryClient = useQueryClient();
 
     const { data: studentDetail = null } = useStudentDetail(classroomId, studentId);
@@ -56,7 +55,6 @@ export default function StudentDetail() {
     if (!studentDetail) {
         return (
             <div className="student-detail">
-                <Link to={backLink} className="student-detail__back">← Tilbake</Link>
                 <p className="student-detail__empty">Eleven ble ikke funnet.</p>
             </div>
         );
@@ -70,7 +68,6 @@ export default function StudentDetail() {
             <div className="student-detail__board-wrap">
                 <div className="student-detail__corkboard">
                     <StudentDetailHeader
-                        backLink={backLink}
                         username={username}
                         email={email}
                         enrolledAt={enrolledAt}

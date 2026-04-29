@@ -1,16 +1,32 @@
-import { Link, Outlet } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LogoutButton from '@/components/ui/buttons/LogoutButton';
 import { decodeToken } from '@/stores/authStore';
 import { useNotifications } from '@/hooks/teacher/useNotifications';
+import { TeacherLayoutContext } from './TeacherLayoutContext';
 import './TeacherLayout.css';
 
 export default function TeacherLayout() {
     const username = decodeToken()?.username ?? null;
     const { data: notifications = [] } = useNotifications();
     const unreadCount = notifications.filter((notification) => !notification.read).length;
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [hideBack, setHideBack] = useState(false);
+    const showBack = location.pathname !== '/teacher' && !hideBack;
 
     return (
+        <TeacherLayoutContext.Provider value={{ setHideBack }}>
         <div className="teacher-layout">
+            {showBack && (
+                <button
+                    className="teacher-layout__back"
+                    onClick={() => navigate(-1)}
+                    aria-label="Gå tilbake"
+                >
+                    ← Tilbake
+                </button>
+            )}
             <div className="teacher-layout__controls" aria-label="Brukermeny og varsler">
                 <Link
                     to="/teacher/notifications"
@@ -57,6 +73,7 @@ export default function TeacherLayout() {
                 <Outlet />
             </main>
         </div>
+        </TeacherLayoutContext.Provider>
     );
 }
 

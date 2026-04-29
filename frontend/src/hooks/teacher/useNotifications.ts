@@ -11,6 +11,7 @@ export function useNotifications(classroomId?: string) {
   return useQuery({
     queryKey: [...notificationsKey, classroomId ?? 'all'],
     queryFn: () => getNotifications(classroomId),
+    refetchInterval: 30_000,
   });
 }
 
