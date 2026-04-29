@@ -13,6 +13,7 @@ import {
     AlertDialogDescription,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
+import alertStyles from "@/components/ui/alert-dialog/alert-dialog.module.css";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -237,11 +238,13 @@ export default function GamePage() {
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <AlertDialogContent stopsLeft={levelPassed ? levelLeft : undefined}>
                     {levelPassed && newMedalion && (
-                        <img
-                            src={newMedalion.imageUrl}
-                            alt={newMedalion.name}
-                            style={{ width: 120, height: 120, margin: "0 auto 8px", display: "block", objectFit: "contain" }}
-                        />
+                        <div className={alertStyles.medalWrapper}>
+                            <img
+                                src={newMedalion.imageUrl}
+                                alt={newMedalion.name}
+                                className={alertStyles.medalImage}
+                            />
+                        </div>
                     )}
                     <AlertDialogTitle>
                         {levelPassed ? "Gratulerer!" : "Prøv igjen!"}
