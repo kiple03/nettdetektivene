@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
-import { playMusic, stopMusic, getMuted, setMuted as setMutedManager, subscribeMute } from "@/audio/musicManager";
+import { playMusic, stopMusic, getMuted, setMuted as setMutedManager, subscribeMute, getCurrentTrack } from "@/audio/musicManager";
 
 export default function BackgroundMusic() {
     const { isLoggedIn, role } = useAuth();
@@ -12,7 +12,10 @@ export default function BackgroundMusic() {
 
     useEffect(() => {
         if (isLoggedIn && role === 'STUDENT') {
-            playMusic('background');
+            // Only claim playback if no other page (e.g. boss battle) already owns it
+            if (getCurrentTrack() === null) {
+                playMusic('background');
+            }
         } else {
             stopMusic();
         }
