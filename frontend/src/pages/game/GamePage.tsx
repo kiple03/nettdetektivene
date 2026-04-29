@@ -189,6 +189,9 @@ export default function GamePage() {
         }
     };
 
+    const sortedLevels = [...stopLevels].sort((a,b) => a.id - b.id);
+    const currentLevelIdx = sortedLevels.findIndex(l => l.id === levelIdNum);
+    const levelLeft = sortedLevels.length - currentLevelIdx -1;
     return (
         <div>
             <StationContainer
@@ -217,7 +220,7 @@ export default function GamePage() {
 
             {dialogOpen && levelPassed && <ConfettiComp duration={5000}/>}
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <AlertDialogContent icon={levelPassed ? "🎉" : "💪"}>
+                <AlertDialogContent icon={levelPassed ? "🎉" : "💪"} stopsLeft={levelPassed ? levelLeft : undefined}>
                     <AlertDialogTitle>
                         {levelPassed ? "Gratulerer!" : "Prøv igjen!"}
                     </AlertDialogTitle>

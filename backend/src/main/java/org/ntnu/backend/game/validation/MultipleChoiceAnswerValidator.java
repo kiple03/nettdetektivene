@@ -48,7 +48,7 @@ public class MultipleChoiceAnswerValidator implements SubmittedAnswerValidator {
             .map(mc -> new ValidationResult(
                     mc.isCorrect(),
                     mc.getExplanation(),
-                    correctOptionIds,
+                    correctOptionIds.stream().map(String::valueOf).toList(),
                     List.of()
             ))
             .orElseThrow(() -> new IllegalArgumentException(

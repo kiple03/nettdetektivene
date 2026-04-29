@@ -16,6 +16,7 @@ interface AlertDialogProps {
 interface AlertDialogContentProps {
     children: ReactNode;
     icon?: ReactNode;
+    stopsLeft?: number; 
 }
 
 interface AlertDialogTextProps {
@@ -92,6 +93,7 @@ export function AlertDialog({
 export function AlertDialogContent({
                                        children,
                                        icon = "🔒",
+                                       stopsLeft,
                                    }: AlertDialogContentProps) {
     return (
         <div className={styles.content}>
@@ -107,6 +109,12 @@ export function AlertDialogContent({
             <div className={styles.heroIcon} aria-hidden="true">
                 {icon}
             </div>
+
+            {stopsLeft !== undefined && (
+                <p className={styles.stopsLeft}>
+                    {stopsLeft === 1 ?  "1 nivå igjen" : `${stopsLeft} nivåer igjen`}
+                </p>
+            )}
 
             {children}
         </div>

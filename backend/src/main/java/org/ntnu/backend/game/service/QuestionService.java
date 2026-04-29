@@ -107,10 +107,10 @@ public class QuestionService {
     ValidationResult result = validator.validate(options, request);
 
     return new SubmitAnswerResponse(
-        result.correct(),
-        result.feedback(),
-        result.correctOptionIds(),
-        result.wrongSelectedOptionIds()
+            result.correct(),
+            result.feedback(),
+            result.correctOptionIds().stream().map(String::valueOf).toList(),
+            result.wrongSelectedOptionIds().stream().map(String::valueOf).toList()
     );
   }
 
