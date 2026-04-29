@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useClassroomEdit } from '@/hooks/teacher/useClassroomEdit';
 import { useStudentManagement } from '@/hooks/teacher/useStudentManagement';
 import { useTeacherInvite } from '@/hooks/teacher/useTeacherInvite';
@@ -54,7 +54,6 @@ export default function ClassroomDetailPage() {
 
     return (
         <div className="classroom-detail">
-            <Link to="/teacher" className="classroom-detail__back">← Tilbake til oversikten</Link>
             <ClassroomDetailHeader
                 title={classroom.title}
                 editMode={editMode}

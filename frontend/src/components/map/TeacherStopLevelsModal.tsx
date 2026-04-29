@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getLevelsForStop } from "@/api/gameApi";
 import { Button } from "@/components/ui/buttons/Button";
+import { useHideBackButton } from "@/components/layout/TeacherLayoutContext";
 import styles from "./StopLevelsModal.module.css";
 
 export interface TeacherStopInfo {
@@ -16,6 +17,7 @@ interface TeacherStopLevelsModalProps {
 }
 
 export function TeacherStopLevelsModal({ stop, classroomId, onClose }: TeacherStopLevelsModalProps) {
+    useHideBackButton(stop !== null);
     const navigate = useNavigate();
 
     const { data: levels = [], isPending } = useQuery({
