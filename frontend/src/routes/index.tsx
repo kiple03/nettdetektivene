@@ -15,7 +15,7 @@ const StudentDetail = lazy(() => import("@/pages/teacher/detail/StudentDetail"))
 const LevelQuestionsPage = lazy(() => import("@/pages/teacher/detail/LevelQuestionsPage"));
 const MysterySubmissions = lazy(() => import("@/pages/teacher/MysterySubmissions"));
 const Notifications = lazy(() => import("@/pages/teacher/Notifications"));
-const LeaderboardPage = lazy(() => import("@/pages/student/LeaderboardPage"));
+const LeaderboardPage = lazy(() => import("@/pages/student/LeaderboardPage.tsx"));
 const NotesPage = lazy(() => import("@/pages/student/NotesPage"));
 const BadgesPage = lazy(() => import("@/pages/student/MedalionPage"));
 const WeeklyMysteryPage = lazy(() => import("@/pages/student/WeeklyMysteryPage"));
