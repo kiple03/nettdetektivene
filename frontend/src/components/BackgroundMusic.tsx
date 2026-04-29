@@ -34,7 +34,7 @@ export default function BackgroundMusic() {
                     bottom: '1rem',
                     right: '1rem',
                     zIndex: 9999,
-                    fontSize: '4rem',
+                    fontSize: '2rem',
                     padding: '0.5rem 0.75rem',
                     lineHeight: 1,
                     background: 'transparent',
