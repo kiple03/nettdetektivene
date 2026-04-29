@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import BackButton from "@/components/ui/buttons/BackButton";
 import { studentKeys } from "@/hooks/student/queryKeys";
@@ -21,6 +21,8 @@ import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import ConfettiComp from "@/components/ConfettiComp";
 import useSound from "use-sound";
 import victorySound from "@/assets/sounds/victorySound.mp3";
+import { useMedalions } from "@/hooks/useMedalions";
+import type { MedalionResponse } from "@/api/medalionApi";
 
 const STOP_TO_TYPE: Record<string, StationType> = {
     "Nyhetskvartalet": STATION_TYPE.NEWS,
@@ -42,8 +44,11 @@ export default function GamePage() {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const [answers, setAnswers] = useState<Record<number, SubmitAnswerRequest>>({});
+    const [newMedalion, setNewMedalion] = useState<MedalionResponse | null>(null);
     const queryClient = useQueryClient();
     const [playVictory] = useSound(victorySound);
+    const { data: medalions = [] } = useMedalions();
+    const beforeSubmitMedals = useRef<MedalionResponse[]>([]);
 
     const levelIdNum = Number(levelId);
     const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
@@ -55,6 +60,9 @@ export default function GamePage() {
                 answer: ans,
             })),
         }),
+        onMutate: () => {
+            beforeSubmitMedals.current = [...medalions];
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: studentKeys.gameStops });
             queryClient.invalidateQueries({ queryKey: ['stopLevels'] });
@@ -74,7 +82,14 @@ export default function GamePage() {
         setAnswers({});
         setLevelPassed(true);
         setDialogOpen(false);
+        setNewMedalion(null);
     }, [levelIdNum]);
+
+    useEffect(() => {
+        if (!levelPassed || !dialogOpen) return;
+        const fresh = medalions.find(m => !beforeSubmitMedals.current.some(p => p.id === m.id));
+        if (fresh) setNewMedalion(fresh);
+    }, [medalions, levelPassed, dialogOpen]);
 
     const { data: level, isError: levelError } = useQuery({
         queryKey: studentKeys.gameLevel(levelIdNum),
@@ -163,6 +178,7 @@ export default function GamePage() {
         setSubmitResult(null);
         setAnswers({});
         setLevelPassed(true);
+        setNewMedalion(null);
     };
 
     const handleBackToMap = () => {
@@ -219,24 +235,33 @@ export default function GamePage() {
 
             {dialogOpen && levelPassed && <ConfettiComp duration={5000}/>}
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <AlertDialogContent icon={levelPassed ? "🎉" : "💪"} stopsLeft={levelPassed ? levelLeft : undefined}>
+                <AlertDialogContent stopsLeft={levelPassed ? levelLeft : undefined}>
+                    {levelPassed && newMedalion && (
+                        <img
+                            src={newMedalion.imageUrl}
+                            alt={newMedalion.name}
+                            style={{ width: 120, height: 120, margin: "0 auto 8px", display: "block", objectFit: "contain" }}
+                        />
+                    )}
                     <AlertDialogTitle>
                         {levelPassed ? "Gratulerer!" : "Prøv igjen!"}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                         {levelPassed
-                            ? "Du fullførte nivået!"
+                            ? newMedalion
+                                ? `Du fullførte stoppen og fikk medaljongen "${newMedalion.name}"!`
+                                : "Du fullførte nivået!"
                             : "Du svarte feil på minst ett spørsmål."}
                     </AlertDialogDescription>
                     <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "1rem" }}>
-                        <Button variant="fun" type="button" onClick={handleRetry}>
+                        <Button variant="primary" type="button" onClick={handleRetry}>
                             Prøv igjen
                         </Button>
-                        <Button variant="fun" type="button" onClick={handleBackToMap}>
+                        <Button variant="primary" type="button" onClick={handleBackToMap}>
                             Tilbake til kartet
                         </Button>
                         {levelPassed && (
-                            <Button variant="fun" type="button" onClick={handleNextLevel}>
+                            <Button variant="primary" type="button" onClick={handleNextLevel}>
                                 Neste nivå →
                             </Button>
                         )}

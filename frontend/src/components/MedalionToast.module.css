@@ -1,7 +1,8 @@
- .medalion-toast {
+.medalion-toast {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     background: white;
@@ -9,34 +10,35 @@
     border-radius: 12px;
     padding: 1rem 1rem 1rem 5rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 999;
-    animation: slideIn 0.3s ease;
-  }
+    z-index: 1100;
+    animation: slideDown 0.3s ease;
+    white-space: nowrap;
+}
 
-  .medalion-toast__image {
+.medalion-toast__image {
     position: absolute;
     left: -10px;
     width: 120px;
     height: 120px;
     object-fit: contain;
-  }
+}
 
-  .medalion-toast__title {
+.medalion-toast__title {
     font-weight: bold;
     font-size: 0.8rem;
     color: #7a4f00;
-  }
-   
-  .medalion-toast__name {                                                                                                                                                            
-    font-weight: bold;   
-  }                   
-   
-  .medalion-toast__description {
+}
+
+.medalion-toast__name {
+    font-weight: bold;
+}
+
+.medalion-toast__description {
     font-size: 0.85rem;
     color: #4b5563;
-  }                                                                                                                                                                                  
-                  
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }   
-  }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}

@@ -1,110 +1,176 @@
+/* ─── Overlay ─────────────────────────────────────────────────────────────── */
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(31, 41, 55, 0.35);
+    background: rgba(20, 10, 35, 0.52);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     padding: 16px;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
+/* Give the ring room to poke above the board */
 .contentWrapper {
     width: 100%;
-    max-width: 480px;
+    max-width: 460px;
+    padding-top: 22px;
 }
 
+/* ─── Clipboard board ─────────────────────────────────────────────────────── */
 .content {
     position: relative;
-    overflow: hidden;
-    border-radius: 28px;
-    padding: 28px 24px 24px;
-    background: linear-gradient(180deg, #f8efb8 0%, #dff1ff 55%, #d7f4e4 100%);
-    border: 5px solid #ffffff;
+    border-radius: 12px 12px 10px 10px;
+    padding: 1.4rem 1.5rem 1.4rem; /* 4px top so paper sits just inside board corners */
+    /* Rich walnut wood — subtle diagonal grain + warm gradient */
+    background:
+        repeating-linear-gradient(
+            -52deg,
+            transparent 0px,
+            transparent 3px,
+            rgba(0, 0, 0, 0.018) 3px,
+            rgba(0, 0, 0, 0.018) 5px
+        ),
+        linear-gradient(170deg, #7a4820 0%, #5e3210 55%, #4a2408 100%);
     box-shadow:
-            0 18px 38px rgba(0, 0, 0, 0.16),
-            inset 0 0 0 3px rgba(255, 255, 255, 0.35);
+        0 24px 64px rgba(0, 0, 0, 0.42),
+        0  6px 18px rgba(0, 0, 0, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -3px 0 rgba(0, 0, 0, 0.18);
     text-align: center;
 }
 
-.decorations span {
+/* ─── Metal clip — absolute so paper extends underneath it ────────────────── */
+.clipWrapper {
     position: absolute;
-    user-select: none;
-    pointer-events: none;
-    line-height: 1;
-    opacity: 0.9;
+    top: 4px; /* flush with paper top edge */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
 }
 
-.emojiOne {
-    top: 14px;
-    left: 20px;
-    font-size: 1.35rem;
-}
-
-.emojiTwo {
-    top: 16px;
-    right: 20px;
-    font-size: 1.35rem;
-}
-
-.emojiThree {
-    bottom: 18px;
-    left: 22px;
-    font-size: 1.3rem;
-}
-
-.emojiFour {
-    bottom: 18px;
-    right: 22px;
-    font-size: 1.3rem;
-}
-
-.emojiFive,
-.emojiSix,
-.emojiSeven,
-.emojiEight {
-    display: none;
-}
-
-.heroIcon {
-    width: 88px;
-    height: 88px;
-    margin: 0 auto 16px;
-    border-radius: 999px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.4rem;
-    background: linear-gradient(135deg, #ffd166, #8ecae6, #95d5b2);
+/* Flat metal body */
+.clip {
+    width: 68px;
+    height: 30px;
+    border-radius: 3px 3px 5px 5px;
+    background: linear-gradient(
+        180deg,
+        #c8c8c8 0%,
+        #a0a0a0 25%,
+        #6a6a6a 55%,
+        #4e4e4e 80%,
+        #3c3c3c 100%
+    );
     box-shadow:
-            0 10px 22px rgba(59, 130, 246, 0.16),
-            inset 0 0 0 5px rgba(255, 255, 255, 0.45);
+        0 5px 16px rgba(0, 0, 0, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        inset 1px 0 0 rgba(255, 255, 255, 0.12),
+        inset -1px 0 0 rgba(0, 0, 0, 0.25);
+    border: 1px solid #2e2e2e;
+    border-top: none;
+    position: relative;
 }
 
+/* Circular ring — sits above body, pokes above board */
+.clip::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 36% 32%,
+        #d4d4d4 0%,
+        #909090 35%,
+        #4a4a4a 70%,
+        #2e2e2e 100%
+    );
+    border: 1.5px solid #222;
+    box-shadow:
+        0 5px 14px rgba(0, 0, 0, 0.6),
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Inner hole of ring */
+.clip::after {
+    content: '';
+    position: absolute;
+    top: -21px; /* -30 + 32/2 - 13/2 = -30 + 16 - 6.5 ≈ -21 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #111 30%, #2a2a2a 100%);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 1);
+}
+
+/* ─── White paper sheet ───────────────────────────────────────────────────── */
+.paper {
+    background: #ffffff;
+    /* Faint blue notebook lines */
+    background-image: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 27px,
+        rgba(100, 149, 220, 0.11) 27px,
+        rgba(100, 149, 220, 0.11) 28px
+    );
+    border-radius: 2px 2px 6px 6px; /* flat on top — clip holds it */
+    padding: 46px 22px 26px; /* 46px top clears the 30px clip body + breathing room */
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.16),
+        0 1px  3px rgba(0, 0, 0, 0.10),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+/* ─── Game logo ──────────────────────────────────────────────────────────── */
+.logo {
+    display: block;
+    width: 140px;
+    height: auto;
+    margin: 0 auto 12px;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18));
+}
+
+/* ─── Typography — uses Baloo 2 (already imported in global.css) ─────────── */
 .title {
-    margin: 0 0 12px;
-    font-size: 1.9rem;
+    margin: 0 0 10px;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 1.75rem;
     font-weight: 800;
     color: #5b2a86;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
 }
 
 .description {
     margin: 0;
+    font-family: 'Patrick Hand', cursive;
     font-size: 1.08rem;
-    line-height: 1.55;
+    line-height: 1.58;
     color: #334155;
-    font-weight: 700;
 }
 
-.stopsLeft{
+/* ─── Pill badge (stops left indicator) ────────────────────────────────────── */
+.stopsLeft {
     display: inline-block;
     margin: 0 0 12px;
-    padding: 4px 14px;                                                                             
+    padding: 3px 14px;
     border-radius: 999px;
-    background: rgba(91, 42, 134, 0.12);                                                           
-    color: #5b2a86;                                                                                
-    font-size: 0.9rem;
-    font-weight: 700;   
+    background: rgba(91, 42, 134, 0.1);
+    color: #5b2a86;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    border: 1.5px solid rgba(91, 42, 134, 0.2);
 }

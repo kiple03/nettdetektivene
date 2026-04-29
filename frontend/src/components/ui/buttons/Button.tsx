@@ -3,7 +3,7 @@ import styles from "./button.module.css";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: ReactNode;
-    variant?: "default" | "destructive" | "fun" | "unstyled" | "next";
+    variant?: "default" | "destructive" | "fun" | "unstyled" | "next" | "primary";
 }
 
 export function Button({
@@ -22,7 +22,9 @@ export function Button({
                     ? styles.unstyled
                     : variant === "next"
                         ? styles.next
-                        : styles.default;
+                        : variant === "primary"
+                            ? styles.primary
+                            : styles.default;
 
     return (
         <button
