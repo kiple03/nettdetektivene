@@ -50,7 +50,8 @@ class AvatarDataSeederTest {
                 AvatarItem.builder().name("tone_wacky").category("skin_tone").build(),
                 AvatarItem.builder().name("boy_hair").category("hair").build(),
                 AvatarItem.builder().name("girl_hair").category("hair").build(),
-                AvatarItem.builder().name("face_girl").category("face").build()
+                AvatarItem.builder().name("face_girl").category("face").build(),
+                AvatarItem.builder().name("VR_goggles").category("head").build()
         );
         when(avatarItemRepository.findAll()).thenReturn(existing);
         avatarDataSeeder.run();
@@ -65,7 +66,7 @@ class AvatarDataSeederTest {
         when(avatarItemRepository.findAll()).thenReturn(existing);
         avatarDataSeeder.run();
         verify(avatarItemRepository).saveAll(argThat(items ->
-                ((List<?>) items).size() == 18));
+                ((List<?>) items).size() == 19));
     }
 
     @Test
@@ -84,11 +85,11 @@ class AvatarDataSeederTest {
     }
 
     @Test
-    void run_savesExactly19ItemsWhenEmpty() throws Exception {
+    void run_savesExactly20ItemsWhenEmpty() throws Exception {
         when(avatarItemRepository.findAll()).thenReturn(Collections.emptyList());
         avatarDataSeeder.run();
         verify(avatarItemRepository).saveAll(argThat(items ->
-                ((List<?>) items).size() == 19));
+                ((List<?>) items).size() == 20));
     }
 
     @Test
@@ -132,6 +133,6 @@ class AvatarDataSeederTest {
         when(avatarItemRepository.findAll()).thenReturn(existing);
         avatarDataSeeder.run();
         verify(avatarItemRepository).saveAll(argThat(items ->
-                ((List<?>) items).size() == 9));
+                ((List<?>) items).size() == 10));
     }
 }
