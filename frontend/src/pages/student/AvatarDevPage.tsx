@@ -331,6 +331,21 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
           <h2 className={styles.sectionTitle}>Din garderobe</h2>
           <div className={styles.gridContainer}>
             {visibleInventory.map((item) => {
+              if (item.locked) {
+                return (
+                  <button
+                    key={item.id}
+                    disabled
+                    aria-disabled="true"
+                    title="Beseir bossen for å låse opp"
+                    className={`${styles.itemButton} ${styles.itemButtonLocked}`}
+                  >
+                    <div className={styles.lockedOverlay}>
+                      <span className={styles.lockedQuestionMark}>?</span>
+                    </div>
+                  </button>
+                );
+              }
               const isEquipped = equipped.some((i) => i.id === item.id);
               return (
                 <button

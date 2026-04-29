@@ -465,6 +465,32 @@
   box-shadow: 0 0 0 8px rgba(255, 191, 0, 0.35);
 }
 
+.itemButtonLocked {
+  border-color: #6b6b6b;
+  background-color: #1a1a1a;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.lockedOverlay {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background-color: #1a1a1a;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lockedQuestionMark {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #888888;
+  line-height: 1;
+  user-select: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .editBtn,
   .genderButton,
