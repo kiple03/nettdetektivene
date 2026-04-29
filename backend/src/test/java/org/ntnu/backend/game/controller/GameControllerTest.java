@@ -184,7 +184,7 @@ class GameControllerTest {
             .thenReturn(new SubmitAnswerResponse(
                     true,
                     "Correct!",
-                    List.of(2),
+                    List.of("2"),
                     List.of()
             ));
 
@@ -205,8 +205,8 @@ class GameControllerTest {
             .thenReturn(new SubmitAnswerResponse(
                     false,
                     "Wrong!",
-                    List.of(2),
-                    List.of(1)
+                    List.of("2"),
+                    List.of("1")
             ));
 
     mockMvc.perform(post("/game/questions/1/submit")

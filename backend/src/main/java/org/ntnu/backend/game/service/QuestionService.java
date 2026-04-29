@@ -91,8 +91,8 @@ public class QuestionService {
     return new SubmitAnswerResponse(
             result.correct(),
             result.feedback(),
-            result.correctOptionIds(),
-            result.wrongSelectedOptionIds()
+            result.correctOptionIds().stream().map(String::valueOf).toList(),
+            result.wrongSelectedOptionIds().stream().map(String::valueOf).toList()
     );
   }
 

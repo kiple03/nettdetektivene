@@ -12,8 +12,8 @@ import java.util.List;
 public record ValidationResult(
         boolean correct,
         String feedback,
-        List<Integer> correctOptionIds,
-        List<Integer> wrongSelectedOptionIds
+        List<String> correctOptionIds,
+        List<String> wrongSelectedOptionIds
 ) {
   public static ValidationResult of(boolean correct, String feedback) {
     return new ValidationResult(correct, feedback, List.of(), List.of());
