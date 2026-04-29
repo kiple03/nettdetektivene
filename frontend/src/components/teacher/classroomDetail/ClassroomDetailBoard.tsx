@@ -4,6 +4,7 @@ import type { CoTeacher, StudentSummary } from '@/types/classroom.ts';
 import { ClassroomDetailStudentCard } from './ClassroomDetailStudentCard';
 import { ClassroomDetailTeacherCard } from './ClassroomDetailTeacherCard';
 import { CensorWordPanel } from './CensorWordPanel';
+import { ClassroomQuestionsCard } from './ClassroomQuestionsCard';
 
 type ClassroomDetailBoardProps = {
     classroomId: string;
@@ -138,6 +139,8 @@ export function ClassroomDetailBoard({
                         onInviteTeacher={onInviteTeacher}
                         onLeaveClassroom={onLeaveClassroom}
                     />
+
+                    <ClassroomQuestionsCard classroomId={classroomId} />
                 </div>
 
                 <ClassroomDetailStudentCard

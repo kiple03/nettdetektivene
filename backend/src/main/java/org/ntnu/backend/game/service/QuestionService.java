@@ -22,6 +22,7 @@ import org.ntnu.backend.game.validation.SubmittedAnswerValidator;
 import org.ntnu.backend.game.validation.ValidationResult;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.service.UserService;
+import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.stereotype.Service;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
 
@@ -113,16 +114,18 @@ public class QuestionService {
     );
   }
 
-  public List<QuestionResponse> getQuestionsForLevel(int levelId, UUID userId, RoleEnum role) {
+  public List<QuestionResponse> getQuestionsForLevel(int levelId, UUID userId, RoleEnum role,  UUID classroomId) {
     Level level = levelRepository.findById(levelId)
         .orElseThrow(() -> new LevelNotFoundException(levelId));
 
     if (!progressService.isLevelAccessible(userId, role, level)) {
       throw new LevelLockedException(levelId);
     }
+    List<Question> questions = (role == RoleEnum.STUDENT && classroomId != null)
+        ? questionRepository.findByLevelIdForClassroom(levelId, classroomId)
+        : questionRepository.findByLevelIdAndClassroomIdIsNull(levelId);
 
-    return questionRepository.findByLevelIdOrderByIdAsc(levelId)
-        .stream()
+    return questions.stream()
         .map(gameMapper::toQuestionResponse)
         .toList();
   }

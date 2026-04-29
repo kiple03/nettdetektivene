@@ -64,6 +64,7 @@ public class OptionValidator {
       case POST_OFFICE -> validatePostOffice(options);
       case PASSWORD_STRENGTH -> validatePasswordStrength(options);
       case CLASSIFY_ITEMS -> validateClassifyItems(options);
+      case TEXT_QUIZ -> validateMultipleChoice(options);
       default -> throw new OptionValidationException("Option type doesnt exist");
     }
   }

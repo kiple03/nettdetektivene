@@ -727,6 +727,8 @@ public class GameSeeder implements CommandLineRunner {
     question.setQuestionText(questionText);
     question.setLevel(level);
     question.setOptionContent(writeOptions(options));
+    question.setDefault(true);
+    question.setClassroomId(null);
     questionRepository.save(question);
   }
 

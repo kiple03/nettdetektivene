@@ -15,6 +15,7 @@ import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.validation.LevelSubmissionValidator;
 import org.ntnu.backend.notes.service.NoteService;
+import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,17 +91,21 @@ public class GameService {
   }
 
   @Transactional
-  public void submitLevel(int levelId, SubmitLevelRequest request, UUID userId, RoleEnum role) {
+  public void submitLevel(int levelId, SubmitLevelRequest request, JwtAuthenticatedPrincipal principal) {
     Level level = levelRepository.findById(levelId)
         .orElseThrow(() -> new LevelNotFoundException(levelId));
-    List<Question> questions = questionRepository.findByLevelIdOrderByIdAsc(levelId);
+
+    UUID classroomId = principal.getClassroomId();
+    List<Question> questions = (principal.isStudent() && classroomId != null)
+        ? questionRepository.findByLevelIdForClassroom(levelId, classroomId)
+        : questionRepository.findByLevelIdAndClassroomIdIsNull(levelId);
 
     levelSubmissionValidator.validate(questions, request.answers());
 
-    boolean newlyCompleted = progressService.recordCompletionOfLevel(userId, role, level);
+    boolean newlyCompleted = progressService.recordCompletionOfLevel(principal.getUserId(), principal.getRole(), level);
 
-    if(newlyCompleted) {
-      noteService.saveCompletionTipIfNeeded(userId, level);
+    if (newlyCompleted) {
+      noteService.saveCompletionTipIfNeeded(principal.getUserId(), level);
     }
   }
 }
