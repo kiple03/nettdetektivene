@@ -20,7 +20,7 @@ export function VictoryScreen({ timeSeconds, playerHp, maxHp }: Props) {
         <div className={styles.screen}>
             <ConfettiComp />
             <img
-                src="/assets/medalions/platinum.svg"
+                src="/assets/medalions/Platinum.svg"
                 alt="Pokal"
                 className={styles.trophy}
             />
