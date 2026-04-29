@@ -1066,6 +1066,168 @@ public class GameSeeder implements CommandLineRunner {
     ensureLevelNoteTemplate(l3, NoteCategory.NETT,
         "Vurder hele nettbutikken samlet: nettadresse, priser, anmeldelser, betaling og returrett. Én trygg detalj betyr ikke at alt er trygt.");
 
+  }
+  private void seedSocial() {
+    Stop stop = stopRepository.findByName("Den sosiale møteplassen").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Den sosiale møteplassen");
+      s.setDisplayOrder(6);
+      return stopRepository.save(s);
+    });
 
+    Level l1 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Tenk før du deler")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Tenk før du deler");
+          l.setDescription("Du ser innlegg på sosiale medier. Hva ville du gjort?");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(1);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l1,
+        "Du ser en TikTok som sier: 'Hvis du ikke deler denne videoen, vil noe fælt skje om 7 dager!' Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Deler videoen med en gang. Jeg vil ikke oppleve noe fælt!", null, false,
+                "Ingen video vil gjøre at do opplever noe fælt! Slike meldinger er laget for å lure deg til å dele."),
+            new MultipleChoiceOption(2, "Ignorerer det, dette er bare tull", null, true,
+                "Riktig! Ingen video vil gjøre at do opplever noe fælt. Slike meldinger prøver å skremme deg til å dele."),
+            new MultipleChoiceOption(3, "Deler den bare til bestevennen min", null, false,
+                "Da sprer du meldingen videre! Den er bare tull, og det er trygt å ignorere den.")
+        )
+    );
+
+    ensureQuestion(l1,
+        "Noen i klassen din legger ut et morsomt, men flaut bilde av en annen elev uten å spørre. Mange ler og deler det. Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Deler det ikke, og sier ifra til en voksen", null, true,
+                "Riktig! Alle har rett til å bestemme over sine egne bilder. Det er modig å si ifra."),
+            new MultipleChoiceOption(2, "Ler og deler det videre, det er jo morsomt!", null, false,
+                "Det kan føles morsomt, men den som er på bildet synes kanskje ikke det. Man skal alltid spørre først."),
+            new MultipleChoiceOption(3, "Sier ingenting, men deler det heller ikke", null, false,
+                "Bra at du ikke deler! Men det er enda bedre å si ifra til en voksen, så den som er på bildet får hjelp.")
+        )
+    );
+
+    ensureQuestion(l1,
+        "En du ikke kjenner sender deg en melding på Snapchat: 'Hei! Vil du bli venner? Send bilde av deg selv!' Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Sender et bilde, jeg vil gjerne ha nye venner!", null, false,
+                "Du vet ikke hvem denne personen egentlig er. Send aldri bilder til noen du ikke kjenner."),
+            new MultipleChoiceOption(2, "Svarer ikke og forteller en voksen om det", null, true,
+                "Riktig! Du skal aldri sende bilder til noen du ikke kjenner. Snakk med en voksen du stoler på."),
+            new MultipleChoiceOption(3, "Spør hvem de er først, og sender bilde hvis de virker greie", null, false,
+                "Selv om noen virker greie, vet du ikke hvem de egentlig er. Ikke send bilder til fremmede.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l1, NoteCategory.SOSIALE,
+        "Tenk deg om før du deler. Hvis noen prøver å skremme eller presse deg til å dele noe videre, er det et tegn på at du bør stoppe opp.");
+
+    // ---------- LEVEL 2 — PICTURE_QUIZ: Finn advarselstegnene ----------
+    Level l2 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Finn advarselstegnene")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Finn advarselstegnene");
+          l.setDescription("Se på innleggene og velg alle advarselstegnene du finner.");
+          l.setLevelType(LevelType.PICTURE_QUIZ);
+          l.setStop(stop);
+          l.setOrder(2);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l2,
+        "Et innlegg sier: 'BREAKING: Skoler i Norge stenges for ALLTID! 😱🚨 Del til alle du kjenner!!' Hva er advarselstegn? Velg alle som passer.",
+        List.of(
+            new PictureQuizOption(1, "Store bokstaver og mange utropstegn", null, true,
+                "Riktig! Store bokstaver og utropstegn brukes for å skape panikk."),
+            new PictureQuizOption(2, "Mange emojier for å skape frykt", null, true,
+                "Riktig! Skremmende emojier brukes for å forsterke følelser og få deg til å reagere uten å tenke."),
+            new PictureQuizOption(3, "Oppfordring til å dele raskt", null, true,
+                "Riktig! 'Del til alle' er et press-triks for å spre informasjon før noen rekker å sjekke den."),
+            new PictureQuizOption(4, "Innlegget handler om skole", null, false,
+                "At et innlegg handler om skole er ikke et advarselstegn i seg selv. Det er måten det er skrevet på som er problemet.")
+        )
+    );
+
+    ensureQuestion(l2,
+        "Du ser denne meldingen i en gruppechat: '😱😱 IKKE spis godteriet fra Kiwi!! En gutt ble SKIKKELIG SYK!! 😱😱 SEND TIL ALLE!!' Hva er advarselstegn? Velg alle som passer.",
+        List.of(
+            new PictureQuizOption(1, "Mange skumle emojier", null, true,
+                "Riktig! Skremmende emojier brukes for å gjøre deg redd uten grunn."),
+            new PictureQuizOption(2, "Store bokstaver og utropstegn", null, true,
+                "Riktig! STORE BOKSTAVER brukes for å lage panikk."),
+            new PictureQuizOption(3, "'Send til alle' – press om å dele", null, true,
+                "Riktig! Når noen sier du MÅ dele, prøver de å spre meldingen uten at noen sjekker om det er sant."),
+            new PictureQuizOption(4, "At det handler om godteri", null, false,
+                "At det handler om godteri er ikke et advarselstegn. Det er måten meldingen er skrevet på som er problemet.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l2, NoteCategory.SOSIALE,
+        "Advarselstegn: store bokstaver, hastverk, ukjente kilder, konspirasjonsspråk og emosjonelt press.");
+
+    // ---------- LEVEL 3 — CLASSIFY_ITEMS: Vurder innlegget ----------
+    Level l3 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Vurder innlegget")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Vurder innlegget");
+          l.setDescription("Les hvert element fra et innlegg på sosiale medier og vurder hva det er.");
+          l.setLevelType(LevelType.CLASSIFY_ITEMS);
+          l.setStop(stop);
+          l.setOrder(3);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l3,
+        "Noen på skolen deler et innlegg i gruppechatten. Vurder hvert element.",
+        List.of(
+            new ClassifyItemsOption("message", "Meldingen: 'Hvis du er en EKTE venn, deler du dette videre!'",
+                List.of("Vennlig melding", "Press fra venner", "God oppfordring"),
+                "Press fra venner",
+                "Når noen sier du er en 'ekte venn' bare hvis du gjør noe, prøver de å presse deg."),
+            new ClassifyItemsOption("emoji", "Det er brukt masse 😡 og 💔 emojier",
+                List.of("Bare pynt", "Brukt for å skape sterke følelser", "Viser at avsenderen er lei seg"),
+                "Brukt for å skape sterke følelser",
+                "Sinte og triste emojier brukes for å få deg til å føle noe sterkt, så du handler uten å tenke."),
+            new ClassifyItemsOption("claim", "'Alle i klassen har allerede delt det!'",
+                List.of("Sikkert sant", "Press – du må gjøre som alle andre", "Bra å vite"),
+                "Press – du må gjøre som alle andre",
+                "Bare fordi 'alle gjør det' betyr ikke at du må. Det er ofte ikke sant heller."),
+            new ClassifyItemsOption("action", "Du kan velge å dele, vente, eller spørre en voksen",
+                List.of("Unødvendig", "Lurt å tenke seg om", "Feigt"),
+                "Lurt å tenke seg om",
+                "Det er alltid lurt å stoppe opp og tenke før du deler noe videre. Du kan alltid spørre en voksen.")
+        )
+    );
+
+    ensureQuestion(l3,
+        "Du ser et innlegg på Instagram fra en du følger. Vurder hvert element.",
+        List.of(
+            new ClassifyItemsOption("photo", "Et bilde av en kjendis med teksten 'Gi bort gratis iPhone til alle som deler!'",
+                List.of("Ekte konkurranse", "For godt til å være sant", "Reklame"),
+                "For godt til å være sant",
+                "Gratis ting til alle som deler er nesten alltid svindel. Ekte konkurranser fungerer ikke sånn."),
+            new ClassifyItemsOption("likes", "Innlegget har 50 000 likes",
+                List.of("Bevis på at det er ekte", "Betyr ingenting", "Mange kan ta feil"),
+                "Mange kan ta feil",
+                "Mange likes betyr ikke at noe er sant. Tusenvis av mennesker kan bli lurt samtidig."),
+            new ClassifyItemsOption("comments", "Alle kommentarene sier 'Håper jeg vinner!! 🤞'",
+                List.of("Bevis på at det er ekte", "Folk som også er lurt", "Hyggelig stemning"),
+                "Folk som også er lurt",
+                "At mange tror på det gjør det ikke sant. Alle i kommentarfeltet kan ha blitt lurt av det samme."),
+            new ClassifyItemsOption("link", "Lenken i innlegget går til en side du aldri har hørt om",
+                List.of("Helt normalt", "Bør sjekkes nøye", "Sikkert trygt"),
+                "Bør sjekkes nøye",
+                "Ukjente lenker kan føre til svindelsider. Klikk aldri på lenker du ikke kjenner igjen.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l3, NoteCategory.SOSIALE,
+        "Vurder alltid kilden, se etter følelsesmanipulasjon, og husk at popularitet ikke er det samme som sannhet.");
   }
 }
