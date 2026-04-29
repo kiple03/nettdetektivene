@@ -1,5 +1,9 @@
 package org.ntnu.backend.classroom.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,10 +32,6 @@ import org.ntnu.backend.user.repository.UserRepository;
 import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 class ClassroomServiceTest {
@@ -149,6 +149,7 @@ class ClassroomServiceTest {
         verify(classroomTeacherRepository).save(captor.capture());
 
         ClassroomTeacher savedTeacherLink = captor.getValue();
+
         assertEquals(classroom, savedTeacherLink.getClassroom());
         assertEquals(teacher, savedTeacherLink.getUser());
         assertTrue(savedTeacherLink.isOwner());
@@ -266,7 +267,7 @@ class ClassroomServiceTest {
     }
 
     @Test
-    void joinClassroom_shouldEnrollStudentAwardMedalionAndReturnClassroom() {
+    void joinClassroom_shouldEnrollStudentAwardMedalionGenerateTokenAndReturnClassroom() {
         JoinClassroomRequest request = new JoinClassroomRequest("ABC123");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(student));
@@ -286,6 +287,7 @@ class ClassroomServiceTest {
         verify(enrollmentRepository).save(enrollmentCaptor.capture());
 
         Enrollment savedEnrollment = enrollmentCaptor.getValue();
+
         assertEquals(student, savedEnrollment.getUser());
         assertEquals(classroom, savedEnrollment.getClassroom());
 

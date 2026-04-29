@@ -1,9 +1,11 @@
 package org.ntnu.backend.classroom.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
@@ -137,7 +139,7 @@ class ClassroomControllerTest {
         JoinClassroomRequest request = new JoinClassroomRequest("ABC123");
 
         when(classroomService.joinClassroom(any(JoinClassroomRequest.class), eq(userId)))
-                .thenReturn(classroomResponse);
+                .thenAnswer(invocation -> classroomResponse);
 
         mockMvc.perform(post("/classrooms/join")
                         .contentType(MediaType.APPLICATION_JSON)

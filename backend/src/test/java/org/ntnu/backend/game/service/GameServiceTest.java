@@ -2,7 +2,7 @@ package org.ntnu.backend.game.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -84,8 +84,6 @@ class GameServiceTest {
     );
   }
 
-  // ===== getStopsForUser =====
-
   @Test
   void getStopsForUser_returnsAllStopsOrdered() {
     Stop stop1 = stop(1, "Nyhetskvartalet", 1);
@@ -128,7 +126,7 @@ class GameServiceTest {
     List<StopResponse> result = gameService.getStopsForUser(userId, RoleEnum.STUDENT);
 
     assertThat(result).hasSize(1);
-    assertThat(result.getFirst().locked()).isFalse();
+    assertThat(result.get(0).locked()).isFalse();
   }
 
   @Test
@@ -143,7 +141,7 @@ class GameServiceTest {
     List<StopResponse> result = gameService.getStopsForUser(userId, RoleEnum.STUDENT);
 
     assertThat(result).hasSize(1);
-    assertThat(result.getFirst().locked()).isTrue();
+    assertThat(result.get(0).locked()).isTrue();
   }
 
   @Test
@@ -158,7 +156,7 @@ class GameServiceTest {
     List<StopResponse> result = gameService.getStopsForUser(userId, RoleEnum.TEACHER);
 
     assertThat(result).hasSize(1);
-    assertThat(result.getFirst().locked()).isFalse();
+    assertThat(result.get(0).locked()).isFalse();
 
     verify(progressService).isStopAccessible(userId, RoleEnum.TEACHER, stop);
   }
@@ -173,8 +171,6 @@ class GameServiceTest {
     assertThat(result).isEmpty();
     verify(stopRepository).findAllByOrderByDisplayOrderAsc();
   }
-
-  // ===== getLevel =====
 
   @Test
   void getLevel_foundAndAccessible_returnsUnlockedResponse() {
@@ -235,8 +231,6 @@ class GameServiceTest {
     verify(progressService, never()).isLevelAccessible(any(), any(), any());
   }
 
-  // ===== getLevelsForStop =====
-
   @Test
   void getLevelsForStop_returnsLevelsForStopWithLockState() {
     Stop stop = stop(1, "Nyhetskvartalet", 1);
@@ -296,8 +290,6 @@ class GameServiceTest {
     assertThat(result).isEmpty();
     verify(levelRepository).findByStopIdOrderByOrderAsc(99);
   }
-
-  // ===== submitLevel =====
 
   @Test
   void submitLevel_whenLevelExistsAndNewlyCompleted_shouldValidateRecordProgressAndSaveCompletionTip() {
@@ -464,8 +456,6 @@ class GameServiceTest {
     verify(progressService).recordCompletionOfLevel(userId, RoleEnum.TEACHER, level);
     verify(noteService, never()).saveCompletionTipIfNeeded(any(UUID.class), any(Level.class));
   }
-
-  // ===== helpers =====
 
   private Stop stop(int id, String name, int displayOrder) {
     Stop stop = new Stop();

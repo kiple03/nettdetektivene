@@ -59,7 +59,13 @@ class UserAvatarServiceTest {
     @BeforeEach
     void setUp() {
         userId = UUID.randomUUID();
-        user = mock(User.class);
+
+        user = User.builder()
+                .id(userId)
+                .username("Fredrik")
+                .email("fredrik@example.com")
+                .hairColor("#3b2417")
+                .build();
     }
 
     @Test
@@ -70,15 +76,13 @@ class UserAvatarServiceTest {
         UserInventoryItem equippedHat = inventoryItem(hat, true);
         UserInventoryItem equippedSuit = inventoryItem(suit, true);
 
-        when(user.getUsername()).thenReturn("Sopika");
-        when(user.getHairColor()).thenReturn("#3b2417");
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(inventoryRepository.findByUserIdAndIsEquippedTrue(userId))
                 .thenReturn(List.of(equippedHat, equippedSuit));
 
         UserProfileResponse response = userAvatarService.getUserProfile(userId);
 
-        assertEquals("Sopika", response.getUsername());
+        assertEquals("Fredrik", response.getUsername());
         assertEquals("#3b2417", response.getHairColor());
         assertEquals(2, response.getEquippedItems().size());
 
@@ -162,8 +166,6 @@ class UserAvatarServiceTest {
 
     @Test
     void getUserInventory_shouldCreateStarterItemsAndReturnInventoryDtos() {
-        when(user.getId()).thenReturn(userId);
-
         AvatarItem starterHat = avatarItem(UUID.randomUUID(), "detective_hat", "hat", null);
         AvatarItem starterSuit = avatarItem(UUID.randomUUID(), "detective_suit", "outfit", "detective-suit.png");
 
@@ -204,8 +206,6 @@ class UserAvatarServiceTest {
 
     @Test
     void starterItems_whenMissingStarterItems_shouldSaveOnlyMissingStarterItems() {
-        when(user.getId()).thenReturn(userId);
-
         AvatarItem existingHat = avatarItem(UUID.randomUUID(), "detective_hat", "hat", null);
         AvatarItem missingSuit = avatarItem(UUID.randomUUID(), "detective_suit", "outfit", null);
         AvatarItem nonStarterItem = avatarItem(UUID.randomUUID(), "golden_crown", "hat", null);
@@ -233,8 +233,6 @@ class UserAvatarServiceTest {
 
     @Test
     void starterItems_whenNoMissingStarterItems_shouldNotSaveAnything() {
-        when(user.getId()).thenReturn(userId);
-
         AvatarItem existingHat = avatarItem(UUID.randomUUID(), "detective_hat", "hat", null);
 
         when(inventoryRepository.findByUserId(userId))
@@ -253,8 +251,6 @@ class UserAvatarServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(profanityFilter.containsProfanity("NewName", List.of())).thenReturn(false);
-        when(user.getUsername()).thenReturn("NewName");
-        when(user.getHairColor()).thenReturn("#111111");
         when(inventoryRepository.findByUserIdAndIsEquippedTrue(userId))
                 .thenReturn(List.of(inventoryItem(hat, true)));
 
@@ -268,18 +264,21 @@ class UserAvatarServiceTest {
         assertEquals("#111111", response.getHairColor());
         assertEquals(1, response.getEquippedItems().size());
 
-        verify(user).setUsername("NewName");
-        verify(user).setHairColor("#111111");
+        assertEquals("NewName", user.getUsername());
+        assertEquals("#111111", user.getHairColor());
+
+        verify(userRepository, times(2)).findById(userId);
         verify(userRepository).save(user);
         verify(profanityFilter).containsProfanity("NewName", List.of());
     }
 
     @Test
     void updateUserProfile_whenHairColorIsNull_shouldOnlyUpdateUsername() {
+        user.setUsername("OldName");
+        user.setHairColor("#old");
+
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(profanityFilter.containsProfanity("OnlyName", List.of())).thenReturn(false);
-        when(user.getUsername()).thenReturn("OnlyName");
-        when(user.getHairColor()).thenReturn("#old");
         when(inventoryRepository.findByUserIdAndIsEquippedTrue(userId)).thenReturn(List.of());
 
         UpdateUserProfileRequest request =
@@ -291,8 +290,9 @@ class UserAvatarServiceTest {
         assertEquals("OnlyName", response.getUsername());
         assertEquals("#old", response.getHairColor());
 
-        verify(user).setUsername("OnlyName");
-        verify(user, never()).setHairColor(any());
+        assertEquals("OnlyName", user.getUsername());
+        assertEquals("#old", user.getHairColor());
+
         verify(userRepository).save(user);
     }
 
@@ -313,8 +313,25 @@ class UserAvatarServiceTest {
 
         verify(notificationService).notifyInappropriateUsername(user, "BadName");
         verify(userRepository, never()).save(any());
-        verify(user, never()).setUsername(anyString());
-        verify(user, never()).setHairColor(anyString());
+    }
+
+    @Test
+    void updateUserProfile_whenUserDoesNotExist_shouldThrowRuntimeException() {
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        UpdateUserProfileRequest request =
+                new UpdateUserProfileRequest("NewName", "#111111");
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> userAvatarService.updateUserProfile(userId, null, request)
+        );
+
+        assertEquals("User not found", exception.getMessage());
+
+        verify(profanityFilter, never()).containsProfanity(anyString(), anyList());
+        verify(userRepository, never()).save(any());
+        verify(notificationService, never()).notifyInappropriateUsername(any(), anyString());
     }
 
     private AvatarItem avatarItem(UUID id, String name, String category, String imageFile) {

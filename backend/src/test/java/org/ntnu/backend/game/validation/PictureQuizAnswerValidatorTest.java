@@ -2,6 +2,8 @@ package org.ntnu.backend.game.validation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -23,27 +25,9 @@ class PictureQuizAnswerValidatorTest {
         validator = new PictureQuizAnswerValidator();
 
         options = List.of(
-                new PictureQuizOption(
-                        1,
-                        "Ekte",
-                        "http://img.test/1.jpg",
-                        true,
-                        "Dette er et ekte bilde."
-                ),
-                new PictureQuizOption(
-                        2,
-                        "KI",
-                        "http://img.test/2.jpg",
-                        false,
-                        "Dette er faktisk KI-generert."
-                ),
-                new PictureQuizOption(
-                        3,
-                        "Manipulert",
-                        "http://img.test/3.jpg",
-                        false,
-                        "Bildet er digitalt manipulert."
-                )
+                option(1, true, "Dette er et ekte bilde."),
+                option(2, false, "Dette er faktisk KI-generert."),
+                option(3, false, "Bildet er digitalt manipulert.")
         );
     }
 
@@ -85,9 +69,9 @@ class PictureQuizAnswerValidatorTest {
     @Test
     void validate_whenMultipleCorrectOptionsAllSelected_shouldReturnCorrect() {
         List<Option> multiCorrect = List.of(
-                new PictureQuizOption(1, "Ekte", "http://img.test/1.jpg", true, "Ekte."),
-                new PictureQuizOption(2, "KI", "http://img.test/2.jpg", true, "KI."),
-                new PictureQuizOption(3, "Manipulert", "http://img.test/3.jpg", false, "Feil.")
+                option(1, true, "Ekte."),
+                option(2, true, "KI."),
+                option(3, false, "Feil.")
         );
 
         ValidationResult result = validator.validate(multiCorrect, answer("1", "2"));
@@ -101,9 +85,9 @@ class PictureQuizAnswerValidatorTest {
     @Test
     void validate_whenOnlyOneOfMultipleCorrectOptionsSelected_shouldReturnIncorrect() {
         List<Option> multiCorrect = List.of(
-                new PictureQuizOption(1, "Ekte", "http://img.test/1.jpg", true, "Ekte."),
-                new PictureQuizOption(2, "KI", "http://img.test/2.jpg", true, "KI."),
-                new PictureQuizOption(3, "Manipulert", "http://img.test/3.jpg", false, "Feil.")
+                option(1, true, "Ekte."),
+                option(2, true, "KI."),
+                option(3, false, "Feil.")
         );
 
         ValidationResult result = validator.validate(multiCorrect, answer("1"));
@@ -117,8 +101,8 @@ class PictureQuizAnswerValidatorTest {
     @Test
     void validate_whenCorrectExplanationIsBlank_shouldReturnNullFeedback() {
         List<Option> blankExplanation = List.of(
-                new PictureQuizOption(1, "Ekte", "http://img.test/1.jpg", true, "   "),
-                new PictureQuizOption(2, "KI", "http://img.test/2.jpg", false, "Wrong")
+                option(1, true, "   "),
+                option(2, false, "Wrong")
         );
 
         ValidationResult result = validator.validate(blankExplanation, answer("1"));
@@ -131,8 +115,8 @@ class PictureQuizAnswerValidatorTest {
     @Test
     void validate_whenCorrectExplanationIsNull_shouldReturnNullFeedback() {
         List<Option> nullExplanation = List.of(
-                new PictureQuizOption(1, "Ekte", "http://img.test/1.jpg", true, null),
-                new PictureQuizOption(2, "KI", "http://img.test/2.jpg", false, "Wrong")
+                option(1, true, null),
+                option(2, false, "Wrong")
         );
 
         ValidationResult result = validator.validate(nullExplanation, answer("1"));
@@ -145,8 +129,8 @@ class PictureQuizAnswerValidatorTest {
     @Test
     void validate_whenWrongSelectedExplanationIsBlank_shouldReturnNullFeedback() {
         List<Option> blankWrongExplanation = List.of(
-                new PictureQuizOption(1, "Ekte", "http://img.test/1.jpg", true, "Correct"),
-                new PictureQuizOption(2, "KI", "http://img.test/2.jpg", false, "   ")
+                option(1, true, "Correct"),
+                option(2, false, "   ")
         );
 
         ValidationResult result = validator.validate(blankWrongExplanation, answer("2"));
@@ -160,8 +144,8 @@ class PictureQuizAnswerValidatorTest {
     @Test
     void validate_whenWrongSelectedExplanationIsNull_shouldReturnNullFeedback() {
         List<Option> nullWrongExplanation = List.of(
-                new PictureQuizOption(1, "Ekte", "http://img.test/1.jpg", true, "Correct"),
-                new PictureQuizOption(2, "KI", "http://img.test/2.jpg", false, null)
+                option(1, true, "Correct"),
+                option(2, false, null)
         );
 
         ValidationResult result = validator.validate(nullWrongExplanation, answer("2"));
@@ -210,7 +194,7 @@ class PictureQuizAnswerValidatorTest {
 
     @Test
     void validate_whenSubmissionIsNotMultiSelectAnswer_shouldThrowIllegalArgumentException() {
-        SubmitAnswerRequest wrongSubmission = new SubmitAnswerRequest() {};
+        SubmitAnswerRequest wrongSubmission = mock(SubmitAnswerRequest.class);
 
         assertThatThrownBy(() -> validator.validate(options, wrongSubmission))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -232,6 +216,14 @@ class PictureQuizAnswerValidatorTest {
         assertThatThrownBy(() -> validator.validate(List.of(), answer("1")))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Option not found 1");
+    }
+
+    private PictureQuizOption option(int id, boolean correct, String explanation) {
+        PictureQuizOption option = mock(PictureQuizOption.class);
+        when(option.getId()).thenReturn(id);
+        when(option.isCorrect()).thenReturn(correct);
+        when(option.getExplanation()).thenReturn(explanation);
+        return option;
     }
 
     private MultiSelectAnswer answer(String... ids) {

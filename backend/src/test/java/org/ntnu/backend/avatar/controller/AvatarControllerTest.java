@@ -65,7 +65,7 @@ class AvatarControllerTest {
         UUID itemId = UUID.randomUUID();
 
         UserProfileResponse response = UserProfileResponse.builder()
-                .username("Sopika")
+                .username("Fredrik")
                 .hairColor("#3b2417")
                 .equippedItems(List.of(
                         EquippedItemDto.builder()
@@ -81,7 +81,7 @@ class AvatarControllerTest {
 
         mockMvc.perform(get("/user/profile"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("Sopika"))
+                .andExpect(jsonPath("$.username").value("Fredrik"))
                 .andExpect(jsonPath("$.hairColor").value("#3b2417"))
                 .andExpect(jsonPath("$.equippedItems[0].id").value(itemId.toString()))
                 .andExpect(jsonPath("$.equippedItems[0].name").value("detective_hat"))
@@ -164,7 +164,8 @@ class AvatarControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value("NewName"))
                 .andExpect(jsonPath("$.hairColor").value("#111111"))
-                .andExpect(jsonPath("$.equippedItems").isArray());
+                .andExpect(jsonPath("$.equippedItems").isArray())
+                .andExpect(jsonPath("$.equippedItems.length()").value(0));
 
         verify(userAvatarService).updateUserProfile(
                 eq(userId),
