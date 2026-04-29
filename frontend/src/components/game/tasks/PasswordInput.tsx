@@ -31,7 +31,7 @@ function PasswordInput({
 
             <input
                 id="password-field"
-                type="password"
+                type="text"
                 value={pw}
                 onChange={(e) => setPw(e.target.value)}
                 disabled={disabled}
