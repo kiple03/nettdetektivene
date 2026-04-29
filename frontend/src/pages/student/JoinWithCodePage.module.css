@@ -466,13 +466,12 @@
 }
 
 .logoutBtn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    bottom: auto;
-    left: auto;
+    position: fixed;
+    top: 6%;
+    left: 1.5%;
     z-index: 10;
     width: auto;
+    height: 2.5rem;
     font-size: 0.85rem;
     padding: 8px 14px;
 }

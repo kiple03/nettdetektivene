@@ -53,6 +53,8 @@
 }
 
 .notifs__back-btn {
+  top: 6%;
+  left: 1.5%;
   align-self: flex-start;
   padding: 6px 14px;
   font-family: 'Georgia', 'Times New Roman', serif;

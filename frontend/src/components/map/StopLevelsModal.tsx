@@ -67,11 +67,9 @@ export function StopLevelsModal({ stop, onClose }: StopLevelsModalProps) {
                                     }}
                                 >
                                     <span className={styles.levelTitle}>{level.title}</span>
-
                                     {level.description && (
                                         <span className={styles.levelDesc}>{level.description}</span>
                                     )}
-
                                     {level.locked && <LockBadge />}
                                 </button>
                             </li>

@@ -1,22 +1,19 @@
 package org.ntnu.backend.game.util;
 
-import org.ntnu.backend.exception.OptionValidationException;
-import org.ntnu.backend.game.model.PictureQuizOption;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
-import org.ntnu.backend.game.model.PostOfficeQuestion;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.InvalidOptionFormatException;
+import org.ntnu.backend.exception.OptionValidationException;
+import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
+import org.ntnu.backend.game.model.PictureQuizOption;
+import org.ntnu.backend.game.model.PostOfficeQuestion;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
-
-import lombok.RequiredArgsConstructor;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -75,11 +72,19 @@ public class OptionParser {
           List<PasswordStrengthOption> list = mapper.readValue(json, new TypeReference<>() {});
           yield new ArrayList<>(list);
         }
-        case TEXT_QUIZ -> null;
+        case CLASSIFY_ITEMS -> {
+          List<ClassifyItemsOption> list = mapper.readValue(json, new TypeReference<>() {});
+          yield new ArrayList<>(list);
+        }
+
+        case TEXT_QUIZ -> {
+          List<MultipleChoiceOption> list =
+                  mapper.readValue(json, new TypeReference<>() {});
+          yield new ArrayList<>(list);
+        }
         case MINIGAME -> null;
         case BOSS_BATTLE -> null;
         case TUTORIAL   -> null;
-        case CLASSIFY_ITEMS -> null;
         default -> null;
       };
     } catch (JacksonException e) {

@@ -5,6 +5,8 @@ import PhotographerStation from "@/components/game/station/stations/Photographer
 import PassordBankenStation from "@/components/game/station/stations/PassordBankenStation";
 import PostkontoretStation from "@/components/game/station/stations/PostkontoretStation.tsx";
 
+import MarkedsplassenStation from "./stations/MarkedsPlassenStation";
+
 
 type StationRendererProps = {
   station: StationData;
@@ -42,6 +44,15 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
               station={station}
               onAnswer={onAnswer}
               disabled={disabled}
+          />
+      );
+
+    case STATION_TYPE.MARKETPLACE:
+        return (
+          <MarkedsplassenStation
+                station={station}
+                onAnswer={onAnswer}
+                disabled={disabled}
           />
       );
 

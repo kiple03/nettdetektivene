@@ -1,3 +1,5 @@
+import type { LevelType } from "@/api/gameApi";
+
 import type {EmailContent} from "@/types/email.ts";
 
 export const STATION_TYPE = {
@@ -7,6 +9,7 @@ export const STATION_TYPE = {
   QUIZ: "QUIZ",
   SOCIAL: "SOCIAL",
   PASSWORD: "PASSWORD",
+  MARKETPLACE: "MARKETPLACE",
 } as const;
 
 export type StationType =
@@ -16,6 +19,10 @@ export type StationOption = {
   id: number;
   label: string;
   imageUrl?: string;
+
+  key?: string;
+  labels?: string[];
+
   //PASSWORD
   minLength?: number;       
   requireDigit?: boolean;                                                                          
@@ -27,6 +34,7 @@ export type StationOption = {
 export type StationData = {
   questionId: number;
   type: StationType;
+  levelType: LevelType;
   title: string;
   questionText: string;
   options: StationOption[];

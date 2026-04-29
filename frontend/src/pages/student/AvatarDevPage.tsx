@@ -8,11 +8,11 @@ import {
   type EquippedItem,
   useUpdateUserProfile,
 } from '@/hooks/useUserProfile';
-import { refreshToken } from '@/api/authApi';
 import { getClassroomId } from '@/stores/authStore';
 import styles from './AvatarDevPage.module.css';
 import {useNavigate} from "react-router-dom";
 import detectiveRoom from "@/assets/detective_room_interior.png";
+import BackButton from '@/components/ui/buttons/BackButton';
 
 type Gender = 'boy' | 'girl';
 
@@ -188,8 +188,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     saveOutfit(itemIds);
 
     updateUserProfile({ username: `Detektiv ${trimmed}`, hairColor: hairColorHex }, {
-      onSuccess: async () => {
-        await refreshToken();
+      onSuccess: () => {
         navigate(getClassroomId() ? '/home' : '/join-with-code');
       },
       onError: (err) => {
@@ -212,6 +211,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
 
   return (
     <div className={styles.page}>
+      <BackButton className={styles.backBtn} ariaLabel='Gå tilbake'/>
       <img src={detectiveRoom} alt="" className={styles.bg}/>
       <div className={styles.container}>
 

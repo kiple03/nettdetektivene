@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy } from "react";
-
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
@@ -13,10 +12,11 @@ const FeideFake = lazy(() => import("@/pages/auth/FeideFake"));
 const StudentHomePage = lazy(() => import("@/pages/student/StudentHomePage"));
 const ClassroomDetail = lazy(() => import("@/pages/teacher/detail/ClassroomDetail"));
 const StudentDetail = lazy(() => import("@/pages/teacher/detail/StudentDetail"));
+const LevelQuestionsPage = lazy(() => import("@/pages/teacher/detail/LevelQuestionsPage"));
 const MysterySubmissions = lazy(() => import("@/pages/teacher/MysterySubmissions"));
 const Notifications = lazy(() => import("@/pages/teacher/Notifications"));
 const LeaderboardPage = lazy(() => import("@/pages/student/LeaderboardPage"));
-const NotesPage = lazy(() => import("@/pages/student/notebook/NotesPage"));
+const NotesPage = lazy(() => import("@/pages/student/NotesPage"));
 const BadgesPage = lazy(() => import("@/pages/student/MedalionPage"));
 const WeeklyMysteryPage = lazy(() => import("@/pages/student/WeeklyMysteryPage"));
 const JoinWithCodePage = lazy(() => import("@/pages/student/JoinWithCodePage"));
@@ -26,6 +26,8 @@ const GamePage = lazy(() => import("@/pages/game/GamePage"));
 const BossBattlePage = lazy(() => import("@/pages/game/BossBattlePage"));
 const CodePage = lazy(() => import("@/pages/teacher/CodePage"));
 const ProfilePage = lazy(() => import("@/pages/student/ProfilePage"));
+const TeacherMapPage = lazy(() => import("@/pages/teacher/TeacherMapPage"));
+const TeacherLevelPreviewPage = lazy(() => import("@/pages/teacher/detail/TeacherLevelPreviewPage"));
 
 export const router = createBrowserRouter([
     // Auth routes (public)
@@ -97,8 +99,8 @@ export const router = createBrowserRouter([
                 element: <MyClassroomsPage />,
             },
             {
-                path: '/teacher/map',
-                element: <MapPage />,
+                path: '/teacher/classrooms/:classroomId/map',
+                element: <TeacherMapPage />,
             },
             {
                 path: '/teacher/leaderboard',
@@ -128,6 +130,14 @@ export const router = createBrowserRouter([
             {
                 path: '/teacher/classrooms/:id/mystery-submissions',
                 element: <MysterySubmissions />,
+            },
+            {
+                path: '/teacher/classrooms/:classroomId/levels/:levelId/questions',
+                element: <LevelQuestionsPage />,
+            },
+            {
+                path: '/teacher/classrooms/:classroomId/levels/:levelId/preview',
+                element: <TeacherLevelPreviewPage />,
             },
             {
                 path: '/teacher/notifications',

@@ -1,0 +1,134 @@
+.q-modal__backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 16px;
+}
+
+.q-modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+}
+
+.q-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+}
+
+.q-modal__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.q-modal__close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #666;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.q-modal__close:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.06);
+    color: #333;
+}
+
+.q-modal__close:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.q-modal__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+}
+
+.q-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 16px 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+}
+
+.q-modal__cancel {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: transparent;
+    color: #444;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.q-modal__cancel:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.q-modal__save {
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: none;
+    background: #2563eb;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.q-modal__save:hover:not(:disabled) {
+    background: #1d4ed8;
+}
+
+.q-modal__save:disabled,
+.q-modal__cancel:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.q-modal__errors {
+    margin: 16px 0 0;
+    padding: 10px 14px 10px 28px;
+    background: rgba(200, 30, 30, 0.06);
+    border: 1px solid rgba(200, 30, 30, 0.2);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.q-modal__errors li {
+    font-size: 13px;
+    color: #c0392b;
+}
+
+.q-modal__error {
+    margin: 12px 0 0;
+    font-size: 13px;
+    color: #c0392b;
+}
