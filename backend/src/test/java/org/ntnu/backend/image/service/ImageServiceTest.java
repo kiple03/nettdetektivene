@@ -116,15 +116,15 @@ class ImageServiceTest {
     void uploadImage_shouldThrowWhenFileTypeIsInvalid() {
         MockMultipartFile file = new MockMultipartFile(
                 "file",
-                "test.gif",
-                "image/gif",
+                "test.bmp",
+                "image/bmp",
                 "fake-content".getBytes()
         );
 
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> imageService.uploadImage(file, UUID.randomUUID()));
 
-        assertEquals("Only JPEG, PNG, and WEBP are allowed", exception.getMessage());
+        assertEquals("Only JPEG, PNG, WEBP, and GIF are allowed", exception.getMessage());
         verifyNoInteractions(imageRepository);
         verify(s3Client, never()).putObject(any(PutObjectRequest.class), any(software.amazon.awssdk.core.sync.RequestBody.class));
     }
