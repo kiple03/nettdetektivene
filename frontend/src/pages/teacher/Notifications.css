@@ -49,12 +49,10 @@
   flex-direction: column;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .notifs__back-btn {
-  top: 6%;
-  left: 1.5%;
   align-self: flex-start;
   padding: 6px 14px;
   font-family: 'Georgia', 'Times New Roman', serif;
@@ -130,49 +128,89 @@
 .notifs__groups {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
 }
 
 .notifs__group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
 
+/* Date label — looks like a small pinned paper tag */
 .notifs__group-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   margin: 0;
-  font-size: 14px;
+  padding: 4px 12px 4px 8px;
+  font-size: 11px;
   font-family: sans-serif;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: #6d4b24;
+  letter-spacing: 0.1em;
+  color: #4a2e0e;
+  background: rgba(255, 248, 224, 0.7);
+  border: 1px solid rgba(90, 62, 27, 0.25);
+  border-radius: 3px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.12);
+  width: fit-content;
+}
+
+/* Tiny pin dot on the date label */
+.notifs__group-title::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #c8a060, #8a5a28 60%, #4a2e0e);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .notifs__list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 6px 4px 4px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 18px;
   align-items: start;
 }
 
+/* Note card */
 .notifs__item {
   position: relative;
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background: #f8f0dc;
-  border: 1px solid rgba(90, 62, 27, 0.28);
-  border-radius: 8px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.14);
-  padding: 16px 16px 16px 18px;
+  border: 1px solid rgba(90, 62, 27, 0.22);
+  border-radius: 4px;
+  padding: 20px 14px 14px;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.notifs__item--unread {
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.22),
+    0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .notifs__item--read {
-  opacity: 0.65;
+  opacity: 0.6;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  filter: saturate(0.7);
+}
+
+.notifs__item:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.28),
+    0 4px 8px rgba(0, 0, 0, 0.12);
+  opacity: 1;
+  filter: none;
+  z-index: 2;
 }
 
 .notifs__item:focus-visible {
@@ -180,21 +218,39 @@
   outline-offset: 2px;
 }
 
-.notifs__tape {
+/* Pushpin centered at top */
+.notifs__pin {
   position: absolute;
-  top: -7px;
-  left: 22px;
-  width: 66px;
-  height: 14px;
-  border-radius: 2px;
-  background: rgba(242, 223, 139, 0.85);
-  border: 1px solid rgba(201, 165, 87, 0.45);
-  transform: rotate(-5deg);
+  top: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow:
+    0 3px 7px rgba(0, 0, 0, 0.45),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+    inset -1px -1px 2px rgba(0, 0, 0, 0.2);
+  z-index: 3;
+}
+
+/* Pin needle shadow beneath */
+.notifs__pin::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 0 0 2px 2px;
 }
 
 .notifs__icon {
   margin-top: 1px;
   font-size: 20px;
+  flex-shrink: 0;
 }
 
 .notifs__body {
@@ -207,22 +263,22 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .notifs__type {
   font-family: sans-serif;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
   color: #5a3e1b;
 }
 
 .notifs__classroom {
   font-family: sans-serif;
-  font-size: 11px;
-  padding: 2px 8px;
+  font-size: 10px;
+  padding: 2px 7px;
   border-radius: 999px;
   border: 1px solid rgba(90, 62, 27, 0.2);
   color: #5a3e1b;
@@ -232,15 +288,15 @@
 .notifs__date {
   margin-left: auto;
   font-family: sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   color: #6d4b24;
 }
 
 .notifs__message {
   margin: 0;
   color: #2f2415;
-  font-size: 16px;
-  line-height: 1.4;
+  font-size: 15px;
+  line-height: 1.45;
 }
 
 .notifs__actions {
@@ -249,20 +305,21 @@
   gap: 6px;
   align-items: center;
   align-self: flex-start;
+  flex-shrink: 0;
 }
 
 .notifs__action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border: 1px solid rgba(73, 50, 22, 0.28);
   background: rgba(255, 255, 255, 0.5);
   border-radius: 6px;
   color: #4f3618;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 .notifs__action-btn:hover {
@@ -296,7 +353,7 @@
   }
 
   .notifs__message {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .notifs__list {

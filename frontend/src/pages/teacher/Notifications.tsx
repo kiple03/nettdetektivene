@@ -22,6 +22,23 @@ const TYPE_ICONS: Record<TeacherNotificationType, string> = {
   INAPPROPRIATE_NOTE: '📝',
 };
 
+const PUSHPIN_PALETTE = ['#c0392b', '#2471a3', '#1e8449', '#d4820a', '#7d3c98', '#117a65', '#c0392b', '#1a5276'];
+
+function getPinColor(id: string): string {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+  return PUSHPIN_PALETTE[Math.abs(h) % PUSHPIN_PALETTE.length];
+}
+
+const NOTE_TINTS: Record<TeacherNotificationType, string> = {
+  AREA_COMPLETED: '#f5f1e4',
+  GAME_COMPLETED: '#f4f1e6',
+  STUDENT_STUCK: '#f7f2e2',
+  INAPPROPRIATE_USERNAME: '#f7ede8',
+  INAPPROPRIATE_NOTE: '#f7ede8',
+};
+
+
 type DateGroup = {
   key: string;
   label: string;
@@ -40,7 +57,6 @@ function formatGroupLabel(dateString: string): string {
 function formatDayKey(dateString: string): string {
   return new Date(dateString).toISOString().slice(0, 10);
 }
-
 
 export default function Notifications() {
   const navigate = useNavigate();
@@ -130,10 +146,14 @@ export default function Notifications() {
                 <ul className="notifs__list">
                   {group.items.map((notification) => {
                     const classroom = classrooms.find((c) => c.id === notification.classroomId);
+                    const pinColor = getPinColor(notification.id);
+                    const noteTint = notification.read ? '#f8f0dc' : NOTE_TINTS[notification.type];
+
                     return (
                       <li
                         key={notification.id}
-                        className={`notifs__item${notification.read ? ' notifs__item--read' : ''}`}
+                        className={`notifs__item${notification.read ? ' notifs__item--read' : ' notifs__item--unread'}`}
+                        style={{ background: noteTint }}
                         onClick={() => handleNotificationClick(notification)}
                         role="button"
                         tabIndex={0}
@@ -144,7 +164,11 @@ export default function Notifications() {
                           }
                         }}
                       >
-                        <div className="notifs__tape" aria-hidden="true" />
+                        <div
+                          className="notifs__pin"
+                          aria-hidden="true"
+                          style={{ background: `radial-gradient(circle at 38% 32%, color-mix(in srgb, ${pinColor} 60%, white), ${pinColor} 55%, color-mix(in srgb, ${pinColor} 70%, black) 100%)` }}
+                        />
                         <span className="notifs__icon" aria-hidden="true">
                           {TYPE_ICONS[notification.type]}
                         </span>
