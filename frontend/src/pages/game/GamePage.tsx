@@ -24,6 +24,8 @@ import useSound from "use-sound";
 import victorySound from "@/assets/sounds/victorySound.mp3";
 import { useMedalions } from "@/hooks/useMedalions";
 import type { MedalionResponse } from "@/api/medalionApi";
+import NotesButton from "@/components/game/NotesButton";
+import NotebookOverlay from "@/components/game/NotebookOverlay";
 
 const STOP_TO_TYPE: Record<string, StationType> = {
     "Nyhetskvartalet": STATION_TYPE.NEWS,
@@ -47,6 +49,7 @@ export default function GamePage() {
 
     const [answers, setAnswers] = useState<Record<number, SubmitAnswerRequest>>({});
     const [newMedalion, setNewMedalion] = useState<MedalionResponse | null>(null);
+    const [notesOpen, setNotesOpen] = useState(false);
     const queryClient = useQueryClient();
     const [playVictory] = useSound(victorySound);
     const { data: medalions = [] } = useMedalions();
@@ -207,6 +210,9 @@ export default function GamePage() {
                 }}
                 ariaLabel="Gå tilbake"
             />
+
+            <NotesButton onClick={() => setNotesOpen(true)} />
+            {notesOpen && <NotebookOverlay onClose={() => setNotesOpen(false)} />}
 
             {dialogOpen && levelPassed && <ConfettiComp duration={5000}/>}
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
