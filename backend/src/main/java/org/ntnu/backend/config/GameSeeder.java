@@ -582,7 +582,7 @@ public class GameSeeder implements CommandLineRunner {
             ),
             List.of(
                 new PostOfficeOption("senderEmail", "senderEmail", true,  "Avsenderadressen er ikke fra en kjent organisasjon."),
-                new PostOfficeOption("signup",      "link",        true,  "Lenken peker til et ukjent nettsted og du vet ikke hvor du havner."),
+                new PostOfficeOption("signup",      "link",        true,  "Lenken peker til et ukjent nettsted."),
                 new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
                 new PostOfficeOption("body",        "body",        false, "Innholdet ser normalt ut."),
                 new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
@@ -709,13 +709,13 @@ public class GameSeeder implements CommandLineRunner {
             ),
             List.of(
                 new PostOfficeOption("senderEmail", "senderEmail", false,  "Avsendermailen er ekte"),
-                new PostOfficeOption("reset",      "link",        true,  "Lenke med knapp uten lenkeadresse er mistenkelig."),
+                new PostOfficeOption("reset",      "link",        true,  "Lenke med knapp med ukjent og falsk lenke er mistenkelig."),
                 new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
                 new PostOfficeOption("body",        "body",        true, "Den inneholder en uekte mail og vil at du skal trykke på en knapp."),
                 new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
-                new PostOfficeOption("signature",   "signature",   true, "Signaturen er ekte.")
+                new PostOfficeOption("signature",   "signature",   false, "Signaturen er ekte.")
             ),
-            List.of("senderEmail", "signature"),
+            List.of("link", "body"),
             "Spør en voksen"
         )
     );
