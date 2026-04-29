@@ -38,7 +38,7 @@
 }
 
 .label {
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     font-weight: bold;
     color: #4a9eff;
     margin: 0;
@@ -52,30 +52,34 @@
 
 .timerWrap {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    position: relative;
 }
 
-/* Animates --countdown from 30→0, displays it via CSS counter */
+/* counter-reset must live on the animated element (not ::before) because --countdown has inherits:false */
 .timerNum {
-    display: block;
-    font-size: 1.6rem;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.4rem;
     font-weight: bold;
     font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+    counter-reset: countdown var(--countdown);
     animation: tick 30s steps(30, end) forwards;
 }
 
 .timerNum::before {
-    counter-reset: countdown var(--countdown);
     content: counter(countdown) "s";
 }
 
 .timerBar {
     width: 100%;
-    height: 14px;
-    border-radius: 7px;
+    height: 48px;
+    border-radius: 24px;
     background: #4caf50;
     animation: depleteBar 30s linear forwards;
 }
@@ -206,8 +210,10 @@
       box-sizing: border-box;
   }  
 
-.stationWrap {                                                                                     
-    width: 100%;                                                                                   
+.stationWrap {
+    width: 100%;
+    zoom: 0.8;
+    color: black;
 }                                                                                                  
                                                                                                     
 .stationWrap :global(.station-container) {
@@ -221,18 +227,20 @@
     display: none;                 
 }                                                                                                  
 
-.stationWrap :global(.station-title),                                                              
+.stationWrap :global(.station-title),
 .stationWrap :global(.task-header) {
-    background: #0a1524;                                                      
+    position: static;
+    transform: none;
+    background: #0a1524;
     color: #e6eefc;
-    border: 1px solid #1e3a5f;                                                                     
-    border-radius: 8px;                                                                            
-    padding: 0.5rem 0.75rem;                                                                       
-    font-size: 1rem;                                                                               
-}                                                                                                  
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+}
 
-.stationWrap :global(.station-content) {                                                           
-    color: #e6eefc;
+.stationWrap :global(.station-content) {
+    /* no color override — each station manages its own text colors against its own background */
 }
 
 .stationWrap :global(.feedback-wrapper) {                                                          
