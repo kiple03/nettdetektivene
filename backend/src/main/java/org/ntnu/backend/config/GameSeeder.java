@@ -73,6 +73,7 @@ public class GameSeeder implements CommandLineRunner {
     seedPasswords();
     seedMarkedsplassen();
     seedSocial();
+    seedBoos();
     log.info("GameSeeder: done");
   }
 
@@ -1224,5 +1225,15 @@ public class GameSeeder implements CommandLineRunner {
 
     ensureLevelNoteTemplate(l3, NoteCategory.SOSIALE,
         "Vurder alltid kilden, se etter følelsesmanipulasjon, og husk at popularitet ikke er det samme som sannhet.");
+  }
+
+
+  private void seedBoos() {
+    stopRepository.findByName("Datasenteret").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Datasenteret");
+      s.setDisplayOrder(7);
+      return stopRepository.save(s);
+    });
   }
 }

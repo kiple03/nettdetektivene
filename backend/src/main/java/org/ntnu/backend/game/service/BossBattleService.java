@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.avatar.service.UserAvatarService;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
+import org.ntnu.backend.exception.ApiException;
+import org.ntnu.backend.exception.BossLockedException;
 import org.ntnu.backend.game.dto.BossBattleResultResponse;
 import org.ntnu.backend.game.dto.BossBattleSaveRequest;
 import org.ntnu.backend.game.model.BossBattleResult;
@@ -25,10 +27,18 @@ public class BossBattleService {
     private final BossBattleResultRepository bossBattleResultRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final MedalionService medalionService;
+    private final ProgressService progressService;
     private final UserAvatarService userAvatarService;
 
     @Transactional
     public void saveResult(UUID userId, UUID classroomId, BossBattleSaveRequest request) {
+        if (!progressService.boosFightUnlocked(userId)) {
+            throw new BossLockedException();
+        }
+        if (request.won()){
+            medalionService.awardInternalUsage(userId, "Platinum", "Du fanget skurken!");
+        }
+
         Enrollment enrollment = resolveEnrollment(userId, classroomId);
         BossBattleResult result = BossBattleResult.builder()
             .enrollment(enrollment)

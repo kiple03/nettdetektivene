@@ -10,9 +10,8 @@ import { StopMap } from "@/components/map/StopMap";
 import { MAP_STOPS, type StopData } from "@/data/mapStops";
 import internettbyenLogo from "@/assets/images/map/internettbyen-logo.png";
 import detektivkontoret from "@/assets/images/map/detektivkontoret.png";
-import datasenteret from "@/assets/images/map/datasenteret.svg";
-import sharkBase from "@/assets/images/boss/shark-base.png";
 import { CarWithAvatar } from "@/components/map/CarWithAvatar";
+import sharkBase from "@/assets/images/boss/shark-base.png";
 import {
     AlertDialog,
     AlertDialogContent,
@@ -81,6 +80,10 @@ export default function MapPage() {
 
     const handleStopClick = (stop: StopData) => {
         animateTo(stop.pathOffset, () => {
+            if (stop.title === "Datasenteret" && isUnlocked(stop.title)) {
+                navigate("/boss");
+                return;
+            }
             if (isUnlocked(stop.title)) {
                 setManualPendingStop(stop);
             } else {
@@ -107,17 +110,31 @@ export default function MapPage() {
                     </div>
                 }
                 renderStopIcon={(stop) => {
-                    if (stop.title === "Datasenteret" && !isUnlocked(stop.title)) {
+                  if (stop.title === "Datasenteret") {
                         return (
                             <>
                                 <div className={styles.datasenteretIcons}>
-                                    <img src={datasenteret} alt="Datasenteret" className={`${styles.icon} ${styles.lockedIcon}`} />
+                                    <img
+                                        src={stop.icon}
+                                        alt={stop.title}
+                                        className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.lockedIcon : ""}`}
+                                    />
+
                                     <div className={styles.sharkWrapper}>
-                                        <img src={sharkBase} alt="Shark" className={`${styles.icon} ${styles.sharkSilhouette}`} />
-                                        <span className={styles.sharkQuestionMark}>?</span>
+                                        <img
+                                            src={sharkBase}
+                                            alt="Shark"
+                                            className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.sharkSilhouette : ""}`}
+                                        />
+
+                                        {/* only show ? when locked */}
+                                        {!isUnlocked(stop.title) && (
+                                            <span className={styles.sharkQuestionMark}>?</span>
+                                        )}
                                     </div>
                                 </div>
-                                <LockBadge />
+
+                                {!isUnlocked(stop.title) && <LockBadge />}
                             </>
                         );
                     }
