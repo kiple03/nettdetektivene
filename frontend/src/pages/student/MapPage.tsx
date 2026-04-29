@@ -109,6 +109,34 @@ export default function MapPage() {
                     </div>
                 }
                 renderStopIcon={(stop) => {
+                  if (stop.title === "Datasenteret") {
+                        return (
+                            <>
+                                <div className={styles.datasenteretIcons}>
+                                    <img
+                                        src={stop.icon}
+                                        alt={stop.title}
+                                        className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.lockedIcon : ""}`}
+                                    />
+
+                                    <div className={styles.sharkWrapper}>
+                                        <img
+                                            src={sharkBase}
+                                            alt="Shark"
+                                            className={`${styles.icon} ${!isUnlocked(stop.title) ? styles.sharkSilhouette : ""}`}
+                                        />
+
+                                        {/* only show ? when locked */}
+                                        {!isUnlocked(stop.title) && (
+                                            <span className={styles.sharkQuestionMark}>?</span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {!isUnlocked(stop.title) && <LockBadge />}
+                            </>
+                        );
+                    }
                     return (
                         <>
                             <img
