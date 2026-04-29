@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import type { EffectiveAttackType } from "./AttackOrchestrator";
+import type { AttackType } from "./AttackOrchestrator";
 import MatrixCanvas from "./MatrixCanvas";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import sharkNewspaper1 from "@/assets/images/boss/shark-newspaper-1.png";
@@ -37,7 +37,7 @@ const TYPING_FRAMES = [
 ];
 
 interface Props {
-    attackType: EffectiveAttackType;
+    attackType: AttackType;
     onComplete: () => void;
     onSpriteChange: (sprite: string) => void;
 }

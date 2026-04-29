@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import ConfettiComp from "@/components/ConfettiComp";
+import heartImg from "@/assets/images/boss/heart.png";
 import styles from "./VictoryScreen.module.css";
 
 interface Props {
@@ -18,18 +19,26 @@ export function VictoryScreen({ timeSeconds, playerHp, maxHp }: Props) {
     return (
         <div className={styles.screen}>
             <ConfettiComp />
-            <h2 className={styles.title}>🎉 Du vant!</h2>
-            <p className={styles.stat}>Tid: {formatTime(timeSeconds)}</p>
-            <div className={styles.hpRow}>
-                {Array.from({ length: maxHp }, (_, i) => (
-                    <div
-                        key={i}
-                        className={`${styles.hpBlock} ${i < playerHp ? styles.hpFull : styles.hpEmpty}`}
-                    />
-                ))}
-                <span className={styles.hpLabel}>{playerHp} / {maxHp} HP</span>
+            <img
+                src="/assets/medalions/platinum.svg"
+                alt="Pokal"
+                className={styles.trophy}
+            />
+            <div className={styles.stats}>
+                <h2 className={styles.title}>Du vant!</h2>
+                <p className={styles.time}>Tid: {formatTime(timeSeconds)}</p>
+                <div className={styles.heartsRow}>
+                    {Array.from({ length: maxHp }, (_, i) => (
+                        <img
+                            key={i}
+                            src={heartImg}
+                            alt="hjerte"
+                            className={i < playerHp ? styles.heartFull : styles.heartLost}
+                        />
+                    ))}
+                </div>
+                <Link to="/map" className={styles.btn}>Tilbake til kartet</Link>
             </div>
-            <Link to="/map" className={styles.btn}>Tilbake til kartet</Link>
         </div>
     );
 }
