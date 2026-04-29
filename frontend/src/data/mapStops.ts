@@ -11,6 +11,7 @@ export interface StopData {
     title: string;
     icon: string;
     pathOffset: string; // used only for car animation; teacher map ignores this
+    disabled?: boolean;
 }
 
 export const MAP_STOPS: StopData[] = [
@@ -20,5 +21,5 @@ export const MAP_STOPS: StopData[] = [
     { id: 4, title: "Passordbanken",          icon: passordbanken,   pathOffset: "47.3%" },
     { id: 5, title: "Markedsplassen",         icon: markedsplassen,  pathOffset: "62.7%" },
     { id: 6, title: "Den sosiale møteplassen", icon: moteplassen,    pathOffset: "83.6%" },
-    { id: 7, title: "Datasenteret",           icon: datasenteret,    pathOffset: "91.9%" },
+    { id: 7, title: "Datasenteret",           icon: datasenteret,    pathOffset: "91.9%", disabled: true },
 ];
