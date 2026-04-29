@@ -124,7 +124,7 @@
 .headerWrap {
     position: absolute;
     left: 50%;
-    top: 5%;
+    top: 3.1%;
     transform: translateX(-50%);
     width: 64%;
     z-index: 8;
@@ -139,6 +139,53 @@
             0 18px 26px rgba(42, 28, 62, 0.18),
             inset 0 0 0 1px rgba(135, 102, 61, 0.1);
     border: 1px gray solid;
+}
+
+/* animation for headerpaper */
+.headerPaper {
+    transform-origin: top center;
+}
+
+.tearOut {
+    animation: tearDownOut 0.8s ease-in forwards;
+}
+
+.tearIn {
+    animation: paperIn 0.85s ease-out;
+}
+
+@keyframes tearOutDown {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+
+    40% {
+        opacity: 0.85;
+        transform: translateY(18px) rotate(2deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(120px) rotate(-8deg) scale(0.96);
+    }
+}
+
+@keyframes paperIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-45px) rotate(4deg) scale(0.97);
+    }
+
+    60% {
+        opacity: 0;
+        transform: translateY(6px) rotate(-1deg) scale(1.01);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
 }
 
 .paperclip {

@@ -13,6 +13,7 @@ type NyhetsKvartalStationProps = {
   levelTitle: string,
   onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void,
   disabled?: boolean,
+  isTearing?: boolean
 };
 
 function NyhetsKvartalStation({
@@ -20,6 +21,7 @@ function NyhetsKvartalStation({
                                 levelTitle,
                                 onAnswer,
                                 disabled = false,
+                                isTearing
                               }: NyhetsKvartalStationProps) {
   const handleSumbit = async (selectedIds: number[]) => {
     const request: SubmitSingleChoiceAnswerRequest = {
@@ -47,6 +49,7 @@ function NyhetsKvartalStation({
         <DetectiveBook
             title={levelTitle}
             subtitle={station.questionText}
+            isTearing={isTearing}
         >
           <PictureGrid
               questionId={station.questionId}
