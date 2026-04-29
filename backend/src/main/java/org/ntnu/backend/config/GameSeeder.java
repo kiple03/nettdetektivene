@@ -463,7 +463,7 @@ public class GameSeeder implements CommandLineRunner {
         .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Nivå 1: Finn det mistenklige i mailen!")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Nivå 1: Finn det mistenklige i mailen! 1");
+          l.setTitle("Nivå 1: Finn det mistenklige i mailen!");
           l.setDescription("Kan du hva som er mistenkelig i mailene?");
           l.setLevelType(LevelType.POST_OFFICE);
           l.setStop(stop3);
