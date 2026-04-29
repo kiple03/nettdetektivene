@@ -27,6 +27,7 @@ export interface EquippedItem {
   name: string;
   category: string;
   imageUrl: string;
+  locked?: boolean;
 }
 
 export interface UserProfile {

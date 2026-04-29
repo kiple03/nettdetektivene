@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import BackButton from "@/components/ui/buttons/BackButton";
 import { studentKeys } from "@/hooks/student/queryKeys";
@@ -17,7 +17,7 @@ import alertStyles from "@/components/ui/alert-dialog/alert-dialog.module.css";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getGameLevelById, getLevelQuestions, submitLevel, getLevelsForStop } from "@/api/gameApi.ts";
+import { getGameLevelById, getLevelQuestions, submitLevel, getLevelsForStop, adminCompleteLevel } from "@/api/gameApi.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import ConfettiComp from "@/components/ConfettiComp";
 import useSound from "use-sound";
@@ -77,6 +77,53 @@ export default function GamePage() {
             setDialogOpen(true);
         },
     });
+
+    const adminCompleteMutation = useMutation({
+        mutationFn: () => adminCompleteLevel(levelIdNum),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: studentKeys.gameStops });
+            queryClient.invalidateQueries({ queryKey: ['stopLevels'] });
+            queryClient.invalidateQueries({ queryKey: ['medalions'] });
+            setLevelPassed(true);
+            setDialogOpen(true);
+            playVictory();
+        },
+        onError: () => {
+            setLevelPassed(false);
+            setDialogOpen(true);
+        },
+    });
+
+    // Ref that always points to the latest cheat trigger so the listener never goes stale.
+    const triggerCheatRef = useRef<() => void>(() => {});
+    triggerCheatRef.current = () => {
+        if (dialogOpen || adminCompleteMutation.isPending) return;
+        beforeSubmitMedals.current = [...medalions];
+        adminCompleteMutation.mutate();
+    };
+
+    const adminListenerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
+    const cheatRootRef = useCallback((node: HTMLDivElement | null) => {
+        if (adminListenerRef.current) {
+            window.removeEventListener('keydown', adminListenerRef.current);
+            adminListenerRef.current = null;
+        }
+        if (!node || !import.meta.env.DEV) return;
+        const TARGET = 'admin';
+        let buffer = '';
+        const handler = (e: KeyboardEvent) => {
+            const target = e.target as HTMLElement | null;
+            if (target?.tagName === 'INPUT' || target?.tagName === 'TEXTAREA' || target?.isContentEditable) return;
+            if (e.key.length !== 1) return;
+            buffer = (buffer + e.key.toLowerCase()).slice(-TARGET.length);
+            if (buffer === TARGET) {
+                buffer = '';
+                triggerCheatRef.current();
+            }
+        };
+        adminListenerRef.current = handler;
+        window.addEventListener('keydown', handler);
+    }, []);
 
     useEffect(() => {
         setQuestionIndex(0);
@@ -210,7 +257,7 @@ export default function GamePage() {
     const currentLevelIdx = sortedLevels.findIndex(l => l.id === levelIdNum);
     const levelLeft = sortedLevels.length - currentLevelIdx -1;
     return (
-        <div>
+        <div ref={cheatRootRef}>
             <StationContainer
                 key={currentQuestion.id}
                 title={level.stopName}

@@ -109,6 +109,7 @@ public class QuestionService {
     return new SubmitAnswerResponse(
             result.correct(),
             result.feedback(),
+            // TODO: send to fronted for validation
             result.correctOptionIds().stream().map(String::valueOf).toList(),
             result.wrongSelectedOptionIds().stream().map(String::valueOf).toList()
     );

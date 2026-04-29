@@ -35,6 +35,15 @@ const DEFAULT_HAIR: Record<Gender, string> = {
   girl: 'girl_hair',
 };
 
+const CATEGORY_ORDER = ['hair', 'face', 'head', 'body', 'accessories'] as const;
+const CATEGORY_LABELS: Record<string, string> = {
+  hair: 'Hår',
+  face: 'Ansikt',
+  head: 'Hodeplagg',
+  body: 'Klær',
+  accessories: 'Tilbehør',
+};
+
 const HAIR_COLORS: { name: string; color: string }[] = [
   { name: 'black',       color: '#1a1008' },
   { name: 'dark-brown',  color: '#3b1f0a' },
@@ -329,25 +338,51 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
         {/* Right column: wardrobe */}
         <div className={styles.wardrobeSection}>
           <h2 className={styles.sectionTitle}>Din garderobe</h2>
-          <div className={styles.gridContainer}>
-            {visibleInventory.map((item) => {
-              const isEquipped = equipped.some((i) => i.id === item.id);
+          <div className={styles.categoriesContainer}>
+            {CATEGORY_ORDER.map((cat) => {
+              const items = visibleInventory.filter(i => i.category === cat);
+              if (items.length === 0) return null;
               return (
-                <button
-                  key={item.id}
-                  onClick={() => toggleItem(item)}
-                  className={`${styles.itemButton} ${isEquipped ? styles.itemButtonEquipped : styles.itemButtonUnequipped}`}
-                >
-                  <div className={styles.imageWrapper}>
-                    <img
-                      src={item.imageUrl}
-                      alt={item.name}
-                      className={styles.itemImage}
-                      onError={(e) => (e.currentTarget.style.display = 'none')}
-                    />
+                <div key={cat} className={styles.categorySection}>
+                  <h3 className={styles.categoryLabel}>{CATEGORY_LABELS[cat]}</h3>
+                  <div className={styles.horizontalRow}>
+                    {items.map((item) => {
+                      if (item.locked) {
+                        return (
+                          <button
+                            key={item.id}
+                            disabled
+                            aria-disabled="true"
+                            title="Beseir bossen for å låse opp"
+                            className={`${styles.itemButton} ${styles.itemButtonLocked}`}
+                          >
+                            <div className={styles.lockedOverlay}>
+                              <span className={styles.lockedQuestionMark}>?</span>
+                            </div>
+                          </button>
+                        );
+                      }
+                      const isEquipped = equipped.some((i) => i.id === item.id);
+                      return (
+                        <button
+                          key={item.id}
+                          onClick={() => toggleItem(item)}
+                          className={`${styles.itemButton} ${isEquipped ? styles.itemButtonEquipped : styles.itemButtonUnequipped}`}
+                        >
+                          <div className={styles.imageWrapper}>
+                            <img
+                              src={item.imageUrl}
+                              alt={item.name}
+                              className={styles.itemImage}
+                              onError={(e) => (e.currentTarget.style.display = 'none')}
+                            />
+                          </div>
+                          {isEquipped && <span className={styles.equippedBadge}>EQUIPPED</span>}
+                        </button>
+                      );
+                    })}
                   </div>
-                  {isEquipped && <span className={styles.equippedBadge}>EQUIPPED</span>}
-                </button>
+                </div>
               );
             })}
           </div>

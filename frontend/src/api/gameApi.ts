@@ -101,6 +101,10 @@ export const submitLevel = async (
   await client.post(`/game/levels/${levelId}/submit`, body);
 };
 
+export const adminCompleteLevel = async (levelId: number): Promise<void> => {
+  await client.post(`/game/levels/${levelId}/admin-complete`);
+};
+
 export const getGameStops = async (): Promise<GameStop[]> => {
   const response = await client.get("/game/stops");
   return response.data;

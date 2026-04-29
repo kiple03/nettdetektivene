@@ -96,8 +96,10 @@ public class UserAvatarService {
 
     /**
      * Service-method that gets the whole users inventory, regardless of it being equipped or not.
+     * Also appends locked items (items with an unlockCondition the user has not yet earned) so
+     * the wardrobe grid can render them as blacked-out tiles.
      * @param userId user identification.
-     * @return a list of all the avatar items accociated with the user.
+     * @return a list of all avatar items the user owns plus locked items not yet earned.
      */
     @Transactional
     public List<EquippedItemDto> getUserInventory(UUID userId) {
@@ -105,14 +107,62 @@ public class UserAvatarService {
         starterItems(user);
         List<UserInventoryItem> inventory = inventoryRepository.findByUserIdOrderByAvatarItemNameAsc(userId);
 
-        return inventory.stream()
+        Set<UUID> ownedIds = inventory.stream()
+            .map(i -> i.getAvatarItem().getId())
+            .collect(Collectors.toSet());
+
+        List<EquippedItemDto> owned = inventory.stream()
             .map(item -> EquippedItemDto.builder()
                 .id(item.getAvatarItem().getId())
                 .name(item.getAvatarItem().getName())
-                .category(item.getAvatarItem().getCategory()) // Make sure EquippedItemDto has a category field!
+                .category(item.getAvatarItem().getCategory())
                 .imageUrl(imageUrl(item.getAvatarItem()))
+                .locked(false)
+                .build())
+            .collect(Collectors.toList());
+
+        List<EquippedItemDto> locked = avatarItemRepository.findByUnlockConditionNotNull().stream()
+            .filter(item -> !ownedIds.contains(item.getId()))
+            .map(item -> EquippedItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .category(item.getCategory())
+                .imageUrl(imageUrl(item))
+                .locked(true)
                 .build())
             .toList();
+
+        owned.addAll(locked);
+        return owned;
+    }
+
+    /**
+     * Grants all avatar items with the given unlock condition to the user, if not already owned.
+     * Idempotent — calling it a second time does nothing.
+     * @param userId user identification.
+     * @param condition the unlock condition string (e.g. "BOSS_DEFEAT").
+     */
+    @Transactional
+    public void unlockByCondition(UUID userId, String condition) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Set<UUID> ownedIds = inventoryRepository.findByUserId(userId).stream()
+            .map(i -> i.getAvatarItem().getId())
+            .collect(Collectors.toSet());
+
+        List<UserInventoryItem> toGrant = avatarItemRepository.findByUnlockConditionNotNull().stream()
+            .filter(item -> condition.equals(item.getUnlockCondition()) && !ownedIds.contains(item.getId()))
+            .map(item -> UserInventoryItem.builder()
+                .user(user)
+                .avatarItem(item)
+                .unlockedAt(LocalDateTime.now())
+                .isEquipped(false)
+                .build())
+            .toList();
+
+        if (!toGrant.isEmpty()) {
+            inventoryRepository.saveAll(toGrant);
+        }
     }
 
     private static final List<String> STARTER_ITEM_NAMES = List.of(
