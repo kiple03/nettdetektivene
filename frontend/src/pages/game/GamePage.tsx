@@ -267,7 +267,7 @@ export default function GamePage() {
             >
                 <StationRenderer
                     station={station}
-                    levelTitle={`Nivå ${level.order} - ${level.title}`}
+                    levelTitle={`${level.title}`}
                     onAnswer={handleAnswer}
                     disabled={!!submitResult}
                 />

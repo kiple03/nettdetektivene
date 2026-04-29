@@ -66,7 +66,7 @@ export function StopLevelsModal({ stop, onClose }: StopLevelsModalProps) {
                                         }
                                     }}
                                 >
-                                    <span className={styles.levelTitle}>Nivå {level.order} - {level.title}</span>
+                                    <span className={styles.levelTitle}>{level.title}</span>
                                     {level.description && (
                                         <span className={styles.levelDesc}>{level.description}</span>
                                     )}
