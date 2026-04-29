@@ -42,7 +42,7 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isTrue();
         assertThat(result.feedback()).isEqualTo("Dette er et ekte bilde.");
-        assertThat(result.correctOptionIds()).containsExactly(1);
+        assertThat(result.correctOptionIds()).containsExactly("1");
         assertThat(result.wrongSelectedOptionIds()).isEmpty();
     }
 
@@ -52,8 +52,8 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).isEqualTo("Dette er faktisk KI-generert.");
-        assertThat(result.correctOptionIds()).containsExactly(1);
-        assertThat(result.wrongSelectedOptionIds()).containsExactly(2);
+        assertThat(result.correctOptionIds()).containsExactly("1");
+        assertThat(result.wrongSelectedOptionIds()).containsExactly("2");
     }
 
     @Test
@@ -62,8 +62,8 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).isEqualTo("Bildet er digitalt manipulert.");
-        assertThat(result.correctOptionIds()).containsExactly(1);
-        assertThat(result.wrongSelectedOptionIds()).containsExactly(3);
+        assertThat(result.correctOptionIds()).containsExactly("1");
+        assertThat(result.wrongSelectedOptionIds()).containsExactly("3");
     }
 
     @Test
@@ -78,7 +78,7 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isTrue();
         assertThat(result.feedback()).isEqualTo("Ekte.");
-        assertThat(result.correctOptionIds()).containsExactly(1, 2);
+        assertThat(result.correctOptionIds()).containsExactly("1", "2");
         assertThat(result.wrongSelectedOptionIds()).isEmpty();
     }
 
@@ -94,7 +94,7 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).isNull();
-        assertThat(result.correctOptionIds()).containsExactly(1, 2);
+        assertThat(result.correctOptionIds()).containsExactly("1", "2");
         assertThat(result.wrongSelectedOptionIds()).isEmpty();
     }
 
@@ -109,7 +109,7 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isTrue();
         assertThat(result.feedback()).isNull();
-        assertThat(result.correctOptionIds()).containsExactly(1);
+        assertThat(result.correctOptionIds()).containsExactly("1");
     }
 
     @Test
@@ -123,7 +123,7 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isTrue();
         assertThat(result.feedback()).isNull();
-        assertThat(result.correctOptionIds()).containsExactly(1);
+        assertThat(result.correctOptionIds()).containsExactly("1");
     }
 
     @Test
@@ -137,8 +137,8 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).isNull();
-        assertThat(result.correctOptionIds()).containsExactly(1);
-        assertThat(result.wrongSelectedOptionIds()).containsExactly(2);
+        assertThat(result.correctOptionIds()).containsExactly("1");
+        assertThat(result.wrongSelectedOptionIds()).containsExactly("2");
     }
 
     @Test
@@ -152,8 +152,8 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).isNull();
-        assertThat(result.correctOptionIds()).containsExactly(1);
-        assertThat(result.wrongSelectedOptionIds()).containsExactly(2);
+        assertThat(result.correctOptionIds()).containsExactly("1");
+        assertThat(result.wrongSelectedOptionIds()).containsExactly("2");
     }
 
     @Test
@@ -162,7 +162,7 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).isNull();
-        assertThat(result.correctOptionIds()).containsExactly(1);
+        assertThat(result.correctOptionIds()).containsExactly("1");
         assertThat(result.wrongSelectedOptionIds()).isEmpty();
     }
 
@@ -175,7 +175,7 @@ class PictureQuizAnswerValidatorTest {
 
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).isNull();
-        assertThat(result.correctOptionIds()).containsExactly(1);
+        assertThat(result.correctOptionIds()).containsExactly("1");
         assertThat(result.wrongSelectedOptionIds()).isEmpty();
     }
 

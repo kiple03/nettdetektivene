@@ -44,7 +44,7 @@ class MultipleChoiceAnswerValidatorTest {
 
         assertThat(result.correct()).isTrue();
         assertThat(result.feedback()).isEqualTo("Correct explanation");
-        assertThat(result.correctOptionIds()).containsExactly(1);
+        assertThat(result.correctOptionIds()).containsExactly("1");
         assertThat(result.wrongSelectedOptionIds()).isEmpty();
     }
 
@@ -63,7 +63,7 @@ class MultipleChoiceAnswerValidatorTest {
 
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).isEqualTo("This was wrong");
-        assertThat(result.correctOptionIds()).containsExactly(1);
+        assertThat(result.correctOptionIds()).containsExactly("1");
         assertThat(result.wrongSelectedOptionIds()).isEmpty();
     }
 
@@ -83,7 +83,7 @@ class MultipleChoiceAnswerValidatorTest {
 
         assertThat(result.correct()).isTrue();
         assertThat(result.feedback()).isEqualTo("Correct two");
-        assertThat(result.correctOptionIds()).containsExactly(1, 2);
+        assertThat(result.correctOptionIds()).containsExactly("1", "2");
         assertThat(result.wrongSelectedOptionIds()).isEmpty();
     }
 
