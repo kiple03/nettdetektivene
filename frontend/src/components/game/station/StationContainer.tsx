@@ -15,6 +15,7 @@ type Props = {
   children: React.ReactNode;
   submitResult: SubmitAnswerResult | null;
   onNext: () => void;
+  isTearing?: boolean;
 };
 
 function StationContainer({ title, type, children, submitResult, onNext }: Props) {

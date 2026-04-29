@@ -69,6 +69,8 @@ export default function GamePage() {
     const levelIdNum = Number(levelId);
     const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
 
+    const [isTearing,setIsTearing] = useState(false);
+
     const submitLevelMutation = useMutation({
         mutationFn: () => submitLevel(levelIdNum, {
             answers: Object.entries(answers).map(([qid, ans]) => ({
@@ -223,17 +225,25 @@ export default function GamePage() {
     };
 
     const handleNext = () => {
-        if (questionIndex < questions.length - 1) {
+      if (questionIndex < questions.length - 1) {
+          setIsTearing(true);
+
+          setTimeout(() => {
             setQuestionIndex((i) => i + 1);
             setSubmitResult(null);
+            setIsTearing(false);
+          }, 800);
+
+          return;
+
+      } else {
+        if (levelPassed) {
+          playVictory();
+          submitLevelMutation.mutate();
         } else {
-            if (levelPassed) {
-                playVictory();
-                submitLevelMutation.mutate();
-            } else {
-                setDialogOpen(true);
-            }
+          setDialogOpen(true);
         }
+      }
     };
 
     const handleRetry = () => {
@@ -277,6 +287,7 @@ export default function GamePage() {
                     levelTitle={`${level.title}`}
                     onAnswer={handleAnswer}
                     disabled={!!submitResult}
+                    isTearing={isTearing}
                 />
             </StationContainer>
 

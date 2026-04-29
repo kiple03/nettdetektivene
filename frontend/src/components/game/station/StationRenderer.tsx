@@ -13,9 +13,10 @@ type StationRendererProps = {
   levelTitle?: string;
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
+    isTearing?: boolean;
 };
 
-function StationRenderer({ station, levelTitle = station.title ?? "Nivå", onAnswer, disabled = false }: StationRendererProps) {
+function StationRenderer({ station, levelTitle = station.title ?? "Nivå", onAnswer, disabled = false, isTearing }: StationRendererProps) {
   switch (station.type) {
     case STATION_TYPE.NEWS:
       return (
@@ -24,6 +25,7 @@ function StationRenderer({ station, levelTitle = station.title ?? "Nivå", onAns
               levelTitle={levelTitle}
               onAnswer={onAnswer}
               disabled={disabled}
+              isTearing={isTearing}
           />
       );
 
