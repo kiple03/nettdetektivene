@@ -1,6 +1,7 @@
 package org.ntnu.backend.config;
 
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;
@@ -24,9 +25,7 @@ class AvatarDataSeederTest {
     @Test
     void run_savesAllItemsWhenDatabaseIsEmpty() throws Exception {
         when(avatarItemRepository.findAll()).thenReturn(Collections.emptyList());
-
         avatarDataSeeder.run();
-
         verify(avatarItemRepository).saveAll(anyList());
     }
 
@@ -54,9 +53,7 @@ class AvatarDataSeederTest {
                 AvatarItem.builder().name("face_girl").category("face").build()
         );
         when(avatarItemRepository.findAll()).thenReturn(existing);
-
         avatarDataSeeder.run();
-
         verify(avatarItemRepository, never()).saveAll(anyList());
     }
 
@@ -66,22 +63,15 @@ class AvatarDataSeederTest {
                 AvatarItem.builder().name("detective_hat").category("head").build()
         );
         when(avatarItemRepository.findAll()).thenReturn(existing);
-
         avatarDataSeeder.run();
-
-        verify(avatarItemRepository).saveAll(argThat(items -> {
-            List<?> list = (List<?>) items;
-            // 19 total - 1 existing = 18 new items
-            return list.size() == 18;
-        }));
+        verify(avatarItemRepository).saveAll(argThat(items ->
+                ((List<?>) items).size() == 18));
     }
 
     @Test
     void run_savesItemsWithCorrectCategories() throws Exception {
         when(avatarItemRepository.findAll()).thenReturn(Collections.emptyList());
-
         avatarDataSeeder.run();
-
         verify(avatarItemRepository).saveAll(argThat(items -> {
             List<AvatarItem> list = (List<AvatarItem>) items;
             return list.stream().anyMatch(i -> "head".equals(i.getCategory()))
@@ -91,5 +81,57 @@ class AvatarDataSeederTest {
                     && list.stream().anyMatch(i -> "hair".equals(i.getCategory()))
                     && list.stream().anyMatch(i -> "accessories".equals(i.getCategory()));
         }));
+    }
+
+    @Test
+    void run_savesExactly19ItemsWhenEmpty() throws Exception {
+        when(avatarItemRepository.findAll()).thenReturn(Collections.emptyList());
+        avatarDataSeeder.run();
+        verify(avatarItemRepository).saveAll(argThat(items ->
+                ((List<?>) items).size() == 19));
+    }
+
+    @Test
+    void run_doesNotSaveDetectiveHatIfAlreadyPresent() throws Exception {
+        when(avatarItemRepository.findAll()).thenReturn(
+                List.of(AvatarItem.builder().name("detective_hat").category("head").build())
+        );
+        avatarDataSeeder.run();
+        verify(avatarItemRepository).saveAll(argThat(items -> {
+            List<AvatarItem> list = (List<AvatarItem>) items;
+            return list.stream().noneMatch(i -> "detective_hat".equals(i.getName()));
+        }));
+    }
+
+    @Test
+    void run_includesFaceGirlWithImageFile() throws Exception {
+        when(avatarItemRepository.findAll()).thenReturn(Collections.emptyList());
+        avatarDataSeeder.run();
+        verify(avatarItemRepository).saveAll(argThat(items -> {
+            List<AvatarItem> list = (List<AvatarItem>) items;
+            return list.stream()
+                    .filter(i -> "face_girl".equals(i.getName()))
+                    .anyMatch(i -> "face_girl.png".equals(i.getImageFile()));
+        }));
+    }
+
+    @Test
+    void run_handlesPartialExistingItemsCorrectly() throws Exception {
+        List<AvatarItem> existing = List.of(
+                AvatarItem.builder().name("detective_hat").category("head").build(),
+                AvatarItem.builder().name("detective_suit").category("body").build(),
+                AvatarItem.builder().name("face_1").category("face").build(),
+                AvatarItem.builder().name("face_2").category("face").build(),
+                AvatarItem.builder().name("face_3").category("face").build(),
+                AvatarItem.builder().name("magnifying_glass").category("accessories").build(),
+                AvatarItem.builder().name("police_hat").category("head").build(),
+                AvatarItem.builder().name("police_uniform").category("body").build(),
+                AvatarItem.builder().name("sheriff_hat").category("head").build(),
+                AvatarItem.builder().name("sheriff_star").category("accessories").build()
+        );
+        when(avatarItemRepository.findAll()).thenReturn(existing);
+        avatarDataSeeder.run();
+        verify(avatarItemRepository).saveAll(argThat(items ->
+                ((List<?>) items).size() == 9));
     }
 }

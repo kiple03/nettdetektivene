@@ -316,6 +316,41 @@ class LeaderboardServiceTest {
     }
 
     @Test
+    void computeScores_whenNoEnrollments_shouldReturnEmptyMap() {
+        when(stopRepository.findAllWithLevelCounts()).thenReturn(List.of());
+        when(userProgressRepository.findAllById(List.of())).thenReturn(List.of());
+
+        Map<UUID, Integer> result = leaderboardService.computeScores(List.of());
+
+        assertTrue(result.isEmpty());
+
+        verify(stopRepository).findAllWithLevelCounts();
+        verify(userProgressRepository).findAllById(List.of());
+    }
+
+    @Test
+    void getTeacherClassroomScores_whenTeacherHasNoClassrooms_shouldReturnEmptyList() {
+        when(classroomTeacherRepository.findClassroomsByTeacherId(teacherId))
+                .thenReturn(List.of());
+        when(enrollmentRepository.findAllByClassroomIdInAndLeftAtIsNull(List.of()))
+                .thenReturn(List.of());
+        when(stopRepository.findAllWithLevelCounts())
+                .thenReturn(List.of());
+        when(userProgressRepository.findAllById(List.of()))
+                .thenReturn(List.of());
+
+        List<LeaderboardClassroomResponse> result =
+                leaderboardService.getTeacherClassroomScores(teacherId);
+
+        assertTrue(result.isEmpty());
+
+        verify(classroomTeacherRepository).findClassroomsByTeacherId(teacherId);
+        verify(enrollmentRepository).findAllByClassroomIdInAndLeftAtIsNull(List.of());
+        verify(stopRepository).findAllWithLevelCounts();
+        verify(userProgressRepository).findAllById(List.of());
+    }
+
+    @Test
     void getGlobalLeaderboard_shouldBuildSortedLeaderboardAndUseMapper() {
         StopLevelCount stopOne = mockStopLevelCount(1, 3L);
         StopLevelCount stopTwo = mockStopLevelCount(2, 2L);

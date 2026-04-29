@@ -149,6 +149,46 @@ class CensorWordServiceTest {
     }
 
     @Test
+    void addWord_whenAuthorizationFails_shouldThrowAndNotUseRepositories() {
+        AddCensorWordRequest request = new AddCensorWordRequest("badword");
+
+        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "No access"))
+                .when(classroomAuthorizationService)
+                .verifyAccess(principal, classroomId);
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> censorWordService.addWord(classroomId, request, principal)
+        );
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verifyNoInteractions(censorWordRepository);
+        verifyNoInteractions(classroomRepository);
+        verifyNoInteractions(profanityFilterService);
+    }
+
+    @Test
+    void deleteWord_whenAuthorizationFails_shouldThrowAndNotUseRepositories() {
+        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "No access"))
+                .when(classroomAuthorizationService)
+                .verifyAccess(principal, classroomId);
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> censorWordService.deleteWord(classroomId, wordId, principal)
+        );
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verifyNoInteractions(censorWordRepository);
+        verifyNoInteractions(classroomRepository);
+        verifyNoInteractions(profanityFilterService);
+    }
+
+    @Test
     void addWord_whenWordAlreadyExists_shouldThrowConflictAndNotSave() {
         AddCensorWordRequest request = new AddCensorWordRequest(" BadWord ");
 

@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.mockito.ArgumentCaptor;
+import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
@@ -560,6 +562,262 @@ class TeacherClassroomServiceTest {
         );
 
         assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(classroomTeacherRepository, never()).delete(any());
+    }
+
+    @Test
+    void getStudentNotebook_whenEnrollmentNotFound_shouldThrowNotFound() {
+        when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId))
+                .thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.getStudentNotebook(classroomId, studentId, principal)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId);
+        verifyNoInteractions(noteService);
+    }
+
+    @Test
+    void updateStudentUsername_whenEnrollmentNotFound_shouldThrowNotFound() {
+        UpdateStudentUsernameRequest request = new UpdateStudentUsernameRequest("NewName");
+
+        when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId))
+                .thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.updateStudentUsername(classroomId, studentId, request, principal)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId);
+        verifyNoInteractions(userRepository);
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void inviteCoTeacher_shouldSaveCoTeacherAndReturnResponse() {
+        InviteCoTeacherRequest request = new InviteCoTeacherRequest("coteacher@example.com");
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(true);
+        when(userRepository.findByEmail("coteacher@example.com"))
+                .thenReturn(Optional.of(coTeacher));
+        when(classroomTeacherRepository.existsByClassroomIdAndUserId(classroomId, coTeacherId))
+                .thenReturn(false);
+        when(classroomRepository.findById(classroomId))
+                .thenReturn(Optional.of(classroom));
+
+        CoTeacherResponse result =
+                teacherClassroomService.inviteCoTeacher(classroomId, request, principal);
+
+        assertEquals(coTeacherId.toString(), result.getUserId());
+        assertEquals("CoTeacher", result.getUsername());
+        assertEquals("coteacher@example.com", result.getEmail());
+        assertFalse(result.isOwner());
+
+        ArgumentCaptor<ClassroomTeacher> captor = ArgumentCaptor.forClass(ClassroomTeacher.class);
+        verify(classroomTeacherRepository).save(captor.capture());
+
+        ClassroomTeacher saved = captor.getValue();
+        assertEquals(classroomId, saved.getId().getClassroomId());
+        assertEquals(coTeacherId, saved.getId().getUserId());
+        assertEquals(classroom, saved.getClassroom());
+        assertEquals(coTeacher, saved.getUser());
+        assertFalse(saved.isOwner());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(classroomTeacherRepository).isOwnerOfClassroom(classroomId, teacherId);
+        verify(userRepository).findByEmail("coteacher@example.com");
+        verify(classroomTeacherRepository).existsByClassroomIdAndUserId(classroomId, coTeacherId);
+        verify(classroomRepository).findById(classroomId);
+    }
+
+    @Test
+    void inviteCoTeacher_whenRequesterIsNotOwner_shouldThrowAccessDenied() {
+        InviteCoTeacherRequest request = new InviteCoTeacherRequest("coteacher@example.com");
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(false);
+
+        assertThrows(
+                AccessDeniedException.class,
+                () -> teacherClassroomService.inviteCoTeacher(classroomId, request, principal)
+        );
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(classroomTeacherRepository).isOwnerOfClassroom(classroomId, teacherId);
+        verifyNoInteractions(userRepository);
+        verify(classroomTeacherRepository, never()).save(any());
+    }
+
+    @Test
+    void inviteCoTeacher_whenInviteeNotFound_shouldThrowNotFound() {
+        InviteCoTeacherRequest request = new InviteCoTeacherRequest("missing@example.com");
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(true);
+        when(userRepository.findByEmail("missing@example.com"))
+                .thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.inviteCoTeacher(classroomId, request, principal)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(classroomTeacherRepository).isOwnerOfClassroom(classroomId, teacherId);
+        verify(userRepository).findByEmail("missing@example.com");
+        verify(classroomTeacherRepository, never()).save(any());
+    }
+
+    @Test
+    void inviteCoTeacher_whenInviteeIsNotTeacher_shouldThrowBadRequest() {
+        InviteCoTeacherRequest request = new InviteCoTeacherRequest("student@example.com");
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(true);
+        when(userRepository.findByEmail("student@example.com"))
+                .thenReturn(Optional.of(student));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.inviteCoTeacher(classroomId, request, principal)
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(userRepository).findByEmail("student@example.com");
+        verify(classroomTeacherRepository, never()).save(any());
+    }
+
+    @Test
+    void inviteCoTeacher_whenTeacherAlreadyAdded_shouldThrowConflict() {
+        InviteCoTeacherRequest request = new InviteCoTeacherRequest("coteacher@example.com");
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(true);
+        when(userRepository.findByEmail("coteacher@example.com"))
+                .thenReturn(Optional.of(coTeacher));
+        when(classroomTeacherRepository.existsByClassroomIdAndUserId(classroomId, coTeacherId))
+                .thenReturn(true);
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.inviteCoTeacher(classroomId, request, principal)
+        );
+
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(userRepository).findByEmail("coteacher@example.com");
+        verify(classroomTeacherRepository).existsByClassroomIdAndUserId(classroomId, coTeacherId);
+        verify(classroomRepository, never()).findById(any());
+        verify(classroomTeacherRepository, never()).save(any());
+    }
+
+    @Test
+    void inviteCoTeacher_whenClassroomNotFound_shouldThrowNotFound() {
+        InviteCoTeacherRequest request = new InviteCoTeacherRequest("coteacher@example.com");
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(true);
+        when(userRepository.findByEmail("coteacher@example.com"))
+                .thenReturn(Optional.of(coTeacher));
+        when(classroomTeacherRepository.existsByClassroomIdAndUserId(classroomId, coTeacherId))
+                .thenReturn(false);
+        when(classroomRepository.findById(classroomId))
+                .thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.inviteCoTeacher(classroomId, request, principal)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(classroomRepository).findById(classroomId);
+        verify(classroomTeacherRepository, never()).save(any());
+    }
+
+    @Test
+    void removeCoTeacher_whenTargetIsOwner_shouldPromoteAnotherTeacherAndDeleteTarget() {
+        ClassroomTeacher ownerEntry = ClassroomTeacher.builder()
+                .id(new ClassroomTeacherId(classroomId, teacherId))
+                .classroom(classroom)
+                .user(teacher)
+                .isOwner(true)
+                .build();
+
+        ClassroomTeacher coTeacherEntry = ClassroomTeacher.builder()
+                .id(new ClassroomTeacherId(classroomId, coTeacherId))
+                .classroom(classroom)
+                .user(coTeacher)
+                .isOwner(false)
+                .build();
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(true);
+        when(classroomTeacherRepository.findWithUsersByClassroomId(classroomId))
+                .thenReturn(List.of(ownerEntry, coTeacherEntry));
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(true);
+        when(classroomTeacherRepository.findOneByClassroomIdAndUserId(classroomId, teacherId))
+                .thenReturn(Optional.of(ownerEntry));
+
+        teacherClassroomService.removeCoTeacher(classroomId, teacherId, principal);
+
+        assertTrue(coTeacherEntry.isOwner());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(classroomTeacherRepository).save(coTeacherEntry);
+        verify(classroomTeacherRepository).delete(ownerEntry);
+    }
+
+    @Test
+    void removeCoTeacher_whenTargetEntryNotFound_shouldThrowNotFound() {
+        ClassroomTeacher ownerEntry = ClassroomTeacher.builder()
+                .id(new ClassroomTeacherId(classroomId, teacherId))
+                .classroom(classroom)
+                .user(teacher)
+                .isOwner(true)
+                .build();
+
+        ClassroomTeacher targetEntry = ClassroomTeacher.builder()
+                .id(new ClassroomTeacherId(classroomId, coTeacherId))
+                .classroom(classroom)
+                .user(coTeacher)
+                .isOwner(false)
+                .build();
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(true);
+        when(classroomTeacherRepository.findWithUsersByClassroomId(classroomId))
+                .thenReturn(List.of(ownerEntry, targetEntry));
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, coTeacherId))
+                .thenReturn(false);
+        when(classroomTeacherRepository.findOneByClassroomIdAndUserId(classroomId, coTeacherId))
+                .thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.removeCoTeacher(classroomId, coTeacherId, principal)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
 
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verify(classroomTeacherRepository, never()).delete(any());
