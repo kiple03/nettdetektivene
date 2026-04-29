@@ -1,0 +1,44 @@
+.btn {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 100;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: rgba(255, 248, 220, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(255, 220, 120, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    backdrop-filter: blur(6px);
+    animation: wobble 3s ease-in-out infinite;
+}
+
+@keyframes wobble {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    20%       { transform: rotate(-8deg) translateY(-4px); }
+    40%       { transform: rotate(6deg) translateY(-6px); }
+    60%       { transform: rotate(-4deg) translateY(-3px); }
+    80%       { transform: rotate(3deg) translateY(-1px); }
+}
+
+.btn:hover {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), 0 0 0 8px rgba(255, 220, 120, 0.5);
+}
+
+.btn:active {
+    animation: none;
+    transform: scale(0.95);
+}
+
+.btnImg {
+    width: 135%;
+    height: 135%;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.5));
+}
