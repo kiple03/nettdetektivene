@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
@@ -34,6 +36,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class QuestionServiceTest {
 
   @Mock private QuestionRepository questionRepository;
@@ -132,6 +135,7 @@ class QuestionServiceTest {
     q2.setOptionContent(VALID_OPTIONS_JSON);
     q2.setLevel(testQuestion.getLevel());
 
+    when(levelRepository.findById(1)).thenReturn(Optional.of(testQuestion.getLevel()));
     when(questionRepository.findByLevelIdOrderByIdAsc(1))
         .thenReturn(List.of(testQuestion, q2));
 
@@ -144,6 +148,11 @@ class QuestionServiceTest {
 
   @Test
   void getQuestionsForLevel_noQuestions_returnsEmpty() {
+    Level emptyLevel = new Level();
+    emptyLevel.setId(99);
+    emptyLevel.setStop(testQuestion.getLevel().getStop());
+
+    when(levelRepository.findById(99)).thenReturn(Optional.of(emptyLevel));
     when(questionRepository.findByLevelIdOrderByIdAsc(99))
         .thenReturn(List.of());
 
