@@ -112,8 +112,4 @@ public class GameMapper {
       );
     };
   }
-
-  public StopResponse bossStop() {
-    return null;
-  }
 }
