@@ -1,50 +1,43 @@
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect, useRef, useState } from "react";
-import backgroundMusic from '@/assets/sounds/backgroundMusic.mp3'
+import { useEffect, useState } from "react";
+import { playMusic, stopMusic, getMuted, setMuted as setMutedManager, subscribeMute } from "@/audio/musicManager";
 
-const MUTE_KEY = 'musicMuted';
-
-// Exposed so other pages can pause/resume the global background music
-export const bgAudio: { current: HTMLAudioElement | null } = { current: null };
-
-export default function BackgroundMusic(){
-    const {isLoggedIn, role} = useAuth();
-    const audioRef = useRef<HTMLAudioElement | null>(null);
-    const [muted, setMuted] = useState(() => localStorage.getItem(MUTE_KEY) === 'true');
+export default function BackgroundMusic() {
+    const { isLoggedIn, role } = useAuth();
+    const [muted, setMutedState] = useState(getMuted);
 
     useEffect(() => {
-        const audio = new Audio(backgroundMusic);
-        audio.loop = true;
-        audio.volume = 0.4;
-        audio.muted = muted;
-        audioRef.current = audio;
-        bgAudio.current = audio;
-        return () => { audio.pause(); audioRef.current = null; bgAudio.current = null; };
+        return subscribeMute(setMutedState);
     }, []);
 
     useEffect(() => {
-        const audio = audioRef.current;
-        if(!audio) return;
-        if(isLoggedIn && role === 'STUDENT'){
-            audio.play().catch(() => {
-                const resume = () => audio.play().catch(() => {});
-                document.addEventListener('click', resume, {once: true});
-            });
-        } else{
-            audio.pause();
+        if (isLoggedIn && role === 'STUDENT') {
+            playMusic('background');
+        } else {
+            stopMusic();
         }
     }, [isLoggedIn, role]);
 
-    useEffect(() => {
-        if(audioRef.current) audioRef.current.muted = muted;
-        localStorage.setItem(MUTE_KEY, String(muted));
-    }, [muted]);
+    if (!isLoggedIn || role !== 'STUDENT') return null;
 
-    if(!isLoggedIn || role !== 'STUDENT') return null;
+    const handleToggle = () => {
+        setMutedManager(!muted);
+    };
 
     return (
-        <button onClick={() => setMuted(m => !m)} 
-                style={{position: 'fixed', bottom: '1rem', right: '1rem', zIndex: 9999}}
+        <button onClick={handleToggle}
+                style={{
+                    position: 'fixed',
+                    bottom: '1rem',
+                    right: '1rem',
+                    zIndex: 9999,
+                    fontSize: '4rem',
+                    padding: '0.5rem 0.75rem',
+                    lineHeight: 1,
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                }}
                 aria-label={muted ? 'Slå på musikk' : 'Slå av musikk'}>
             {muted ? '🔇' : '🔊'}
         </button>
