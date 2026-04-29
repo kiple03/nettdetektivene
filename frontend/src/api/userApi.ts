@@ -8,6 +8,7 @@ interface RawEquippedItem {
   name: string;
   category: string;
   imageUrl: string;
+  locked?: boolean;
 }
 
 interface RawInventoryItem {
@@ -15,6 +16,7 @@ interface RawInventoryItem {
   name: string;
   category: string;
   imageUrl: string;
+  locked?: boolean;
 }
 interface RawUserProfile {
   username: string;
@@ -29,7 +31,7 @@ export const fetchUserInventory = async (): Promise<EquippedItem[]> => {
 };
 
 function mapEquippedItem(raw: RawEquippedItem): EquippedItem {
-  return { id: raw.id, name: raw.name, category: raw.category, imageUrl: raw.imageUrl };
+  return { id: raw.id, name: raw.name, category: raw.category, imageUrl: raw.imageUrl, locked: raw.locked };
 }
 
 function mapUserProfile(raw: RawUserProfile): UserProfile {
