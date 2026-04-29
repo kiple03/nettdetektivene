@@ -1,7 +1,9 @@
 package org.ntnu.backend.classroom.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.AddCensorWordRequest;
 import org.ntnu.backend.classroom.dto.CensorWordResponse;
@@ -11,6 +13,8 @@ import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.service.ProfanityFilterService;
+import org.springframework.context.event.EventListener;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,15 @@ public class CensorWordService {
     private final ClassroomRepository classroomRepository;
     private final ClassroomAuthorizationService classroomAuthorizationService;
     private final ProfanityFilterService profanityFilterService;
+
+    @EventListener(ApplicationReadyEvent.class)
+    @Transactional(readOnly = true)
+    public void warmCacheOnStartup() {
+        Map<UUID, List<ClassroomCensorWord>> byClassroom = censorWordRepository.findAll()
+                .stream()
+                .collect(Collectors.groupingBy(w -> w.getClassroom().getId()));
+        byClassroom.forEach((classroomId, words) -> syncCache(classroomId, words));
+    }
 
     @Transactional(readOnly = true)
     public List<CensorWordResponse> listWords(UUID classroomId, JwtAuthenticatedPrincipal principal) {
