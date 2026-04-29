@@ -3,6 +3,7 @@ package org.ntnu.backend.game.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -35,7 +36,9 @@ import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.util.OptionValidator;
 import org.ntnu.backend.game.validation.LevelSubmissionValidator;
 import org.ntnu.backend.notes.service.NoteService;
+import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
@@ -321,13 +324,13 @@ class GameServiceTest {
     List<Question> questions = List.of(questionOne, questionTwo);
 
     when(levelRepository.findById(levelId)).thenReturn(Optional.of(level));
-    when(questionRepository.findByLevelIdOrderByIdAsc(levelId)).thenReturn(questions);
+    when(questionRepository.findByLevelIdAndClassroomIdIsNull(levelId)).thenReturn(questions);
     when(progressService.recordCompletionOfLevel(userId, RoleEnum.STUDENT, level)).thenReturn(true);
 
-    gameService.submitLevel(levelId, request, userId, RoleEnum.STUDENT);
+    gameService.submitLevel(levelId, request, principal(RoleEnum.STUDENT));
 
     verify(levelRepository).findById(levelId);
-    verify(questionRepository).findByLevelIdOrderByIdAsc(levelId);
+    verify(questionRepository).findByLevelIdAndClassroomIdIsNull(levelId);
     verify(levelSubmissionValidator).validate(questions, request.answers());
     verify(progressService).recordCompletionOfLevel(userId, RoleEnum.STUDENT, level);
     verify(noteService).saveCompletionTipIfNeeded(userId, level);
@@ -356,13 +359,13 @@ class GameServiceTest {
     List<Question> questions = List.of(question);
 
     when(levelRepository.findById(levelId)).thenReturn(Optional.of(level));
-    when(questionRepository.findByLevelIdOrderByIdAsc(levelId)).thenReturn(questions);
+    when(questionRepository.findByLevelIdAndClassroomIdIsNull(levelId)).thenReturn(questions);
     when(progressService.recordCompletionOfLevel(userId, RoleEnum.STUDENT, level)).thenReturn(false);
 
-    gameService.submitLevel(levelId, request, userId, RoleEnum.STUDENT);
+    gameService.submitLevel(levelId, request, principal(RoleEnum.STUDENT));
 
     verify(levelRepository).findById(levelId);
-    verify(questionRepository).findByLevelIdOrderByIdAsc(levelId);
+    verify(questionRepository).findByLevelIdAndClassroomIdIsNull(levelId);
     verify(levelSubmissionValidator).validate(questions, request.answers());
     verify(progressService).recordCompletionOfLevel(userId, RoleEnum.STUDENT, level);
     verify(noteService, never()).saveCompletionTipIfNeeded(any(UUID.class), any(Level.class));
@@ -374,11 +377,11 @@ class GameServiceTest {
 
     when(levelRepository.findById(99)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> gameService.submitLevel(99, request, userId, RoleEnum.STUDENT))
+    assertThatThrownBy(() -> gameService.submitLevel(99, request, principal(RoleEnum.STUDENT)))
             .isInstanceOf(LevelNotFoundException.class);
 
     verify(levelRepository).findById(99);
-    verify(questionRepository, never()).findByLevelIdOrderByIdAsc(any(Integer.class));
+    verify(questionRepository, never()).findByLevelIdAndClassroomIdIsNull(anyInt());
     verify(levelSubmissionValidator, never()).validate(any(), any());
     verify(progressService, never()).recordCompletionOfLevel(any(), any(), any());
     verify(noteService, never()).saveCompletionTipIfNeeded(any(), any());
@@ -407,18 +410,18 @@ class GameServiceTest {
     List<Question> questions = List.of(question);
 
     when(levelRepository.findById(levelId)).thenReturn(Optional.of(level));
-    when(questionRepository.findByLevelIdOrderByIdAsc(levelId)).thenReturn(questions);
+    when(questionRepository.findByLevelIdAndClassroomIdIsNull(levelId)).thenReturn(questions);
 
     doThrow(new RuntimeException("Invalid level submission"))
             .when(levelSubmissionValidator)
             .validate(questions, request.answers());
 
-    assertThatThrownBy(() -> gameService.submitLevel(levelId, request, userId, RoleEnum.STUDENT))
+    assertThatThrownBy(() -> gameService.submitLevel(levelId, request, principal(RoleEnum.STUDENT)))
             .isInstanceOf(RuntimeException.class)
             .hasMessageContaining("Invalid level submission");
 
     verify(levelRepository).findById(levelId);
-    verify(questionRepository).findByLevelIdOrderByIdAsc(levelId);
+    verify(questionRepository).findByLevelIdAndClassroomIdIsNull(levelId);
     verify(levelSubmissionValidator).validate(questions, request.answers());
     verify(progressService, never()).recordCompletionOfLevel(any(), any(), any());
     verify(noteService, never()).saveCompletionTipIfNeeded(any(), any());
@@ -447,14 +450,25 @@ class GameServiceTest {
     List<Question> questions = List.of(question);
 
     when(levelRepository.findById(levelId)).thenReturn(Optional.of(level));
-    when(questionRepository.findByLevelIdOrderByIdAsc(levelId)).thenReturn(questions);
+    when(questionRepository.findByLevelIdAndClassroomIdIsNull(levelId)).thenReturn(questions);
     when(progressService.recordCompletionOfLevel(userId, RoleEnum.TEACHER, level)).thenReturn(false);
 
-    gameService.submitLevel(levelId, request, userId, RoleEnum.TEACHER);
+    gameService.submitLevel(levelId, request, principal(RoleEnum.TEACHER));
 
+    verify(questionRepository).findByLevelIdAndClassroomIdIsNull(levelId);
     verify(levelSubmissionValidator).validate(questions, request.answers());
     verify(progressService).recordCompletionOfLevel(userId, RoleEnum.TEACHER, level);
     verify(noteService, never()).saveCompletionTipIfNeeded(any(UUID.class), any(Level.class));
+  }
+
+  private JwtAuthenticatedPrincipal principal(RoleEnum role) {
+    return new JwtAuthenticatedPrincipal(
+            "test-user",
+            userId,
+            role,
+            null,
+            List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
+    );
   }
 
   private Stop stop(int id, String name, int displayOrder) {

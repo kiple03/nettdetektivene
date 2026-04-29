@@ -272,7 +272,7 @@ class OptionValidatorTest {
 
   private PictureQuizOption pictureQuizOption(int id, boolean correct) {
     PictureQuizOption option = mock(PictureQuizOption.class);
-    when(option.getId()).thenReturn(id);
+    when(option.id()).thenReturn(id);
     when(option.isCorrect()).thenReturn(correct);
     return option;
   }

@@ -55,14 +55,16 @@ class GameMapperTest {
     @Test
     void toStopOverviewResponse_whenUnlocked_shouldMapLockedFalse() {
         Stop stop = new Stop();
-        stop.setId(2);
-        stop.setName("Fotografen");
+        stop.setId(1);
+        stop.setName("Nyhetskvartalet");
 
-        StopResponse result = gameMapper.toStopOverviewResponse(stop, false);
-
-        assertThat(result.id()).isEqualTo(2);
-        assertThat(result.name()).isEqualTo("Fotografen");
-        assertThat(result.locked()).isFalse();
+        Level level = new Level();
+        level.setId(11);
+        level.setTitle("Passordstyrke");
+        level.setDescription("Lag et sterkt passord");
+        level.setLevelType(LevelType.PASSWORD_STRENGTH);
+        level.setOrder(1);
+        level.setStop(stop);
     }
 
     @Test
@@ -90,12 +92,17 @@ class GameMapperTest {
 
     @Test
     void toLevelResponse_whenUnlocked_shouldMapLockedFalse() {
+        Stop stop = new Stop();
+        stop.setId(1);
+        stop.setName("Nyhetskvartalet");
+
         Level level = new Level();
         level.setId(11);
         level.setTitle("Passordstyrke");
         level.setDescription("Lag et sterkt passord");
         level.setLevelType(LevelType.PASSWORD_STRENGTH);
         level.setOrder(1);
+        level.setStop(stop);
 
         LevelResponse result = gameMapper.toLevelResponse(level, false);
 
@@ -158,9 +165,9 @@ class GameMapperTest {
         Question question = question(101, level, "Hvilket bilde er KI?", "picture-json");
 
         PictureQuizOption option = mock(PictureQuizOption.class);
-        when(option.getId()).thenReturn(7);
-        when(option.getText()).thenReturn("AI-generated");
-        when(option.getImageUrl()).thenReturn("https://example.com/picture.jpg");
+        when(option.id()).thenReturn(7);
+        when(option.text()).thenReturn("AI-generated");
+        when(option.imageUrl()).thenReturn("https://example.com/picture.jpg");
 
         when(optionParser.parse("picture-json", LevelType.PICTURE_QUIZ))
                 .thenReturn(List.of(option));

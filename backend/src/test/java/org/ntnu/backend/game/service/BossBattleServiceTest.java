@@ -3,6 +3,8 @@ package org.ntnu.backend.game.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 import java.time.Instant;
@@ -21,6 +23,7 @@ import org.ntnu.backend.game.dto.BossBattleResultResponse;
 import org.ntnu.backend.game.dto.BossBattleSaveRequest;
 import org.ntnu.backend.game.model.BossBattleResult;
 import org.ntnu.backend.game.repository.BossBattleResultRepository;
+import org.ntnu.backend.medalion.service.MedalionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,11 +36,14 @@ class BossBattleServiceTest {
     @Mock
     private EnrollmentRepository enrollmentRepository;
 
+    @Mock
+    private MedalionService medalionService;
+
     @InjectMocks
     private BossBattleService bossBattleService;
 
     @Test
-    void saveResult_whenUserIsEnrolled_shouldSaveBossBattleResult() {
+    void saveResult_whenUserIsEnrolled_shouldSaveBossBattleResultAndAwardMedalion() {
         UUID userId = UUID.randomUUID();
         UUID classroomId = UUID.randomUUID();
 
@@ -53,11 +59,18 @@ class BossBattleServiceTest {
         verify(bossBattleResultRepository).save(captor.capture());
 
         BossBattleResult saved = captor.getValue();
+
         assertThat(saved.getEnrollment()).isEqualTo(enrollment);
         assertThat(saved.isWon()).isTrue();
         assertThat(saved.getTimeSeconds()).isEqualTo(120);
         assertThat(saved.getPlayerHpRemaining()).isEqualTo(45);
         assertThat(saved.getCompletedAt()).isNotNull();
+
+        verify(medalionService).awardInternalUsage(
+                eq(userId),
+                anyString(),
+                anyString()
+        );
     }
 
     @Test
@@ -75,6 +88,7 @@ class BossBattleServiceTest {
 
         verifyNoInteractions(enrollmentRepository);
         verifyNoInteractions(bossBattleResultRepository);
+        verifyNoInteractions(medalionService);
     }
 
     @Test
@@ -95,6 +109,7 @@ class BossBattleServiceTest {
                 });
 
         verify(bossBattleResultRepository, never()).save(any());
+        verifyNoInteractions(medalionService);
     }
 
     @Test
@@ -126,6 +141,10 @@ class BossBattleServiceTest {
         assertThat(response.get().timeSeconds()).isEqualTo(95);
         assertThat(response.get().playerHpRemaining()).isEqualTo(30);
         assertThat(response.get().completedAt()).isEqualTo(completedAt);
+
+        verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, userId);
+        verify(bossBattleResultRepository).findTopByEnrollmentIdOrderByCompletedAtDesc(enrollmentId);
+        verifyNoInteractions(medalionService);
     }
 
     @Test
@@ -146,6 +165,10 @@ class BossBattleServiceTest {
                 bossBattleService.getLatestResult(userId, classroomId);
 
         assertThat(response).isEmpty();
+
+        verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, userId);
+        verify(bossBattleResultRepository).findTopByEnrollmentIdOrderByCompletedAtDesc(enrollmentId);
+        verifyNoInteractions(medalionService);
     }
 
     @Test
@@ -164,6 +187,8 @@ class BossBattleServiceTest {
                     assertThat(exception.getReason()).isEqualTo("Not enrolled in classroom");
                 });
 
+        verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, userId);
         verifyNoInteractions(bossBattleResultRepository);
+        verifyNoInteractions(medalionService);
     }
 }

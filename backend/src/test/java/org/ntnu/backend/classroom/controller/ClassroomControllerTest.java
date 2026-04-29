@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.JoinClassroomRequest;
+import org.ntnu.backend.classroom.dto.JoinClassroomResponse;
 import org.ntnu.backend.classroom.service.ClassroomService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.core.MethodParameter;
@@ -22,8 +23,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -87,6 +87,15 @@ class ClassroomControllerTest {
                 .joinCode("ABC123")
                 .createdAt(LocalDateTime.of(2026, 4, 28, 12, 30))
                 .build();
+
+        JoinClassroomResponse response = JoinClassroomResponse.builder()
+                .id(classroomId.toString())
+                .title("Klasse 5A")
+                .description("Test classroom")
+                .joinCode("ABC123")
+                .createdAt(LocalDateTime.of(2026, 4, 28, 12, 30))
+                .accessToken("new-token")
+                .build();
     }
 
     @Test
@@ -134,12 +143,19 @@ class ClassroomControllerTest {
 
     @Test
     void joinClassroom_shouldReturnJoinedClassroom() throws Exception {
-        when(principal.getUserId()).thenReturn(userId);
-
         JoinClassroomRequest request = new JoinClassroomRequest("ABC123");
 
-        when(classroomService.joinClassroom(any(JoinClassroomRequest.class), eq(userId)))
-                .thenAnswer(invocation -> classroomResponse);
+        JoinClassroomResponse response = JoinClassroomResponse.builder()
+                .id(classroomId.toString())
+                .title("Klasse 5A")
+                .description("Test classroom")
+                .joinCode("ABC123")
+                .createdAt(LocalDateTime.of(2026, 4, 28, 12, 30))
+                .accessToken("new-token")
+                .build();
+
+        when(classroomService.joinClassroom(any(JoinClassroomRequest.class), isNull()))
+                .thenReturn(response);
 
         mockMvc.perform(post("/classrooms/join")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -149,9 +165,12 @@ class ClassroomControllerTest {
                 .andExpect(jsonPath("$.title").value("Klasse 5A"))
                 .andExpect(jsonPath("$.description").value("Test classroom"))
                 .andExpect(jsonPath("$.joinCode").value("ABC123"))
-                .andExpect(jsonPath("$.createdAt").value("2026-04-28T12:30:00"));
+                .andExpect(jsonPath("$.accessToken").value("new-token"));
 
-        verify(classroomService).joinClassroom(any(JoinClassroomRequest.class), eq(userId));
+        verify(classroomService).joinClassroom(
+                argThat(joinRequest -> joinRequest.getJoinCode().equals("ABC123")),
+                isNull()
+        );
     }
 
     @Test

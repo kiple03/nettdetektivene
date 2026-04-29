@@ -145,27 +145,18 @@ class AvatarControllerTest {
     }
 
     @Test
-    void updateUserProfile_shouldUpdateProfileAndReturnUpdatedProfile() throws Exception {
+    void updateUserProfile_shouldUpdateProfileAndReturnUpdatedUsername() throws Exception {
         UpdateUserProfileRequest request =
                 new UpdateUserProfileRequest("NewName", "#111111");
 
-        UserProfileResponse response = UserProfileResponse.builder()
-                .username("NewName")
-                .hairColor("#111111")
-                .equippedItems(List.of())
-                .build();
-
         when(userAvatarService.updateUserProfile(eq(userId), eq(classroomId), any(UpdateUserProfileRequest.class)))
-                .thenReturn(response);
+                .thenReturn("NewName");
 
         mockMvc.perform(put("/user/profile")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("NewName"))
-                .andExpect(jsonPath("$.hairColor").value("#111111"))
-                .andExpect(jsonPath("$.equippedItems").isArray())
-                .andExpect(jsonPath("$.equippedItems.length()").value(0));
+                .andExpect(jsonPath("$.accessToken").value("NewName"));
 
         verify(userAvatarService).updateUserProfile(
                 eq(userId),

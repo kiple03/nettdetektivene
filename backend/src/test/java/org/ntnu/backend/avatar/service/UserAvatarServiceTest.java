@@ -24,6 +24,8 @@ import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
+import org.ntnu.backend.security.JwtService;
+import org.ntnu.backend.security.UserPrincipal;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.ntnu.backend.user.service.ProfanityFilterService;
@@ -34,6 +36,9 @@ class UserAvatarServiceTest {
 
     @Mock
     private UserInventoryItemRepository inventoryRepository;
+
+    @Mock
+    private JwtService jwtService;
 
     @Mock
     private AvatarItemRepository avatarItemRepository;
@@ -110,6 +115,8 @@ class UserAvatarServiceTest {
         );
 
         assertEquals("User not found", exception.getMessage());
+
+        verify(userRepository).findById(userId);
         verify(inventoryRepository, never()).findByUserIdAndIsEquippedTrue(any());
     }
 
@@ -167,7 +174,12 @@ class UserAvatarServiceTest {
     @Test
     void getUserInventory_shouldCreateStarterItemsAndReturnInventoryDtos() {
         AvatarItem starterHat = avatarItem(UUID.randomUUID(), "detective_hat", "hat", null);
-        AvatarItem starterSuit = avatarItem(UUID.randomUUID(), "detective_suit", "outfit", "detective-suit.png");
+        AvatarItem starterSuit = avatarItem(
+                UUID.randomUUID(),
+                "detective_suit",
+                "outfit",
+                "detective-suit.png"
+        );
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(inventoryRepository.findByUserId(userId)).thenReturn(List.of());
@@ -181,12 +193,16 @@ class UserAvatarServiceTest {
         List<EquippedItemDto> inventory = userAvatarService.getUserInventory(userId);
 
         assertEquals(2, inventory.size());
+
         assertEquals("detective_hat", inventory.get(0).getName());
         assertEquals("/assets/detective_hat.svg", inventory.get(0).getImageUrl());
+
         assertEquals("detective_suit", inventory.get(1).getName());
         assertEquals("/assets/detective-suit.png", inventory.get(1).getImageUrl());
 
         verify(userRepository).findById(userId);
+        verify(inventoryRepository).findByUserId(userId);
+        verify(avatarItemRepository).findAll();
         verify(inventoryRepository).saveAll(anyList());
         verify(inventoryRepository).findByUserIdOrderByAvatarItemNameAsc(userId);
     }
@@ -201,6 +217,8 @@ class UserAvatarServiceTest {
         );
 
         assertEquals("User not found", exception.getMessage());
+
+        verify(userRepository).findById(userId);
         verify(inventoryRepository, never()).findByUserIdOrderByAvatarItemNameAsc(any());
     }
 
@@ -246,54 +264,52 @@ class UserAvatarServiceTest {
     }
 
     @Test
-    void updateUserProfile_shouldTrimUsernameUpdateHairColorSaveUserAndReturnProfile() {
-        AvatarItem hat = avatarItem(UUID.randomUUID(), "detective_hat", "hat", null);
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(profanityFilter.containsProfanity("NewName", List.of())).thenReturn(false);
-        when(inventoryRepository.findByUserIdAndIsEquippedTrue(userId))
-                .thenReturn(List.of(inventoryItem(hat, true)));
-
-        UpdateUserProfileRequest request =
-                new UpdateUserProfileRequest("  NewName  ", "#111111");
-
-        UserProfileResponse response =
-                userAvatarService.updateUserProfile(userId, null, request);
-
-        assertEquals("NewName", response.getUsername());
-        assertEquals("#111111", response.getHairColor());
-        assertEquals(1, response.getEquippedItems().size());
-
-        assertEquals("NewName", user.getUsername());
-        assertEquals("#111111", user.getHairColor());
-
-        verify(userRepository, times(2)).findById(userId);
-        verify(userRepository).save(user);
-        verify(profanityFilter).containsProfanity("NewName", List.of());
-    }
-
-    @Test
     void updateUserProfile_whenHairColorIsNull_shouldOnlyUpdateUsername() {
         user.setUsername("OldName");
         user.setHairColor("#old");
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(profanityFilter.containsProfanity("OnlyName", List.of())).thenReturn(false);
-        when(inventoryRepository.findByUserIdAndIsEquippedTrue(userId)).thenReturn(List.of());
+        when(jwtService.generateToken(any(UserPrincipal.class), any()))
+                .thenReturn("new-jwt-token");
 
         UpdateUserProfileRequest request =
                 new UpdateUserProfileRequest("OnlyName", null);
 
-        UserProfileResponse response =
+        String response =
                 userAvatarService.updateUserProfile(userId, null, request);
 
-        assertEquals("OnlyName", response.getUsername());
-        assertEquals("#old", response.getHairColor());
-
+        assertEquals("new-jwt-token", response);
         assertEquals("OnlyName", user.getUsername());
         assertEquals("#old", user.getHairColor());
 
+        verify(userRepository).findById(userId);
         verify(userRepository).save(user);
+        verify(profanityFilter).containsProfanity("OnlyName", List.of());
+        verify(jwtService).generateToken(any(UserPrincipal.class), any());
+    }
+
+    @Test
+    void updateUserProfile_shouldTrimUsernameUpdateHairColorSaveUserAndReturnUsername() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(profanityFilter.containsProfanity("NewName", List.of())).thenReturn(false);
+        when(jwtService.generateToken(any(UserPrincipal.class), any()))
+                .thenReturn("new-jwt-token");
+
+        UpdateUserProfileRequest request =
+                new UpdateUserProfileRequest("  NewName  ", "#111111");
+
+        String response =
+                userAvatarService.updateUserProfile(userId, null, request);
+
+        assertEquals("new-jwt-token", response);
+        assertEquals("NewName", user.getUsername());
+        assertEquals("#111111", user.getHairColor());
+
+        verify(userRepository).findById(userId);
+        verify(userRepository).save(user);
+        verify(profanityFilter).containsProfanity("NewName", List.of());
+        verify(jwtService).generateToken(any(UserPrincipal.class), any());
     }
 
     @Test
@@ -311,8 +327,11 @@ class UserAvatarServiceTest {
 
         assertEquals(400, exception.getStatusCode().value());
 
+        verify(userRepository).findById(userId);
+        verify(profanityFilter).containsProfanity("BadName", List.of());
         verify(notificationService).notifyInappropriateUsername(user, "BadName");
         verify(userRepository, never()).save(any());
+        verify(inventoryRepository, never()).findByUserIdAndIsEquippedTrue(any());
     }
 
     @Test
@@ -329,9 +348,11 @@ class UserAvatarServiceTest {
 
         assertEquals("User not found", exception.getMessage());
 
+        verify(userRepository).findById(userId);
         verify(profanityFilter, never()).containsProfanity(anyString(), anyList());
         verify(userRepository, never()).save(any());
         verify(notificationService, never()).notifyInappropriateUsername(any(), anyString());
+        verify(inventoryRepository, never()).findByUserIdAndIsEquippedTrue(any());
     }
 
     private AvatarItem avatarItem(UUID id, String name, String category, String imageFile) {

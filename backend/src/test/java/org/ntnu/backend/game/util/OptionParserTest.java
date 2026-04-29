@@ -133,11 +133,11 @@ class OptionParserTest {
     assertInstanceOf(PictureQuizOption.class, result.getFirst());
 
     PictureQuizOption first = (PictureQuizOption) result.getFirst();
-    assertEquals(1, first.getId());
-    assertEquals("AI-generated", first.getText());
-    assertEquals("https://example.com/image-1.jpg", first.getImageUrl());
+    assertEquals(1, first.id());
+    assertEquals("AI-generated", first.text());
+    assertEquals("https://example.com/image-1.jpg", first.imageUrl());
     assertTrue(first.isCorrect());
-    assertEquals("This image has AI artifacts.", first.getExplanation());
+    assertEquals("This image has AI artifacts.", first.explanation());
 
     verify(optionValidator).validate(result, LevelType.PICTURE_QUIZ);
   }
@@ -213,8 +213,8 @@ class OptionParserTest {
   void parseUnsupportedLevelType_textQuiz_callsValidatorWithNullAndReturnsNull() {
     List<Option> result = parser.parse("[]", LevelType.TEXT_QUIZ);
 
-    assertNull(result);
-    verify(optionValidator).validate(null, LevelType.TEXT_QUIZ);
+    assertTrue(result.isEmpty());
+    verify(optionValidator).validate(result, LevelType.TEXT_QUIZ);
   }
 
   @Test
@@ -242,10 +242,11 @@ class OptionParserTest {
   }
 
   @Test
-  void parseUnsupportedLevelType_classifyItems_callsValidatorWithNullAndReturnsNull() {
+  void parseUnsupportedLevelType_classifyItems_callsValidatorWithEmptyListAndReturnsEmptyList() {
     List<Option> result = parser.parse("[]", LevelType.CLASSIFY_ITEMS);
 
-    assertNull(result);
-    verify(optionValidator).validate(null, LevelType.CLASSIFY_ITEMS);
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
+    verify(optionValidator).validate(result, LevelType.CLASSIFY_ITEMS);
   }
 }
