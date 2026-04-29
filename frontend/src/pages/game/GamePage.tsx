@@ -6,7 +6,7 @@ import { mapQuestionToStationData } from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
 import StationRenderer from "@/components/game/station/StationRenderer.tsx";
 import { STATION_TYPE, type SubmitAnswerResult, type StationType } from "@/types/station";
-import "@/components/game/ui/game.css";
+import "@/components/game/ui_game/game.css";
 import {
     AlertDialog,
     AlertDialogContent,
