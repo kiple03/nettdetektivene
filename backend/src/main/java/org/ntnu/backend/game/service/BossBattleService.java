@@ -11,6 +11,7 @@ import org.ntnu.backend.game.dto.BossBattleResultResponse;
 import org.ntnu.backend.game.dto.BossBattleSaveRequest;
 import org.ntnu.backend.game.model.BossBattleResult;
 import org.ntnu.backend.game.repository.BossBattleResultRepository;
+import org.ntnu.backend.medalion.service.MedalionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,8 +22,13 @@ public class BossBattleService {
 
     private final BossBattleResultRepository bossBattleResultRepository;
     private final EnrollmentRepository enrollmentRepository;
+    private final MedalionService medalionService;
 
     public void saveResult(UUID userId, UUID classroomId, BossBattleSaveRequest request) {
+        if(request.won()){
+            medalionService.awardInternalUsage(userId, "Platinum", "Du fanget skurken!");
+        }
+
         Enrollment enrollment = resolveEnrollment(userId, classroomId);
         BossBattleResult result = BossBattleResult.builder()
             .enrollment(enrollment)

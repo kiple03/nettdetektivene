@@ -14,6 +14,7 @@ import sharkBase from "@/assets/images/boss/shark-base.png";
 import sharkHurt from "@/assets/images/boss/shark-hurt.png";
 import arenaBg from "@/assets/images/boss/arena-bg.png";
 import styles from "./BossBattlePage.module.css";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Phase = "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
 
@@ -31,6 +32,7 @@ export default function BossBattlePage() {
     const [currentSprite, setCurrentSprite] = useState<string>(sharkBase);
     const [introPlayerRevealed, setIntroPlayerRevealed] = useState(false);
     const startTimeRef = useRef<number | null>(null);
+    const queryClient = useQueryClient();
 
     const beginFade = () => setPhase("intro-fading");
 
@@ -56,6 +58,7 @@ export default function BossBattlePage() {
                 saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
                     .catch((err) => console.error("Failed to save boss battle result", err));
                 setPhase("victory");
+                queryClient.invalidateQueries({queryKey: ['medalions']});
                 return;
             }
         } else {
