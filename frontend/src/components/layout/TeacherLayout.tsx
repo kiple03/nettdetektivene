@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LogoutButton from '@/components/ui/buttons/LogoutButton';
 import { decodeToken } from '@/stores/authStore';
 import { useNotifications } from '@/hooks/teacher/useNotifications';
+import { TeacherLayoutContext } from './TeacherLayoutContext';
 import './TeacherLayout.css';
 
 export default function TeacherLayout() {
@@ -10,9 +12,11 @@ export default function TeacherLayout() {
     const unreadCount = notifications.filter((notification) => !notification.read).length;
     const location = useLocation();
     const navigate = useNavigate();
-    const showBack = location.pathname !== '/teacher';
+    const [hideBack, setHideBack] = useState(false);
+    const showBack = location.pathname !== '/teacher' && !hideBack;
 
     return (
+        <TeacherLayoutContext.Provider value={{ setHideBack }}>
         <div className="teacher-layout">
             {showBack && (
                 <button
@@ -69,6 +73,7 @@ export default function TeacherLayout() {
                 <Outlet />
             </main>
         </div>
+        </TeacherLayoutContext.Provider>
     );
 }
 
