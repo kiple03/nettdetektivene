@@ -112,7 +112,7 @@ export function AlertDialogContent({
 
             {stopsLeft !== undefined && (
                 <p className={styles.stopsLeft}>
-                    {stopsLeft === 1 ?  "1 level igjen" : `${stopsLeft} leveler igjen`}
+                    {stopsLeft === 1 ?  "1 nivå igjen" : `${stopsLeft} nivåer igjen`}
                 </p>
             )}
 
