@@ -157,6 +157,9 @@ public class GameSeeder implements CommandLineRunner {
     levelRepository.delete(level);
   }
 
+  /**
+   * Seed news stop, levels and questions.
+   */
   private void seedNews() {
     Stop stop = stopRepository.findByName("Nyhetskvartalet").orElseGet(() -> {
       Stop s = new Stop();
@@ -165,11 +168,12 @@ public class GameSeeder implements CommandLineRunner {
       return stopRepository.save(s);
     });
 
+    /* level 1 */
     Level level1 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt?")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 1: Ekte eller falskt?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte eller falskt?");
+          l.setTitle("Nivå 1: Ekte eller falskt?");
           l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
           l.setLevelType(LevelType.MULTIPLE_CHOICE);
           l.setStop(stop);
@@ -193,17 +197,18 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 1 */
     ensureLevelNoteTemplate(level1,
         NoteCategory.NYHETER,
         "Sjekk alltid om overskriften virker troverdig og se etter rare skrivefeil eller manglende navn."
     );
 
-
+    /* level 2 */
     Level level2 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt?")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 2: Ekte eller falskt?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte eller falskt?");
+          l.setTitle("Nivå 2: Ekte eller falskt?");
           l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
           l.setLevelType(LevelType.MULTIPLE_CHOICE);
           l.setStop(stop);
@@ -227,11 +232,18 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 2 */
+    ensureLevelNoteTemplate(level2,
+        NoteCategory.NYHETER,
+        "Sjekk dato og tidspunkt. Normen i nyhetsartikler er at fullt navn eller bare etteravn blir brukt. "
+    );
+
+    /* level 3 */
     Level level3 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt?")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 3: Ekte eller falskt?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte eller falskt?");
+          l.setTitle("Nivå 3: Ekte eller falskt?");
           l.setDescription("Kan du se forskjell på ekte og falske nyheter? Les overskriftene og velg den du tror er ekte.");
           l.setLevelType(LevelType.MULTIPLE_CHOICE);
           l.setStop(stop);
@@ -255,19 +267,16 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
-    ensureLevelNoteTemplate(level2,
-        NoteCategory.NYHETER,
-        "Dummy notat for nivå 2 — sjekk datoer, klokkeslett og om journalisten har fullt navn."
-    );
-
-    // ... level3 definition and questions ...
-
+    /* notes level 3*/
     ensureLevelNoteTemplate(level3,
         NoteCategory.NYHETER,
-        "Dummy notat for nivå 3 — vurder om tallene og alderen i artikkelen gir logisk mening."
+        "Sjekk om artikkelen er logisk riktig og om de bruker STORE bokstaver for å skape frykt eller andre følelser."
     );
   }
 
+  /**
+   * Seeds photo stop, level and questions.
+   */
   private void seedPhoto() {
     Stop stop = stopRepository.findByName("Fotografen").orElseGet(() -> {
       Stop s = new Stop();
@@ -276,9 +285,10 @@ public class GameSeeder implements CommandLineRunner {
       return stopRepository.save(s);
     });
 
-    Level level = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte, KI eller manipulert?").orElseGet(() -> {
+    /* level 1 */
+    Level level = levelRepository.findByStopIdAndTitle(stop.getId(), "Nivå 1: Ekte, KI eller manipulert?").orElseGet(() -> {
       Level l = new Level();
-      l.setTitle("Ekte, KI eller manipulert?");
+      l.setTitle("Nivå 1: Ekte, KI eller manipulert?");
       l.setDescription("Se nøye på bildet og velg riktig svar.");
       l.setLevelType(LevelType.PICTURE_QUIZ);
       l.setOrder(1);
@@ -331,11 +341,18 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 1 */
+    ensureLevelNoteTemplate(level,
+        NoteCategory.BILDER,
+        "Vær oppmerksom på urealistiske objekter og for glinsende, ren og myk hud."
+    );
+
+    /* level 2 */
     Level level2 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert?")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 2: Ekte, KI eller manipulert?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte, KI eller manipulert?");
+          l.setTitle("Nivå 2: Ekte, KI eller manipulert?");
           l.setDescription("Se nøye på bildet og velg riktig svar.");
           l.setLevelType(LevelType.PICTURE_QUIZ);
           l.setStop(stop);
@@ -383,11 +400,17 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 2 */
+    ensureLevelNoteTemplate(level2,
+        NoteCategory.BILDER,
+        "Sjekk om bedriften eksisterer."
+    );
+
     Level level3 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert?")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 3: Ekte, KI eller manipulert?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Ekte, KI eller manipulert?");
+          l.setTitle("Nivå 3: Ekte, KI eller manipulert?");
           l.setDescription("Se nøye på bildet og velg riktig svar.");
           l.setLevelType(LevelType.PICTURE_QUIZ);
           l.setStop(stop);
@@ -416,8 +439,17 @@ public class GameSeeder implements CommandLineRunner {
                 true, "Riktig! dette bildet er faktisk ikke generert av AI")
         )
     );
+
+    /* notes level 3 */
+    ensureLevelNoteTemplate(level3,
+        NoteCategory.BILDER,
+        "Kunstig intelligens har blitt veldig god på generering av bilder. Spør en voksen hvis du er usikker!"
+    );
   }
 
+  /**
+   * Seeds post stop, levels and questions.
+   */
   private void seedPost() {
     Stop stop3 = stopRepository.findByName("Postkontoret").orElseGet(() -> {
       Stop s = new Stop();
@@ -426,11 +458,12 @@ public class GameSeeder implements CommandLineRunner {
       return stopRepository.save(s);
     });
 
+    /* level 1 */
     Level postLevel1 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen!")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Nivå 1: Finn det mistenklige i mailen!")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Finn det mistenklige i mailen!");
+          l.setTitle("Nivå 1: Finn det mistenklige i mailen! 1");
           l.setDescription("Kan du hva som er mistenkelig i mailene?");
           l.setLevelType(LevelType.POST_OFFICE);
           l.setStop(stop3);
@@ -505,11 +538,18 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 1 */
+    ensureLevelNoteTemplate(postLevel1,
+        NoteCategory.EPOST,
+        "Sjekk om avsender-epost er ekte, innholdet er lokkende, lenken er ekte og om logoen er ekte."
+    );
+
+    /* level 2 */
     Level postLevel2 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen!")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Nivå 2: Finn det mistenklige i mailen!")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Finn det mistenklige i mailen!");
+          l.setTitle("Nivå 2: Finn det mistenklige i mailen!");
           l.setDescription("Kan du hva som er mistenkelig i mailene?");
           l.setLevelType(LevelType.POST_OFFICE);
           l.setStop(stop3);
@@ -592,11 +632,17 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 2 */
+    ensureLevelNoteTemplate(postLevel2,
+        NoteCategory.EPOST,
+        "Sjekk om avsender-epost er ekte, lenken er ekte og signaturen."
+    );
+
     Level postLevel3 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen!")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Nivå 3: Finn det mistenklige i mailen!")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Finn det mistenklige i mailen!");
+          l.setTitle("Nivå 3: Finn det mistenklige i mailen!");
           l.setDescription("Kan du hva som er mistenkelig i mailene?");
           l.setLevelType(LevelType.POST_OFFICE);
           l.setStop(stop3);
@@ -636,7 +682,7 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
-    ensureQuestion(postLevel2,
+    ensureQuestion(postLevel3,
         "Hva er mistenklig med eposten fra Roblox?",
         new PostOfficeQuestion(
             new PostOfficeQuestion.Email(
@@ -672,6 +718,11 @@ public class GameSeeder implements CommandLineRunner {
             List.of("senderEmail", "signature"),
             "Spør en voksen"
         )
+    );
+    /* notes level 3 */
+    ensureLevelNoteTemplate(postLevel3,
+        NoteCategory.EPOST,
+        "Sjekk alle små detaljer som mailadresser og skrivefeil."
     );
   }
 
@@ -778,10 +829,10 @@ public class GameSeeder implements CommandLineRunner {
 
       // ---------- LEVEL 1 — password strength (new type) ----------
       Level l1 = levelRepository
-          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Lag et sterkt passord")
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 1: Lag et sterkt passord")
           .orElseGet(() -> {
               Level l = new Level();
-              l.setTitle("Lag et sterkt passord");
+              l.setTitle("Nivå 1: Lag et sterkt passord");
               l.setDescription("Skriv inn et passord. Systemet sier fra hvor sterkt det er.");
               l.setLevelType(LevelType.PASSWORD_STRENGTH);
               l.setStop(stop);
@@ -812,10 +863,10 @@ public class GameSeeder implements CommandLineRunner {
 
       // ---------- LEVEL 2 — multiple choice: what makes a good password ----------
       Level l2 = levelRepository
-          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Hva er et godt passord?")
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 2: Hva er et godt passord?")
           .orElseGet(() -> {
               Level l = new Level();
-              l.setTitle("Hva er et godt passord?");
+              l.setTitle("Nivå 2: Hva er et godt passord?");
               l.setDescription("Velg alternativet som beskriver et godt passord.");
               l.setLevelType(LevelType.MULTIPLE_CHOICE);
               l.setStop(stop);
@@ -857,10 +908,10 @@ public class GameSeeder implements CommandLineRunner {
 
       // ---------- LEVEL 3 — multiple choice: what to do on a leak ----------
       Level l3 = levelRepository
-          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Passordlekkasje — hva gjør du?")
+          .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 3: Passordlekkasje — hva gjør du?")
           .orElseGet(() -> {
               Level l = new Level();
-              l.setTitle("Passordlekkasje — hva gjør du?");
+              l.setTitle("Nivå 3: Passordlekkasje — hva gjør du?");
               l.setDescription("Velg riktig handling hvis passordet ditt er lekket.");
               l.setLevelType(LevelType.MULTIPLE_CHOICE);
               l.setStop(stop);
@@ -910,10 +961,10 @@ public class GameSeeder implements CommandLineRunner {
     });
 
     Level l1 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Er denne nettbutikken trygg?")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 1: Er denne nettbutikken trygg?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Er denne nettbutikken trygg?");
+          l.setTitle("Nivå 1: Er denne nettbutikken trygg?");
           l.setDescription("Du har funnet noen nettbutikker. Se nøye på tilbudene og vurder om du bør handle der.");
           l.setLevelType(LevelType.MULTIPLE_CHOICE);
           l.setStop(stop);
@@ -960,10 +1011,10 @@ public class GameSeeder implements CommandLineRunner {
     ensureLevelNoteTemplate(l1, NoteCategory.NETT,
         "Sjekk alltid kontaktinfo, nettadresse og anmeldelser før du handler på nett. Hvis noe virker for godt til å være sant, er det ofte det.");
     Level l2 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Hva er mistenkelig?")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 2: Hva er mistenkelig?")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Hva er mistenkelig?");
+          l.setTitle("Nivå 2: Hva er mistenkelig?");
           l.setDescription("Noe er galt med disse nettbutikkene. Kan du finne ut hva som er mistenkelig?");
           l.setLevelType(LevelType.MULTIPLE_CHOICE);
           l.setStop(stop);
@@ -1012,10 +1063,10 @@ public class GameSeeder implements CommandLineRunner {
 
 
     Level l3 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nettbutikk-eksperten")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 3: Nettbutikk-eksperten")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Nettbutikk-eksperten");
+          l.setTitle("Nivå 3: Nettbutikk-eksperten");
           l.setDescription("Gå gjennom nettbutikken og vurder hvert element.");
           l.setLevelType(LevelType.CLASSIFY_ITEMS);
           l.setStop(stop);
@@ -1067,6 +1118,8 @@ public class GameSeeder implements CommandLineRunner {
         "Vurder hele nettbutikken samlet: nettadresse, priser, anmeldelser, betaling og returrett. Én trygg detalj betyr ikke at alt er trygt.");
 
   }
+
+  /** Seed social stop, levels and questions **/
   private void seedSocial() {
     Stop stop = stopRepository.findByName("Den sosiale møteplassen").orElseGet(() -> {
       Stop s = new Stop();
