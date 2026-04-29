@@ -4,8 +4,8 @@ import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import PhotographerStation from "@/components/game/station/stations/PhotographerStation.tsx";
 import PassordBankenStation from "@/components/game/station/stations/PassordBankenStation";
 import PostkontoretStation from "@/components/game/station/stations/PostkontoretStation.tsx";
-
 import MarkedsplassenStation from "./stations/MarkedsPlassenStation";
+import SosialeMoteplassenStation from "./stations/SosialeMoteplassenStation";
 
 
 type StationRendererProps = {
@@ -48,13 +48,21 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
       );
 
     case STATION_TYPE.MARKETPLACE:
-        return (
+      return (
           <MarkedsplassenStation
                 station={station}
                 onAnswer={onAnswer}
                 disabled={disabled}
           />
       );
+    case STATION_TYPE.SOCIAL:
+        return (
+          <SosialeMoteplassenStation 
+                station={station} 
+                onAnswer={onAnswer} 
+                disabled={disabled} 
+          />
+        );
 
     default:
       return <div>Ukjent stasjonstype</div>;

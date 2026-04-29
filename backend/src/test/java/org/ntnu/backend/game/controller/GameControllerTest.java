@@ -134,9 +134,10 @@ class GameControllerTest {
             new MultipleChoiceOptionResponse(2, "Option B", "img2.jpg")
     );
 
-    when(questionService.getQuestionsForLevel(anyInt(), any())).thenReturn(List.of(
+    when(questionService.getQuestionsForLevel(anyInt(), any(), any(), any()))
+        .thenReturn(List.of(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which is real?", options, null)
-    ));
+        ));
 
     mockMvc.perform(get("/game/levels/1/questions").with(authentication(studentAuth)))
             .andExpect(status().isOk())
@@ -151,7 +152,7 @@ class GameControllerTest {
             new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg")
     );
 
-    when(questionService.getQuestionsForLevel(anyInt(), any())).thenReturn(List.of(
+    when(questionService.getQuestionsForLevel(anyInt(), any(), any(), any())).thenReturn(List.of(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Test?", options, null)
     ));
 
@@ -168,7 +169,7 @@ class GameControllerTest {
             new MultipleChoiceOptionResponse(2, "B", "img.jpg")
     );
 
-    when(questionService.getQuestionById(anyInt())).thenReturn(
+    when(questionService.getQuestionById(anyInt(), any(), any())).thenReturn(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which?", options, null));
 
     mockMvc.perform(get("/game/questions/1").with(authentication(studentAuth)))
@@ -180,7 +181,7 @@ class GameControllerTest {
 
   @Test
   void submitAnswer_correctAnswer_returnsTrue() throws Exception {
-    when(questionService.submitAnswer(anyInt(), any()))
+    when(questionService.submitAnswer(anyInt(), any(), any(), any()))
             .thenReturn(new SubmitAnswerResponse(
                     true,
                     "Correct!",
@@ -201,7 +202,7 @@ class GameControllerTest {
 
   @Test
   void submitAnswer_wrongAnswer_returnsFalse() throws Exception {
-    when(questionService.submitAnswer(anyInt(), any()))
+    when(questionService.submitAnswer(anyInt(), any(), any(), any()))
             .thenReturn(new SubmitAnswerResponse(
                     false,
                     "Wrong!",

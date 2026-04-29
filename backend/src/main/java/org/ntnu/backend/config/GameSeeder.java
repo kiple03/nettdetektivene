@@ -72,6 +72,7 @@ public class GameSeeder implements CommandLineRunner {
     seedPhoto();
     seedPasswords();
     seedMarkedsplassen();
+    seedSocial();
     log.info("GameSeeder: done");
   }
 
@@ -920,13 +921,13 @@ public class GameSeeder implements CommandLineRunner {
         });
 
     ensureQuestion(l1,
-        "Du finner en nettbutikk som heter 'SuperBillig-Shop.xyz'. De har 90% rabatt på ALT, ingen kontaktinformasjon, og nettsiden ser ut som den ble laget i går. Hva gjør du?",
+        "Du finner en nettbutikk som heter 'SuperBillig-Shop.xyz'. De har 90% rabatt på alle varer. Du finner ingen kontaktinformasjon, og nettsiden ser ut som den ble laget i går. Hva gjør du?",
         List.of(
-            new MultipleChoiceOption(1, "Kjøpe – dette er et godt tilbud!", null, false,
-                "Denne nettbutikken har mange varseltegn. 90% rabatt på alt er nesten alltid for godt til å være sant."),
+            new MultipleChoiceOption(1, "Kjøper, dette er et godt tilbud!", null, false,
+                "90% er mistenkelig, men jeg kjøper en vare jeg har lyst på. Nettsiden er tross alt nosrk."),
             new MultipleChoiceOption(2, "Undersøke mer først", null, false,
                 "Det er bra å være forsiktig, men denne butikken har så mange røde flagg at det er best å holde seg unna."),
-            new MultipleChoiceOption(3, "Ikke handle – dette virker utrygt", null, true,
+            new MultipleChoiceOption(3, "Ikke handle, dette virker utrygt", null, true,
                 "Riktig! Butikken har 90% rabatt på alt, ingen kontaktinfo og en merkelig nettadresse. Dette er typiske tegn på svindel.")
         )
     );
@@ -934,24 +935,24 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(l1,
         "En nettbutikk selger populære sko til halv pris. Siden ser profesjonell ut, men alle anmeldelsene er 5 stjerner og skrevet på samme dag. Du finner ikke noe info om hvem som eier butikken. Hva gjør du?",
         List.of(
-            new MultipleChoiceOption(1, "Kjøpe – det ser fint ut", null, false,
+            new MultipleChoiceOption(1, "Undersøke mer først", null, true,
+                "Riktig! Butikken ser grei ut ved første øyekast, men det er noen ting som bør sjekkes nærmere, som anmeldelsene og manglende info om selskapet."),
+            new MultipleChoiceOption(2, "Kjøpe, nettsiden ser profejsonell ut", null, false,
                 "Selv om siden ser pen ut, bør du være forsiktig. Alle anmeldelsene er skrevet på samme dag, og det finnes ingen informasjon om hvem som driver butikken."),
-            new MultipleChoiceOption(2, "Undersøke mer først", null, true,
-                "Riktig! Butikken ser grei ut ved første øyekast, men det er noen ting som bør sjekkes nærmere – som anmeldelsene og manglende info om selskapet."),
-            new MultipleChoiceOption(3, "Ikke handle – dette virker utrygt", null, false,
+            new MultipleChoiceOption(3, "Dette virker utrygt, her skal jeg ikke handle", null, false,
                 "Det er lurt å være forsiktig, men her er det bedre å undersøke mer først. Noen av tegnene kan ha en forklaring.")
         )
     );
 
     ensureQuestion(l1,
-        "Du finner en nettbutikk med norsk organisasjonsnummer, telefonnummer og e-post på kontaktsiden. Nettadressen starter med hengelås og slutter på '.no'. Anmeldelsene ser ekte ut med både gode og dårlige tilbakemeldinger. Hva gjør du?",
+        "Du finner en nettbutikk med telefonnummer og e-post på kontaktsiden. Nettadressen har hengelås og slutter på '.no'. Anmeldelsene gir både gode og dårlige tilbakemeldinger. Hva gjør du?",
         List.of(
-            new MultipleChoiceOption(1, "Kjøpe – dette ser trygt ut", null, true,
-                "Riktig! Denne butikken har organisasjonsnummer, kontaktinfo, sikker betaling og ekte anmeldelser. Dette er tegn på en trygg nettbutikk."),
+            new MultipleChoiceOption(1, "Kjøpe, dette ser trygt ut", null, true,
+                "Riktig! Denne butikken har kontaktinfo, sikker nettadresse og ekte anmeldelser. Dette er tegn på en trygg nettbutikk."),
             new MultipleChoiceOption(2, "Undersøke mer først", null, false,
                 "Det er alltid lurt å være forsiktig, men denne butikken viser alle tegnene på at den er trygg og seriøs."),
-            new MultipleChoiceOption(3, "Ikke handle – jeg stoler ikke på nettbutikker", null, false,
-                "Denne butikken er faktisk trygg! Den har kontaktinfo, organisasjonsnummer, hengelås i nettleseren og ekte anmeldelser. Det er viktig å kunne kjenne igjen trygge butikker også.")
+            new MultipleChoiceOption(3, "Ikke handle, jeg stoler ikke på nettbutikker", null, false,
+                "Denne butikken er faktisk trygg! Den har kontaktinfo, hengelås i nettleseren og ekte anmeldelser. Det er viktig å kunne kjenne igjen trygge butikker også.")
         )
     );
 
@@ -984,7 +985,7 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(l2,
         "Du finner en nettbutikk med mange gode anmeldelser, men alle er skrevet av 'Bruker123' med litt forskjellig tekst. Hva er mistenkelig?",
         List.of(
-            new MultipleChoiceOption(1, "Butikken har anmeldelser", null, false,
+            new MultipleChoiceOption(1, "Butikken har med anmeldelser", null, false,
                 "Det er bra at en butikk har anmeldelser! Problemet er at de alle ser ut til å komme fra samme person."),
             new MultipleChoiceOption(2, "Alle anmeldelsene er fra samme bruker", null, true,
                 "Riktig! Ekte anmeldelser kommer fra mange forskjellige personer. Når alle er fra samme bruker, er de sannsynligvis falske."),
@@ -994,14 +995,14 @@ public class GameSeeder implements CommandLineRunner {
     );
 
     ensureQuestion(l2,
-        "En nettbutikk tilbyr kun betaling med gavekort eller kryptovaluta. Hva er mistenkelig?",
+        "En nettbutikk lar deg bare betale med Roblox-gavekort eller PlayStation-koder. Hva er mistenkelig?",
         List.of(
             new MultipleChoiceOption(1, "At butikken finnes på nett", null, false,
                 "Det er helt vanlig å handle på nett. Det mistenkelige er betalingsmåten."),
-            new MultipleChoiceOption(2, "Betalingsmåten – du kan ikke spore pengene", null, true,
-                "Riktig! Trygge nettbutikker tilbyr vanlige betalingsmetoder som Vipps, kort eller faktura. Gavekort og krypto kan ikke spores, så du får aldri pengene tilbake."),
+            new MultipleChoiceOption(2, "Betalingsmåten, spillkort er ikke ekte betaling overalt", null, true,
+                "Riktig! Trygge nettbutikker lar deg betale med Vipps eller kort. Hvis noen ber om spillkort som betaling, er det nesten alltid svindel."),
             new MultipleChoiceOption(3, "At de tar betaling i det hele tatt", null, false,
-                "Alle butikker tar betaling. Det mistenkelige er hvilke betalingsmåter de tilbyr.")
+                "Alle butikker tar betaling. Det mistenkelige er at de ber om spillkort i stedet for vanlige betalingsmåter som Vipps eller kort.")
         )
     );
 
@@ -1022,24 +1023,24 @@ public class GameSeeder implements CommandLineRunner {
         });
 
     ensureQuestion(l3,
-        "Du har funnet nettbutikken 'ElektroTilbud'. Hva tror du om hvert element?",
+        "Du har funnet nettbutikken 'ElektroTilbud'. Hva tenker du om følgende observasjoner?",
         List.of(
-            new ClassifyItemsOption("url", "Nettadressen er www.elektrotilbud.xyz",
-                List.of("Ekte norsk butikk", "Utenlandsk side", "Ukjent domene"),
-                "Ukjent domene",
-                ".xyz er ikke et norsk domene. Norske butikker bruker vanligvis .no — et ukjent domene betyr at du bør være ekstra forsiktig."),
-            new ClassifyItemsOption("reviews", "Alle 200 anmeldelsene er 5 stjerner og lagt inn samme dag",
-                List.of("Ekte anmeldelser", "Kjøpte anmeldelser", "Ansatte som har skrevet"),
+            new ClassifyItemsOption("url", "Nettadressen er www.elektrotilbud.fun",
+                List.of("Ekte norsk nettbutikk", "Rart at den ikke slutter på .no", "Ser helt vanlig ut"),
+                "Rart at den ikke slutter på .no",
+                "Norske nettbutikker bruker vanligvis .no. Når adressen slutter på noe annet bør du være ekstra forsiktig."),
+            new ClassifyItemsOption("reviews", "Alle 2000 anmeldelsene er 5 stjerner og lagt inn i løpet av et par dager",
+                List.of("Ekte anmeldelser", "Kjøpte anmeldelser", "Må ha utrolig høy kvalitet"),
                 "Kjøpte anmeldelser",
-                "200 perfekte anmeldelser på én dag er nesten helt sikkert kjøpt. Ekte anmeldelser kommer over tid fra forskjellige folk."),
-            new ClassifyItemsOption("contact", "Kontaktsiden har telefonnummer, e-post og besøksadresse",
-                List.of("Vanlig for nettbutikker", "Uvanlig mye info", "Sikkert falsk info"),
+                "2000 perfekte anmeldelser på noen dager er nesten helt sikkert kjøpt. Ekte anmeldelser kommer over tid fra forskjellige folk."),
+            new ClassifyItemsOption("contact", "Kontaktsiden har telefonnummer, e-post og adresse",
+                List.of("Vanlig for nettbutikker", "Uvanlig mye info", "Ikke viktig"),
                 "Vanlig for nettbutikker",
-                "Seriøse butikker har alltid kontaktinfo. Du kan ringe eller besøke dem hvis noe går galt."),
-            new ClassifyItemsOption("payment", "Betaling kun via kryptovaluta",
-                List.of("Moderne betalingsløsning", "Uvanlig for norske butikker", "Helt normalt"),
-                "Uvanlig for norske butikker",
-                "Norske nettbutikker tilbyr alltid Vipps, kort eller faktura. Kun krypto betyr at pengene ikke kan spores tilbake.")
+                "Seriøse butikker har alltid kontaktinfo. Du kan ringe dem hvis noe går galt."),
+            new ClassifyItemsOption("payment", "Du kan bare betale med gavekort",
+                List.of("Vanlig betalingsmåte", "Rart — du kan ikke klage etterpå", "Helt greit"),
+                "Rart — du kan ikke klage etterpå",
+                "Trygge nettbutikker lar deg betale med Vipps eller kort. Med gavekort får du aldri pengene tilbake hvis noe er galt.")
         )
     );
 
@@ -1054,20 +1055,174 @@ public class GameSeeder implements CommandLineRunner {
                 List.of("Norsk dialekt", "Dårlig oversettelse", "Vanlige skrivefeil"),
                 "Dårlig oversettelse",
                 "Mange slike feil tyder på at siden er automatisk oversatt fra et annet språk — vanlig for svindelbutikker."),
-            new ClassifyItemsOption("price", "En PlayStation 5 koster vanlig butikkpris",
+            new ClassifyItemsOption("price", "En PlayStation 5 koster det samme som i butikken",
                 List.of("For dyrt", "Rettferdig pris", "Mistenkelig billig"),
                 "Rettferdig pris",
-                "Normal pris er faktisk et godt tegn! Svindelbutikker lokker med urealistisk lave priser."),
-            new ClassifyItemsOption("return", "Det finnes ingen informasjon om retur eller angrerett",
-                List.of("Normalt for nettbutikker", "Bryter norsk lov", "Betyr gratis retur"),
-                "Bryter norsk lov",
-                "Norske nettbutikker er pålagt å tilby 14 dagers angrerett. Manglende info om dette er et alvorlig rødt flagg.")
+                "Normal pris er faktisk et godt tegn! Svindelbutikker lokker med urealistisk lave priser.")
         )
     );
 
     ensureLevelNoteTemplate(l3, NoteCategory.NETT,
         "Vurder hele nettbutikken samlet: nettadresse, priser, anmeldelser, betaling og returrett. Én trygg detalj betyr ikke at alt er trygt.");
 
+  }
+  private void seedSocial() {
+    Stop stop = stopRepository.findByName("Den sosiale møteplassen").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Den sosiale møteplassen");
+      s.setDisplayOrder(6);
+      return stopRepository.save(s);
+    });
 
+    Level l1 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Tenk før du deler")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Tenk før du deler");
+          l.setDescription("Du ser innlegg på sosiale medier. Hva ville du gjort?");
+          l.setLevelType(LevelType.MULTIPLE_CHOICE);
+          l.setStop(stop);
+          l.setOrder(1);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l1,
+        "Du ser en TikTok som sier: 'Hvis du ikke deler denne videoen, vil noe fælt skje om 7 dager!' Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Deler videoen med en gang. Jeg vil ikke oppleve noe fælt!", null, false,
+                "Ingen video vil gjøre at do opplever noe fælt! Slike meldinger er laget for å lure deg til å dele."),
+            new MultipleChoiceOption(2, "Ignorerer det, dette er bare tull", null, true,
+                "Riktig! Ingen video vil gjøre at do opplever noe fælt. Slike meldinger prøver å skremme deg til å dele."),
+            new MultipleChoiceOption(3, "Deler den bare til bestevennen min", null, false,
+                "Da sprer du meldingen videre! Den er bare tull, og det er trygt å ignorere den.")
+        )
+    );
+
+    ensureQuestion(l1,
+        "Noen i klassen din legger ut et morsomt, men flaut bilde av en annen elev uten å spørre. Mange ler og deler det. Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Deler det ikke, og sier ifra til en voksen", null, true,
+                "Riktig! Alle har rett til å bestemme over sine egne bilder. Det er modig å si ifra."),
+            new MultipleChoiceOption(2, "Ler og deler det videre, det er jo morsomt!", null, false,
+                "Det kan føles morsomt, men den som er på bildet synes kanskje ikke det. Man skal alltid spørre først."),
+            new MultipleChoiceOption(3, "Sier ingenting, men deler det heller ikke", null, false,
+                "Bra at du ikke deler! Men det er enda bedre å si ifra til en voksen, så den som er på bildet får hjelp.")
+        )
+    );
+
+    ensureQuestion(l1,
+        "En du ikke kjenner sender deg en melding på Snapchat: 'Hei! Vil du bli venner? Send bilde av deg selv!' Hva gjør du?",
+        List.of(
+            new MultipleChoiceOption(1, "Sender et bilde, jeg vil gjerne ha nye venner!", null, false,
+                "Du vet ikke hvem denne personen egentlig er. Send aldri bilder til noen du ikke kjenner."),
+            new MultipleChoiceOption(2, "Svarer ikke og forteller en voksen om det", null, true,
+                "Riktig! Du skal aldri sende bilder til noen du ikke kjenner. Snakk med en voksen du stoler på."),
+            new MultipleChoiceOption(3, "Spør hvem de er først, og sender bilde hvis de virker greie", null, false,
+                "Selv om noen virker greie, vet du ikke hvem de egentlig er. Ikke send bilder til fremmede.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l1, NoteCategory.SOSIALE,
+        "Tenk deg om før du deler. Hvis noen prøver å skremme eller presse deg til å dele noe videre, er det et tegn på at du bør stoppe opp.");
+
+    // ---------- LEVEL 2 — PICTURE_QUIZ: Finn advarselstegnene ----------
+    Level l2 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Finn advarselstegnene")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Finn advarselstegnene");
+          l.setDescription("Se på innleggene og velg alle advarselstegnene du finner.");
+          l.setLevelType(LevelType.PICTURE_QUIZ);
+          l.setStop(stop);
+          l.setOrder(2);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l2,
+        "Et innlegg sier: 'BREAKING: Skoler i Norge stenges for ALLTID! 😱🚨 Del til alle du kjenner!!' Hva er advarselstegn? Velg alle som passer.",
+        List.of(
+            new PictureQuizOption(1, "Store bokstaver og mange utropstegn", null, true,
+                "Riktig! Store bokstaver og utropstegn brukes for å skape panikk."),
+            new PictureQuizOption(2, "Mange emojier for å skape frykt", null, true,
+                "Riktig! Skremmende emojier brukes for å forsterke følelser og få deg til å reagere uten å tenke."),
+            new PictureQuizOption(3, "Oppfordring til å dele raskt", null, true,
+                "Riktig! 'Del til alle' er et press-triks for å spre informasjon før noen rekker å sjekke den."),
+            new PictureQuizOption(4, "Innlegget handler om skole", null, false,
+                "At et innlegg handler om skole er ikke et advarselstegn i seg selv. Det er måten det er skrevet på som er problemet.")
+        )
+    );
+
+    ensureQuestion(l2,
+        "Du ser denne meldingen i en gruppechat: '😱😱 IKKE spis godteriet fra Kiwi!! En gutt ble SKIKKELIG SYK!! 😱😱 SEND TIL ALLE!!' Hva er advarselstegn? Velg alle som passer.",
+        List.of(
+            new PictureQuizOption(1, "Mange skumle emojier", null, true,
+                "Riktig! Skremmende emojier brukes for å gjøre deg redd uten grunn."),
+            new PictureQuizOption(2, "Store bokstaver og utropstegn", null, true,
+                "Riktig! STORE BOKSTAVER brukes for å lage panikk."),
+            new PictureQuizOption(3, "'Send til alle' – press om å dele", null, true,
+                "Riktig! Når noen sier du MÅ dele, prøver de å spre meldingen uten at noen sjekker om det er sant."),
+            new PictureQuizOption(4, "At det handler om godteri", null, false,
+                "At det handler om godteri er ikke et advarselstegn. Det er måten meldingen er skrevet på som er problemet.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l2, NoteCategory.SOSIALE,
+        "Advarselstegn: store bokstaver, hastverk, ukjente kilder, konspirasjonsspråk og emosjonelt press.");
+
+    // ---------- LEVEL 3 — CLASSIFY_ITEMS: Vurder innlegget ----------
+    Level l3 = levelRepository
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Vurder innlegget")
+        .orElseGet(() -> {
+          Level l = new Level();
+          l.setTitle("Vurder innlegget");
+          l.setDescription("Les hvert element fra et innlegg på sosiale medier og vurder hva det er.");
+          l.setLevelType(LevelType.CLASSIFY_ITEMS);
+          l.setStop(stop);
+          l.setOrder(3);
+          return levelRepository.save(l);
+        });
+
+    ensureQuestion(l3,
+        "Noen på skolen deler et innlegg i gruppechatten. Vurder hvert element.",
+        List.of(
+            new ClassifyItemsOption("message", "Meldingen: 'Hvis du er en EKTE venn, deler du dette videre!'",
+                List.of("Vennlig melding", "Press fra venner", "God oppfordring"),
+                "Press fra venner",
+                "Når noen sier du er en 'ekte venn' bare hvis du gjør noe, prøver de å presse deg."),
+            new ClassifyItemsOption("emoji", "Det er brukt masse 😡 og 💔 emojier",
+                List.of("Bare pynt", "Brukt for å skape sterke følelser", "Viser at avsenderen er lei seg"),
+                "Brukt for å skape sterke følelser",
+                "Sinte og triste emojier brukes for å få deg til å føle noe sterkt, så du handler uten å tenke."),
+            new ClassifyItemsOption("claim", "'Alle i klassen har allerede delt det!'",
+                List.of("Sikkert sant", "Press – du må gjøre som alle andre", "Bra å vite"),
+                "Press – du må gjøre som alle andre",
+                "Bare fordi 'alle gjør det' betyr ikke at du må. Det er ofte ikke sant heller."),
+            new ClassifyItemsOption("action", "Du kan velge å dele, vente, eller spørre en voksen",
+                List.of("Unødvendig", "Lurt å tenke seg om", "Feigt"),
+                "Lurt å tenke seg om",
+                "Det er alltid lurt å stoppe opp og tenke før du deler noe videre. Du kan alltid spørre en voksen.")
+        )
+    );
+
+    ensureQuestion(l3,
+        "Du ser et innlegg på Instagram fra en du følger. Vurder hvert element.",
+        List.of(
+            new ClassifyItemsOption("photo", "Et bilde av en kjendis med teksten 'Gi bort gratis iPhone til alle som deler!'",
+                List.of("Ekte konkurranse", "For godt til å være sant", "Reklame"),
+                "For godt til å være sant",
+                "Gratis ting til alle som deler er nesten alltid svindel. Ekte konkurranser fungerer ikke sånn."),
+            new ClassifyItemsOption("comments", "Alle kommentarene sier 'Håper jeg vinner!! 🤞' og ingen stiller spørsmål",
+                List.of("Bevis på at det er ekte", "Folk som også er lurt", "Hyggelig stemning"),
+                "Folk som også er lurt",
+                "At mange tror på det gjør det ikke sant. Alle i kommentarfeltet kan ha blitt lurt av det samme."),
+            new ClassifyItemsOption("link", "Lenken i innlegget går til en side du aldri har hørt om",
+                List.of("Helt normalt", "Bør sjekkes nøye", "Sikkert trygt"),
+                "Bør sjekkes nøye",
+                "Ukjente lenker kan føre til svindelsider. Klikk aldri på lenker du ikke kjenner igjen.")
+        )
+    );
+
+    ensureLevelNoteTemplate(l3, NoteCategory.SOSIALE,
+        "Vurder alltid kilden, se etter følelsesmanipulasjon, og husk at popularitet ikke er det samme som sannhet.");
   }
 }

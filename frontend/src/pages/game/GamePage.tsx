@@ -28,6 +28,7 @@ const STOP_TO_TYPE: Record<string, StationType> = {
     "Passordbanken": STATION_TYPE.PASSWORD,
     "Postkontoret": STATION_TYPE.POST,
     "Markedsplassen": STATION_TYPE.MARKETPLACE,
+    "Den sosiale møteplassen": STATION_TYPE.SOCIAL,
 };
 
 export default function GamePage() {
