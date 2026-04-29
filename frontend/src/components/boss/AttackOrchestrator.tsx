@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useQueries } from "@tanstack/react-query";
 import { AttackAnimation } from "./AttackAnimation";
@@ -13,61 +13,31 @@ export type AttackType =
     | "POSTKONTORET"
     | "PASSORDBANKEN"
     | "MARKEDSPLASSEN"
-    | "DEN_SOSIALE_MOPLASSEN"
-    | "MYSTERY_BOX";
-
-export type EffectiveAttackType = Exclude<AttackType, "MYSTERY_BOX">;
+    | "DEN_SOSIALE_MOPLASSEN";
 
 interface AttackConfig {
-    type: EffectiveAttackType;
+    type: AttackType;
     label: string;
-    weight: number;
 }
 
 const BASE_ATTACKS: AttackConfig[] = [
-    { type: "NYHETSKVARTALET", label: "Nyhetskvartalet-angrep! 📰", weight: 1 },
-    { type: "FOTOGRAFEN", label: "Fotografen-angrep! 📷", weight: 1 },
-    { type: "POSTKONTORET", label: "Postkontoret-angrep! ✉️", weight: 1 },
-    { type: "PASSORDBANKEN", label: "Passordbanken-angrep! 💻", weight: 1 },
-    { type: "MARKEDSPLASSEN", label: "Markedsplassen-angrep! 🧔", weight: 1 },
-    { type: "DEN_SOSIALE_MOPLASSEN", label: "Den sosiale møteplassen-angrep! 🐺", weight: 1 },
+    { type: "NYHETSKVARTALET", label: "Nyhetskvartalet-angrep! 📰" },
+    { type: "FOTOGRAFEN", label: "Fotografen-angrep! 📷" },
+    { type: "POSTKONTORET", label: "Postkontoret-angrep! ✉️" },
+    { type: "PASSORDBANKEN", label: "Passordbanken-angrep! 💻" },
+    { type: "MARKEDSPLASSEN", label: "Markedsplassen-angrep! 🧔" },
+    { type: "DEN_SOSIALE_MOPLASSEN", label: "Den sosiale møteplassen-angrep! 🐺" },
 ];
 
-const MYSTERY_BOX_WEIGHT = 2;
-const BASE_TOTAL_WEIGHT = BASE_ATTACKS.reduce((sum, a) => sum + a.weight, 0);
+const ALL_ATTACK_TYPES = BASE_ATTACKS.map(a => a.type);
 
-interface ResolvedAttack {
-    effectiveType: EffectiveAttackType;
-    label: string;
-}
-
-function pickAttack(): ResolvedAttack {
-    const totalWeight = BASE_TOTAL_WEIGHT + MYSTERY_BOX_WEIGHT;
-    let r = Math.random() * totalWeight;
-
-    if (r < MYSTERY_BOX_WEIGHT) {
-        const resolved = BASE_ATTACKS[Math.floor(Math.random() * BASE_ATTACKS.length)];
-        return { effectiveType: resolved.type, label: "Mysterieangrep! 📦" };
+function shuffleArray<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
     }
-    r -= MYSTERY_BOX_WEIGHT;
-
-    for (const attack of BASE_ATTACKS) {
-        r -= attack.weight;
-        if (r <= 0) {
-            return { effectiveType: attack.type, label: attack.label };
-        }
-    }
-    const last = BASE_ATTACKS[BASE_ATTACKS.length - 1];
-    return { effectiveType: last.type, label: last.label };
-}
-
-function resolveAttackType(type: AttackType): ResolvedAttack {
-    if (type === "MYSTERY_BOX") {
-        const resolved = BASE_ATTACKS[Math.floor(Math.random() * BASE_ATTACKS.length)];
-        return { effectiveType: resolved.type, label: "Mysterieangrep! 📦" };
-    }
-    const config = BASE_ATTACKS.find(a => a.type === type)!;
-    return { effectiveType: type, label: config.label };
+    return a;
 }
 
 const STOP_NAMES = Object.values(ATTACK_TO_STOP_NAME);
@@ -83,8 +53,10 @@ interface Props {
 
 export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVictory }: Props) {
     const [innerPhase, setInnerPhase] = useState<InnerPhase>("waiting");
-    const [currentAttack, setCurrentAttack] = useState<ResolvedAttack | null>(null);
+    const [currentAttackType, setCurrentAttackType] = useState<AttackType | null>(null);
+    const [currentAttackLabel, setCurrentAttackLabel] = useState<string | null>(null);
     const [currentQuestion, setCurrentQuestion] = useState<GameQuestion | null>(null);
+    const attackPoolRef = useRef<AttackType[]>(shuffleArray(ALL_ATTACK_TYPES));
 
     const poolResults = useQueries({
         queries: STOP_NAMES.map(name => ({
@@ -99,26 +71,38 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVi
         questionPoolByStopName[name] = poolResults[i].data ?? [];
     });
 
-    const pickQuestion = (effectiveType: EffectiveAttackType): GameQuestion | null => {
-        const stopName = ATTACK_TO_STOP_NAME[effectiveType];
+    const pickQuestion = (type: AttackType): GameQuestion | null => {
+        const stopName = ATTACK_TO_STOP_NAME[type];
         const pool = questionPoolByStopName[stopName];
         if (!pool || pool.length === 0) return null;
         return pool[Math.floor(Math.random() * pool.length)];
+    };
+
+    const drawFromPool = (): AttackType => {
+        if (attackPoolRef.current.length === 0) {
+            attackPoolRef.current = shuffleArray(ALL_ATTACK_TYPES);
+        }
+        const [next, ...rest] = attackPoolRef.current;
+        attackPoolRef.current = rest;
+        return next;
     };
 
     const isAdmin = new URLSearchParams(window.location.search).get("admin") === "true";
     const isBattle = phase === "battle";
     const canTrigger = isBattle && innerPhase === "waiting";
 
-    const startAttack = (attack: ResolvedAttack) => {
-        setCurrentAttack(attack);
-        setCurrentQuestion(pickQuestion(attack.effectiveType));
+    const startAttack = (type: AttackType) => {
+        const config = BASE_ATTACKS.find(a => a.type === type)!;
+        setCurrentAttackType(type);
+        setCurrentAttackLabel(config.label);
+        setCurrentQuestion(pickQuestion(type));
         setInnerPhase("animating");
     };
 
     const handleAnswer = (correct: boolean) => {
         onAnswer(correct);
-        setCurrentAttack(null);
+        setCurrentAttackType(null);
+        setCurrentAttackLabel(null);
         setCurrentQuestion(null);
         setInnerPhase("waiting");
     };
@@ -126,7 +110,7 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVi
     return (
         <>
             {canTrigger && !isAdmin && (
-                <button className={styles.attackButton} onClick={() => startAttack(pickAttack())}>
+                <button className={styles.attackButton} onClick={() => startAttack(drawFromPool())}>
                     Neste angrep
                 </button>
             )}
@@ -134,14 +118,14 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVi
                 <div className={styles.adminPanel}>
                     <p className={styles.adminTitle}>⚙️ Admin — velg angrep</p>
                     <div className={styles.adminButtons}>
-                        {(["MYSTERY_BOX", ...BASE_ATTACKS.map(a => a.type)] as AttackType[]).map(type => (
+                        {BASE_ATTACKS.map(({ type }) => (
                             <button
                                 key={type}
                                 className={styles.adminButton}
                                 disabled={!canTrigger}
-                                onClick={() => startAttack(resolveAttackType(type))}
+                                onClick={() => startAttack(type)}
                             >
-                                {type === "MYSTERY_BOX" ? "📦 MYSTERY_BOX" : type}
+                                {type}
                             </button>
                         ))}
                     </div>
@@ -172,16 +156,16 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVi
                 </div>,
                 document.body
             )}
-            {isBattle && innerPhase === "animating" && currentAttack && (
+            {isBattle && innerPhase === "animating" && currentAttackType && (
                 <AttackAnimation
-                    attackType={currentAttack.effectiveType}
+                    attackType={currentAttackType}
                     onComplete={() => setInnerPhase("modal")}
                     onSpriteChange={onSpriteChange}
                 />
             )}
-            {isBattle && innerPhase === "modal" && currentAttack && (
+            {isBattle && innerPhase === "modal" && currentAttackType && (
                 <QuestionModal
-                    label={currentAttack.label}
+                    label={currentAttackLabel ?? ""}
                     question={currentQuestion}
                     onAnswer={handleAnswer}
                 />
