@@ -10,10 +10,14 @@ import { DefeatCutscene } from "@/components/boss/DefeatCutscene";
 import { VictoryScreen } from "@/components/boss/VictoryScreen";
 import { DefeatScreen } from "@/components/boss/DefeatScreen";
 import { saveBossBattleResult } from "@/api/bossBattleApi";
+import { bgAudio } from "@/components/BackgroundMusic";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import sharkHurt from "@/assets/images/boss/shark-hurt.png";
 import arenaBg from "@/assets/images/boss/arena-bg.png";
+import bossSoundtrack from "@/assets/sounds/bossBattle.mp3";
 import styles from "./BossBattlePage.module.css";
+
+const MUTE_KEY = 'musicMuted';
 
 type Phase = "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
 
@@ -31,11 +35,49 @@ export default function BossBattlePage() {
     const [currentSprite, setCurrentSprite] = useState<string>(sharkBase);
     const [introPlayerRevealed, setIntroPlayerRevealed] = useState(false);
     const startTimeRef = useRef<number | null>(null);
+    const bossAudioRef = useRef<HTMLAudioElement | null>(null);
+    const battleStartedRef = useRef(false);
+
+    const getBossAudio = (): HTMLAudioElement => {
+        if (!bossAudioRef.current) {
+            const audio = new Audio(bossSoundtrack);
+            audio.loop = true;
+            audio.volume = 0.7;
+            bossAudioRef.current = audio;
+        }
+        return bossAudioRef.current;
+    };
+
+    const startBossMusic = () => {
+        bgAudio.current?.pause();
+        const audio = getBossAudio();
+        audio.currentTime = 0;
+        audio.muted = localStorage.getItem(MUTE_KEY) === 'true';
+        audio.play().catch(() => {});
+        battleStartedRef.current = true;
+    };
+
+    const stopBossMusic = () => {
+        bossAudioRef.current?.pause();
+        if (bossAudioRef.current) bossAudioRef.current.currentTime = 0;
+        battleStartedRef.current = false;
+        if (bgAudio.current && localStorage.getItem(MUTE_KEY) !== 'true') {
+            bgAudio.current.play().catch(() => {});
+        }
+    };
+
+    // Cleanup boss audio if user navigates away mid-battle
+    const cleanupRef = (el: HTMLDivElement | null) => {
+        if (el === null && battleStartedRef.current) {
+            stopBossMusic();
+        }
+    };
 
     const beginFade = () => setPhase("intro-fading");
 
     const startBattle = () => {
         startTimeRef.current = Date.now();
+        startBossMusic();
         setPhase("battle");
     };
 
@@ -54,6 +96,7 @@ export default function BossBattlePage() {
                 const secs = captureTime();
                 setFinalSeconds(secs);
                 setCurrentSprite(sharkHurt);
+                stopBossMusic();
                 saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
                     .catch((err) => console.error("Failed to save boss battle result", err));
                 setPhase("victory");
@@ -65,6 +108,7 @@ export default function BossBattlePage() {
             if (next <= 0) {
                 const secs = captureTime();
                 setFinalSeconds(secs);
+                stopBossMusic();
                 saveBossBattleResult({ won: false, timeSeconds: secs, playerHpRemaining: 0 })
                     .catch((err) => console.error("Failed to save boss battle result", err));
                 setPhase("defeat");
@@ -96,6 +140,7 @@ export default function BossBattlePage() {
 
     return (
         <div className={styles.arena}>
+            <div ref={cleanupRef} style={{ display: 'none' }} />
             <div className={styles.arenaBg} style={{ backgroundImage: `url(${arenaBg})` }} />
             {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
             {showBoss && (

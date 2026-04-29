@@ -4,6 +4,9 @@ import backgroundMusic from '@/assets/sounds/backgroundMusic.mp3'
 
 const MUTE_KEY = 'musicMuted';
 
+// Exposed so other pages can pause/resume the global background music
+export const bgAudio: { current: HTMLAudioElement | null } = { current: null };
+
 export default function BackgroundMusic(){
     const {isLoggedIn, role} = useAuth();
     const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -15,7 +18,8 @@ export default function BackgroundMusic(){
         audio.volume = 0.4;
         audio.muted = muted;
         audioRef.current = audio;
-        return () => {audio.pause(); audioRef.current = null;};
+        bgAudio.current = audio;
+        return () => { audio.pause(); audioRef.current = null; bgAudio.current = null; };
     }, []);
 
     useEffect(() => {
