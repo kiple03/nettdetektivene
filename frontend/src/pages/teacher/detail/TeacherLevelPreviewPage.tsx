@@ -6,8 +6,8 @@ import { QuestionEditorModal } from '@/components/teacher/questionEditor/Questio
 import StationContainer from '@/components/game/station/StationContainer';
 import StationRenderer from '@/components/game/station/StationRenderer';
 import { STATION_TYPE } from '@/types/station';
-import type { StationData, SubmitAnswerResult } from '@/types/station';
-import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherQuestionOption } from '@/api/teacherApi';
+import type { StationData, StationType, SubmitAnswerResult } from '@/types/station';
+import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherQuestionOption, TeacherPasswordStrengthOption } from '@/api/teacherApi';
 import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
 import { makeOptionId } from '@/components/teacher/questionEditor/types';
 import type { SubmitAnswerRequest, LevelType } from '@/api/gameApi';
@@ -48,12 +48,20 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     }
 }
 
-function mapToStation(q: TeacherQuestion): StationData {
+const STOP_TO_TYPE: Record<string, StationType> = {
+    "Nyhetskvartalet": STATION_TYPE.NEWS,
+    "Fotografen": STATION_TYPE.PHOTO,
+    "Passordbanken": STATION_TYPE.PASSWORD,
+    "Postkontoret": STATION_TYPE.POST,
+    "Markedsplassen": STATION_TYPE.MARKETPLACE,
+};
+
+function mapToStation(q: TeacherQuestion, stationType: StationType): StationData {
     if (q.levelType === 'CLASSIFY_ITEMS') {
         const ciOptions = q.options as TeacherClassifyItemsOption[];
         return {
             questionId: q.id,
-            type: STATION_TYPE.NEWS,
+            type: stationType,
             levelType: q.levelType as LevelType,
             title: 'Nyhetskvartal',
             questionText: q.questionText,
@@ -65,10 +73,29 @@ function mapToStation(q: TeacherQuestion): StationData {
             })),
         };
     }
+    if (q.levelType === 'PASSWORD_STRENGTH') {
+        const pwOptions = q.options as TeacherPasswordStrengthOption[];
+        return {
+            questionId: q.id,
+            type: stationType,
+            levelType: q.levelType as LevelType,
+            title: 'Passordbanken',
+            questionText: q.questionText,
+            options: pwOptions.map(o => ({
+                id: o.id,
+                label: '',
+                minLength: o.minLength,
+                requireDigit: o.requireDigit,
+                requireUpper: o.requireUpper,
+                requireLower: o.requireLower,
+                requireSymbol: o.requireSymbol,
+            })),
+        };
+    }
     const stdOptions = q.options as TeacherQuestionOption[];
     return {
         questionId: q.id,
-        type: STATION_TYPE.NEWS,
+        type: stationType,
         levelType: q.levelType as LevelType,
         title: 'Nyhetskvartal',
         questionText: q.questionText,
@@ -134,7 +161,8 @@ export default function TeacherLevelPreviewPage() {
 
     const currentQuestion = questions[questionIndex];
     const isLastQuestion = questionIndex === questions.length - 1;
-    const station = mapToStation(currentQuestion);
+    const stationType = STOP_TO_TYPE[level?.stopName ?? ''] ?? STATION_TYPE.NEWS;
+    const station = mapToStation(currentQuestion, stationType);
 
     const handleAnswer = (result: SubmitAnswerResult, _request: SubmitAnswerRequest) => {
         setSubmitResult(result);

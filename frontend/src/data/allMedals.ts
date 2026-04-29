@@ -10,7 +10,8 @@ export const ALL_MEDALS: MedalDefinition[] = [
     { name: "Fanget på kamera",    description: "Du gjennomskuet bildene!" },
     { name: "Ikke klikk!",         description: "Du gjennomskuet falske eposter" },
     { name: "Passordvokter",       description: "Du bygde passord som holder skurker ute!" },
-    { name: "platinum",            description: "Du fanget skurken" },
+    { name: "God Handel",          description: "Du var varsom i bazaaren" },
+    { name: "Platinum",            description: "Du fanget skurken!" },
 ];
 
 export const getMedalImageUrl = (name: string) => `/assets/medalions/${name}.svg`;

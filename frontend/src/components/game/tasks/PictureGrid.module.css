@@ -49,6 +49,10 @@
     overflow: hidden;
 }
 
+.gridFourOptions .card:hover .imageFrame {
+    overflow: visible;
+}
+
 .gridFourOptions .image {
     width: 100%;
     height: 100%;
@@ -121,7 +125,8 @@
 .card:hover .image{
     transform: scale(2.5);
     z-index: 9;
-
+    box-shadow: none;
+    pointer-events: none;
 }
 
 /* teipbitene */
