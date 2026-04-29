@@ -42,8 +42,6 @@ function PassordBankenStation({ station, onAnswer, disabled = false }: Props) {
     };
 
   const passwordImage = station.options[0]?.imageUrl;
-  console.log("password option", station.options[0]);
-  console.log("password image", passwordImage);
 
   if (station.levelType === "PASSWORD_STRENGTH") {
     return (
