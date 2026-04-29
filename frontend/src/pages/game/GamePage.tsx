@@ -24,8 +24,8 @@ import useSound from "use-sound";
 import victorySound from "@/assets/sounds/victorySound.mp3";
 import { useMedalions } from "@/hooks/useMedalions";
 import type { MedalionResponse } from "@/api/medalionApi";
-import NotesButton from "@/components/game/NotesButton";
-import NotebookOverlay from "@/components/game/NotebookOverlay";
+import NotesButton from "@/components/game/ui_game/NotesButton";
+import NotebookOverlay from "@/components/game/ui_game/NotebookOverlay";
 import type { TabId } from "@/api/notesService";
 
 const STATION_TO_TAB: Record<StationType, TabId> = {

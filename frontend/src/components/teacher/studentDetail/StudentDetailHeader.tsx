@@ -1,4 +1,4 @@
-import { LayeredAvatar } from '@/components/user/LayeredAvatar';
+import { LayeredAvatar } from '@/components/miscellaneous/LayeredAvatar';
 import type { EquippedItem } from '@/hooks/useUserProfile';
 
 type StudentDetailHeaderProps = {

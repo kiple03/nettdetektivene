@@ -1,6 +1,6 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { LayeredAvatar } from '@/components/user/LayeredAvatar';
+import { LayeredAvatar } from '@/components/miscellaneous/LayeredAvatar';
 import type { StudentSummary } from '@/types/classroom.ts';
 
 type ClassroomDetailStudentCardProps = {

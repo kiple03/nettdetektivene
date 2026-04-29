@@ -6,7 +6,7 @@ import styles from "@/pages/student/ProfilePage.module.css";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyClassroom } from "@/hooks/student/useMyClassroom";
-import { LayeredAvatar } from "@/components/user/LayeredAvatar";
+import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 import { getGameStops, getLevelsForStop } from "@/api/gameApi";
 import { studentKeys } from "@/hooks/student/queryKeys";

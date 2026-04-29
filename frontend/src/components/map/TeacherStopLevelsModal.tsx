@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getLevelsForStop } from "@/api/gameApi";
 import { Button } from "@/components/ui/buttons/Button";
-import { useHideBackButton } from "@/components/layout/TeacherLayoutContext";
+import { useHideBackButton } from "@/components/teacher_layout/TeacherLayoutContext";
 import styles from "./StopLevelsModal.module.css";
 
 export interface TeacherStopInfo {

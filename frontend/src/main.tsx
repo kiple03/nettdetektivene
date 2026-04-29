@@ -5,8 +5,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {router} from './routes/index.tsx'
 import './index.css'
 import MedalionWatcher from './components/MedalionWatcher.tsx'
-import BackgroundMusic from './components/BackgroundMusic.tsx'
-import AuthSessionRefresher from './components/AuthSessionRefresher.tsx'
+import BackgroundMusic from './components/ui/buttons/MusicMuteButton.tsx'
+import AuthSessionRefresher from './components/auth/AuthSessionRefresher.tsx'
 
 //Create client 
 const queryClient = new QueryClient({

@@ -5,7 +5,7 @@ import {
 } from "@/api/gameApi.ts";
 import {mapSubmitResponseToSubmitAnswer} from "@/utils/gameMapper.ts";
 import type {StationData, SubmitAnswerResult} from "@/types/station.ts";
-import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 
 type NyhetsKvartalStationProps = {
