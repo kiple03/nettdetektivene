@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/buttons/Button.tsx";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getGameLevelById, getLevelQuestions, submitLevel, getLevelsForStop, adminCompleteLevel } from "@/api/gameApi.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
-import ConfettiComp from "@/components/ConfettiComp";
+import ConfettiComp from "@/components/miscellaneous/ConfettiComp";
 import useSound from "use-sound";
 import victorySound from "@/assets/sounds/victorySound.mp3";
 import { useMedalions } from "@/hooks/useMedalions";
