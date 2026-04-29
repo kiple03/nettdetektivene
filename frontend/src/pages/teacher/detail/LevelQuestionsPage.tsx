@@ -112,14 +112,15 @@ function renderQuestionOptions(q: TeacherQuestion) {
     }
     if (q.options.length === 0) return null;
     const stdOptions = q.options as import('@/api/teacherApi').TeacherQuestionOption[];
+    const isPictureQuiz = q.levelType === 'PICTURE_QUIZ';
     return (
-        <ul className="level-questions__options">
+        <ul className={`level-questions__options${isPictureQuiz ? ' level-questions__options--grid' : ''}`}>
             {stdOptions.map(opt => (
                 <li
                     key={opt.id}
                     className={`level-questions__option${opt.isCorrect ? ' level-questions__option--correct' : ''}`}
                 >
-                    {q.levelType === 'PICTURE_QUIZ' && opt.imageUrl && (
+                    {isPictureQuiz && opt.imageUrl && (
                         <img
                             src={getImageDisplayUrl(opt.imageUrl)}
                             alt={opt.text ?? ''}

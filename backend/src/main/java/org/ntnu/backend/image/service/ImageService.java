@@ -24,7 +24,7 @@ import software.amazon.awssdk.services.s3.model.*;
  * database via {@link ImageRepository} so images can be looked up by ID without
  * querying S3 directly.
  *
- * <p>Only JPEG, PNG, and WEBP files up to {@value MAX_FILE_SIZE} MB are accepted.
+ * <p>Only JPEG, PNG, WEBP, and GIF files up to {@value MAX_FILE_SIZE} MB are accepted.
  * The S3 bucket is created automatically on first use if it does not already exist.
  */
 @Service
@@ -34,7 +34,8 @@ public class ImageService {
     private static final Set<String> ALLOWED_TYPES = Set.of(
             "image/jpeg",
             "image/png",
-            "image/webp"
+            "image/webp",
+            "image/gif"
     );
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -124,7 +125,7 @@ public class ImageService {
         }
 
         if (!ALLOWED_TYPES.contains(file.getContentType())) {
-            throw new RuntimeException("Only JPEG, PNG, and WEBP are allowed");
+            throw new RuntimeException("Only JPEG, PNG, WEBP, and GIF are allowed");
         }
 
         if (file.getSize() > MAX_FILE_SIZE) {
