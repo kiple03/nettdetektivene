@@ -17,9 +17,11 @@
 
 .medalion-toast__image {
     position: absolute;
-    left: -10px;
-    width: 120px;
-    height: 120px;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.5rem;
+    height: 3.5rem;
     object-fit: contain;
 }
 
