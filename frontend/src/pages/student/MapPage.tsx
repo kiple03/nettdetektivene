@@ -80,6 +80,10 @@ export default function MapPage() {
     };
 
     const handleStopClick = (stop: StopData) => {
+        if (stop.title === "Datasenteret" && isUnlocked(stop.title)) {
+            navigate("/boss");
+            return;
+        }
         animateTo(stop.pathOffset, () => {
             if (isUnlocked(stop.title)) {
                 setManualPendingStop(stop);
@@ -107,20 +111,6 @@ export default function MapPage() {
                     </div>
                 }
                 renderStopIcon={(stop) => {
-                    if (stop.title === "Datasenteret" && !isUnlocked(stop.title)) {
-                        return (
-                            <>
-                                <div className={styles.datasenteretIcons}>
-                                    <img src={datasenteret} alt="Datasenteret" className={`${styles.icon} ${styles.lockedIcon}`} />
-                                    <div className={styles.sharkWrapper}>
-                                        <img src={sharkBase} alt="Shark" className={`${styles.icon} ${styles.sharkSilhouette}`} />
-                                        <span className={styles.sharkQuestionMark}>?</span>
-                                    </div>
-                                </div>
-                                <LockBadge />
-                            </>
-                        );
-                    }
                     return (
                         <>
                             <img
