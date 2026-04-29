@@ -10,6 +10,7 @@ import IncorrectFx from '@/assets/sounds/IncorrectAnswer.mp3';
 
 type Props = {
   title: string;
+  subtitle?: string;
   type: StationType;
   children: React.ReactNode;
   submitResult: SubmitAnswerResult | null;
@@ -29,6 +30,7 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
   return (
       // toLowerCase for css-styling for the specific station
       <div className={`station-container station-${type.toLowerCase()}`}>
+        {/* Top label */}
         <h1 className="station-title">{title}</h1>
 
         <button

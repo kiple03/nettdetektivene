@@ -73,6 +73,7 @@ public class GameSeeder implements CommandLineRunner {
     seedPasswords();
     seedMarkedsplassen();
     seedSocial();
+    seedBoos();
     log.info("GameSeeder: done");
   }
 
@@ -842,7 +843,7 @@ public class GameSeeder implements CommandLineRunner {
       ensureQuestion(l1,
           "Lag et passord på minst 8 tegn med tall og stor bokstav.",
           List.of(new PasswordStrengthOption(
-              1, 8, true, true, false, false,
+              1, 8, true, true, false, false, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/passord1.png",
               "Bra! Passordet oppfyller kravene.",
               "Passordet ditt er ikke sterkt nok."
           ))
@@ -851,7 +852,7 @@ public class GameSeeder implements CommandLineRunner {
       ensureQuestion(l1,
           "Nå skjerper vi kravene: minst 12 tegn, med tall, stor bokstav OG symbol.",
           List.of(new PasswordStrengthOption(
-              1, 12, true, true, false, true,
+              1, 12, true, true, false, true, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/passord2.png",
               "Utmerket — dette er et robust passord!",
               "Passordet ditt er ikke sterkt nok."
           ))
@@ -1277,5 +1278,15 @@ public class GameSeeder implements CommandLineRunner {
 
     ensureLevelNoteTemplate(l3, NoteCategory.SOSIALE,
         "Vurder alltid kilden, se etter følelsesmanipulasjon, og husk at popularitet ikke er det samme som sannhet.");
+  }
+
+
+  private void seedBoos() {
+    stopRepository.findByName("Datasenteret").orElseGet(() -> {
+      Stop s = new Stop();
+      s.setName("Datasenteret");
+      s.setDisplayOrder(7);
+      return stopRepository.save(s);
+    });
   }
 }

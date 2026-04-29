@@ -134,11 +134,9 @@
 
 /* ─── Medallion image with shine ────────────────────────────────────────── */
 .medalWrapper {
-    width: 160px;
-    height: 160px;
-    overflow: hidden;
+    width: 80px;
+    height: 80px;
     margin: 0 auto 12px;
-    border-radius: 12px;
     animation: medalShine 2s ease-in-out infinite;
 }
 
@@ -147,8 +145,6 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    transform: scale(2.4);
-    transform-origin: center;
 }
 
 @keyframes medalShine {

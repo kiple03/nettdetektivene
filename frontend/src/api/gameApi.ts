@@ -47,6 +47,7 @@ export interface GameLevel {
   description: string;
   stopName: string;
   levelType: LevelType;
+  order: number;
   locked: boolean;
 }
 
@@ -98,6 +99,10 @@ export const submitLevel = async (
   body: SubmitLevelRequest
 ): Promise<void> => {
   await client.post(`/game/levels/${levelId}/submit`, body);
+};
+
+export const adminCompleteLevel = async (levelId: number): Promise<void> => {
+  await client.post(`/game/levels/${levelId}/admin-complete`);
 };
 
 export const getGameStops = async (): Promise<GameStop[]> => {

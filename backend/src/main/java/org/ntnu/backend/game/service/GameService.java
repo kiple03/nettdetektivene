@@ -91,6 +91,17 @@ public class GameService {
   }
 
   @Transactional
+  public void adminCompleteLevel(int levelId, JwtAuthenticatedPrincipal principal) {
+    Level level = levelRepository.findById(levelId)
+        .orElseThrow(() -> new LevelNotFoundException(levelId));
+    boolean newlyCompleted = progressService.recordCompletionOfLevel(
+        principal.getUserId(), principal.getRole(), level);
+    if (newlyCompleted) {
+      noteService.saveCompletionTipIfNeeded(principal.getUserId(), level);
+    }
+  }
+
+  @Transactional
   public void submitLevel(int levelId, SubmitLevelRequest request, JwtAuthenticatedPrincipal principal) {
     Level level = levelRepository.findById(levelId)
         .orElseThrow(() -> new LevelNotFoundException(levelId));

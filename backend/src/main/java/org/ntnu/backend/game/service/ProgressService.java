@@ -164,7 +164,7 @@ public class ProgressService {
     Stop completedStop = progress.getCurrentStop();
     advanceToNextLevel(progress);
 
-    if(progress.isGameCompleted()){
+    if (progress.isGameCompleted()){
       medalionService.awardInternalUsage(userId, "platinum", "Du fanget skurken");
     } else if(progress.getCurrentStop().getId() != completedStop.getId()){
       awardStopCompletionMedal(userId, completedStop);
@@ -205,7 +205,7 @@ public class ProgressService {
       case "Fotografen" -> Map.entry("Fanget på kamera", "Du gjennomskuet bildene!");
       case "Postkontoret" -> Map.entry("Ikke klikk!", "Du gjennomskuet falske eposter");
       case "Passordbanken" -> Map.entry("Passordvokter", "Du bygde passord som holder skurker ute!");
-      case "Markedsplassen" -> Map.entry  ("God handel", "Du var varsom i bazaaren");
+      case "Markedsplassen" -> Map.entry  ("God Handel", "Du var varsom i bazaaren");
       case "Den Sosiale Møteplassen" -> Map.entry("Chat chat chat", "Du var føre var på medier");
       default -> null;
     };
@@ -225,6 +225,10 @@ public class ProgressService {
             UserProgress::getId,
             progress -> progressMapper.toSummary(progress, stopLevelCounts, totalLevelsInGame)
         ));
+  }
+
+  public boolean boosFightUnlocked(UUID userId) {
+    return getProgressOrThrow(userId).getCurrentStop().getDisplayOrder() == 7;
   }
 
   /**
