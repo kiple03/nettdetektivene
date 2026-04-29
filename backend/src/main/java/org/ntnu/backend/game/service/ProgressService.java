@@ -227,8 +227,8 @@ public class ProgressService {
         ));
   }
 
-  public boolean isBossUnlocked(UUID userId) {
-    return getProgressOrThrow(userId).isGameCompleted();
+  public boolean boosFightUnlocked(UUID userId) {
+    return getProgressOrThrow(userId).getCurrentStop().getDisplayOrder() == 7;
   }
 
   /**

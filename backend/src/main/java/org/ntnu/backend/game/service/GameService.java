@@ -55,14 +55,12 @@ public class GameService {
    */
   @Transactional(readOnly = true)
   public List<StopResponse> getStopsForUser(UUID userId, RoleEnum role) {
-    List<StopResponse>  unlockedStops =  stopRepository.findAllByOrderByDisplayOrderAsc()
+    return stopRepository.findAllByOrderByDisplayOrderAsc()
         .stream()
         .map(stop -> gameMapper.toStopOverviewResponse(
             stop,
             !progressService.isStopAccessible(userId, role, stop)
         )).toList();
-
-    return unlockedStops;
   }
 
   /**
