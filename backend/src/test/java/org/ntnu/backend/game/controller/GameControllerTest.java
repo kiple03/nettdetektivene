@@ -103,9 +103,9 @@ class GameControllerTest {
     when(gameService.getLevelsForStop(anyInt(), any(), any()))
         .thenReturn(List.of(
             new LevelResponse(1, "Ekte eller falskt?", "Finn den ekte nyheten",
-                LevelType.MULTIPLE_CHOICE, 1,false),
+                "Nyhetskvartalet", LevelType.MULTIPLE_CHOICE,  1,false),
             new LevelResponse(2, "Clickbait-detektiven", "Spot clickbait",
-                LevelType.MULTIPLE_CHOICE, 2, false)
+                "Nyhetskvartalet", LevelType.MULTIPLE_CHOICE, 2, false)
         ));
     mockMvc.perform(get("/game/stops/1/levels").with(authentication(studentAuth)))
             .andExpect(status().isOk())
@@ -118,7 +118,7 @@ class GameControllerTest {
   void getLevel_returnsLevelDetail() throws Exception {
     when(gameService.getLevel(anyInt(), any(), any())).thenReturn(
         new LevelResponse(1, "Ekte eller falskt?", "Finn den ekte nyheten",
-            LevelType.MULTIPLE_CHOICE, 1, false));
+            "Nyhetskvartalet", LevelType.MULTIPLE_CHOICE, 1, false));
 
     mockMvc.perform(get("/game/levels/1").with(authentication(studentAuth)))
             .andExpect(status().isOk())
@@ -134,7 +134,7 @@ class GameControllerTest {
             new MultipleChoiceOptionResponse(2, "Option B", "img2.jpg")
     );
 
-    when(questionService.getQuestionsForLevel(anyInt())).thenReturn(List.of(
+    when(questionService.getQuestionsForLevel(anyInt(), any())).thenReturn(List.of(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which is real?", options, null)
     ));
 
@@ -151,7 +151,7 @@ class GameControllerTest {
             new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg")
     );
 
-    when(questionService.getQuestionsForLevel(anyInt())).thenReturn(List.of(
+    when(questionService.getQuestionsForLevel(anyInt(), any())).thenReturn(List.of(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Test?", options, null)
     ));
 

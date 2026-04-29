@@ -1,4 +1,3 @@
-import ConfettiComp from '@/components/ConfettiComp';
 import HomeBoard from "@/components/dashboard/HomeBoard.tsx";
 import { studentBoardItems } from "@/data/studentBoardItems";
 import {
@@ -10,24 +9,26 @@ import {
 import styles from "@/pages/student/MapPage.module.css";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function StudentHomePage() {
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const helpButtonRef = useRef<HTMLButtonElement>(null);
-
+    const { email } = useAuth();
+    
     useEffect(() => {
-        const hasSeenDialog = localStorage.getItem("hasSeenWelcomeDialog");
+        if(!email) return;
+        const key = `hasSeenWelcomeDialog_${email}`;
+        const hasSeenDialog = localStorage.getItem(key);
 
         if (!hasSeenDialog) {
             setLockedDialogOpen(true);
-            localStorage.setItem("hasSeenWelcomeDialog", "true");
+            localStorage.setItem(key, "true");
         }
-    }, []);
+    }, [email]);
 
     return (
         <>
-            <ConfettiComp duration={2000} />
-
             <section>
                 <HomeBoard items={studentBoardItems} />
             </section>

@@ -65,7 +65,7 @@ public class ClassroomController {
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('STUDENT')")
-    public ClassroomResponse joinClassroom(@Valid @RequestBody JoinClassroomRequest request,
+    public JoinClassroomResponse joinClassroom(@Valid @RequestBody JoinClassroomRequest request,
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return classroomService.joinClassroom(request, principal.getUserId());
     }

@@ -1,4 +1,5 @@
 import apiClient from '@/api/client';
+import { setToken } from '@/stores/authStore';
 import type { ClassroomDetail } from '@/types/classroom';
 
 // Raw response type from backend (internal, not exported)
@@ -8,6 +9,10 @@ interface RawClassroomResponse {
   description: string | null;
   joinCode: string;
   createdAt: string;
+}
+
+interface RawJoinResponse extends RawClassroomResponse {
+  accessToken: string;
 }
 
 function mapClassroomDetail(raw: RawClassroomResponse): ClassroomDetail {
@@ -21,7 +26,9 @@ function mapClassroomDetail(raw: RawClassroomResponse): ClassroomDetail {
 }
 
 export async function joinClassroom(joinCode: string): Promise<ClassroomDetail> {
-  const res = await apiClient.post<RawClassroomResponse>('/classrooms/join', { joinCode });
+  const res = await apiClient.post<RawJoinResponse>('/classrooms/join', { joinCode });
+  setToken(res.data.accessToken);
+  window.dispatchEvent(new Event('auth-changed'));
   return mapClassroomDetail(res.data);
 }
 

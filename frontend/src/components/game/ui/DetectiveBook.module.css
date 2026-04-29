@@ -194,6 +194,10 @@
     overflow: visible;
 }
 
+.content:has(button:hover){
+    z-index: 10;
+}
+
 .answerDock {
     visibility: hidden;
 }

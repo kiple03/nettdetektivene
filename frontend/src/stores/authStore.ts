@@ -1,6 +1,7 @@
 import type { Role } from '@/types/user';
 
 const TOKEN_KEY = 'token';
+const SESSION_ENDED_KEY = 'auth-session-ended';
 
 const KNOWN_ROLES: Role[] = ['STUDENT', 'TEACHER'];
 
@@ -10,10 +11,19 @@ export function getToken(): string | null {
 
 export function setToken(token: string): void {
   localStorage.setItem(TOKEN_KEY, token);
+  localStorage.removeItem(SESSION_ENDED_KEY);
 }
 
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
+}
+
+export function markSessionEnded(): void {
+  localStorage.setItem(SESSION_ENDED_KEY, 'true');
+}
+
+export function isSessionEnded(): boolean {
+  return localStorage.getItem(SESSION_ENDED_KEY) === 'true';
 }
 
 interface JwtPayload {
@@ -55,11 +65,7 @@ export function decodeToken(token: string | null = getToken()): JwtPayload | nul
 export function isLoggedIn(): boolean {
   const payload = decodeToken();
   if (!payload) return false;
-  if (payload.exp !== undefined && payload.exp * 1000 < Date.now()) {
-    clearToken();
-    return false;
-  }
-  return true;
+  return payload.exp === undefined || payload.exp * 1000 >= Date.now();
 }
 
 export function getRole(): Role | null {
@@ -69,4 +75,18 @@ export function getRole(): Role | null {
 
 export function getClassroomId(): string | null {
   return decodeToken()?.classroomId ?? null;
+}
+
+// Ready once the startup session-restore attempt has settled.
+// Starts true when: no token to restore, token is already valid, or explicit logout.
+// Starts false only when: an access token exists but has expired (needs a refresh probe).
+let _authReady: boolean = !getToken() || isLoggedIn() || isSessionEnded();
+
+export function isAuthReady(): boolean {
+  return _authReady;
+}
+
+export function setAuthReady(): void {
+  _authReady = true;
+  window.dispatchEvent(new Event('auth-changed'));
 }

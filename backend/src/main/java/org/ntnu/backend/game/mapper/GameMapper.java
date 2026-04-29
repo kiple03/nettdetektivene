@@ -2,6 +2,7 @@ package org.ntnu.backend.game.mapper;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.game.dto.ClassifyItemsOptionResponse;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
 import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
@@ -10,6 +11,7 @@ import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.OptionResponse;
 import org.ntnu.backend.game.dto.PasswordStrengthOptionResponse;
+import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
@@ -53,6 +55,7 @@ public class GameMapper {
         level.getId(),
         level.getTitle(),
         level.getDescription(),
+        level.getStop().getName(),
         level.getLevelType(),
         level.getOrder(),
         locked
@@ -95,12 +98,18 @@ public class GameMapper {
       case PostOfficeOption o -> new PostOfficeOptionResponse(o.getId(), o.getType());
 
       case PictureQuizOption pq -> new PictureQuizOptionResponse(
-              pq.getId(),
-              pq.getText(),
-              pq.getImageUrl()
+              pq.id(),
+              pq.text(),
+              pq.imageUrl()
       );
       case PasswordStrengthOption p -> new PasswordStrengthOptionResponse(
-        p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol());
+        p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol()
+      );
+      case ClassifyItemsOption ci -> new ClassifyItemsOptionResponse(
+          ci.getKey(),
+          ci.getText(),
+          ci.getLabels()
+      );
     };
   }
 }

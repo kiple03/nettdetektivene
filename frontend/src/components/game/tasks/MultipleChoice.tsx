@@ -1,5 +1,5 @@
 import ImageOptionCard from "@/components/game/ui/ImageOptionCard.tsx";
-import type { StationOption } from "@/types/station.ts";
+import type {StationOption} from "@/types/station.ts";
 
 type MultipleChoiceProps = {
   question: string;
@@ -8,17 +8,16 @@ type MultipleChoiceProps = {
   disabled?: boolean;
 };
 
-function MultipleChoice({
-                          question,
-                          options,
-                          onSelect,
-                          disabled = false,
-                        }: MultipleChoiceProps) {
+function MultipleChoice({ question, options, onSelect, disabled = false }: MultipleChoiceProps) {
+  const hasImages = options.some(o => o.imageUrl);
+
   return (
-      <fieldset className="photo-task">
-        <legend className="photo-task__legend">
-          {question}
-        </legend>
+      <fieldset className={hasImages ? "photo-task" : "optionsContainer"}>
+        {question && (
+            <legend className="photo-task__legend">
+              {question}
+            </legend>
+        )}
 
         {options.map((option) =>
             option.imageUrl ? (
@@ -34,6 +33,7 @@ function MultipleChoice({
                 <button
                     key={option.id}
                     type="button"
+                    className="optionButton"
                     onClick={() => onSelect(option)}
                     disabled={disabled}
                 >
@@ -42,7 +42,7 @@ function MultipleChoice({
             )
         )}
       </fieldset>
-  );
+    );
 }
 
 export default MultipleChoice;

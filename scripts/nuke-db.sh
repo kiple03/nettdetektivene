@@ -41,20 +41,25 @@ mysql -h "$HOST" -P "$PORT" -u "$DB_USERNAME" -p"$DB_PASSWORD" "$DATABASE" <<'SQ
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS mystery_submission;
-DROP TABLE IF EXISTS notepad_entry;
+DROP TABLE IF EXISTS student_level_notes;
+DROP TABLE IF EXISTS notes;
+DROP TABLE IF EXISTS level_note_templates;
 DROP TABLE IF EXISTS medal;
-DROP TABLE IF EXISTS level_completion;
-DROP TABLE IF EXISTS question;
-DROP TABLE IF EXISTS level;
-DROP TABLE IF EXISTS stop;
+DROP TABLE IF EXISTS boss_battle_result;
+DROP TABLE IF EXISTS user_progress;
+DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS levels;
+DROP TABLE IF EXISTS stops;
+DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS enrollment;
 DROP TABLE IF EXISTS classroom_teacher;
+DROP TABLE IF EXISTS classroom_censor_word;
 DROP TABLE IF EXISTS classroom;
 DROP TABLE IF EXISTS user_avatar_unlock;
 DROP TABLE IF EXISTS avatar_item;
 DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS images;
 DROP TABLE IF EXISTS app_user;
-DROP TABLE IF EXISTS users;
 
 SET FOREIGN_KEY_CHECKS = 1;
 SQL

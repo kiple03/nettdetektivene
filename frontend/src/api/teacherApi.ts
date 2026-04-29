@@ -9,6 +9,49 @@ import type {
   StopSummary,
   CoTeacher,
 } from '../types/classroom';
+
+export interface TeacherQuestionOption {
+  id: number;
+  text: string | null;
+  imageUrl: string | null;
+  isCorrect: boolean;
+  explanation: string | null;
+}
+
+export interface TeacherClassifyItemsOption {
+  key: string;
+  text: string;
+  labels: string[];
+  correctLabel: string;
+  explanation: string;
+}
+
+export interface TeacherPasswordStrengthOption {
+  id: number;
+  minLength: number;
+  requireDigit: boolean;
+  requireUpper: boolean;
+  requireLower: boolean;
+  requireSymbol: boolean;
+  successFeedback: string;
+  failureFeedback: string;
+}
+
+export interface TeacherTextQuizOption {
+  id: number;
+  text: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+export interface TeacherQuestion {
+  id: number;
+  levelType: string;
+  questionText: string;
+  options: TeacherQuestionOption[] | TeacherClassifyItemsOption[] | TeacherPasswordStrengthOption[] | TeacherTextQuizOption[];
+  isDefault: boolean;
+  classroomId: string | null;
+}
 import type { MedalionResponse } from './medalionApi';
 import { toNotesMap } from './notesService';
 import type { NotesData } from './notesService';
@@ -336,12 +379,13 @@ export async function getStudentMedalions(classroomId: string, studentId: string
 }
 
 export async function getStudentNotebook(classroomId: string, studentId: string): Promise<NotesData> {
-  const res = await apiClient.get<{ reflections?: Record<string, any[]>; levelNotes?: Record<string, any[]> }>(
+  type RawNotebook = { reflections?: Parameters<typeof toNotesMap>[0]; levelNotes?: Parameters<typeof toNotesMap>[0] };
+  const res = await apiClient.get<RawNotebook>(
     `/teacher/classrooms/${classroomId}/students/${studentId}/notebook`,
   );
   return {
-    reflections: toNotesMap(res.data.reflections as any),
-    levelNotes: toNotesMap(res.data.levelNotes as any),
+    reflections: toNotesMap(res.data.reflections),
+    levelNotes: toNotesMap(res.data.levelNotes),
   };
 }
 
@@ -382,4 +426,174 @@ export async function addCensorWord(classroomId: string, word: string): Promise<
 
 export async function deleteCensorWord(classroomId: string, wordId: string): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}/censor-words/${wordId}`);
+}
+
+export async function listLevelQuestions(classroomId: string, levelId: number): Promise<TeacherQuestion[]> {
+  const res = await apiClient.get<TeacherQuestion[]>(`/teacher/classrooms/${classroomId}/levels/${levelId}/questions`);
+  return res.data;
+}
+
+export interface QuestionOptionPayload {
+  text: string;
+  imageUrl: string | null;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+export interface PictureQuizOptionPayload {
+  text: string;
+  imageUrl: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+export interface CreateMultipleChoiceQuestionPayload {
+  questionText: string;
+  levelType: 'MULTIPLE_CHOICE';
+  options: QuestionOptionPayload[];
+}
+
+export interface CreatePictureQuizQuestionPayload {
+  questionText: string;
+  levelType: 'PICTURE_QUIZ';
+  options: PictureQuizOptionPayload[];
+}
+
+export interface ClassifyItemsItemPayload {
+  text: string;
+  correctLabel: string;
+  explanation: string;
+}
+
+export interface CreateClassifyItemsQuestionPayload {
+  questionText: string;
+  levelType: 'CLASSIFY_ITEMS';
+  labels: string[];
+  items: ClassifyItemsItemPayload[];
+}
+
+export interface CreatePasswordStrengthQuestionPayload {
+  questionText: string;
+  levelType: 'PASSWORD_STRENGTH';
+  minLength: number;
+  requireDigit: boolean;
+  requireUpper: boolean;
+  requireLower: boolean;
+  requireSymbol: boolean;
+  successFeedback: string;
+  failureFeedback: string;
+}
+
+export interface TextQuizOptionPayload {
+  text: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+export interface CreateTextQuizQuestionPayload {
+  questionText: string;
+  levelType: 'TEXT_QUIZ';
+  options: TextQuizOptionPayload[];
+}
+
+// Discriminated union — extend with additional arms as new types are added
+export type CreateQuestionPayload = CreateMultipleChoiceQuestionPayload | CreatePictureQuizQuestionPayload | CreateClassifyItemsQuestionPayload | CreatePasswordStrengthQuestionPayload | CreateTextQuizQuestionPayload;
+
+export interface UpdateMultipleChoiceQuestionPayload {
+  levelType: 'MULTIPLE_CHOICE';
+  questionText: string;
+  options: QuestionOptionPayload[];
+}
+
+export interface UpdatePictureQuizQuestionPayload {
+  levelType: 'PICTURE_QUIZ';
+  questionText: string;
+  options: PictureQuizOptionPayload[];
+}
+
+export interface UpdateClassifyItemsQuestionPayload {
+  levelType: 'CLASSIFY_ITEMS';
+  questionText: string;
+  labels: string[];
+  items: ClassifyItemsItemPayload[];
+}
+
+export interface UpdatePasswordStrengthQuestionPayload {
+  levelType: 'PASSWORD_STRENGTH';
+  questionText: string;
+  minLength: number;
+  requireDigit: boolean;
+  requireUpper: boolean;
+  requireLower: boolean;
+  requireSymbol: boolean;
+  successFeedback: string;
+  failureFeedback: string;
+}
+
+export interface UpdateTextQuizQuestionPayload {
+  levelType: 'TEXT_QUIZ';
+  questionText: string;
+  options: TextQuizOptionPayload[];
+}
+
+// Discriminated union — extend with additional arms as new types are added
+export type UpdateQuestionPayload = UpdateMultipleChoiceQuestionPayload | UpdatePictureQuizQuestionPayload | UpdateClassifyItemsQuestionPayload | UpdatePasswordStrengthQuestionPayload | UpdateTextQuizQuestionPayload;
+
+export async function createQuestion(classroomId: string, levelId: number, payload: CreateQuestionPayload): Promise<TeacherQuestion> {
+  const res = await apiClient.post<TeacherQuestion>(
+    `/teacher/classrooms/${classroomId}/levels/${levelId}/questions`,
+    payload,
+  );
+  return res.data;
+}
+
+export async function updateQuestion(classroomId: string, levelId: number, questionId: number, payload: UpdateQuestionPayload): Promise<TeacherQuestion> {
+  const res = await apiClient.put<TeacherQuestion>(
+    `/teacher/classrooms/${classroomId}/levels/${levelId}/questions/${questionId}`,
+    payload,
+  );
+  return res.data;
+}
+
+export async function deleteQuestion(classroomId: string, levelId: number, questionId: number): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}/levels/${levelId}/questions/${questionId}`);
+}
+
+export interface TeacherImage {
+  id: number;
+  url: string;
+  originalFilename: string;
+  uploadedAt: string;
+}
+
+interface RawUploadedImage {
+  id: number;
+  url: string;
+  originalFilename: string;
+  uploadedAt: string;
+}
+
+export function getImageDisplayUrl(imageUrl: string): string {
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) return imageUrl;
+  const base = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api';
+  return `${base}${imageUrl}`;
+}
+
+export async function listMyImages(): Promise<TeacherImage[]> {
+  const res = await apiClient.get<TeacherImage[]>('/teacher/images');
+  return res.data;
+}
+
+export async function uploadImage(file: File): Promise<TeacherImage> {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await apiClient.post<RawUploadedImage>('/images', formData, {
+    headers: { 'Content-Type': undefined },
+  });
+  return {
+    id: res.data.id,
+    url: res.data.url,
+    originalFilename: res.data.originalFilename,
+    uploadedAt: res.data.uploadedAt,
+  };
 }

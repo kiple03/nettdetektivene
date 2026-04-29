@@ -9,6 +9,12 @@
   justify-content: center;
 }
 
+.backBtn{
+  position: absolute;
+  top: 6%;
+  left: 1.5%;
+}
+
 .bg {
   position: fixed;
   inset: 0;
@@ -102,6 +108,11 @@
   width: 100%;
   height: auto;
   object-fit: contain;
+}
+
+.locked {
+  opacity: 0.35;
+  filter: grayscale(100%);
 }
 
 .medalName {

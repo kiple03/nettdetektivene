@@ -14,4 +14,7 @@ export const teacherKeys = {
     stops: ['teacher', 'stops'] as const,
     notifications: ['teacher', 'notifications'] as const,
     censorWords: (classroomId: string) => ['teacher', 'classrooms', classroomId, 'censor-words'] as const,
+    levelQuestions: (classroomId: string, levelId: number) =>
+        ['teacher', 'classrooms', classroomId, 'levels', levelId, 'questions'] as const,
+    images: ['teacher', 'images'] as const,
 };

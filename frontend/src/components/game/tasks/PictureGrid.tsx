@@ -17,6 +17,7 @@ type PictureGridProps = {
     correctIds?: number[];
     wrongIds?: number[];
     selectionMode?: "single" | "multiple";
+    gridClassName?: string;
 };
 
 export default function PictureGrid({
@@ -26,7 +27,8 @@ export default function PictureGrid({
                                         disabled = false,
                                         correctIds = [],
                                         wrongIds = [],
-    selectionMode = "multiple",
+                                      selectionMode = "multiple",
+                                      gridClassName = "",
                                     }: PictureGridProps) {
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -81,7 +83,7 @@ export default function PictureGrid({
 
     return (
         <div className={styles.wrapper}>
-            <div className={`${styles.grid} ${gridSizeClass}`}>
+            <div className={`${styles.grid} ${gridSizeClass} ${gridClassName}`}>
                 {options.map((option) => {
                     const hasImage = Boolean(option.imageUrl?.trim());
                     const hasText = Boolean(option.text?.trim());
