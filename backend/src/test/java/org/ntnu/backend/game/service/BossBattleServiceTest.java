@@ -24,6 +24,7 @@ import org.ntnu.backend.game.dto.BossBattleResultResponse;
 import org.ntnu.backend.game.dto.BossBattleSaveRequest;
 import org.ntnu.backend.game.model.BossBattleResult;
 import org.ntnu.backend.game.repository.BossBattleResultRepository;
+import org.ntnu.backend.avatar.service.UserAvatarService;
 import org.ntnu.backend.medalion.service.MedalionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -39,6 +40,9 @@ class BossBattleServiceTest {
 
     @Mock
     private MedalionService medalionService;
+
+    @Mock
+    private UserAvatarService userAvatarService;
 
     @Mock
     private ProgressService progressService;

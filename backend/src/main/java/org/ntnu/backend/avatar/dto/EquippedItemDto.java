@@ -20,4 +20,5 @@ public class EquippedItemDto {
     private String name;
     private String category;
     private String imageUrl;
+    private boolean locked;
 }
