@@ -17,7 +17,7 @@ import alertStyles from "@/components/ui/alert-dialog/alert-dialog.module.css";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getGameLevelById, getLevelQuestions, submitLevel, getLevelsForStop } from "@/api/gameApi.ts";
+import { getGameLevelById, getLevelQuestions, submitLevel } from "@/api/gameApi.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import ConfettiComp from "@/components/ConfettiComp";
 import useSound from "use-sound";
@@ -105,11 +105,6 @@ export default function GamePage() {
         enabled: validId,
     });
 
-    const { data: stopLevels = [] } = useQuery({
-        queryKey: ["stopLevels", stopId],
-        queryFn: () => getLevelsForStop(stopId!),
-        enabled: !!stopId,
-    });
 
     if (!validId) {
         return (
@@ -187,28 +182,6 @@ export default function GamePage() {
         navigate(stopId ? `/map?levelId=${stopId}` : "/map");
     };
 
-    const handleNextLevel = () => {
-        const sortedLevels = [...stopLevels].sort(
-            (a, b) => a.id - b.id
-        );
-
-        const currentLevelIndex = sortedLevels.findIndex(
-            (level) => level.id === levelIdNum
-        );
-
-        const nextLevel = sortedLevels[currentLevelIndex + 1];
-
-        if (nextLevel) {
-            setDialogOpen(false);
-            navigate(`/game/${nextLevel.id}?stopId=${stopId}`);
-        } else {
-            handleBackToMap();
-        }
-    };
-
-    const sortedLevels = [...stopLevels].sort((a,b) => a.id - b.id);
-    const currentLevelIdx = sortedLevels.findIndex(l => l.id === levelIdNum);
-    const levelLeft = sortedLevels.length - currentLevelIdx -1;
     return (
         <div>
             <StationContainer
@@ -237,7 +210,7 @@ export default function GamePage() {
 
             {dialogOpen && levelPassed && <ConfettiComp duration={5000}/>}
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <AlertDialogContent stopsLeft={levelPassed ? levelLeft : undefined}>
+                <AlertDialogContent>
                     {levelPassed && newMedalion && (
                         <div className={alertStyles.medalWrapper}>
                             <img
@@ -264,11 +237,6 @@ export default function GamePage() {
                         <Button variant="primary" type="button" onClick={handleBackToMap}>
                             Tilbake til kartet
                         </Button>
-                        {levelPassed && (
-                            <Button variant="primary" type="button" onClick={handleNextLevel}>
-                                Neste nivå →
-                            </Button>
-                        )}
                     </div>
                 </AlertDialogContent>
             </AlertDialog>
