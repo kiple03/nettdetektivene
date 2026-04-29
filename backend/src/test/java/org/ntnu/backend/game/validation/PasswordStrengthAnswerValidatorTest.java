@@ -25,6 +25,28 @@ class PasswordStrengthAnswerValidatorTest {
     }
 
     @Test
+    void validate_whenAllRulesAreDisabledAndPasswordIsEmpty_shouldReturnCorrect() {
+        PasswordStrengthOption rule = rule(
+                0,
+                false,
+                false,
+                false,
+                false,
+                "Sterkt passord",
+                "Svakt passord"
+        );
+
+        PasswordStrengthAnswer answer = passwordAnswer("");
+
+        ValidationResult result = validator.validate(List.of(rule), answer);
+
+        assertThat(result.correct()).isTrue();
+        assertThat(result.feedback()).isEqualTo("Sterkt passord");
+        assertThat(result.correctOptionIds()).isEmpty();
+        assertThat(result.wrongSelectedOptionIds()).isEmpty();
+    }
+
+    @Test
     void supportedType_shouldReturnPasswordStrength() {
         assertThat(validator.supportedType()).isEqualTo(LevelType.PASSWORD_STRENGTH);
     }

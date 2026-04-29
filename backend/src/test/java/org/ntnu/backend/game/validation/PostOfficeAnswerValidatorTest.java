@@ -24,6 +24,17 @@ class PostOfficeAnswerValidatorTest {
     }
 
     @Test
+    void validate_whenSelectedIdsIsNull_shouldThrowNullPointerException() {
+        PostOfficeOption suspicious = option("sender", true, "Sender looks suspicious.");
+
+        MultiSelectAnswer submission = mock(MultiSelectAnswer.class);
+        when(submission.getSelectedIds()).thenReturn(null);
+
+        assertThatThrownBy(() -> validator.validate(List.of(suspicious), submission))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
     void supportedType_shouldReturnPostOffice() {
         assertThat(validator.supportedType()).isEqualTo(LevelType.POST_OFFICE);
     }

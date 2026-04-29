@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.mockito.ArgumentCaptor;
 import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -364,66 +365,6 @@ class TeacherClassroomServiceTest {
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId);
         verify(noteService).getNotesForUser(studentId, classroomId);
-    }
-
-    @Test
-    void updateStudentUsername_shouldTrimUsernameAndSaveUser() {
-        UpdateStudentUsernameRequest request = new UpdateStudentUsernameRequest("  NewName  ");
-
-        when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId))
-                .thenReturn(Optional.of(enrollment));
-        when(userRepository.findById(studentId)).thenReturn(Optional.of(student));
-        when(profanityFilter.containsProfanity("NewName")).thenReturn(false);
-
-        teacherClassroomService.updateStudentUsername(classroomId, studentId, request, principal);
-
-        assertEquals("NewName", student.getUsername());
-
-        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
-        verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId);
-        verify(userRepository).findById(studentId);
-        verify(profanityFilter).containsProfanity("NewName");
-        verify(userRepository).save(student);
-    }
-
-    @Test
-    void updateStudentUsername_whenUsernameContainsProfanity_shouldThrowBadRequestAndNotSave() {
-        UpdateStudentUsernameRequest request = new UpdateStudentUsernameRequest(" badname ");
-
-        when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId))
-                .thenReturn(Optional.of(enrollment));
-        when(userRepository.findById(studentId)).thenReturn(Optional.of(student));
-        when(profanityFilter.containsProfanity("badname")).thenReturn(true);
-
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> teacherClassroomService.updateStudentUsername(classroomId, studentId, request, principal)
-        );
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-
-        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
-        verify(userRepository, never()).save(any());
-    }
-
-    @Test
-    void updateStudentUsername_whenUserNotFound_shouldThrowNotFound() {
-        UpdateStudentUsernameRequest request = new UpdateStudentUsernameRequest("NewName");
-
-        when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId))
-                .thenReturn(Optional.of(enrollment));
-        when(userRepository.findById(studentId)).thenReturn(Optional.empty());
-
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> teacherClassroomService.updateStudentUsername(classroomId, studentId, request, principal)
-        );
-
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-
-        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
-        verify(userRepository).findById(studentId);
-        verify(userRepository, never()).save(any());
     }
 
     @Test
@@ -838,8 +779,206 @@ class TeacherClassroomServiceTest {
     }
 
     @Test
+    void listClassrooms_whenTeacherHasNoClassrooms_shouldReturnEmptyList() {
+        when(classroomTeacherRepository.findClassroomsByTeacherId(teacherId))
+                .thenReturn(List.of());
+        when(stopRepository.count()).thenReturn(5L);
+        when(progressService.getProgressForStudents(List.of()))
+                .thenReturn(Map.of());
+        when(leaderboardService.getTeacherClassroomScores(teacherId))
+                .thenReturn(List.of());
+
+        List<ClassroomSummaryResponse> result =
+                teacherClassroomService.listClassrooms(teacherId);
+
+        assertTrue(result.isEmpty());
+
+        verify(classroomTeacherRepository).findClassroomsByTeacherId(teacherId);
+        verify(stopRepository).count();
+        verify(progressService).getProgressForStudents(List.of());
+        verify(leaderboardService).getTeacherClassroomScores(teacherId);
+        verifyNoInteractions(classroomMapper);
+    }
+
+    @Test
+    void listClassrooms_shouldCalculateAverageStopPositionFromProgress() {
+        ClassroomSummaryResponse summary = mock(ClassroomSummaryResponse.class);
+
+        ProgressSummaryResponse progress = mock(ProgressSummaryResponse.class);
+        when(progress.currentStopDisplayOrder()).thenReturn(4);
+
+        when(classroomTeacherRepository.findClassroomsByTeacherId(teacherId))
+                .thenReturn(List.of(classroom));
+        when(stopRepository.count()).thenReturn(6L);
+        when(enrollmentRepository.findByClassroomIdAndLeftAtIsNull(classroomId))
+                .thenReturn(List.of(enrollment));
+        when(progressService.getProgressForStudents(List.of(studentId)))
+                .thenReturn(Map.of(studentId, progress));
+        when(leaderboardService.getTeacherClassroomScores(teacherId))
+                .thenReturn(List.of());
+        when(classroomMapper.toSummary(classroom, 1, 6, 4.0, 0))
+                .thenReturn(summary);
+
+        List<ClassroomSummaryResponse> result =
+                teacherClassroomService.listClassrooms(teacherId);
+
+        assertEquals(List.of(summary), result);
+
+        verify(classroomMapper).toSummary(classroom, 1, 6, 4.0, 0);
+    }
+
+    @Test
+    void updateStudentUsername_shouldTrimUsernameAndSaveUser() {
+        UpdateStudentUsernameRequest request = new UpdateStudentUsernameRequest("  NewName  ");
+
+        when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId))
+                .thenReturn(Optional.of(enrollment));
+        when(userRepository.findById(studentId))
+                .thenReturn(Optional.of(student));
+        when(profanityFilter.containsProfanity("NewName"))
+                .thenReturn(false);
+
+        teacherClassroomService.updateStudentUsername(classroomId, studentId, request, principal);
+
+        assertEquals("NewName", student.getUsername());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId);
+        verify(userRepository).findById(studentId);
+        verify(profanityFilter).containsProfanity("NewName");
+        verify(userRepository).save(student);
+    }
+
+    @Test
+    void updateStudentUsername_whenUserNotFound_shouldThrowNotFound() {
+        UpdateStudentUsernameRequest request = new UpdateStudentUsernameRequest("NewName");
+
+        when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId))
+                .thenReturn(Optional.of(enrollment));
+        when(userRepository.findById(studentId))
+                .thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.updateStudentUsername(classroomId, studentId, request, principal)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId);
+        verify(userRepository).findById(studentId);
+        verifyNoInteractions(profanityFilter);
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void updateStudentUsername_whenUsernameContainsProfanity_shouldThrowBadRequestAndNotSave() {
+        UpdateStudentUsernameRequest request = new UpdateStudentUsernameRequest("badword");
+
+        when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId))
+                .thenReturn(Optional.of(enrollment));
+        when(userRepository.findById(studentId))
+                .thenReturn(Optional.of(student));
+        when(profanityFilter.containsProfanity("badword"))
+                .thenReturn(true);
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.updateStudentUsername(classroomId, studentId, request, principal)
+        );
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(userRepository).findById(studentId);
+        verify(profanityFilter).containsProfanity("badword");
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void removeCoTeacher_whenRequesterIsNotOwnerButRemovesSelf_shouldDeleteOwnTeacherEntry() {
+        UUID nonOwnerId = coTeacherId;
+
+        JwtAuthenticatedPrincipal nonOwnerPrincipal = mock(JwtAuthenticatedPrincipal.class);
+        when(nonOwnerPrincipal.getUserId()).thenReturn(nonOwnerId);
+
+        ClassroomTeacher ownerEntry = ClassroomTeacher.builder()
+                .id(new ClassroomTeacherId(classroomId, teacherId))
+                .classroom(classroom)
+                .user(teacher)
+                .isOwner(true)
+                .build();
+
+        ClassroomTeacher selfEntry = ClassroomTeacher.builder()
+                .id(new ClassroomTeacherId(classroomId, nonOwnerId))
+                .classroom(classroom)
+                .user(coTeacher)
+                .isOwner(false)
+                .build();
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, nonOwnerId))
+                .thenReturn(false);
+        when(classroomTeacherRepository.findWithUsersByClassroomId(classroomId))
+                .thenReturn(List.of(ownerEntry, selfEntry));
+        when(classroomTeacherRepository.findOneByClassroomIdAndUserId(classroomId, nonOwnerId))
+                .thenReturn(Optional.of(selfEntry));
+
+        teacherClassroomService.removeCoTeacher(classroomId, nonOwnerId, nonOwnerPrincipal);
+
+        verify(classroomAuthorizationService).verifyAccess(nonOwnerPrincipal, classroomId);
+        verify(classroomTeacherRepository).delete(selfEntry);
+        verify(classroomTeacherRepository, never()).save(any());
+    }
+
+    @Test
+    void removeCoTeacher_whenRequesterIsNotOwnerAndRemovesOtherTeacher_shouldThrowAccessDenied() {
+        UUID otherTeacherId = UUID.fromString("77777777-7777-7777-7777-777777777777");
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(false);
+
+        assertThrows(
+                AccessDeniedException.class,
+                () -> teacherClassroomService.removeCoTeacher(classroomId, otherTeacherId, principal)
+        );
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(classroomTeacherRepository).isOwnerOfClassroom(classroomId, teacherId);
+        verify(classroomTeacherRepository, never()).findWithUsersByClassroomId(any());
+        verify(classroomTeacherRepository, never()).delete(any());
+    }
+
+    @Test
+    void removeCoTeacher_whenOnlyTeacherInClassroom_shouldThrowConflict() {
+        ClassroomTeacher onlyTeacher = ClassroomTeacher.builder()
+                .id(new ClassroomTeacherId(classroomId, teacherId))
+                .classroom(classroom)
+                .user(teacher)
+                .isOwner(true)
+                .build();
+
+        when(classroomTeacherRepository.isOwnerOfClassroom(classroomId, teacherId))
+                .thenReturn(true);
+        when(classroomTeacherRepository.findWithUsersByClassroomId(classroomId))
+                .thenReturn(List.of(onlyTeacher));
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> teacherClassroomService.removeCoTeacher(classroomId, teacherId, principal)
+        );
+
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+
+        verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
+        verify(classroomTeacherRepository).findWithUsersByClassroomId(classroomId);
+        verify(classroomTeacherRepository, never()).delete(any());
+    }
+
+    @Test
     void getClassroom_whenClassroomNotFound_shouldThrowNotFound() {
-        when(classroomRepository.findById(classroomId)).thenReturn(Optional.empty());
+        when(classroomRepository.findById(classroomId))
+                .thenReturn(Optional.empty());
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,

@@ -37,6 +37,43 @@ class LevelSubmissionValidatorTest {
     }
 
     @Test
+    void validate_whenQuestionsAndAnswersAreBothEmpty_shouldPassWithoutParsingOrValidation() {
+        levelSubmissionValidator.validate(List.of(), List.of());
+
+        verifyNoInteractions(optionParser);
+        verifyNoInteractions(validatorRegistry);
+        verifyNoInteractions(submittedAnswerValidator);
+    }
+
+    @Test
+    void validate_whenQuestionUsesPictureQuiz_shouldUsePictureQuizValidator() {
+        Level level = level(LevelType.PICTURE_QUIZ);
+
+        Question question = question(1, level, "picture-options");
+
+        SubmitAnswerRequest answer = mock(SubmitAnswerRequest.class);
+        QuestionAnswer questionAnswer = new QuestionAnswer(1, answer);
+
+        List<Option> options = List.of();
+
+        when(optionParser.parse("picture-options", LevelType.PICTURE_QUIZ))
+                .thenReturn(options);
+        when(validatorRegistry.forType(LevelType.PICTURE_QUIZ))
+                .thenReturn(submittedAnswerValidator);
+        when(submittedAnswerValidator.validate(options, answer))
+                .thenReturn(correctResponse());
+
+        levelSubmissionValidator.validate(
+                List.of(question),
+                List.of(questionAnswer)
+        );
+
+        verify(optionParser).parse("picture-options", LevelType.PICTURE_QUIZ);
+        verify(validatorRegistry).forType(LevelType.PICTURE_QUIZ);
+        verify(submittedAnswerValidator).validate(options, answer);
+    }
+
+    @Test
     void validate_whenAllAnswersAreCorrect_shouldPass() {
         Level level = level(LevelType.MULTIPLE_CHOICE);
 

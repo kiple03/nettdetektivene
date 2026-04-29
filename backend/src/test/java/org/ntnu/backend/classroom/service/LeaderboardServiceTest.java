@@ -235,36 +235,6 @@ class LeaderboardServiceTest {
     }
 
     @Test
-    void getRankedStudentLeaderboard_whenStudentHasNoProgress_shouldUseZeroScore() {
-        StopLevelCount stopOne = mockStopLevelCount(1, 3L);
-
-        when(enrollmentRepository.findAllByClassroomIdAndLeftAtIsNull(classroomId))
-                .thenReturn(List.of(enrollmentOne));
-
-        when(stopRepository.findAllWithLevelCounts())
-                .thenReturn(List.of(stopOne));
-
-        when(userProgressRepository.findAllById(List.of(studentOneId)))
-                .thenReturn(List.of());
-
-        when(leaderboardMapper.toRankedStudentList(anyList()))
-                .thenReturn(List.of());
-
-        leaderboardService.getRankedStudentLeaderboard(classroomId);
-
-        @SuppressWarnings("unchecked")
-        var captor = org.mockito.ArgumentCaptor.forClass(List.class);
-        verify(leaderboardMapper).toRankedStudentList(captor.capture());
-
-        List<LeaderboardStudentResponse> students =
-                (List<LeaderboardStudentResponse>) captor.getValue();
-
-        assertEquals(1, students.size());
-        assertEquals("Anna", students.get(0).username());
-        assertEquals(0, students.get(0).score());
-    }
-
-    @Test
     void getTeacherClassroomScores_shouldReturnSortedClassroomScoresForTeacher() {
         StopLevelCount stopOne = mockStopLevelCount(1, 3L);
         StopLevelCount stopTwo = mockStopLevelCount(2, 2L);
@@ -348,6 +318,140 @@ class LeaderboardServiceTest {
         verify(enrollmentRepository).findAllByClassroomIdInAndLeftAtIsNull(List.of());
         verify(stopRepository).findAllWithLevelCounts();
         verify(userProgressRepository).findAllById(List.of());
+    }
+
+    @Test
+    void getRankedStudentLeaderboard_whenStudentHasNoProgress_shouldUseZeroScore() {
+        RankedStudentResponse ranked = mock(RankedStudentResponse.class);
+
+        when(enrollmentRepository.findAllByClassroomIdAndLeftAtIsNull(classroomId))
+                .thenReturn(List.of(enrollmentOne));
+        when(stopRepository.findAllWithLevelCounts())
+                .thenReturn(List.of());
+        when(userProgressRepository.findAllById(List.of(studentOneId)))
+                .thenReturn(List.of());
+        when(leaderboardMapper.toRankedStudentList(anyList()))
+                .thenReturn(List.of(ranked));
+
+        List<RankedStudentResponse> result =
+                leaderboardService.getRankedStudentLeaderboard(classroomId);
+
+        assertEquals(List.of(ranked), result);
+
+        verify(leaderboardMapper).toRankedStudentList(argThat(list ->
+                list.size() == 1
+                        && list.get(0).username().equals("Anna")
+                        && list.get(0).score() == 0
+        ));
+    }
+
+    @Test
+    void getRankedStudentLeaderboard_whenNoEnrollments_shouldCallMapperWithEmptyList() {
+        when(enrollmentRepository.findAllByClassroomIdAndLeftAtIsNull(classroomId))
+                .thenReturn(List.of());
+        when(stopRepository.findAllWithLevelCounts())
+                .thenReturn(List.of());
+        when(userProgressRepository.findAllById(List.of()))
+                .thenReturn(List.of());
+        when(leaderboardMapper.toRankedStudentList(List.of()))
+                .thenReturn(List.of());
+
+        List<RankedStudentResponse> result =
+                leaderboardService.getRankedStudentLeaderboard(classroomId);
+
+        assertTrue(result.isEmpty());
+
+        verify(leaderboardMapper).toRankedStudentList(List.of());
+    }
+
+    @Test
+    void getGlobalLeaderboard_shouldBuildSortedClassroomLeaderboardAndUseMapper() {
+        StopLevelCount stopOne = mockStopLevelCount(1, 2L);
+        StopLevelCount stopTwo = mockStopLevelCount(2, 2L);
+
+        Stop stopTwoModel = mockStop(2);
+
+        UserProgress progressOne = mock(UserProgress.class);
+        when(progressOne.getId()).thenReturn(studentOneId);
+        when(progressOne.isGameCompleted()).thenReturn(false);
+        when(progressOne.getCurrentStop()).thenReturn(stopTwoModel);
+        when(progressOne.getCurrentLevelOrder()).thenReturn(1);
+
+        UserProgress progressTwo = mock(UserProgress.class);
+        when(progressTwo.getId()).thenReturn(studentTwoId);
+        when(progressTwo.isGameCompleted()).thenReturn(true);
+
+        UserProgress progressThree = mock(UserProgress.class);
+        when(progressThree.getId()).thenReturn(studentThreeId);
+        when(progressThree.isGameCompleted()).thenReturn(false);
+        when(progressThree.getCurrentStop()).thenReturn(stopTwoModel);
+        when(progressThree.getCurrentLevelOrder()).thenReturn(2);
+
+        RankedClassroomResponse rankedOne = mock(RankedClassroomResponse.class);
+        RankedClassroomResponse rankedTwo = mock(RankedClassroomResponse.class);
+
+        when(enrollmentRepository.findAllByLeftAtIsNull())
+                .thenReturn(List.of(enrollmentOne, enrollmentTwo, enrollmentThree));
+        when(stopRepository.findAllWithLevelCounts())
+                .thenReturn(List.of(stopOne, stopTwo));
+        when(userProgressRepository.findAllById(List.of(studentOneId, studentTwoId, studentThreeId)))
+                .thenReturn(List.of(progressOne, progressTwo, progressThree));
+        when(leaderboardMapper.toRankedList(anyList()))
+                .thenReturn(List.of(rankedOne, rankedTwo));
+
+        List<RankedClassroomResponse> result =
+                leaderboardService.getGlobalLeaderboard();
+
+        assertEquals(List.of(rankedOne, rankedTwo), result);
+
+        verify(leaderboardMapper).toRankedList(argThat(list ->
+                list.size() == 2
+                        && list.get(0).avgScore() >= list.get(1).avgScore()
+        ));
+    }
+
+    @Test
+    void getTeacherClassroomScores_shouldSortByAverageScoreDescending() {
+        when(classroomTeacherRepository.findClassroomsByTeacherId(teacherId))
+                .thenReturn(List.of(classroomOne, classroomTwo));
+
+        StopLevelCount stopOne = mockStopLevelCount(1, 2L);
+        StopLevelCount stopTwo = mockStopLevelCount(2, 2L);
+
+        Stop stopTwoModel = mockStop(2);
+
+        UserProgress progressOne = mock(UserProgress.class);
+        when(progressOne.getId()).thenReturn(studentOneId);
+        when(progressOne.isGameCompleted()).thenReturn(false);
+        when(progressOne.getCurrentStop()).thenReturn(stopTwoModel);
+        when(progressOne.getCurrentLevelOrder()).thenReturn(1);
+
+        UserProgress progressTwo = mock(UserProgress.class);
+        when(progressTwo.getId()).thenReturn(studentTwoId);
+        when(progressTwo.isGameCompleted()).thenReturn(true);
+
+        UserProgress progressThree = mock(UserProgress.class);
+        when(progressThree.getId()).thenReturn(studentThreeId);
+        when(progressThree.isGameCompleted()).thenReturn(false);
+        when(progressThree.getCurrentStop()).thenReturn(stopTwoModel);
+        when(progressThree.getCurrentLevelOrder()).thenReturn(2);
+
+        when(enrollmentRepository.findAllByClassroomIdInAndLeftAtIsNull(
+                List.of(classroomOne.getId(), classroomTwo.getId())
+        )).thenReturn(List.of(enrollmentOne, enrollmentTwo, enrollmentThree));
+
+        when(stopRepository.findAllWithLevelCounts())
+                .thenReturn(List.of(stopOne, stopTwo));
+        when(userProgressRepository.findAllById(List.of(studentOneId, studentTwoId, studentThreeId)))
+                .thenReturn(List.of(progressOne, progressTwo, progressThree));
+
+        List<LeaderboardClassroomResponse> result =
+                leaderboardService.getTeacherClassroomScores(teacherId);
+
+        assertEquals(2, result.size());
+        assertTrue(result.get(0).avgScore() >= result.get(1).avgScore());
+
+        verify(classroomTeacherRepository).findClassroomsByTeacherId(teacherId);
     }
 
     @Test

@@ -3,9 +3,7 @@ package org.ntnu.backend.classroom.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -610,6 +608,156 @@ class NotificationServiceTest {
         notificationService.createStuckStudentNotifications();
 
         verify(classroomTeacherRepository, never()).findWithUsersByClassroomId(any());
+        verify(notificationRepository, never()).save(any());
+    }
+
+    @Test
+    void createStuckStudentNotifications_whenNoActiveEnrollments_shouldDoNothing() {
+        when(enrollmentRepository.findAllActiveWithUserAndClassroom())
+                .thenReturn(List.of());
+
+        notificationService.createStuckStudentNotifications();
+
+        verify(enrollmentRepository).findAllActiveWithUserAndClassroom();
+        verify(userProgressRepository, never()).findByUserIdIn(any());
+        verify(notificationRepository, never()).save(any());
+    }
+
+    @Test
+    void createStuckStudentNotifications_whenProgressIsMissing_shouldSkipStudent() {
+        User student = buildUser(studentId, "studentUser");
+        Classroom classroom = buildClassroom(classroomId, "Test Class");
+        Enrollment enrollment = buildEnrollment(student, classroom);
+
+        when(enrollmentRepository.findAllActiveWithUserAndClassroom())
+                .thenReturn(List.of(enrollment));
+        when(userProgressRepository.findByUserIdIn(List.of(studentId)))
+                .thenReturn(List.of());
+
+        notificationService.createStuckStudentNotifications();
+
+        verify(userProgressRepository).findByUserIdIn(List.of(studentId));
+        verify(classroomTeacherRepository, never()).findWithUsersByClassroomId(any());
+        verify(notificationRepository, never()).save(any());
+    }
+
+    @Test
+    void createStuckStudentNotifications_whenGameIsCompleted_shouldSkipStudent() {
+        User student = buildUser(studentId, "studentUser");
+        Classroom classroom = buildClassroom(classroomId, "Test Class");
+        Enrollment enrollment = buildEnrollment(student, classroom);
+
+        UserProgress progress = mock(UserProgress.class);
+        when(progress.getUser()).thenReturn(student);
+        when(progress.isGameCompleted()).thenReturn(true);
+
+        when(enrollmentRepository.findAllActiveWithUserAndClassroom())
+                .thenReturn(List.of(enrollment));
+        when(userProgressRepository.findByUserIdIn(List.of(studentId)))
+                .thenReturn(List.of(progress));
+
+        notificationService.createStuckStudentNotifications();
+
+        verify(classroomTeacherRepository, never()).findWithUsersByClassroomId(any());
+        verify(notificationRepository, never()).save(any());
+    }
+
+    @Test
+    void createStuckStudentNotifications_whenLastProgressIsRecent_shouldSkipStudent() {
+        User student = buildUser(studentId, "studentUser");
+        Classroom classroom = buildClassroom(classroomId, "Test Class");
+        Enrollment enrollment = buildEnrollment(student, classroom);
+
+        UserProgress progress = mock(UserProgress.class);
+        when(progress.getUser()).thenReturn(student);
+        when(progress.isGameCompleted()).thenReturn(false);
+        when(progress.getLastProgressAt()).thenReturn(Instant.now().minus(2, ChronoUnit.DAYS));
+
+        when(enrollmentRepository.findAllActiveWithUserAndClassroom())
+                .thenReturn(List.of(enrollment));
+        when(userProgressRepository.findByUserIdIn(List.of(studentId)))
+                .thenReturn(List.of(progress));
+
+        notificationService.createStuckStudentNotifications();
+
+        verify(classroomTeacherRepository, never()).findWithUsersByClassroomId(any());
+        verify(notificationRepository, never()).save(any());
+    }
+
+    @Test
+    void createStuckStudentNotifications_whenStudentIsStuckAndNoUnreadNotificationExists_shouldCreateNotification() {
+        User student = buildUser(studentId, "studentUser");
+        Classroom classroom = buildClassroom(classroomId, "Test Class");
+        Enrollment enrollment = buildEnrollment(student, classroom);
+        enrollment.setEnrolledAt(Instant.now().minus(10, ChronoUnit.DAYS));
+
+        User teacher = buildUser(teacherId, "teacherUser");
+        ClassroomTeacher classroomTeacher = buildClassroomTeacher(classroom, teacher);
+
+        UserProgress progress = mock(UserProgress.class);
+        when(progress.getUser()).thenReturn(student);
+        when(progress.isGameCompleted()).thenReturn(false);
+        when(progress.getLastProgressAt()).thenReturn(Instant.now().minus(8, ChronoUnit.DAYS));
+
+        when(enrollmentRepository.findAllActiveWithUserAndClassroom())
+                .thenReturn(List.of(enrollment));
+        when(userProgressRepository.findByUserIdIn(List.of(studentId)))
+                .thenReturn(List.of(progress));
+        when(classroomTeacherRepository.findWithUsersByClassroomId(classroomId))
+                .thenReturn(List.of(classroomTeacher));
+        when(notificationRepository.existsByTeacherIdAndClassroomIdAndStudentIdAndTypeAndReadFalse(
+                teacherId,
+                classroomId,
+                studentId,
+                NotificationType.STUDENT_STUCK
+        )).thenReturn(false);
+        when(notificationRepository.save(any()))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        notificationService.createStuckStudentNotifications();
+
+        ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
+        verify(notificationRepository).save(captor.capture());
+
+        Notification saved = captor.getValue();
+
+        assertThat(saved.getType()).isEqualTo(NotificationType.STUDENT_STUCK);
+        assertThat(saved.getTeacherId()).isEqualTo(teacherId);
+        assertThat(saved.getClassroomId()).isEqualTo(classroomId);
+        assertThat(saved.getStudentId()).isEqualTo(studentId);
+        assertThat(saved.getMessage()).contains("studentUser");
+    }
+
+    @Test
+    void createStuckStudentNotifications_whenUnreadNotificationAlreadyExists_shouldNotCreateDuplicate() {
+        User student = buildUser(studentId, "studentUser");
+        Classroom classroom = buildClassroom(classroomId, "Test Class");
+        Enrollment enrollment = buildEnrollment(student, classroom);
+        enrollment.setEnrolledAt(Instant.now().minus(10, ChronoUnit.DAYS));
+
+        User teacher = buildUser(teacherId, "teacherUser");
+        ClassroomTeacher classroomTeacher = buildClassroomTeacher(classroom, teacher);
+
+        UserProgress progress = mock(UserProgress.class);
+        when(progress.getUser()).thenReturn(student);
+        when(progress.isGameCompleted()).thenReturn(false);
+        when(progress.getLastProgressAt()).thenReturn(Instant.now().minus(8, ChronoUnit.DAYS));
+
+        when(enrollmentRepository.findAllActiveWithUserAndClassroom())
+                .thenReturn(List.of(enrollment));
+        when(userProgressRepository.findByUserIdIn(List.of(studentId)))
+                .thenReturn(List.of(progress));
+        when(classroomTeacherRepository.findWithUsersByClassroomId(classroomId))
+                .thenReturn(List.of(classroomTeacher));
+        when(notificationRepository.existsByTeacherIdAndClassroomIdAndStudentIdAndTypeAndReadFalse(
+                teacherId,
+                classroomId,
+                studentId,
+                NotificationType.STUDENT_STUCK
+        )).thenReturn(true);
+
+        notificationService.createStuckStudentNotifications();
+
         verify(notificationRepository, never()).save(any());
     }
 
