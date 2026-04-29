@@ -35,6 +35,10 @@ export type StationData = {
   questionId: number;
   type: StationType;
   levelType: LevelType;
+
+  levelTitle?: string;
+  levelOrder?: string;
+
   title: string;
   questionText: string;
   options: StationOption[];

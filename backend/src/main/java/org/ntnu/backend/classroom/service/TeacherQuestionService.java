@@ -197,7 +197,7 @@ public class TeacherQuestionService {
     private List<Option> buildPsOptions(CreatePasswordStrengthQuestionRequest ps) {
         return List.of(new PasswordStrengthOption(
             1, ps.minLength(), ps.requireDigit(), ps.requireUpper(),
-            ps.requireLower(), ps.requireSymbol(), ps.successFeedback(), ps.failureFeedback()));
+            ps.requireLower(), ps.requireSymbol(), null, ps.successFeedback(), ps.failureFeedback()));
     }
 
     private List<Option> buildTqOptions(List<CreateTextQuizOptionRequest> dtos) {
@@ -212,7 +212,7 @@ public class TeacherQuestionService {
     private List<Option> buildPsOptions(UpdatePasswordStrengthQuestionRequest ps) {
         return List.of(new PasswordStrengthOption(
             1, ps.minLength(), ps.requireDigit(), ps.requireUpper(),
-            ps.requireLower(), ps.requireSymbol(), ps.successFeedback(), ps.failureFeedback()));
+            ps.requireLower(), ps.requireSymbol(), null, ps.successFeedback(), ps.failureFeedback()));
     }
 
     private String serialize(List<Option> options) {

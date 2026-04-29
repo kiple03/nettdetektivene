@@ -103,7 +103,8 @@ public class GameMapper {
               pq.imageUrl()
       );
       case PasswordStrengthOption p -> new PasswordStrengthOptionResponse(
-        p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol()
+        p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol(),
+          p.getImageUrl()
       );
       case ClassifyItemsOption ci -> new ClassifyItemsOptionResponse(
           ci.getKey(),

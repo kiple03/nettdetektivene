@@ -10,16 +10,18 @@ import MarkedsplassenStation from "./stations/MarkedsPlassenStation";
 
 type StationRendererProps = {
   station: StationData;
+  levelTitle: string;
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
 };
 
-function StationRenderer({ station, onAnswer, disabled = false }: StationRendererProps) {
+function StationRenderer({ station, levelTitle, onAnswer, disabled = false }: StationRendererProps) {
   switch (station.type) {
     case STATION_TYPE.NEWS:
       return (
           <NyhetsKvartalStation
               station={station}
+              levelTitle={levelTitle}
               onAnswer={onAnswer}
               disabled={disabled}
           />
@@ -29,6 +31,7 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
       return (
           <PhotographerStation
               station={station}
+              levelTitle={levelTitle}
               onAnswer={onAnswer}
               disabled={disabled}
           />
@@ -42,6 +45,7 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
       return (
           <PassordBankenStation
               station={station}
+              levelTitle={levelTitle}
               onAnswer={onAnswer}
               disabled={disabled}
           />
@@ -51,6 +55,7 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
         return (
           <MarkedsplassenStation
                 station={station}
+                levelTitle={levelTitle}
                 onAnswer={onAnswer}
                 disabled={disabled}
           />

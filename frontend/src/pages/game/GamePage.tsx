@@ -192,13 +192,14 @@ export default function GamePage() {
         <div>
             <StationContainer
                 key={currentQuestion.id}
-                title={level?.title ?? station.title}
+                title={level.stopName}
                 type={station.type}
                 submitResult={submitResult}
                 onNext={handleNext}
             >
                 <StationRenderer
                     station={station}
+                    levelTitle={`Nivå ${level.order} - ${level.title}`}
                     onAnswer={handleAnswer}
                     disabled={!!submitResult}
                 />

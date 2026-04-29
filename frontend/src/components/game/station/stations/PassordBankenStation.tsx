@@ -8,11 +8,12 @@ import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
 
 type Props = {
     station: StationData;
+    levelTitle: string;
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
 };
 
-function PassordBankenStation({ station, onAnswer, disabled = false }: Props) {
+function PassordBankenStation({ station, levelTitle, onAnswer, disabled = false }: Props) {
     const handlePasswordSubmit = async (password: string) => {
         const request: SubmitPasswordStrengthAnswerRequest = {
             shape: "PASSWORD",
@@ -47,7 +48,7 @@ function PassordBankenStation({ station, onAnswer, disabled = false }: Props) {
     return (
         <div className="passordbanken-station">
           <DetectiveBook
-              title={station.title || "Passordbanken"}
+              title={levelTitle}
               subtitle={station.questionText}
           >
             <div className={`password-layout ${passwordImage ? "" : "password-layout-no-image"}`}>

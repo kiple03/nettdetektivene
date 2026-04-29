@@ -45,31 +45,65 @@
   background-image: url("@/assets/images/game/marked.png");
 }
 
-/* Title of the level (1, 2, 3). Styled with same box as badge */
+/* Stop name */
 .station-title {
   position: fixed;
-  top: 0.75rem;
+  top: 0.5rem;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) rotate(-1.2deg);
   z-index: 40;
 
   margin: 0;
   padding: 0.35rem 1rem;
 
-  font-size: clamp(1rem, 1.4vw, 1.4rem);
+  font-size: clamp(1rem, 2vw, 2rem);
   font-weight: 0;
   text-align: center;
 
-  background: rgba(255, 248, 220, 0.94);
-  border: 2px dashed rgb(126, 95, 55);
+  border: 5px solid rgba(126, 95, 55, 0);
   color: #2d1b0f;
   border-radius: 6px;
-  padding: 16px 12px;
+  padding: 10px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow:
+      0 8px 16px rgba(0, 0, 0, 0.25),
+      0 16px 30px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Different colors for different stations */
+.station-news .station-title {
+  border-color: #d9468f;
+  background: #fde7f3;
+}
+
+.station-photo .station-title {
+  border-color: #7c3aed;
+  background: #ede9fe;
+}
+
+.station-post .station-title {
+  border-color: #2563eb;
+  background: #e0edff;
+}
+
+.station-password .station-title {
+  border-color: #2e8b57;
+  background: #e3f5ea;
+}
+
+.station-marketplace .station-title {
+  border-color: #d97706;
+  background: #fff1db;
+}
+
+.station-social .station-title {
+  border-color: #dc2626;
+  background: #ffe4e4;
 }
 
 .feedback-wrapper {
