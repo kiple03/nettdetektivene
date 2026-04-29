@@ -17,7 +17,7 @@ import alertStyles from "@/components/ui/alert-dialog/alert-dialog.module.css";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getGameLevelById, getLevelQuestions, submitLevel } from "@/api/gameApi.ts";
+import { getGameLevelById, getLevelQuestions, submitLevel, getLevelsForStop } from "@/api/gameApi.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import ConfettiComp from "@/components/ConfettiComp";
 import useSound from "use-sound";
@@ -26,6 +26,17 @@ import { useMedalions } from "@/hooks/useMedalions";
 import type { MedalionResponse } from "@/api/medalionApi";
 import NotesButton from "@/components/game/NotesButton";
 import NotebookOverlay from "@/components/game/NotebookOverlay";
+import type { TabId } from "@/api/notesService";
+
+const STATION_TO_TAB: Record<StationType, TabId> = {
+    [STATION_TYPE.NEWS]: "nyheter",
+    [STATION_TYPE.PHOTO]: "bilder",
+    [STATION_TYPE.POST]: "epost",
+    [STATION_TYPE.PASSWORD]: "passord",
+    [STATION_TYPE.MARKETPLACE]: "nett",
+    [STATION_TYPE.SOCIAL]: "sosiale",
+    [STATION_TYPE.QUIZ]: "egne",
+};
 
 const STOP_TO_TYPE: Record<string, StationType> = {
     "Nyhetskvartalet": STATION_TYPE.NEWS,
@@ -108,6 +119,12 @@ export default function GamePage() {
         enabled: validId,
     });
 
+    const { data: stopLevels = [] } = useQuery({
+        queryKey: ["stopLevels", stopId],
+        queryFn: () => getLevelsForStop(stopId!),
+        enabled: !!stopId,
+    });
+
 
     if (!validId) {
         return (
@@ -185,6 +202,20 @@ export default function GamePage() {
         navigate(stopId ? `/map?levelId=${stopId}` : "/map");
     };
 
+    const sortedLevels = [...stopLevels].sort((a, b) => a.id - b.id);
+    const currentLevelIdx = sortedLevels.findIndex((l) => l.id === levelIdNum);
+    const levelLeft = sortedLevels.length - currentLevelIdx - 1;
+
+    const handleNextLevel = () => {
+        const nextLevel = sortedLevels[currentLevelIdx + 1];
+        if (nextLevel) {
+            setDialogOpen(false);
+            navigate(`/game/${nextLevel.id}?stopId=${stopId}`);
+        } else {
+            handleBackToMap();
+        }
+    };
+
     return (
         <div>
             <StationContainer
@@ -212,11 +243,11 @@ export default function GamePage() {
             />
 
             <NotesButton onClick={() => setNotesOpen(true)} />
-            {notesOpen && <NotebookOverlay onClose={() => setNotesOpen(false)} />}
+            {notesOpen && <NotebookOverlay onClose={() => setNotesOpen(false)} initialTab={STATION_TO_TAB[stationType]} />}
 
             {dialogOpen && levelPassed && <ConfettiComp duration={5000}/>}
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <AlertDialogContent>
+                <AlertDialogContent stopsLeft={levelPassed && levelLeft > 0 ? levelLeft : undefined}>
                     {levelPassed && newMedalion && (
                         <div className={alertStyles.medalWrapper}>
                             <img
@@ -243,6 +274,11 @@ export default function GamePage() {
                         <Button variant="primary" type="button" onClick={handleBackToMap}>
                             Tilbake til kartet
                         </Button>
+                        {levelPassed && levelLeft > 0 && (
+                            <Button variant="primary" type="button" onClick={handleNextLevel}>
+                                Neste nivå →
+                            </Button>
+                        )}
                     </div>
                 </AlertDialogContent>
             </AlertDialog>

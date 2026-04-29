@@ -62,16 +62,17 @@ const Spirals = ({ count = 16 }: { count?: number }) => (
 
 type Props = {
     onClose: () => void;
+    initialTab?: TabId;
 };
 
-export default function NotebookOverlay({ onClose }: Props) {
+export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Props) {
     const { data: userProfile } = useUserProfile();
     const username = userProfile?.username;
     const notebookTitle = username
         ? `${getPossessive(username)} sin notatblokk`
         : "Mi notatblokk";
 
-    const [activeTab, setActiveTab] = useState<TabId>("nyheter");
+    const [activeTab, setActiveTab] = useState<TabId>(initialTab);
     const [draft, setDraft] = useState("");
     const [savedNotes, setSavedNotes] = useState<NotesMap>(EMPTY_NOTES_MAP());
     const [levelNotes, setLevelNotes] = useState<NotesMap>(EMPTY_NOTES_MAP());
