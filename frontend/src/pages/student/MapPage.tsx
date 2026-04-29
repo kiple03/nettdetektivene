@@ -41,7 +41,7 @@ export default function MapPage() {
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [lockedStopTitle, setLockedStopTitle] = useState("");
     const [adminBypassInput, setAdminBypassInput] = useState("");
-    const [currentPathOffset, setCurrentPathOffset] = useState("5%");
+    const [currentPathOffset, setCurrentPathOffset] = useState(() => localStorage.getItem("carPathOffset") ?? "5%");
     const [animating, setAnimating] = useState(false);
     const [carReversed, setCarReversed] = useState(false);
     const [carOffsetPath, setCarOffsetPath] = useState<string | null>(null);
@@ -64,6 +64,7 @@ export default function MapPage() {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 setCurrentPathOffset(offset);
+                localStorage.setItem("carPathOffset", offset);
                 setTimeout(() => { setAnimating(false); setCarReversed(false); onDone(); }, 1200);
             });
         });

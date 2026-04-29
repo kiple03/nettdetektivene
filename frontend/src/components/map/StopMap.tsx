@@ -153,13 +153,14 @@ export function StopMap({
                             <button
                                 key={stop.id}
                                 type="button"
-                                className={styles.hotspot}
+                                className={`${styles.hotspot}${stop.disabled ? ` ${styles.hotspotDisabled}` : ''}`}
                                 style={
                                     pos
                                         ? { top: pos.top, left: pos.left, transform: "translate(-50%, -50%)" }
                                         : { display: "none" }
                                 }
-                                onClick={() => onStopClick(stop)}
+                                onClick={stop.disabled ? undefined : () => onStopClick(stop)}
+                                disabled={stop.disabled}
                                 aria-label={stop.title}
                             >
                                 <div className={styles.iconWrapper}>
