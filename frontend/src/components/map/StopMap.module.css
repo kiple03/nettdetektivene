@@ -54,15 +54,6 @@
   transform: scale(1.03);
 }
 
-.hotspotDisabled {
-  cursor: default;
-  pointer-events: none;
-}
-
-.hotspotDisabled .iconWrapper {
-  filter: grayscale(1) opacity(0.45);
-}
-
 .iconWrapper {
   position: relative;
   display: inline-block;

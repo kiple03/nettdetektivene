@@ -9,22 +9,25 @@ type MedalionToastProp = {
     onDone?: () => void;
 };
 
-function MedalionToast({name, description, imageUrl, duration=4000, onDone}: MedalionToastProp){
-    const [visible, setVisible] = useState(true);
+function MedalionToast({name, description, imageUrl, duration=7000, onDone}: MedalionToastProp){
+    const [leaving, setLeaving] = useState(false);
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setVisible(false);
-            onDone?.();
+        const showTimer = setTimeout(() => setLeaving(true), duration);
+        return () => clearTimeout(showTimer);
+    }, [duration]);
 
-        }, duration);
-        return () => clearTimeout(timer);
-    }, [duration, onDone]);
+    const handleAnimationEnd = () => {
+        if (leaving) onDone?.();
+    };
 
-    if(!visible) return null;
 
-    return (      
-      <div className={styles['medalion-toast']}>
+
+    return (
+      <div
+        className={`${styles['medalion-toast']} ${leaving ? styles['medalion-toast--leaving'] : ''}`}
+        onAnimationEnd={handleAnimationEnd}
+      >
         <img src={imageUrl} alt={name} className={styles['medalion-toast__image']} />
         <div className={styles['medalion-toast__text']}>                             
       <p className={styles['medalion-toast__title']}>🏅 Achievement unlocked!</p>

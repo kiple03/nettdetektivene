@@ -12,7 +12,7 @@ function FeedbackBox({ isCorrect, text }: FeedbackBoxProps) {
         <span className={`stamp ${isCorrect ? "stamp-correct" : "stamp-wrong"}`}>
           {isCorrect ? "RIKTIG" : "FEIL"}
         </span>
-        <p>{text}</p>
+        <p style={{whiteSpace: 'pre-line'}}>{text}</p>
       </div>
   );
 }

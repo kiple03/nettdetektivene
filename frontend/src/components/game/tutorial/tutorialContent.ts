@@ -46,15 +46,18 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
     },
   ],
   [STATION_TYPE.SOCIAL]: [
-    {
-      title: "Sosiale medier 📱",
-      description: "(Kommer snart) Her skal du vurdere innlegg fra sosiale medier.",
-    },
-    {
-      title: "Lurt å vite",
-      description:
-        "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
-    },
+      {
+          title: "Den sosiale møteplassen 💬",
+          description: "Her lærer du å tenke kritisk om det du ser på sosiale medier. Ikke alt som deles er sant!",
+      },
+      {
+          title: "Slik svarer du",
+          description: "Noen oppgaver har ett riktig svar, noen ber deg velge flere, og noen ber deg vurdere hvert element for seg.",
+      },
+      {
+          title: "Lurt å vite",
+          description: "Trykk på ?-knappen øverst til høyre for å se denne guiden igjen.",
+      },
   ],
   [STATION_TYPE.PASSWORD]: [
     {
@@ -97,6 +100,7 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
           "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
     },
   ],
+  
 };
 
 const storageKey = (type: StationType) => `nettdetektivene_tutorial_${type}`;

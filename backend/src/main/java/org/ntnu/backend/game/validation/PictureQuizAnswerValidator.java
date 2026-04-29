@@ -104,10 +104,10 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
                   .orElse(null);
 
         return new ValidationResult(
-                isCorrect,
-                explanation,
-                correctOptionIds,
-                wrongSelectedOptionIds
+            isCorrect,
+            explanation,
+            correctOptionIds.stream().map(String::valueOf).toList(),
+            wrongSelectedOptionIds.stream().map(String::valueOf).toList()
         );
     }
 }

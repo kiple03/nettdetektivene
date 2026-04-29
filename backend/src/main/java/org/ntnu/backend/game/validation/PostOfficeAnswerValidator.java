@@ -1,5 +1,6 @@
 package org.ntnu.backend.game.validation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -67,6 +68,12 @@ public class PostOfficeAnswerValidator implements SubmittedAnswerValidator {
         .map(PostOfficeOption::getExplanation)
         .collect(Collectors.joining(" "));
 
-    return ValidationResult.of(isCorrect, feedback);
+    List<String> correctIdList = new ArrayList<>(correctIds);
+    List<String> wrongSelectedList = submittedIds.stream()
+        .filter(id -> !correctIds.contains(id))
+        .toList();
+
+    return new ValidationResult(isCorrect, feedback, correctIdList, wrongSelectedList);
+
   }
 }

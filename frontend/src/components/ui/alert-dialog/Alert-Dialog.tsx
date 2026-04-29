@@ -5,6 +5,7 @@ import {
     type RefObject,
 } from "react";
 import styles from "./alert-dialog.module.css";
+import internettbyenLogo from "@/assets/images/map/internettbyen-logo.png";
 
 interface AlertDialogProps {
     open: boolean;
@@ -15,7 +16,7 @@ interface AlertDialogProps {
 
 interface AlertDialogContentProps {
     children: ReactNode;
-    icon?: ReactNode;
+    stopsLeft?: number;
 }
 
 interface AlertDialogTextProps {
@@ -91,24 +92,29 @@ export function AlertDialog({
 
 export function AlertDialogContent({
                                        children,
-                                       icon = "🔒",
+                                       stopsLeft,
                                    }: AlertDialogContentProps) {
     return (
         <div className={styles.content}>
-            <div className={styles.decorations} aria-hidden="true">
-                <span className={styles.emojiOne}>⭐</span>
-                <span className={styles.emojiTwo}>🧩</span>
-                <span className={styles.emojiThree}>🔍</span>
-                <span className={styles.emojiFive}>✨</span>
-                <span className={styles.emojiSeven}>🎉</span>
-                <span className={styles.emojiEight}>🔒</span>
+            <div className={styles.clipWrapper} aria-hidden="true">
+                <div className={styles.clip} />
             </div>
 
-            <div className={styles.heroIcon} aria-hidden="true">
-                {icon}
-            </div>
+            <div className={styles.paper}>
+                <img
+                    src={internettbyenLogo}
+                    alt="Internettbyen"
+                    className={styles.logo}
+                />
 
-            {children}
+                {stopsLeft !== undefined && (
+                    <p className={styles.stopsLeft}>
+                        {stopsLeft === 1 ? "1 nivå igjen" : `${stopsLeft} nivåer igjen`}
+                    </p>
+                )}
+
+                {children}
+            </div>
         </div>
     );
 }

@@ -47,22 +47,22 @@ export default function StudentHomePage() {
                 onOpenChange={setLockedDialogOpen}
                 returnFocusRef={helpButtonRef}
             >
-                <AlertDialogContent icon="🔍">
+                <AlertDialogContent>
                     <AlertDialogTitle>
-                        Velkommen til internettbyen <span aria-hidden="true">🕵️</span>
+                        Velkommen!
                     </AlertDialogTitle>
 
                     <AlertDialogDescription>
                         Oppdraget ditt er å beskytte internettbyen ved å bekjempe data-tyven som prøver å lure deg gjennom falske nyheter og bilder, stjeler passord og sender løgner på e-post. Du skal løse oppgaver, se etter spor og tenke for å løse saken og bekjempe data-tyven.
                     </AlertDialogDescription>
 
-                    <div className={styles.dialogActions}>
+                    <div className={styles.dialogActions} style={{ justifyContent: "center" }}>
                         <Button
-                            variant="fun"
+                            variant="primary"
                             type="button"
                             onClick={() => setLockedDialogOpen(false)}
                         >
-                            Lukk
+                            Start spill
                         </Button>
                     </div>
                 </AlertDialogContent>
