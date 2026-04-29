@@ -206,7 +206,7 @@ public class ProgressService {
       case "Postkontoret" -> Map.entry("Ikke klikk!", "Du gjennomskuet falske eposter");
       case "Passordbanken" -> Map.entry("Passordvokter", "Du bygde passord som holder skurker ute!");
       case "Markedsplassen" -> Map.entry  ("God Handel", "Du var varsom i bazaaren");
-      case "Den Sosiale Møteplassen" -> Map.entry("Chat chat chat", "Du var føre var på medier");
+      case "Den sosiale møteplassen" -> Map.entry("Den sosiale møteplassen", "Du navigerte sosiale medier trygt!");
       default -> null;
     };
     if(medal != null){
