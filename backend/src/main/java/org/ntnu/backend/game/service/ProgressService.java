@@ -164,7 +164,6 @@ public class ProgressService {
     Stop completedStop = progress.getCurrentStop();
     advanceToNextLevel(progress);
 
-    //Medalion progress
     if(progress.isGameCompleted()){
       medalionService.awardInternalUsage(userId, "platinum", "Du fanget skurken");
     } else if(progress.getCurrentStop().getId() != completedStop.getId()){

@@ -72,6 +72,7 @@ public class GameSeeder implements CommandLineRunner {
     seedPhoto();
     seedPasswords();
     seedMarkedsplassen();
+    seedSocial();
     log.info("GameSeeder: done");
   }
 
@@ -924,7 +925,7 @@ public class GameSeeder implements CommandLineRunner {
                 "90% er mistenkelig, men jeg kjøper en vare jeg har lyst på. Nettsiden er tross alt nosrk."),
             new MultipleChoiceOption(2, "Undersøke mer først", null, false,
                 "Det er bra å være forsiktig, men denne butikken har så mange røde flagg at det er best å holde seg unna."),
-            new MultipleChoiceOption(3, "Ikke handle – dette virker utrygt", null, true,
+            new MultipleChoiceOption(3, "Ikke handle, dette virker utrygt", null, true,
                 "Riktig! Butikken har 90% rabatt på alt, ingen kontaktinfo og en merkelig nettadresse. Dette er typiske tegn på svindel.")
         )
     );
@@ -942,14 +943,14 @@ public class GameSeeder implements CommandLineRunner {
     );
 
     ensureQuestion(l1,
-        "Du finner en nettbutikk med norsk organisasjonsnummer, telefonnummer og e-post på kontaktsiden. Nettadressen starter med hengelås og slutter på '.no'. Anmeldelsene gir både gode og dårlige tilbakemeldinger. Hva gjør du?",
+        "Du finner en nettbutikk med telefonnummer og e-post på kontaktsiden. Nettadressen har hengelås og slutter på '.no'. Anmeldelsene gir både gode og dårlige tilbakemeldinger. Hva gjør du?",
         List.of(
-            new MultipleChoiceOption(1, "Kjøpe,  dette ser trygt ut", null, true,
-                "Riktig! Denne butikken har organisasjonsnummer, kontaktinfo, sikker betaling og ekte anmeldelser. Dette er tegn på en trygg nettbutikk."),
+            new MultipleChoiceOption(1, "Kjøpe, dette ser trygt ut", null, true,
+                "Riktig! Denne butikken har kontaktinfo, sikker nettadresse og ekte anmeldelser. Dette er tegn på en trygg nettbutikk."),
             new MultipleChoiceOption(2, "Undersøke mer først", null, false,
                 "Det er alltid lurt å være forsiktig, men denne butikken viser alle tegnene på at den er trygg og seriøs."),
             new MultipleChoiceOption(3, "Ikke handle, jeg stoler ikke på nettbutikker", null, false,
-                "Denne butikken er faktisk trygg! Den har kontaktinfo, organisasjonsnummer, hengelås i nettleseren og ekte anmeldelser. Det er viktig å kunne kjenne igjen trygge butikker også.")
+                "Denne butikken er faktisk trygg! Den har kontaktinfo, hengelås i nettleseren og ekte anmeldelser. Det er viktig å kunne kjenne igjen trygge butikker også.")
         )
     );
 
@@ -992,14 +993,14 @@ public class GameSeeder implements CommandLineRunner {
     );
 
     ensureQuestion(l2,
-        "En nettbutikk tilbyr kun betaling med gavekort eller kryptovaluta. Hva er mistenkelig?",
+        "En nettbutikk lar deg bare betale med Roblox-gavekort eller PlayStation-koder. Hva er mistenkelig?",
         List.of(
             new MultipleChoiceOption(1, "At butikken finnes på nett", null, false,
                 "Det er helt vanlig å handle på nett. Det mistenkelige er betalingsmåten."),
-            new MultipleChoiceOption(2, "Betalingsmåten, du kan ikke spore pengene", null, true,
-                "Riktig! Trygge nettbutikker tilbyr vanlige betalingsmetoder som Vipps, kort eller faktura. Gavekort og kryptovalutta kan ikke spores, så du får aldri pengene tilbake."),
-            new MultipleChoiceOption(3, "At de tar betaling med gavekort", null, false,
-                "Å tillate bruk av gavekort er ikke mistenkelig i seg selv, men eller at betaling med f.eks. kort ikke er tilgjengelig.")
+            new MultipleChoiceOption(2, "Betalingsmåten, spillkort er ikke ekte betaling overalt", null, true,
+                "Riktig! Trygge nettbutikker lar deg betale med Vipps eller kort. Hvis noen ber om spillkort som betaling, er det nesten alltid svindel."),
+            new MultipleChoiceOption(3, "At de tar betaling i det hele tatt", null, false,
+                "Alle butikker tar betaling. Det mistenkelige er at de ber om spillkort i stedet for vanlige betalingsmåter som Vipps eller kort.")
         )
     );
 
@@ -1023,21 +1024,21 @@ public class GameSeeder implements CommandLineRunner {
         "Du har funnet nettbutikken 'ElektroTilbud'. Hva tenker du om følgende observasjoner?",
         List.of(
             new ClassifyItemsOption("url", "Nettadressen er www.elektrotilbud.fun",
-                List.of("Ekte norsk butikk", "Utenlandsk side", "Ukjent domene"),
-                "Ukjent domene",
-                ".xyz er ikke et norsk domene. Norske butikker bruker vanligvis .no, et ukjent domene betyr at du bør være ekstra forsiktig."),
+                List.of("Ekte norsk nettbutikk", "Rart at den ikke slutter på .no", "Ser helt vanlig ut"),
+                "Rart at den ikke slutter på .no",
+                "Norske nettbutikker bruker vanligvis .no. Når adressen slutter på noe annet bør du være ekstra forsiktig."),
             new ClassifyItemsOption("reviews", "Alle 2000 anmeldelsene er 5 stjerner og lagt inn i løpet av et par dager",
-                List.of("Ekte anmeldelser", "Kjøpte anmeldelser", "Må ha utrolig høy kvalitet på varene sine"),
+                List.of("Ekte anmeldelser", "Kjøpte anmeldelser", "Må ha utrolig høy kvalitet"),
                 "Kjøpte anmeldelser",
-                "200 perfekte anmeldelser på én dag er nesten helt sikkert kjøpt. Ekte anmeldelser kommer over tid fra forskjellige folk."),
-            new ClassifyItemsOption("contact", "Kontaktsiden har telefonnummer, e-post og besøksadresse",
-                List.of("Vanlig for nettbutikker", "Uvanlig mye info, mistenkelig", "Hvem bruker e-post?", "Irrelevant informasjon for å vite om nettsiden er ekte"),
+                "2000 perfekte anmeldelser på noen dager er nesten helt sikkert kjøpt. Ekte anmeldelser kommer over tid fra forskjellige folk."),
+            new ClassifyItemsOption("contact", "Kontaktsiden har telefonnummer, e-post og adresse",
+                List.of("Vanlig for nettbutikker", "Uvanlig mye info", "Ikke viktig"),
                 "Vanlig for nettbutikker",
-                "Seriøse butikker har alltid kontaktinfo. Du kan ringe eller besøke dem hvis noe går galt."),
-            new ClassifyItemsOption("payment", "Betaling kun via kryptovaluta",
-                List.of("Moderne betalingsløsning", "Uvanlig for norske butikker", "Helt normalt"),
-                "Uvanlig for norske butikker",
-                "Norske nettbutikker tilbyr alltid Vipps, kort eller faktura. Kun krypto betyr at pengene ikke kan spores tilbake.")
+                "Seriøse butikker har alltid kontaktinfo. Du kan ringe dem hvis noe går galt."),
+            new ClassifyItemsOption("payment", "Du kan bare betale med gavekort",
+                List.of("Vanlig betalingsmåte", "Rart — du kan ikke klage etterpå", "Helt greit"),
+                "Rart — du kan ikke klage etterpå",
+                "Trygge nettbutikker lar deg betale med Vipps eller kort. Med gavekort får du aldri pengene tilbake hvis noe er galt.")
         )
     );
 
@@ -1052,14 +1053,10 @@ public class GameSeeder implements CommandLineRunner {
                 List.of("Norsk dialekt", "Dårlig oversettelse", "Vanlige skrivefeil"),
                 "Dårlig oversettelse",
                 "Mange slike feil tyder på at siden er automatisk oversatt fra et annet språk — vanlig for svindelbutikker."),
-            new ClassifyItemsOption("price", "En PlayStation 5 koster vanlig butikkpris",
+            new ClassifyItemsOption("price", "En PlayStation 5 koster det samme som i butikken",
                 List.of("For dyrt", "Rettferdig pris", "Mistenkelig billig"),
                 "Rettferdig pris",
-                "Normal pris er faktisk et godt tegn! Svindelbutikker lokker med urealistisk lave priser."),
-            new ClassifyItemsOption("return", "Det finnes ingen informasjon om retur eller angrerett",
-                List.of("Normalt for nettbutikker", "Bryter norsk lov", "Betyr gratis retur"),
-                "Bryter norsk lov",
-                "Norske nettbutikker er pålagt å tilby 14 dagers angrerett. Manglende info om dette er et alvorlig rødt flagg.")
+                "Normal pris er faktisk et godt tegn! Svindelbutikker lokker med urealistisk lave priser.")
         )
     );
 
@@ -1212,11 +1209,7 @@ public class GameSeeder implements CommandLineRunner {
                 List.of("Ekte konkurranse", "For godt til å være sant", "Reklame"),
                 "For godt til å være sant",
                 "Gratis ting til alle som deler er nesten alltid svindel. Ekte konkurranser fungerer ikke sånn."),
-            new ClassifyItemsOption("likes", "Innlegget har 50 000 likes",
-                List.of("Bevis på at det er ekte", "Betyr ingenting", "Mange kan ta feil"),
-                "Mange kan ta feil",
-                "Mange likes betyr ikke at noe er sant. Tusenvis av mennesker kan bli lurt samtidig."),
-            new ClassifyItemsOption("comments", "Alle kommentarene sier 'Håper jeg vinner!! 🤞'",
+            new ClassifyItemsOption("comments", "Alle kommentarene sier 'Håper jeg vinner!! 🤞' og ingen stiller spørsmål",
                 List.of("Bevis på at det er ekte", "Folk som også er lurt", "Hyggelig stemning"),
                 "Folk som også er lurt",
                 "At mange tror på det gjør det ikke sant. Alle i kommentarfeltet kan ha blitt lurt av det samme."),
