@@ -35,9 +35,6 @@ public class BossBattleService {
         if (!progressService.boosFightUnlocked(userId)) {
             throw new BossLockedException();
         }
-        if (request.won()){
-            medalionService.awardInternalUsage(userId, "Platinum", "Du fanget skurken!");
-        }
 
         Enrollment enrollment = resolveEnrollment(userId, classroomId);
         BossBattleResult result = BossBattleResult.builder()
