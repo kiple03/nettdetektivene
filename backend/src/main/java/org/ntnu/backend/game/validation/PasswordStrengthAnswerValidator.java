@@ -29,13 +29,13 @@ public class PasswordStrengthAnswerValidator implements SubmittedAnswerValidator
         if(pwd.length() < rule.getMinLength()) 
             missing.append("Minst ").append(rule.getMinLength()).append("tegn\n");
         if(rule.isRequireDigit() && pwd.chars().noneMatch(Character::isDigit))
-            missing.append("Minst ett tall");
+            missing.append("Minst ett tall\n");
         if(rule.isRequireUpper() && pwd.chars().noneMatch(Character::isUpperCase))
             missing.append("Minst èn stor bokstav\n");
         if(rule.isRequireLower() && pwd.chars().noneMatch(Character::isLowerCase))
-            missing.append("Minst èn liten bokstav");
+            missing.append("Minst èn liten bokstav\n");
         if(rule.isRequireSymbol() && pwd.chars().noneMatch(c -> !Character.isLetterOrDigit(c)))
-            missing.append("Minst ett symbol");
+            missing.append("Minst ett symbol\n");
 
         if(missing.length() == 0){
             return new ValidationResult(true, rule.getSuccessFeedback(), List.of(), List.of());

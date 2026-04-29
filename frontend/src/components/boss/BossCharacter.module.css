@@ -19,11 +19,45 @@
 
 @keyframes hurtFlash{
     0% {filter: brightness(1) saturate(1);}
-    25%  { filter: brightness(2) saturate(3) hue-rotate(-30deg) sepia(1); }                        
-    75%  { filter: brightness(2) saturate(3) hue-rotate(-30deg) sepia(1); }                        
-    100% { filter: brightness(1) saturate(1); }       
+    25%  { filter: brightness(2) saturate(3) hue-rotate(-30deg) sepia(1); }
+    75%  { filter: brightness(2) saturate(3) hue-rotate(-30deg) sepia(1); }
+    100% { filter: brightness(1) saturate(1); }
 }
 
 .hurt{
     animation: hurtFlash 0.5s ease-out forwards;
+}
+
+@keyframes victoryShakeAndFade {
+    /* 0–60 % = 0–3 s: accelerating random XY shake */
+    0%   { transform: translate(0, 0); opacity: 1; }
+    3%   { transform: translate(-2px, -1px); }
+    6%   { transform: translate(3px, 2px); }
+    9%   { transform: translate(1px, -3px); }
+    12%  { transform: translate(-4px, 1px); }
+    15%  { transform: translate(2px, 4px); }
+    18%  { transform: translate(-3px, -4px); }
+    21%  { transform: translate(5px, 1px); }
+    24%  { transform: translate(-2px, -5px); }
+    27%  { transform: translate(4px, 4px); }
+    30%  { transform: translate(-7px, -2px); }
+    33%  { transform: translate(2px, 7px); }
+    36%  { transform: translate(8px, -3px); }
+    39%  { transform: translate(-6px, -7px); }
+    42%  { transform: translate(-3px, 9px); }
+    44%  { transform: translate(11px, 4px); }
+    46%  { transform: translate(-10px, -7px); }
+    48%  { transform: translate(6px, 12px); }
+    50%  { transform: translate(12px, -8px); }
+    52%  { transform: translate(-13px, 5px); }
+    54%  { transform: translate(8px, -14px); }
+    56%  { transform: translate(-11px, 13px); }
+    58%  { transform: translate(15px, -6px); }
+    60%  { transform: translate(0, 0); opacity: 1; }
+    /* 60–100 % = 3–5 s: fade out */
+    100% { transform: translate(0, 0); opacity: 0; }
+}
+
+.victory {
+    animation: victoryShakeAndFade 5s linear forwards;
 }

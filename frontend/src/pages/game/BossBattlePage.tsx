@@ -10,6 +10,7 @@ import { DefeatCutscene } from "@/components/boss/DefeatCutscene";
 import { VictoryScreen } from "@/components/boss/VictoryScreen";
 import { DefeatScreen } from "@/components/boss/DefeatScreen";
 import { saveBossBattleResult } from "@/api/bossBattleApi";
+import { playMusic, getCurrentTrack } from "@/audio/musicManager";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import sharkHurt from "@/assets/images/boss/shark-hurt.png";
 import arenaBg from "@/assets/images/boss/arena-bg.png";
@@ -19,6 +20,16 @@ import { useQueryClient } from "@tanstack/react-query";
 type Phase = "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
 
 const MAX_HP = 5;
+
+// Stable ref callback — defined outside the component so React doesn't re-fire on every render.
+// Switches to boss music on mount, restores background music on unmount.
+function bossPageMusicRef(el: HTMLDivElement | null) {
+    if (el !== null) {
+        playMusic('boss');
+    } else if (getCurrentTrack() === 'boss') {
+        playMusic('background');
+    }
+}
 
 export default function BossBattlePage() {
     const { data: profile } = useUserProfile();
@@ -55,6 +66,8 @@ export default function BossBattlePage() {
             if (next <= 0) {
                 const secs = captureTime();
                 setFinalSeconds(secs);
+                setCurrentSprite(sharkHurt);
+                playMusic('background');
                 saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
                     .catch((err) => console.error("Failed to save boss battle result", err));
                 setPhase("victory");
@@ -67,6 +80,7 @@ export default function BossBattlePage() {
             if (next <= 0) {
                 const secs = captureTime();
                 setFinalSeconds(secs);
+                playMusic('background');
                 saveBossBattleResult({ won: false, timeSeconds: secs, playerHpRemaining: 0 })
                     .catch((err) => console.error("Failed to save boss battle result", err));
                 setPhase("defeat");
@@ -74,6 +88,11 @@ export default function BossBattlePage() {
             }
         }
         setPhase("battle");
+    };
+
+    const replayVictory = () => {
+        setCurrentSprite(sharkHurt);
+        setPhase("victory");
     };
 
     const resetBattle = () => {
@@ -86,18 +105,19 @@ export default function BossBattlePage() {
     };
 
     const isIntroPhase = phase === "intro" || phase === "intro-fading";
-    const showBoss = isIntroPhase || phase === "battle" || phase === "attacking";
+    const showBoss = isIntroPhase || phase === "battle" || phase === "attacking" || phase === "victory";
     const showPlayer = (!isIntroPhase || introPlayerRevealed) && (phase !== "victory" && phase !== "victory-screen" && phase !== "defeat" && phase !== "defeat-screen");
     const showBattle = phase === "battle" || phase === "attacking";
     const bossSprite = bossHurt ? sharkHurt : currentSprite;
 
     return (
         <div className={styles.arena}>
+            <div ref={bossPageMusicRef} style={{ display: 'none' }} />
             <div className={styles.arenaBg} style={{ backgroundImage: `url(${arenaBg})` }} />
             {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
             {showBoss && (
                 <div className={styles.bossCharArea}>
-                    <BossCharacter sprite={bossSprite} isHurt={bossHurt}/>
+                    <BossCharacter sprite={bossSprite} isHurt={bossHurt} isVictory={phase === "victory"} />
                     {showBattle && (
                         <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
                     )}
@@ -118,6 +138,7 @@ export default function BossBattlePage() {
                     phase={phase}
                     onAnswer={handleAnswer}
                     onSpriteChange={setCurrentSprite}
+                    onReplayVictory={replayVictory}
                 />
             </div>
 

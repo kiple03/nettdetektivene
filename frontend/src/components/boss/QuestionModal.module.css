@@ -1,6 +1,6 @@
 @property --countdown {
     syntax: '<integer>';
-    initial-value: 10;
+    initial-value: 30;
     inherits: false;
 }
 
@@ -10,7 +10,7 @@
 }
 
 @keyframes tick {
-    from { --countdown: 10; }
+    from { --countdown: 30; }
     to   { --countdown: 0;  }
 }
 
@@ -35,13 +35,10 @@
     flex-direction: column;
     align-items: center;
     gap: 16px;
-    min-width: 280px;
-    max-width: 440px;
-    width: 90%;
 }
 
 .label {
-    font-size: 1.2rem;
+    font-size: 1.8rem;
     font-weight: bold;
     color: #4a9eff;
     margin: 0;
@@ -55,32 +52,36 @@
 
 .timerWrap {
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    position: relative;
 }
 
-/* Animates --countdown from 10→0, displays it via CSS counter */
+/* counter-reset must live on the animated element (not ::before) because --countdown has inherits:false */
 .timerNum {
-    display: block;
-    font-size: 1.6rem;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.4rem;
     font-weight: bold;
     font-variant-numeric: tabular-nums;
-    animation: tick 10s steps(10, end) forwards;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+    counter-reset: countdown var(--countdown);
+    animation: tick 30s steps(30, end) forwards;
 }
 
 .timerNum::before {
-    counter-reset: countdown var(--countdown);
     content: counter(countdown) "s";
 }
 
 .timerBar {
     width: 100%;
-    height: 14px;
-    border-radius: 7px;
+    height: 48px;
+    border-radius: 24px;
     background: #4caf50;
-    animation: depleteBar 10s linear forwards;
+    animation: depleteBar 30s linear forwards;
 }
 
 .btnRow {
@@ -191,26 +192,28 @@
 
    
 /****************** Override from old modal styles (question) ******************/
-.modal {                                                                                           
+.modal {
       background: #0d1a2a;
-      border: 2px solid #4a9eff;                                                                     
-      border-radius: 14px;                                                                           
-      padding: clamp(20px, 3vw, 32px);      
-      color: white;                                                                                  
+      border: 2px solid #4a9eff;
+      border-radius: 14px;
+      padding: clamp(20px, 3vw, 32px);
+      color: white;
       text-align: center;
-      display: flex;                                                                                 
+      display: flex;
       flex-direction: column;
-      align-items: stretch;  
-      gap: 12px;                                                            
-                                                                                                     
-      width: max-content;                                              
-      min-width: 280px;                            
-      max-width: min(92vw, 800px);                                          
-      box-sizing: border-box;                                            
+      align-items: stretch;
+      gap: 12px;
+
+      width: calc(100vw - 32px);
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
+      box-sizing: border-box;
   }  
 
-.stationWrap {                                                                                     
-    width: 100%;                                                                                   
+.stationWrap {
+    width: 100%;
+    zoom: 0.8;
+    color: black;
 }                                                                                                  
                                                                                                     
 .stationWrap :global(.station-container) {
@@ -224,18 +227,20 @@
     display: none;                 
 }                                                                                                  
 
-.stationWrap :global(.station-title),                                                              
+.stationWrap :global(.station-title),
 .stationWrap :global(.task-header) {
-    background: #0a1524;                                                      
+    position: static;
+    transform: none;
+    background: #0a1524;
     color: #e6eefc;
-    border: 1px solid #1e3a5f;                                                                     
-    border-radius: 8px;                                                                            
-    padding: 0.5rem 0.75rem;                                                                       
-    font-size: 1rem;                                                                               
-}                                                                                                  
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+}
 
-.stationWrap :global(.station-content) {                                                           
-    color: #e6eefc;
+.stationWrap :global(.station-content) {
+    /* no color override — each station manages its own text colors against its own background */
 }
 
 .stationWrap :global(.feedback-wrapper) {                                                          

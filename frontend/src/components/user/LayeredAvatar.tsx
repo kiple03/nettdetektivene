@@ -12,7 +12,7 @@ const DEFAULT_TONE = SKIN_TONES['tone_dark'];
 
 interface LayeredAvatarProps{
     items: EquippedItem[];
-    size?: number;
+    size?: number | string;
     circular?: boolean;
     skinToneBase?: string;
     skinToneShadowDark?: string;

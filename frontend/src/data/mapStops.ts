@@ -11,7 +11,6 @@ export interface StopData {
     title: string;
     icon: string;
     pathOffset: string; // used only for car animation; teacher map ignores this
-    disabled?: boolean;
 }
 
 export const MAP_STOPS: StopData[] = [

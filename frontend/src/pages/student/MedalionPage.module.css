@@ -105,7 +105,7 @@
 }
 
 .medalImage {
-  width: 100%;
+  width: 50%;
   height: auto;
   object-fit: contain;
 }
