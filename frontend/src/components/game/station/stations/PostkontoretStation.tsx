@@ -4,6 +4,8 @@ import type { SubmitMultiChoiceAnswerRequest, SubmitAnswerRequest } from "@/api/
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper.ts";
 import type { StationData, SubmitAnswerResult } from "@/types/station.ts";
 import type { PostkontoretTask } from "@/types/email.ts";
+import {useState} from "react";
+import type { SubmitResult } from "@/types/station.ts";
 
 type PostOfficeStationProps = {
   station: StationData;
@@ -18,6 +20,8 @@ function PostOfficeStation({ station, onAnswer, disabled = false }: PostOfficeSt
     recommendedAction: "",   // can be included in feedback from backend
   };
 
+  const [result, setResult] = useState<SubmitResult | undefined>(undefined);
+
   const handleSubmit = async (selectedIds: string[]) => {
     const request: SubmitMultiChoiceAnswerRequest = {
       shape: "MULTI",
@@ -25,6 +29,11 @@ function PostOfficeStation({ station, onAnswer, disabled = false }: PostOfficeSt
     };
     try {
       const response = await submitMultiChoiceAnswer(station.questionId, request);
+      setResult({
+        correct: response.correct,
+        correctOptionIds: response.correctOptionIds ?? [],
+        wrongSelectedOptionIds: response.wrongSelectedOptionIds ?? [],
+      });
       const mappedResult = mapSubmitResponseToSubmitAnswer(response);
       onAnswer(mappedResult, request);
     } catch (error: any) {
@@ -44,7 +53,8 @@ function PostOfficeStation({ station, onAnswer, disabled = false }: PostOfficeSt
         <EmailTask
             task={task}
             onSubmit={handleSubmit}
-            disabled={disabled} />
+            disabled={disabled}
+            result={result}/>
       </div>
   );
 }

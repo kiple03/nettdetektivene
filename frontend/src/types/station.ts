@@ -46,6 +46,12 @@ export type SubmitAnswerResult = {
   feedback: string;
 };
 
+export type SubmitResult = {
+  correct: boolean;
+  correctOptionIds: string[];
+  wrongSelectedOptionIds: string[];
+};
+
 export type Level = {
   id: number;
 }
