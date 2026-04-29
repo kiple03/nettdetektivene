@@ -156,6 +156,9 @@ public class GameSeeder implements CommandLineRunner {
     levelRepository.delete(level);
   }
 
+  /**
+   * Seed news stop, levels and questions.
+   */
   private void seedNews() {
     Stop stop = stopRepository.findByName("Nyhetskvartalet").orElseGet(() -> {
       Stop s = new Stop();
@@ -164,6 +167,7 @@ public class GameSeeder implements CommandLineRunner {
       return stopRepository.save(s);
     });
 
+    /* level 1 */
     Level level1 = levelRepository
         .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 1")
         .orElseGet(() -> {
@@ -192,12 +196,13 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 1 */
     ensureLevelNoteTemplate(level1,
         NoteCategory.NYHETER,
         "Sjekk alltid om overskriften virker troverdig og se etter rare skrivefeil eller manglende navn."
     );
 
-
+    /* level 2 */
     Level level2 = levelRepository
         .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 2")
         .orElseGet(() -> {
@@ -226,6 +231,13 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 2 */
+    ensureLevelNoteTemplate(level2,
+        NoteCategory.NYHETER,
+        "Sjekk dato og tidspunkt. Normen i nyhetsartikler er at fullt navn eller bare etteravn blir brukt. "
+    );
+
+    /* level 3 */
     Level level3 = levelRepository
         .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte eller falskt? 3")
         .orElseGet(() -> {
@@ -254,19 +266,16 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
-    ensureLevelNoteTemplate(level2,
-        NoteCategory.NYHETER,
-        "Dummy notat for nivå 2 — sjekk datoer, klokkeslett og om journalisten har fullt navn."
-    );
-
-    // ... level3 definition and questions ...
-
+    /* notes level 3*/
     ensureLevelNoteTemplate(level3,
         NoteCategory.NYHETER,
-        "Dummy notat for nivå 3 — vurder om tallene og alderen i artikkelen gir logisk mening."
+        "Sjekk om artikkelen er logisk riktig og om de bruker STORE bokstaver for å skape frykt eller andre følelser."
     );
   }
 
+  /**
+   * Seeds photo stop, level and questions.
+   */
   private void seedPhoto() {
     Stop stop = stopRepository.findByName("Fotografen").orElseGet(() -> {
       Stop s = new Stop();
@@ -275,6 +284,7 @@ public class GameSeeder implements CommandLineRunner {
       return stopRepository.save(s);
     });
 
+    /* level 1 */
     Level level = levelRepository.findByStopIdAndTitle(stop.getId(), "Ekte, KI eller manipulert?").orElseGet(() -> {
       Level l = new Level();
       l.setTitle("Ekte, KI eller manipulert?");
@@ -330,6 +340,13 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 1 */
+    ensureLevelNoteTemplate(level,
+        NoteCategory.BILDER,
+        "Vær oppmerksom på urealistiske objekter og for glinsende, ren og myk hud."
+    );
+
+    /* level 2 */
     Level level2 = levelRepository
         .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert? 2")
         .orElseGet(() -> {
@@ -382,6 +399,12 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 2 */
+    ensureLevelNoteTemplate(level2,
+        NoteCategory.BILDER,
+        "Sjekk om bedriften eksisterer."
+    );
+
     Level level3 = levelRepository
         .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Ekte, KI eller manipulert? 3")
         .orElseGet(() -> {
@@ -415,8 +438,17 @@ public class GameSeeder implements CommandLineRunner {
                 true, "Riktig! dette bildet er faktisk ikke generert av AI")
         )
     );
+
+    /* notes level 3 */
+    ensureLevelNoteTemplate(level3,
+        NoteCategory.BILDER,
+        "Kunstig intelligens har blitt veldig god på generering av bilder. Spør en voksen hvis du er usikker!"
+    );
   }
 
+  /**
+   * Seeds post stop, levels and questions.
+   */
   private void seedPost() {
     Stop stop3 = stopRepository.findByName("Postkontoret").orElseGet(() -> {
       Stop s = new Stop();
@@ -425,6 +457,7 @@ public class GameSeeder implements CommandLineRunner {
       return stopRepository.save(s);
     });
 
+    /* level 1 */
     Level postLevel1 = levelRepository
         .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen! 1")
         .orElseGet(() -> {
@@ -504,6 +537,13 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 1 */
+    ensureLevelNoteTemplate(postLevel1,
+        NoteCategory.EPOST,
+        "Sjekk om avsender-epost er ekte, innholdet er lokkende, lenken er ekte og om logoen er ekte."
+    );
+
+    /* level 2 */
     Level postLevel2 = levelRepository
         .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen! 2")
         .orElseGet(() -> {
@@ -591,6 +631,12 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
+    /* notes level 2 */
+    ensureLevelNoteTemplate(postLevel2,
+        NoteCategory.EPOST,
+        "Sjekk om avsender-epost er ekte, lenken er ekte og signaturen."
+    );
+
     Level postLevel3 = levelRepository
         .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Finn det mistenklige i mailen! 3")
         .orElseGet(() -> {
@@ -635,7 +681,7 @@ public class GameSeeder implements CommandLineRunner {
         )
     );
 
-    ensureQuestion(postLevel2,
+    ensureQuestion(postLevel3,
         "Hva er mistenklig med eposten fra Roblox?",
         new PostOfficeQuestion(
             new PostOfficeQuestion.Email(
@@ -671,6 +717,11 @@ public class GameSeeder implements CommandLineRunner {
             List.of("senderEmail", "signature"),
             "Spør en voksen"
         )
+    );
+    /* notes level 3 */
+    ensureLevelNoteTemplate(postLevel3,
+        NoteCategory.EPOST,
+        "Sjekk alle små detaljer som mailadresser og skrivefeil."
     );
   }
 
@@ -1066,6 +1117,8 @@ public class GameSeeder implements CommandLineRunner {
         "Vurder hele nettbutikken samlet: nettadresse, priser, anmeldelser, betaling og returrett. Én trygg detalj betyr ikke at alt er trygt.");
 
   }
+
+  /** Seed social stop, levels and questions **/
   private void seedSocial() {
     Stop stop = stopRepository.findByName("Den sosiale møteplassen").orElseGet(() -> {
       Stop s = new Stop();
