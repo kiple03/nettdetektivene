@@ -37,6 +37,8 @@ export default function JoinWithCodePage() {
         if (e.key === 'Backspace' && rawCode.length > 0) {
             e.preventDefault();
             setCode((prev) => prev.slice(0, -1));
+        } else if(e.key === 'Enter'){
+            handleJoin();
         }
     };
 
