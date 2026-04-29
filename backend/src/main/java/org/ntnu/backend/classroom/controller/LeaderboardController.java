@@ -9,11 +9,15 @@ import org.ntnu.backend.classroom.dto.leaderboard.RankedStudentResponse;
 import org.ntnu.backend.classroom.service.LeaderboardService;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,8 +29,11 @@ public class LeaderboardController {
   private final ClassroomAuthorizationService classroomAuthorizationService;
 
   @GetMapping("/classrooms")
-  public List<RankedClassroomResponse> getGlobalLeaderboard() {
-    return leaderboardService.getGlobalLeaderboard();
+  public Page<RankedClassroomResponse> getGlobalLeaderboard(
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int size
+  ) {
+    return leaderboardService.getGlobalLeaderboard(PageRequest.of(page, size));
   }
 
   @GetMapping("/classrooms/{classroomId}")

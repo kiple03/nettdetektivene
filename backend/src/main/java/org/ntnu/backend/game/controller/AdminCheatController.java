@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Dev-only cheat endpoint. Only registered when APP_CHEATS_ENABLED=true.
  * Not available in production.
  */
-@RestController
+//@RestController
 @RequiredArgsConstructor
 @RequestMapping("/game")
 @ConditionalOnProperty(name = "app.cheats.enabled", havingValue = "true")

@@ -22,6 +22,9 @@ import org.ntnu.backend.game.model.UserProgress;
 import org.ntnu.backend.game.repository.StopLevelCount;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.repository.UserProgressRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,7 +62,17 @@ public class LeaderboardService {
     return buildSortedLeaderboard(byClassroom);
   }
 
-  public List<RankedClassroomResponse> getGlobalLeaderboard() {
+  public Page<RankedClassroomResponse> getGlobalLeaderboard(Pageable pageable) {
+    List<RankedClassroomResponse> allClassroomsRanked = buildGlobalLeaderboard();
+    int start = (int) pageable.getOffset();
+    int end = Math.min(start + pageable.getPageSize(), allClassroomsRanked.size());
+    List<RankedClassroomResponse> page = start >= allClassroomsRanked.size()
+        ? List.of()
+        : allClassroomsRanked.subList(start, end);
+    return new PageImpl<>(page, pageable, allClassroomsRanked.size());
+  }
+
+  private List<RankedClassroomResponse> buildGlobalLeaderboard() {
     List<Enrollment> enrollments = enrollmentRepository.findAllByLeftAtIsNull();
     Map<UUID, Integer> scores = computeScores(enrollments);
     Map<Classroom, List<Integer>> byClassroom = groupScoresByClassroom(enrollments, scores);
