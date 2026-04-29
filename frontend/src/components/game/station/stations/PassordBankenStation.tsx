@@ -5,8 +5,6 @@ import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 import TaskHeader from "../../ui/TaskHeader";
 import PasswordInput from "../../tasks/PasswordInput";
 import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
-import passwordImg1 from "@/assets/images/game/passord1.png"
-import passwordImg2 from "@/assets/images/game/passord2.png"
 
 type Props = {
     station: StationData;
@@ -43,13 +41,9 @@ function PassordBankenStation({ station, onAnswer, disabled = false }: Props) {
         }
     };
 
-  // Midlertidig hardkodet mtp bilde for spørsmålene i level 1
-  const passwordImageByQuestionId: Record<number, string> = {
-    12: passwordImg1,
-    13: passwordImg2,
-  }
-
-  const passwordImage = passwordImageByQuestionId[station.questionId]
+  const passwordImage = station.options[0]?.imageUrl;
+  console.log("password option", station.options[0]);
+  console.log("password image", passwordImage);
 
   if (station.levelType === "PASSWORD_STRENGTH") {
     return (
