@@ -9,11 +9,12 @@ import ClassifyItems from "@/components/game/tasks/ClassifyItems.tsx";
 
 type Props = {
     station: StationData;
+    levelTitle: string,
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
 };
 
-function SosialeMoteplassenStation({ station, onAnswer, disabled = false }: Props) {
+function SosialeMoteplassenStation({ station, levelTitle, onAnswer, disabled = false }: Props) {
     const [correctIds, setCorrectIds] = useState<number[]>([]);
     const [wrongIds, setWrongIds] = useState<number[]>([]);
     const [submitted, setSubmitted] = useState(false);
@@ -79,7 +80,7 @@ function SosialeMoteplassenStation({ station, onAnswer, disabled = false }: Prop
     return (
         <div className="sosiale-station">
             <DetectiveBook
-                title={station.title || "Den sosiale møteplassen"}
+                title={levelTitle}
                 subtitle={station.questionText}
             >
                 {station.levelType === "CLASSIFY_ITEMS" ? (
