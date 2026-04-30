@@ -55,5 +55,4 @@ public class LeaderboardController {
     // verify access
     return leaderboardService.getTeacherClassroomScores(teacherId);
   }
-
 }
