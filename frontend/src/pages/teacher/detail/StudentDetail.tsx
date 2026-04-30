@@ -9,6 +9,7 @@ import { StudentDetailLevels } from '@/components/teacher/studentDetail/StudentD
 import { StudentNotebook } from '@/components/teacher/studentDetail/StudentNotebook';
 import './StudentDetail.css';
 import { ALL_MEDALS, getMedalImageUrl } from '@/data/allMedals';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 export default function StudentDetail() {
     const { id: classroomId = '', studentId = '' } = useParams<{ id: string; studentId: string }>();
@@ -24,6 +25,9 @@ export default function StudentDetail() {
     const [editing, setEditing] = useState(false);
     const [editValue, setEditValue] = useState('');
     const [usernameError, setUsernameError] = useState<string | null>(null);
+
+    useBackTo(`/teacher/classrooms/${classroomId}`, "Tilbake til klasserom");
+
 
     function startEdit() {
         setEditValue(studentDetail?.username ?? '');

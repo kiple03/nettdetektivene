@@ -14,6 +14,7 @@ import { emptyDraftForType, makeOptionId } from '@/components/teacher/questionEd
 import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherPasswordStrengthOption, TeacherTextQuizOption } from '@/api/teacherApi';
 import { getImageDisplayUrl } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 const LEVEL_TYPE_LABELS: Record<string, string> = {
     MULTIPLE_CHOICE: 'Flervalg',
@@ -168,6 +169,8 @@ export default function LevelQuestionsPage() {
     const modalMode: 'create' | 'edit' = editingQuestion ? 'edit' : 'create';
     const modalSaving = createMutation.isPending || updateMutation.isPending;
     const modalError = editingQuestion ? updateError : createError;
+
+    useBackTo(backUrl);
 
     const handleCloseModal = () => {
         setCreateOpen(false);
@@ -369,9 +372,6 @@ export default function LevelQuestionsPage() {
 
     return (
         <div className="level-questions">
-            <Link to={backUrl} className="level-questions__back">
-                ← Tilbake
-            </Link>
 
             <div className="level-questions__header">
                 {level && (
