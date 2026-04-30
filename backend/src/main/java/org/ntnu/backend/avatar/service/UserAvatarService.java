@@ -170,7 +170,7 @@ public class UserAvatarService {
         "magnifying_glass", "police_hat", "police_uniform", "sheriff_hat",
         "sheriff_star", "sheriff_suit", "stop_sign",
         "tone_light", "tone_medium", "tone_dark", "tone_wacky",
-        "boy_hair", "girl_hair", "face_girl", "burning_hand",
+        "boy_hair", "girl_hair", "face_girl", "face_girl_2", "face_girl_3", "burning_hand",
         "afro", "girl_bob_hair", "mohawk"
     );
 

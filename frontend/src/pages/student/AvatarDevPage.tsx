@@ -21,6 +21,8 @@ const ITEM_GENDER: Record<string, Gender> = {
   face_2: 'boy',
   face_3: 'boy',
   face_girl: 'girl',
+  face_girl_2: 'girl',
+  face_girl_3: 'girl',
   boy_hair: 'boy',
   girl_hair: 'girl',
   girl_bob_hair: 'girl',
