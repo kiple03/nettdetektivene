@@ -21,6 +21,8 @@ import org.ntnu.backend.game.repository.StopLevelCount;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.repository.UserProgressRepository;
 import org.ntnu.backend.user.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -399,10 +401,10 @@ class LeaderboardServiceTest {
         when(leaderboardMapper.toRankedList(anyList()))
                 .thenReturn(List.of(rankedOne, rankedTwo));
 
-        List<RankedClassroomResponse> result =
-                leaderboardService.getGlobalLeaderboard();
+        Page<RankedClassroomResponse> result =
+                leaderboardService.getGlobalLeaderboard(PageRequest.of(0, 10));
 
-        assertEquals(List.of(rankedOne, rankedTwo), result);
+        assertEquals(List.of(rankedOne, rankedTwo), result.getContent());
 
         verify(leaderboardMapper).toRankedList(argThat(list ->
                 list.size() == 2
@@ -478,10 +480,9 @@ class LeaderboardServiceTest {
         when(leaderboardMapper.toRankedList(anyList()))
                 .thenReturn(List.of(rankedOne, rankedTwo));
 
-        List<RankedClassroomResponse> result = leaderboardService.getGlobalLeaderboard();
-
-        assertEquals(List.of(rankedOne, rankedTwo), result);
-
+      Page<RankedClassroomResponse> result =
+          leaderboardService.getGlobalLeaderboard(PageRequest.of(0, 10));
+        assertEquals(List.of(rankedOne, rankedTwo), result.getContent());
         verify(enrollmentRepository).findAllByLeftAtIsNull();
 
         @SuppressWarnings("unchecked")

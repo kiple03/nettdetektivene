@@ -19,7 +19,7 @@ export default function LeaderboardPage() {
     const entries = data?.content ?? [];
     const totalPages = data?.totalPages ?? 0;
     const totalElements = data?.totalElements ?? 0;
-
+    
     return (
         <div className={styles.page} style={{ backgroundImage: `url(${detectiveRoom})` }}>
             <BackButton
@@ -49,6 +49,7 @@ export default function LeaderboardPage() {
                                     totalPages={totalPages}
                                     totalElements={totalElements}
                                     pageSize={PAGE_SIZE}
+                                      numberOfElements={entries.length}
                                     onPageChange={setCurrentPage}
                                 />
                             )}

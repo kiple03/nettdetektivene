@@ -31,12 +31,13 @@
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
-.btn:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(90, 74, 58, 0.5);
+.btn:hover:not(:disabled):not(.active) {
+  background: rgba(90, 74, 58, 0.15);
+  border-color: rgba(90, 74, 58, 0.6);
+  color: #3a2a1a;
 }
 
 .btn:disabled {
