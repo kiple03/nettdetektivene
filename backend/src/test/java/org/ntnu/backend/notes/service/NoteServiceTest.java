@@ -29,6 +29,10 @@ import org.ntnu.backend.notes.model.enums.NoteCategory;
 import org.ntnu.backend.notes.repository.LevelNoteTemplateRepository;
 import org.ntnu.backend.notes.repository.NoteRepository;
 import org.ntnu.backend.notes.repository.StudentLevelNoteRepository;
+import org.ntnu.backend.classroom.model.ClassroomCensorWord;
+import org.ntnu.backend.classroom.model.Enrollment;
+import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
+import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.User;
@@ -58,6 +62,10 @@ class NoteServiceTest {
     private ProfanityFilterService profanityFilter;
     @Mock
     private NotificationService notificationService;
+    @Mock
+    private ClassroomCensorWordRepository classroomCensorWordRepository;
+    @Mock
+    private EnrollmentRepository enrollmentRepository;
 
     @InjectMocks
     private NoteService noteService;
@@ -253,8 +261,8 @@ class NoteServiceTest {
         UpsertNoteRequest request = new UpsertNoteRequest("  faen dette var dårlig  ");
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-        when(profanityFilter.containsProfanity("faen dette var dårlig", (UUID) null)).thenReturn(true);
-        when(profanityFilter.censor("faen dette var dårlig", null)).thenReturn("*** dette var dårlig");
+        when(profanityFilter.containsProfanity("faen dette var dårlig", List.of())).thenReturn(true);
+        when(profanityFilter.censor("faen dette var dårlig", List.of())).thenReturn("*** dette var dårlig");
 
         Note savedNote = Note.builder()
                 .id(UUID.randomUUID())
@@ -313,7 +321,7 @@ class NoteServiceTest {
         );
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-        when(profanityFilter.containsProfanity("vanlig note", (UUID) null)).thenReturn(false);
+        when(profanityFilter.containsProfanity("vanlig note", List.of())).thenReturn(false);
         when(noteRepository.save(any(Note.class))).thenReturn(savedNote);
         when(noteMapper.toResponse(savedNote)).thenReturn(expectedResponse);
 
@@ -373,9 +381,10 @@ class NoteServiceTest {
         when(noteMapper.toOverviewResponse(List.of(ownNote), List.of(levelNote)))
                 .thenReturn(rawResponse);
 
-        when(profanityFilter.containsProfanity("faen note", classroomId)).thenReturn(true);
-        when(profanityFilter.censor("faen note", classroomId)).thenReturn("*** note");
-        when(profanityFilter.containsProfanity("vanlig level note", classroomId)).thenReturn(false);
+        when(classroomCensorWordRepository.findByClassroomId(classroomId)).thenReturn(List.of());
+        when(profanityFilter.containsProfanity("faen note", List.of())).thenReturn(true);
+        when(profanityFilter.censor("faen note", List.of())).thenReturn("*** note");
+        when(profanityFilter.containsProfanity("vanlig level note", List.of())).thenReturn(false);
 
         NotesOverviewResponse response = noteService.getNotesForUser(testUser.getId(), classroomId);
 

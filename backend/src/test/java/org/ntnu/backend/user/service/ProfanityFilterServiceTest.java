@@ -3,7 +3,6 @@ package org.ntnu.backend.user.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
-import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,69 +47,26 @@ class ProfanityFilterServiceTest {
     }
 
     @Test
-    void containsProfanity_withClassroomId_whenClassroomHasExtraWord_shouldReturnTrue() {
-        UUID classroomId = UUID.randomUUID();
-
-        profanityFilterService.putClassroomPatterns(classroomId, List.of("spoiler"));
-
-        assertTrue(profanityFilterService.containsProfanity("Dette er en spoiler", classroomId));
-    }
-
-    @Test
-    void containsProfanity_withClassroomId_whenClassroomExtraWordHasDifferentCase_shouldReturnTrue() {
-        UUID classroomId = UUID.randomUUID();
-
-        profanityFilterService.putClassroomPatterns(classroomId, List.of("spoiler"));
-
-        assertTrue(profanityFilterService.containsProfanity("Dette er en SPOILER", classroomId));
-    }
-
-    @Test
-    void containsProfanity_withClassroomId_shouldOnlyMatchClassroomWordsAsWholeWords() {
-        UUID classroomId = UUID.randomUUID();
-
-        profanityFilterService.putClassroomPatterns(classroomId, List.of("bad"));
-
-        assertFalse(profanityFilterService.containsProfanity("badge", classroomId));
-    }
-
-    @Test
-    void containsProfanity_withClassroomId_whenClassroomIdIsNull_shouldOnlyCheckDefaultPatterns() {
-        assertFalse(profanityFilterService.containsProfanity("spoiler", (UUID) null));
-    }
-
-    @Test
-    void containsProfanity_withClassroomId_whenNoClassroomPatternsExist_shouldReturnFalse() {
-        UUID classroomId = UUID.randomUUID();
-
-        assertFalse(profanityFilterService.containsProfanity("spoiler", classroomId));
-    }
-
-    @Test
-    void containsProfanity_withClassroomId_whenDefaultProfanityExists_shouldReturnTrueEvenWithoutClassroomPattern() {
-        UUID classroomId = UUID.randomUUID();
-
-        assertTrue(profanityFilterService.containsProfanity("Dette var faen", classroomId));
-    }
-
-    @Test
-    void evictClassroomCache_shouldRemoveClassroomSpecificWords() {
-        UUID classroomId = UUID.randomUUID();
-
-        profanityFilterService.putClassroomPatterns(classroomId, List.of("spoiler"));
-
-        assertTrue(profanityFilterService.containsProfanity("Dette er en spoiler", classroomId));
-
-        profanityFilterService.evictClassroomCache(classroomId);
-
-        assertFalse(profanityFilterService.containsProfanity("Dette er en spoiler", classroomId));
-    }
-
-    @Test
     void containsProfanity_withExtraWords_whenExtraWordExists_shouldReturnTrue() {
         assertTrue(profanityFilterService.containsProfanity(
                 "Dette er en spoiler",
                 List.of("spoiler")
+        ));
+    }
+
+    @Test
+    void containsProfanity_withExtraWords_whenExtraWordHasDifferentCase_shouldReturnTrue() {
+        assertTrue(profanityFilterService.containsProfanity(
+                "Dette er en SPOILER",
+                List.of("spoiler")
+        ));
+    }
+
+    @Test
+    void containsProfanity_withExtraWords_shouldOnlyMatchWholeWords() {
+        assertFalse(profanityFilterService.containsProfanity(
+                "badge",
+                List.of("bad")
         ));
     }
 
@@ -135,14 +91,6 @@ class ProfanityFilterServiceTest {
         assertTrue(profanityFilterService.containsProfanity(
                 "Dette var faen",
                 List.of("spoiler")
-        ));
-    }
-
-    @Test
-    void containsProfanity_withExtraWords_shouldOnlyMatchWholeWords() {
-        assertFalse(profanityFilterService.containsProfanity(
-                "badge",
-                List.of("bad")
         ));
     }
 
@@ -175,43 +123,23 @@ class ProfanityFilterServiceTest {
     }
 
     @Test
-    void censor_withClassroomId_whenClassroomHasExtraWord_shouldReplaceExtraWord() {
-        UUID classroomId = UUID.randomUUID();
-
-        profanityFilterService.putClassroomPatterns(classroomId, List.of("spoiler"));
-
-        String result = profanityFilterService.censor("Dette er en spoiler", classroomId);
+    void censor_withExtraWords_whenExtraWordExists_shouldReplaceExtraWord() {
+        String result = profanityFilterService.censor("Dette er en spoiler", List.of("spoiler"));
 
         assertEquals("Dette er en ***", result);
     }
 
     @Test
-    void censor_withClassroomId_whenClassroomIdIsNull_shouldOnlyCensorDefaultProfanity() {
-        String result = profanityFilterService.censor("Dette er en spoiler", null);
+    void censor_withExtraWords_whenExtraWordsIsNull_shouldOnlyCensorDefaultProfanity() {
+        String result = profanityFilterService.censor("Dette er en spoiler", (List<String>) null);
 
         assertEquals("Dette er en spoiler", result);
     }
 
     @Test
-    void censor_withClassroomId_whenDefaultAndClassroomProfanityExist_shouldCensorBoth() {
-        UUID classroomId = UUID.randomUUID();
-
-        profanityFilterService.putClassroomPatterns(classroomId, List.of("spoiler"));
-
-        String result = profanityFilterService.censor("Faen, dette er en spoiler", classroomId);
+    void censor_withExtraWords_whenDefaultAndExtraProfanityExist_shouldCensorBoth() {
+        String result = profanityFilterService.censor("Faen, dette er en spoiler", List.of("spoiler"));
 
         assertEquals("***, dette er en ***", result);
-    }
-
-    @Test
-    void censor_withClassroomId_whenClassroomPatternWasEvicted_shouldNotCensorExtraWord() {
-        UUID classroomId = UUID.randomUUID();
-
-        profanityFilterService.putClassroomPatterns(classroomId, List.of("spoiler"));
-        profanityFilterService.evictClassroomCache(classroomId);
-
-        String result = profanityFilterService.censor("Dette er en spoiler", classroomId);
-
-        assertEquals("Dette er en spoiler", result);
     }
 }

@@ -7,6 +7,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import org.ntnu.backend.classroom.model.ClassroomCensorWord;
+import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
+import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.user.service.ProfanityFilterService;
@@ -26,6 +29,7 @@ import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -54,6 +58,8 @@ public class NoteService {
     private final LevelNoteTemplateRepository levelNoteTemplateRepository;
     private final ProfanityFilterService profanityFilter;
     private final NotificationService notificationService;
+    private final ClassroomCensorWordRepository classroomCensorWordRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     /**
      * Returns the full notebook for the authenticated user, including both personal notes and
@@ -84,11 +90,16 @@ public class NoteService {
         User user = getAuthenticatedUser(authentication);
         NoteCategory category = parseCategory(categoryRaw);
 
-        UUID classroomId = JwtAuthenticatedPrincipal.from(authentication).getClassroomId();
+        UUID classroomId = enrollmentRepository.findByUserAndLeftAtIsNull(user)
+                .map(e -> e.getClassroom().getId())
+                .orElse(null);
+        List<String> classroomWords = classroomId == null ? List.of() :
+                classroomCensorWordRepository.findByClassroomId(classroomId)
+                        .stream().map(ClassroomCensorWord::getWord).toList();
         String content = request.content().trim();
-        boolean hasProfanity = profanityFilter.containsProfanity(content, classroomId);
+        boolean hasProfanity = profanityFilter.containsProfanity(content, classroomWords);
         if (hasProfanity) {
-            content = profanityFilter.censor(content, classroomId);
+            content = profanityFilter.censor(content, classroomWords);
         }
 
         Note note = Note.builder()
@@ -154,13 +165,16 @@ public class NoteService {
     }
 
     private NotesOverviewResponse applyCensoring(NotesOverviewResponse response, UUID classroomId) {
+        List<String> classroomWords = classroomId == null ? List.of() :
+                classroomCensorWordRepository.findByClassroomId(classroomId)
+                        .stream().map(ClassroomCensorWord::getWord).toList();
         return new NotesOverviewResponse(
-            censorMap(response.reflections(), classroomId),
-            censorMap(response.levelNotes(), classroomId)
+            censorMap(response.reflections(), classroomWords),
+            censorMap(response.levelNotes(), classroomWords)
         );
     }
 
-    private Map<String, List<NoteResponse>> censorMap(Map<String, List<NoteResponse>> map, UUID classroomId) {
+    private Map<String, List<NoteResponse>> censorMap(Map<String, List<NoteResponse>> map, List<String> classroomWords) {
         return map.entrySet().stream()
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
@@ -168,8 +182,8 @@ public class NoteService {
                     .map(note -> new NoteResponse(
                         note.id(),
                         note.category(),
-                        profanityFilter.containsProfanity(note.content(), classroomId)
-                            ? profanityFilter.censor(note.content(), classroomId)
+                        profanityFilter.containsProfanity(note.content(), classroomWords)
+                            ? profanityFilter.censor(note.content(), classroomWords)
                             : note.content(),
                         note.createdAt(),
                         note.updatedAt()
@@ -178,6 +192,7 @@ public class NoteService {
             ));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveCompletionTipIfNeeded(UUID userId, Level level) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));

@@ -31,7 +31,7 @@ import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtService;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
-import org.ntnu.backend.user.service.ProfanityFilterService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,7 +44,6 @@ class ClassroomServiceTest {
     private ClassroomTeacherRepository classroomTeacherRepository;
     private MysterySubmissionRepository mysterySubmissionRepository;
     private ClassroomCensorWordRepository classroomCensorWordRepository;
-    private ProfanityFilterService profanityFilterService;
     private ClassroomMapper classroomMapper;
     private JoinCodeGenerator joinCodeGenerator;
     private MedalionService medalionService;
@@ -70,7 +69,6 @@ class ClassroomServiceTest {
         classroomTeacherRepository = mock(ClassroomTeacherRepository.class);
         mysterySubmissionRepository = mock(MysterySubmissionRepository.class);
         classroomCensorWordRepository = mock(ClassroomCensorWordRepository.class);
-        profanityFilterService = mock(ProfanityFilterService.class);
         classroomMapper = mock(ClassroomMapper.class);
         joinCodeGenerator = mock(JoinCodeGenerator.class);
         medalionService = mock(MedalionService.class);
@@ -83,7 +81,6 @@ class ClassroomServiceTest {
                 classroomTeacherRepository,
                 mysterySubmissionRepository,
                 classroomCensorWordRepository,
-                profanityFilterService,
                 classroomMapper,
                 joinCodeGenerator,
                 medalionService,
@@ -257,7 +254,6 @@ class ClassroomServiceTest {
         verify(enrollmentRepository).deleteByClassroomId(classroomId);
         verify(classroomTeacherRepository).deleteByClassroomId(classroomId);
         verify(classroomCensorWordRepository).deleteByClassroomId(classroomId);
-        verify(profanityFilterService).evictClassroomCache(classroomId);
         verify(classroomRepository).deleteById(classroomId);
     }
 
@@ -277,7 +273,6 @@ class ClassroomServiceTest {
         verify(enrollmentRepository, never()).deleteByClassroomId(any());
         verify(classroomTeacherRepository, never()).deleteByClassroomId(any());
         verify(classroomCensorWordRepository, never()).deleteByClassroomId(any());
-        verify(profanityFilterService, never()).evictClassroomCache(any());
         verify(classroomRepository, never()).deleteById(any());
     }
 

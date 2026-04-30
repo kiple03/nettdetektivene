@@ -2,7 +2,7 @@ package org.ntnu.backend.game.service;
 
 import java.util.List;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
+
 import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.StopResponse;
@@ -19,6 +19,8 @@ import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.AllArgsConstructor;
 
 /**
  * Handles the game map and level navigation. Provides stop overviews
@@ -114,7 +116,6 @@ public class GameService {
     levelSubmissionValidator.validate(questions, request.answers());
 
     boolean newlyCompleted = progressService.recordCompletionOfLevel(principal.getUserId(), principal.getRole(), level);
-
     if (newlyCompleted) {
       noteService.saveCompletionTipIfNeeded(principal.getUserId(), level);
     }

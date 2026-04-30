@@ -12,6 +12,7 @@ export type TabId =
 export type NoteEntry = {
     id: string;
     content: string;
+    createdAt: string;
 };
 
 export type NotesMap = Record<TabId, NoteEntry[]>;
@@ -53,7 +54,7 @@ export function toNotesMap(raw: Partial<Record<TabId, NoteResponse[]>> | undefin
         ...Object.fromEntries(
             Object.entries(raw).map(([tab, notes]) => [
                 tab,
-                (notes ?? []).map((n) => ({ id: n.id, content: n.content })),
+                (notes ?? []).map((n) => ({ id: n.id, content: n.content, createdAt: n.createdAt })),
             ])
         ),
     };
@@ -76,7 +77,7 @@ export async function saveMyNote(
         content,
     });
 
-    return { id: res.data.id, content: res.data.content };
+    return { id: res.data.id, content: res.data.content, createdAt: res.data.createdAt };
 }
 
 export async function deleteMyNote(noteId: string): Promise<void> {
