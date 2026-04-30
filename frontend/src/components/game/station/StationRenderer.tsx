@@ -38,10 +38,14 @@ function StationRenderer({ station, levelTitle = station.title ?? "Nivå", onAns
               disabled={disabled}
           />
       );
+
     case STATION_TYPE.POST:
-      return <PostkontoretStation
+      return (
+          <PostkontoretStation
           station={station}
-          onAnswer={onAnswer} />;
+          onAnswer={onAnswer}
+          />
+      );
 
     case STATION_TYPE.PASSWORD:
       return (
