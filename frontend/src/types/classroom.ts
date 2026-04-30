@@ -33,6 +33,7 @@ export interface StudentSummary {
   totalStops: number;
   score: number;
   equippedItems: EquippedItem[];
+  hairColor?: string;
 }
 
 export interface LevelEntry {
