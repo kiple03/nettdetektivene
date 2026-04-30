@@ -6,20 +6,32 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
-import org.mockito.ArgumentCaptor;
-import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardClassroomResponse;
-import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
@@ -28,7 +40,7 @@ import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
-import org.ntnu.backend.game.repository.LevelRepository;
+import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
@@ -45,10 +57,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.server.ResponseStatusException;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 class TeacherClassroomServiceTest {
 
     private ClassroomTeacherRepository classroomTeacherRepository;
@@ -56,7 +64,6 @@ class TeacherClassroomServiceTest {
     private ClassroomService classroomService;
     private ClassroomAuthorizationService classroomAuthorizationService;
     private EnrollmentRepository enrollmentRepository;
-    private LevelRepository levelRepository;
     private StopRepository stopRepository;
     private UserRepository userRepository;
     private ProgressService progressService;
@@ -90,7 +97,6 @@ class TeacherClassroomServiceTest {
         classroomService = mock(ClassroomService.class);
         classroomAuthorizationService = mock(ClassroomAuthorizationService.class);
         enrollmentRepository = mock(EnrollmentRepository.class);
-        levelRepository = mock(LevelRepository.class);
         stopRepository = mock(StopRepository.class);
         userRepository = mock(UserRepository.class);
         progressService = mock(ProgressService.class);
@@ -107,7 +113,6 @@ class TeacherClassroomServiceTest {
                 classroomService,
                 classroomAuthorizationService,
                 enrollmentRepository,
-                levelRepository,
                 stopRepository,
                 userRepository,
                 progressService,
