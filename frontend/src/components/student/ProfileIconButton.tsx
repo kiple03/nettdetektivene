@@ -1,0 +1,99 @@
+import { useRef, useState } from "react";
+import { useNavigate, useMatch } from "react-router-dom";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
+import { Button } from "@/components/ui/buttons/Button.tsx";
+
+export default function ProfileIconButton() {
+    const navigate = useNavigate();
+    const isOnGame = useMatch("/game/:levelId");
+    const isOnBoss = useMatch("/boss");
+    const isOnLevel = isOnGame || isOnBoss;
+
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    const { data: userProfile } = useUserProfile();
+
+    const handleClick = () => {
+        if (isOnLevel) {
+            setConfirmOpen(true);
+        } else {
+            navigate("/profile");
+        }
+    };
+
+    const handleConfirm = () => {
+        setConfirmOpen(false);
+        navigate("/profile");
+    };
+
+    return (
+        <>
+            <button
+                ref={buttonRef}
+                onClick={handleClick}
+                type="button"
+                aria-label="Gå til profil"
+                style={{
+                    position: "fixed",
+                    top: "1rem",
+                    right: "1rem",
+                    zIndex: 100,
+                    background: "none",
+                    border: "4px solid #6b3a1f",
+                    padding: 0,
+                    cursor: "pointer",
+                    borderRadius: "50%",
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.5), 0 0 0 2px rgba(107,58,31,0.4)",
+                    transform: "translateY(-1px)",
+                }}
+            >
+                <LayeredAvatar
+                    items={userProfile?.equippedItems ?? []}
+                    hairColor={userProfile?.hairColor}
+                    size={80}
+                    circular={true}
+                />
+            </button>
+
+            <AlertDialog
+                open={confirmOpen}
+                onOpenChange={setConfirmOpen}
+                returnFocusRef={buttonRef}
+                contentWrapperStyle={{ maxWidth: "580px" }}
+            >
+                <AlertDialogContent>
+                    <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Du mister fremgangen din på dette nivået.
+                    </AlertDialogDescription>
+                    <div style={{ display: "flex", gap: "1.25rem", justifyContent: "center", marginTop: "1.25rem" }}>
+                        <Button
+                            variant="destructive"
+                            type="button"
+                            onClick={handleConfirm}
+                            style={{ padding: "0.75rem 2.5rem", fontSize: "1.05rem" }}
+                        >
+                            Ja
+                        </Button>
+                        <Button
+                            variant="primary"
+                            type="button"
+                            onClick={() => setConfirmOpen(false)}
+                            style={{ padding: "0.75rem 2.5rem", fontSize: "1.05rem" }}
+                        >
+                            Nei
+                        </Button>
+                    </div>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
+    );
+}

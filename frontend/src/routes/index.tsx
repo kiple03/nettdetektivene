@@ -5,6 +5,7 @@ import RequireClassroom from "@/routes/RequireClassroom";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
 
 const TeacherLayout = lazy(() => import("@/components/teacher_layout/TeacherLayout"));
+const StudentLayout = lazy(() => import("@/layouts/StudentLayout"));
 const MapPage = lazy(() => import("../pages/student/MapPage"));
 const StudentLoginPage = lazy(() => import("@/pages/auth/StudentLoginPage"));
 const TeacherLoginPage = lazy(() => import("@/pages/auth/TeacherLoginPage"));
@@ -53,26 +54,20 @@ export const router = createBrowserRouter([
         path: '/join-with-code',
         element: <RequireAuth role="STUDENT"><JoinWithCodePage /></RequireAuth>,
     },
+    // Student routes with profile icon
     {
-        path: '/map',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><MapPage /></RequireClassroom></RequireAuth>,
+        element: <RequireAuth role="STUDENT"><RequireClassroom><StudentLayout /></RequireClassroom></RequireAuth>,
+        children: [
+            { path: '/map', element: <MapPage /> },
+            { path: '/leaderboard', element: <LeaderboardPage /> },
+            { path: '/notes', element: <NotesPage /> },
+            { path: '/badges', element: <BadgesPage /> },
+            { path: '/weekly-mystery', element: <WeeklyMysteryPage /> },
+            { path: '/game/:levelId', element: <GamePage /> },
+            { path: '/boss', element: <BossBattlePage /> },
+        ],
     },
-    {
-        path: '/leaderboard',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><LeaderboardPage /></RequireClassroom></RequireAuth>,
-    },
-    {
-        path: '/notes',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><NotesPage /></RequireClassroom></RequireAuth>,
-    },
-    {
-        path: '/badges',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><BadgesPage /></RequireClassroom></RequireAuth>,
-    },
-    {
-        path: '/weekly-mystery',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><WeeklyMysteryPage /></RequireClassroom></RequireAuth>,
-    },
+    // Student routes without profile icon
     {
         path: '/profile',
         element: <RequireAuth role="STUDENT"><RequireClassroom><ProfilePage/></RequireClassroom></RequireAuth>
@@ -80,14 +75,6 @@ export const router = createBrowserRouter([
     {
         path: "/avatar",
         element: <RequireAuth role="STUDENT"><AvatarDevPage /></RequireAuth>
-    },
-    {
-        path: '/game/:levelId',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><GamePage /></RequireClassroom></RequireAuth>
-    },
-    {
-        path: '/boss',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><BossBattlePage /></RequireClassroom></RequireAuth>
     },
 
     // Teacher routes — require TEACHER role
