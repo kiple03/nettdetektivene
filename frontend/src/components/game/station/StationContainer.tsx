@@ -36,7 +36,7 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
 
         <button
           className="tutorial-help-btn"
-          style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 2 }}
+          style={{ position: "absolute", top: "1rem", right: "calc(88px + 1.75rem)", zIndex: 2 }}
           onClick={() => setTutorialOpen(true)}
           aria-label="Vis guide"
         >
