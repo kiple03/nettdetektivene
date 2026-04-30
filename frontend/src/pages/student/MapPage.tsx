@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/buttons/Button.tsx";
 import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
 import { StopLevelsModal } from "@/components/map/StopLevelsModal";
+import { MapLoadingOverlay } from "@/components/map/MapLoadingOverlay";
 
 export default function MapPage() {
   const { data: profile } = useUserProfile();
@@ -115,6 +116,7 @@ export default function MapPage() {
 
   return (
     <>
+      <MapLoadingOverlay />
       <StopMap
         stops={MAP_STOPS}
         onStopClick={handleStopClick}
