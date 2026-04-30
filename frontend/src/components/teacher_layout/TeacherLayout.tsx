@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import LogoutButton from '@/components/ui/buttons/LogoutButton';
 import { decodeToken } from '@/stores/authStore';
 import { useNotifications } from '@/hooks/teacher/useNotifications';
@@ -11,9 +11,10 @@ export default function TeacherLayout() {
     const { data: notifications = [] } = useNotifications();
     const unreadCount = notifications.filter((notification) => !notification.read).length;
     const location = useLocation();
-    const navigate = useNavigate();
     const [hideBack, setHideBack] = useState(false);
     const showBack = location.pathname !== '/teacher' && !hideBack;
+
+const [backTo, setBackTo] = useState<string | null>(null);
 
     const [profileOpen, setProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDetailsElement>(null);
@@ -37,16 +38,16 @@ export default function TeacherLayout() {
 }, []);
 
     return (
-        <TeacherLayoutContext.Provider value={{ setHideBack }}>
-        <div className="teacher-layout">
+        <TeacherLayoutContext.Provider value={{ setHideBack, setBackTo }}>
+            <div className="teacher-layout">
             {showBack && (
-                <button
+                <Link
+                    to={backTo ?? '/teacher'}
                     className="teacher-layout__back"
-                    onClick={() => navigate(-1)}
                     aria-label="Gå tilbake"
                 >
                     ← Tilbake
-                </button>
+                </Link>
             )}
             <div className="teacher-layout__controls" aria-label="Brukermeny og varsler">
                 <Link

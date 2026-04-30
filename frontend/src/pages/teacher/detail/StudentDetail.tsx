@@ -9,6 +9,7 @@ import { StudentDetailLevels } from '@/components/teacher/studentDetail/StudentD
 import { StudentNotebook } from '@/components/teacher/studentDetail/StudentNotebook';
 import './StudentDetail.css';
 import { ALL_MEDALS, getMedalImageUrl } from '@/data/allMedals';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 export default function StudentDetail() {
     const { id: classroomId = '', studentId = '' } = useParams<{ id: string; studentId: string }>();
@@ -62,6 +63,8 @@ export default function StudentDetail() {
 
     const { username, email, enrolledAt, levelCompletions } = studentDetail;
     const completedCount = studentDetail.totalLevelsCompleted ?? levelCompletions.length;
+
+    useBackTo(`/teacher/classrooms/${id}`);
 
     return (
         <div className="student-detail">
