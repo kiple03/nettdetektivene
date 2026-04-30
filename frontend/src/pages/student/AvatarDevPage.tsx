@@ -114,7 +114,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   });
   const hairColorHex = HAIR_COLORS.find(c => c.name === hairColor)?.color;
 
-  const [saveButtonVisible, setSaveButtonVisible] = useState(false);
+  const [_saveButtonVisible, setSaveButtonVisible] = useState(false);
   const scrollableRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const saveButtonRef = useCallback((node: HTMLButtonElement | null) => {
@@ -128,35 +128,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     observerRef.current.observe(node);
   }, []);
 
-  // Derive initial equipped for edit detection (props don't change across renders)
-  const initEquipped: EquippedItem[] = (() => {
-    let items = [...initialItems];
-    if (!items.some(i => i.category === 'skin_tone')) {
-      const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
-      if (defaultTone) items = [...items, defaultTone];
-    }
-    if (!items.some(i => i.category === 'hair')) {
-      const defaultHair = inventory.find(i => i.name === 'boy_hair' && i.category === 'hair');
-      if (defaultHair) items = [...items, defaultHair];
-    }
-    return items;
-  })();
-  const initEquippedIds = new Set(initEquipped.map(i => i.id));
-  const initGender: Gender = (() => {
-    const hair = initEquipped.find(i => i.category === 'hair');
-    return (hair && ITEM_GENDER[hair.name] === 'girl') ? 'girl' : 'boy';
-  })();
-  const initHairColor = HAIR_COLORS.find(c => c.color === userProfile?.hairColor)?.name ?? HAIR_COLORS[0].name;
-  const initSkinTone = initEquipped.find(i => i.category === 'skin_tone')?.name || 'tone_dark';
-  const initUsername = userProfile?.username?.replace("Detektiv ", "") || "";
 
-  const hasEdited =
-    username !== initUsername ||
-    gender !== initGender ||
-    hairColor !== initHairColor ||
-    skinToneKey !== initSkinTone ||
-    equipped.length !== initEquippedIds.size ||
-    equipped.some(i => !initEquippedIds.has(i.id));
 
   const toggleItem = (item: EquippedItem) => {
     setEquipped((prev) => {
