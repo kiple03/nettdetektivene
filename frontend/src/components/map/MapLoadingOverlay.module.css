@@ -10,13 +10,13 @@
 }
 
 .overlayFadeOut {
-  animation: bgFadeOut 0.4s forwards;
+  animation: bgFadeOut 0.2s forwards;
 }
 
 .logo {
   height: 38vh;
   width: auto;
-  animation: fadeInOut 1.6s forwards;
+  animation: fadeInOut 0.8s forwards;
 }
 
 @keyframes fadeInOut {
