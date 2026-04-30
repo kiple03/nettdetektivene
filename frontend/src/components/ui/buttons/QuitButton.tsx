@@ -10,19 +10,20 @@ import { Button } from "@/components/ui/buttons/Button.tsx";
 import styles from "./QuitButton.module.css";
 
 interface QuitButtonProps {
-    stopId: number | null;
+    stopId?: number | null;
+    to?: string;
     className?: string;
     style?: CSSProperties;
 }
 
-function QuitButton({ stopId, className = "", style }: QuitButtonProps) {
+function QuitButton({ stopId, to, className = "", style }: QuitButtonProps) {
     const navigate = useNavigate();
     const [confirmOpen, setConfirmOpen] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     const handleConfirm = () => {
         setConfirmOpen(false);
-        navigate(stopId ? `/map?levelId=${stopId}` : "/map");
+        navigate(to ?? (stopId ? `/map?levelId=${stopId}` : "/map"));
     };
 
     return (

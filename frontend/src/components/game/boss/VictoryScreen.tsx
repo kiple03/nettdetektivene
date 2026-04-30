@@ -7,6 +7,7 @@ interface Props {
   timeSeconds: number;
   playerHp: number;
   maxHp: number;
+  backTo?: string;
 }
 
 function formatTime(seconds: number): string {
@@ -15,7 +16,7 @@ function formatTime(seconds: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-export function VictoryScreen({ timeSeconds, playerHp, maxHp }: Props) {
+export function VictoryScreen({ timeSeconds, playerHp, maxHp, backTo }: Props) {
   return (
     <div className={styles.screen}>
       <ConfettiComp />
@@ -37,7 +38,7 @@ export function VictoryScreen({ timeSeconds, playerHp, maxHp }: Props) {
             />
           ))}
         </div>
-        <Link to="/map" className={styles.btn}>
+        <Link to={backTo ?? "/map"} className={styles.btn}>
           Tilbake til kartet
         </Link>
       </div>
