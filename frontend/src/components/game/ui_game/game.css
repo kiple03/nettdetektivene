@@ -45,6 +45,10 @@
   background-image: url("@/assets/images/game/marked.png");
 }
 
+.station-social {
+  background-image: url("@/assets/images/game/social.png");
+}
+
 /* Stop name */
 .station-title {
   position: fixed;
@@ -156,7 +160,7 @@
 }
 
 .stamp-correct {
-  color: #2e8b57;
+  color: #25593c;
 }
 
 .stamp-wrong {
@@ -498,6 +502,14 @@
 
 .passordbanken-station li {
   text-align: left;
+}
+
+.password-field {
+  width: 60%;
+  padding: 9px 14px;
+  border-radius: 6px;
+  font-size: 20px;
+  outline: none;
 }
 
 .password-layout {

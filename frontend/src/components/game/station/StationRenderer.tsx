@@ -65,7 +65,8 @@ function StationRenderer({ station, levelTitle = station.title ?? "Nivå", onAns
     case STATION_TYPE.SOCIAL:
         return (
           <SosialeMoteplassenStation 
-                station={station} 
+                station={station}
+                levelTitle={levelTitle}
                 onAnswer={onAnswer} 
                 disabled={disabled} 
           />

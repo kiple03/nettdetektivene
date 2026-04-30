@@ -15,7 +15,6 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
       return STATION_TYPE.POST;
     case "PICTURE_QUIZ":
       return STATION_TYPE.PHOTO;
-
     case "PASSWORD_STRENGTH":
       return STATION_TYPE.PASSWORD;
 
