@@ -1,6 +1,7 @@
 import {
     useEffect,
     useRef,
+    type CSSProperties,
     type ReactNode,
     type RefObject,
 } from "react";
@@ -12,6 +13,7 @@ interface AlertDialogProps {
     onOpenChange: (open: boolean) => void;
     children: ReactNode;
     returnFocusRef?: RefObject<HTMLElement | null>;
+    contentWrapperStyle?: CSSProperties;
 }
 
 interface AlertDialogContentProps {
@@ -28,6 +30,7 @@ export function AlertDialog({
                                 onOpenChange,
                                 children,
                                 returnFocusRef,
+                                contentWrapperStyle,
                             }: AlertDialogProps) {
     const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -80,6 +83,7 @@ export function AlertDialog({
             <div
                 ref={dialogRef}
                 className={styles.contentWrapper}
+                style={contentWrapperStyle}
                 role="dialog"
                 aria-modal="true"
                 onClick={(event) => event.stopPropagation()}

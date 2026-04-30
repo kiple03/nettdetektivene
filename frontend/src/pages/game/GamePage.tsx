@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import BackButton from "@/components/ui/buttons/BackButton";
+import QuitButton from "@/components/ui/buttons/QuitButton";
 import { studentKeys } from "@/hooks/student/queryKeys";
 import { mapQuestionToStationData } from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
@@ -280,15 +280,17 @@ export default function GamePage() {
                 />
             </StationContainer>
 
-            <BackButton
-                style={{
-                    position: "absolute",
-                    top: "1rem",
-                    left: "1rem",
-                    zIndex: 50,
-                }}
-                ariaLabel="Gå tilbake"
-            />
+            {!dialogOpen && (
+                <QuitButton
+                    stopId={stopId}
+                    style={{
+                        position: "absolute",
+                        top: "1rem",
+                        left: "1rem",
+                        zIndex: 50,
+                    }}
+                />
+            )}
 
             <NotesButton onClick={() => setNotesOpen(true)} />
             {notesOpen && <NotebookOverlay onClose={() => setNotesOpen(false)} initialTab={STATION_TO_TAB[stationType]} />}
