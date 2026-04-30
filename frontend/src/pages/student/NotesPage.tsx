@@ -10,7 +10,7 @@ import {
     type TabId,
     type NotesMap,
 } from "@/api/notesService";
-import { LayeredAvatar } from "@/components/user/LayeredAvatar.tsx";
+import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
 
 import backgroundImg from "@/assets/detective_room_interior.png";
 import {useUserProfile} from "@/hooks/useUserProfile.ts";

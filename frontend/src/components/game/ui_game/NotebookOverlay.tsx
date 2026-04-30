@@ -11,7 +11,7 @@ import {
     type NotesMap,
     EMPTY_NOTES_MAP,
 } from "@/api/notesService";
-import { LayeredAvatar } from "@/components/user/LayeredAvatar.tsx";
+import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
 import { useUserProfile } from "@/hooks/useUserProfile.ts";
 
 interface TabConfig {

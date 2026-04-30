@@ -2,7 +2,7 @@ import { submitSingleChoiceAnswer, submitPerItemAnswer } from "@/api/gameApi.ts"
 import type { SubmitAnswerRequest, SubmitSingleChoiceAnswerRequest } from "@/api/gameApi.ts";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper.ts";
 import type { StationData, SubmitAnswerResult } from "@/types/station.ts";
-import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 import ClassifyItems from "@/components/game/tasks/ClassifyItems.tsx";
 import styles from "@/components/game/tasks/PictureGrid.module.css";

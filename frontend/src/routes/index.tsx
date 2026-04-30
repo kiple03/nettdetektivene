@@ -4,7 +4,7 @@ import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
 
-const TeacherLayout = lazy(() => import("@/components/layout/TeacherLayout"));
+const TeacherLayout = lazy(() => import("@/components/teacher_layout/TeacherLayout"));
 const MapPage = lazy(() => import("../pages/student/MapPage"));
 const StudentLoginPage = lazy(() => import("@/pages/auth/StudentLoginPage"));
 const TeacherLoginPage = lazy(() => import("@/pages/auth/TeacherLoginPage"));
