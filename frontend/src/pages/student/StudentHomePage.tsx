@@ -12,9 +12,12 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { MapTransitionOutgoing } from "@/components/map/MapTransitionOutgoing";
+import HomeTour from "@/components/dashboard/HomeTour";
+import { studentTourSteps } from "@/data/studentTourSteps";
 
 export default function StudentHomePage() {
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
+    const [tourActive, setTourActive] = useState(false);
     const [transitioning, setTransitioning] = useState(false);
     const helpButtonRef = useRef<HTMLButtonElement>(null);
     const { email } = useAuth();
@@ -30,6 +33,11 @@ export default function StudentHomePage() {
             localStorage.setItem(key, "true");
         }
     }, [email]);
+
+    const closeModalAndStartTour = () => {
+        setLockedDialogOpen(false);
+        setTourActive(true);
+    };
 
     const handleMapClick = () => {
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -62,7 +70,7 @@ export default function StudentHomePage() {
 
             <AlertDialog
                 open={lockedDialogOpen}
-                onOpenChange={setLockedDialogOpen}
+                onOpenChange={(open) => { if (!open) closeModalAndStartTour(); }}
                 returnFocusRef={helpButtonRef}
             >
                 <AlertDialogContent>
@@ -78,13 +86,20 @@ export default function StudentHomePage() {
                         <Button
                             variant="primary"
                             type="button"
-                            onClick={() => setLockedDialogOpen(false)}
+                            onClick={closeModalAndStartTour}
                         >
                             Start spill
                         </Button>
                     </div>
                 </AlertDialogContent>
             </AlertDialog>
+
+            {tourActive && (
+                <HomeTour
+                    steps={studentTourSteps}
+                    onExit={() => setTourActive(false)}
+                />
+            )}
         </>
     );
 }
