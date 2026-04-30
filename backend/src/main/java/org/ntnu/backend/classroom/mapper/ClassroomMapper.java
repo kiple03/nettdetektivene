@@ -120,6 +120,7 @@ public class ClassroomMapper {
         .score(score)
         .medalsEarned(medalsEarned)
         .equippedItems(equippedItems)
+        .hairColor(enrollment.getUser().getHairColor())
         .build();
   }
 

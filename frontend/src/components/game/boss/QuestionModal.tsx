@@ -5,7 +5,7 @@ import { mapQuestionToStationData } from "@/utils/gameMapper";
 import StationContainer from "@/components/game/station/StationContainer";                         
 import StationRenderer from "@/components/game/station/StationRenderer";                           
 import type { SubmitAnswerResult } from "@/types/station";
-import "@/components/game/ui/game.css";                                                            
+import "@/components/game/ui_game/game.css";                                                            
 import styles from "./QuestionModal.module.css";                                                   
 
 interface Props {                                                                                  

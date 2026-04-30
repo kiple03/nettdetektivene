@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import DetectiveBook from "@/components/game/ui/DetectiveBook";
+import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 import PictureGrid from "@/components/game/tasks/PictureGrid";
 
 import { type SubmitAnswerRequest, submitMultiSelectAnswer } from "@/api/gameApi";

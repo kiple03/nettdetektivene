@@ -1,4 +1,4 @@
-import { LayeredAvatar } from '@/components/user/LayeredAvatar';
+import { LayeredAvatar } from '@/components/miscellaneous/LayeredAvatar';
 import type { EquippedItem } from '@/hooks/useUserProfile';
 
 type StudentDetailHeaderProps = {
@@ -7,6 +7,7 @@ type StudentDetailHeaderProps = {
     enrolledAt: string | null;
     completedCount: number;
     avatarItems: EquippedItem[];
+    hairColor?: string;
     editing: boolean;
     editValue: string;
     onEditValueChange: (v: string) => void;
@@ -18,7 +19,7 @@ type StudentDetailHeaderProps = {
 };
 
 export function StudentDetailHeader({
-    username, email, enrolledAt, completedCount, avatarItems,
+    username, email, enrolledAt, completedCount, avatarItems, hairColor,
     editing, editValue, onEditValueChange, onStartEdit, onCancelEdit, onSaveUsername,
     savingUsername, usernameError,
 }: StudentDetailHeaderProps) {
@@ -30,7 +31,7 @@ export function StudentDetailHeader({
         <header className="student-detail__header student-detail__note">
             <div className="student-detail__note-tape" />
             <div className="student-detail__avatar-ring">
-                <LayeredAvatar items={avatarItems} size={132} />
+                <LayeredAvatar items={avatarItems} size={132} hairColor={hairColor} />
             </div>
 
 

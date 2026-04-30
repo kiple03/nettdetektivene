@@ -1,5 +1,5 @@
 import type { EquippedItem } from '@/hooks/useUserProfile';
-import { LayeredAvatar } from '@/components/user/LayeredAvatar';
+import { LayeredAvatar } from '@/components/miscellaneous/LayeredAvatar';
 
 interface CarWithAvatarProps {
     items: EquippedItem[];

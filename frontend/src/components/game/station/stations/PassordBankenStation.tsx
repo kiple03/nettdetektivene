@@ -2,9 +2,9 @@ import { submitPasswordStrengthAnswer, submitSingleChoiceAnswer, type SubmitAnsw
 import type { StationData, SubmitAnswerResult } from "@/types/station";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
-import TaskHeader from "../../ui/TaskHeader";
+import TaskHeader from "../../ui_game/TaskHeader";
 import PasswordInput from "../../tasks/PasswordInput";
-import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 
 type Props = {
     station: StationData;

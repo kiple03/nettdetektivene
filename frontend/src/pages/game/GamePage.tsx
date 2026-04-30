@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import BackButton from "@/components/ui/buttons/BackButton";
+import QuitButton from "@/components/ui/buttons/QuitButton";
 import { studentKeys } from "@/hooks/student/queryKeys";
 import { mapQuestionToStationData } from "@/utils/gameMapper.ts";
 import StationContainer from "@/components/game/station/StationContainer.tsx";
 import StationRenderer from "@/components/game/station/StationRenderer.tsx";
 import { STATION_TYPE, type SubmitAnswerResult, type StationType } from "@/types/station";
-import "@/components/game/ui/game.css";
+import "@/components/game/ui_game/game.css";
 import {
     AlertDialog,
     AlertDialogContent,
@@ -19,13 +19,13 @@ import { Button } from "@/components/ui/buttons/Button.tsx";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getGameLevelById, getLevelQuestions, submitLevel, getLevelsForStop, adminCompleteLevel } from "@/api/gameApi.ts";
 import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
-import ConfettiComp from "@/components/ConfettiComp";
+import ConfettiComp from "@/components/miscellaneous/ConfettiComp";
 import useSound from "use-sound";
 import victorySound from "@/assets/sounds/victorySound.mp3";
 import { useMedalions } from "@/hooks/useMedalions";
 import type { MedalionResponse } from "@/api/medalionApi";
-import NotesButton from "@/components/game/NotesButton";
-import NotebookOverlay from "@/components/game/NotebookOverlay";
+import NotesButton from "@/components/game/ui_game/NotesButton";
+import NotebookOverlay from "@/components/game/ui_game/NotebookOverlay";
 import type { TabId } from "@/api/notesService";
 
 const STATION_TO_TAB: Record<StationType, TabId> = {
@@ -68,6 +68,8 @@ export default function GamePage() {
 
     const levelIdNum = Number(levelId);
     const validId = !!levelId && !isNaN(levelIdNum) && levelIdNum > 0;
+
+    const [isTearing,setIsTearing] = useState(false);
 
     const submitLevelMutation = useMutation({
         mutationFn: () => submitLevel(levelIdNum, {
@@ -223,17 +225,25 @@ export default function GamePage() {
     };
 
     const handleNext = () => {
-        if (questionIndex < questions.length - 1) {
+      if (questionIndex < questions.length - 1) {
+          setIsTearing(true);
+
+          setTimeout(() => {
             setQuestionIndex((i) => i + 1);
             setSubmitResult(null);
+            setIsTearing(false);
+          }, 800);
+
+          return;
+
+      } else {
+        if (levelPassed) {
+          playVictory();
+          submitLevelMutation.mutate();
         } else {
-            if (levelPassed) {
-                playVictory();
-                submitLevelMutation.mutate();
-            } else {
-                setDialogOpen(true);
-            }
+          setDialogOpen(true);
         }
+      }
     };
 
     const handleRetry = () => {
@@ -277,18 +287,21 @@ export default function GamePage() {
                     levelTitle={`${level.title}`}
                     onAnswer={handleAnswer}
                     disabled={!!submitResult}
+                    isTearing={isTearing}
                 />
             </StationContainer>
 
-            <BackButton
-                style={{
-                    position: "absolute",
-                    top: "1rem",
-                    left: "1rem",
-                    zIndex: 50,
-                }}
-                ariaLabel="Gå tilbake"
-            />
+            {!dialogOpen && (
+                <QuitButton
+                    stopId={stopId}
+                    style={{
+                        position: "absolute",
+                        top: "1rem",
+                        left: "1rem",
+                        zIndex: 50,
+                    }}
+                />
+            )}
 
             <NotesButton onClick={() => setNotesOpen(true)} />
             {notesOpen && <NotebookOverlay onClose={() => setNotesOpen(false)} initialTab={STATION_TO_TAB[stationType]} />}

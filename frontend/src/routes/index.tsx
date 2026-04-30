@@ -4,7 +4,7 @@ import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
 
-const TeacherLayout = lazy(() => import("@/components/layout/TeacherLayout"));
+const TeacherLayout = lazy(() => import("@/components/teacher_layout/TeacherLayout"));
 const MapPage = lazy(() => import("../pages/student/MapPage"));
 const StudentLoginPage = lazy(() => import("@/pages/auth/StudentLoginPage"));
 const TeacherLoginPage = lazy(() => import("@/pages/auth/TeacherLoginPage"));
@@ -15,7 +15,7 @@ const StudentDetail = lazy(() => import("@/pages/teacher/detail/StudentDetail"))
 const LevelQuestionsPage = lazy(() => import("@/pages/teacher/detail/LevelQuestionsPage"));
 const MysterySubmissions = lazy(() => import("@/pages/teacher/MysterySubmissions"));
 const Notifications = lazy(() => import("@/pages/teacher/Notifications"));
-const LeaderboardPage = lazy(() => import("@/pages/student/LeaderboardPage"));
+const LeaderboardPage = lazy(() => import("@/pages/student/LeaderboardPage.tsx"));
 const NotesPage = lazy(() => import("@/pages/student/NotesPage"));
 const BadgesPage = lazy(() => import("@/pages/student/MedalionPage"));
 const WeeklyMysteryPage = lazy(() => import("@/pages/student/WeeklyMysteryPage"));
