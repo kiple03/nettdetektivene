@@ -84,12 +84,13 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
   ],
 };
 
-const storageKey = (type: StationType) => `nettdetektivene_tutorial_${type}`;
+const storageKey = (type: StationType, email?: string | null | undefined) =>
+    `nettdetektivene_tutorial_${type}_${email ?? "anonymous"}`;
 
-export function hasSeenTutorial(type: StationType): boolean {
-  return localStorage.getItem(storageKey(type)) === "true";
+export function hasSeenTutorial(type: StationType, email?: string | null): boolean {
+  return localStorage.getItem(storageKey(type, email)) === "true";
 }
 
-export function markTutorialSeen(type: StationType): void {
-  localStorage.setItem(storageKey(type), "true");
+export function markTutorialSeen(type: StationType, email?: string | null | undefined): void {
+  localStorage.setItem(storageKey(type, email), "true");
 }

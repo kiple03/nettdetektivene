@@ -13,6 +13,7 @@ type Props = {
   steps: TutorialStep[];
   isOpen: boolean;
   onClose: () => void;
+  email?: string | null | undefined;
   returnFocusRef?: RefObject<HTMLElement | null>;
 };
 
@@ -21,6 +22,7 @@ function TutorialOverlay({
                            steps,
                            isOpen,
                            onClose,
+                           email,
                            returnFocusRef,
                          }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
@@ -31,8 +33,8 @@ function TutorialOverlay({
 
   const handleNext = () => {
     if (isLast) {
-      if (!hasSeenTutorial(type)) {
-        markTutorialSeen(type);
+      if (!hasSeenTutorial(type, email)) {
+        markTutorialSeen(type, email);
       }
       onClose();
       setCurrentStep(0);
@@ -42,8 +44,8 @@ function TutorialOverlay({
   };
 
   const handleClose = () => {
-    if (!hasSeenTutorial(type)) {
-      markTutorialSeen(type);
+    if (!hasSeenTutorial(type, email)) {
+      markTutorialSeen(type, email);
     }
     onClose();
     setCurrentStep(0);

@@ -7,6 +7,7 @@ import { TUTORIAL_STEPS, hasSeenTutorial } from "@/components/game/tutorial/tuto
 import useSound from "use-sound";
 import CorrectFx from '@/assets/sounds/CorrectAnswer.wav';
 import IncorrectFx from '@/assets/sounds/IncorrectAnswer.mp3';
+import { useAuth } from '@/hooks/useAuth'
 
 type Props = {
   title: string;
@@ -19,7 +20,11 @@ type Props = {
 };
 
 function StationContainer({ title, type, children, submitResult, onNext }: Props) {
-  const [tutorialOpen, setTutorialOpen] = useState(() => !hasSeenTutorial(type));
+  const { email } = useAuth();
+
+  const [tutorialOpen, setTutorialOpen] = useState(
+      () => !hasSeenTutorial(type, email)
+  );
 
   const [playCorrect] = useSound(CorrectFx);
   const [playWomp] = useSound(IncorrectFx)
@@ -49,6 +54,7 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
             steps={TUTORIAL_STEPS[type]}
             isOpen={tutorialOpen}
             onClose={() => setTutorialOpen(false)}
+            email={email}
           />
         )}
 
