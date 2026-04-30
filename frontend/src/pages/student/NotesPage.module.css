@@ -630,6 +630,13 @@
     word-break: break-word;
 }
 
+.noteTimestamp {
+    margin: 5px 0 0;
+    font-size: 0.75rem;
+    color: #a0896e;
+    font-style: italic;
+}
+
 .emptyState {
     text-align: center;
     color: #8f7a63;

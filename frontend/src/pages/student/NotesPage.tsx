@@ -109,6 +109,13 @@ function getTabConfig(tabId: TabId): TabConfig {
     return TABS.find((tab) => tab.id === tabId)!;
 }
 
+function formatDate(iso: string): string {
+    return new Intl.DateTimeFormat("nb-NO", {
+        day: "numeric", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+    }).format(new Date(iso));
+}
+
 function getPossessive(name: string): string {
     return /[sxzSXZ]$/.test(name) ? `${name}'` : `${name}`;
 }
@@ -165,23 +172,27 @@ export default function NotesPage() {
         };
     }, []);
 
+    const byNewest = (a: { createdAt: string }, b: { createdAt: string }) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
     const visibleNotes = useMemo(() => {
         if (activeTab === "egne") {
             const relevantTabs = TAB_ORDER.filter((t) => t !== "egne");
-
-            const own = relevantTabs.flatMap((tabId) =>
-                savedNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: false }))
-            );
-            const level = relevantTabs.flatMap((tabId) =>
-                levelNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: true }))
-            );
-
+            const own = relevantTabs
+                .flatMap((tabId) => savedNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: false })))
+                .sort(byNewest);
+            const level = relevantTabs
+                .flatMap((tabId) => levelNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: true })))
+                .sort(byNewest);
             return { own, level };
         }
-
         return {
-            own: savedNotes[activeTab].map((note) => ({ ...note, category: activeTab, isLevel: false })),
-            level: levelNotes[activeTab].map((note) => ({ ...note, category: activeTab, isLevel: true })),
+            own: savedNotes[activeTab]
+                .map((note) => ({ ...note, category: activeTab, isLevel: false }))
+                .sort(byNewest),
+            level: levelNotes[activeTab]
+                .map((note) => ({ ...note, category: activeTab, isLevel: true }))
+                .sort(byNewest),
         };
     }, [activeTab, savedNotes, levelNotes]);
 
@@ -433,6 +444,7 @@ export default function NotesPage() {
                                                                         <p className={styles.savedNoteText}>
                                                                             {note.content}
                                                                         </p>
+                                                                        <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>
                                                                     </div>
                                                                 );
                                                             })}
@@ -463,6 +475,7 @@ export default function NotesPage() {
                                                                         <p className={styles.savedNoteText}>
                                                                             {note.content}
                                                                         </p>
+                                                                        <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>
                                                                         <Button
                                                                             variant="destructive"
                                                                             className={styles.deleteButton}
