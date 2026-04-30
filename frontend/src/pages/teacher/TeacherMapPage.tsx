@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getGameStops } from '@/api/gameApi';
 import { useClassroom } from '@/hooks/teacher/useTeacherQueries';
