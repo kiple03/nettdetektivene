@@ -274,14 +274,24 @@
 }
 
 @media (max-width: 700px) {
+  .teacher-layout__back {
+    top: 10px;
+    left: 12px;
+    height: 36px;
+    padding: 0 12px;
+  }
+
   .teacher-layout__controls {
     top: 10px;
     right: 12px;
     gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: calc(100vw - 24px);
   }
 
   .teacher-layout__dropdown {
-    width: 210px;
+    width: min(210px, calc(100vw - 24px));
   }
 
   .teacher-layout__profile-label {

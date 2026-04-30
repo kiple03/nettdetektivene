@@ -10,7 +10,6 @@ import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
-import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +23,12 @@ public class CensorWordService {
     private final ClassroomCensorWordRepository censorWordRepository;
     private final ClassroomRepository classroomRepository;
     private final ClassroomAuthorizationService classroomAuthorizationService;
-    private final ProfanityFilterService profanityFilterService;
 
     @Transactional(readOnly = true)
     public List<CensorWordResponse> listWords(UUID classroomId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
-        List<ClassroomCensorWord> words = censorWordRepository.findByClassroomId(classroomId);
-        syncCache(classroomId, words);
-        return words.stream().map(this::toResponse).toList();
+        return censorWordRepository.findByClassroomId(classroomId)
+                .stream().map(this::toResponse).toList();
     }
 
     public CensorWordResponse addWord(UUID classroomId, AddCensorWordRequest request,
@@ -50,12 +47,8 @@ public class CensorWordService {
                 .classroom(classroom)
                 .word(normalized)
                 .build();
-        ClassroomCensorWord saved = censorWordRepository.save(entity);
 
-        List<ClassroomCensorWord> allWords = censorWordRepository.findByClassroomId(classroomId);
-        syncCache(classroomId, allWords);
-
-        return toResponse(saved);
+        return toResponse(censorWordRepository.save(entity));
     }
 
     public void deleteWord(UUID classroomId, UUID wordId, JwtAuthenticatedPrincipal principal) {
@@ -65,14 +58,6 @@ public class CensorWordService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ordet ble ikke funnet"));
 
         censorWordRepository.delete(word);
-
-        List<ClassroomCensorWord> remaining = censorWordRepository.findByClassroomId(classroomId);
-        syncCache(classroomId, remaining);
-    }
-
-    private void syncCache(UUID classroomId, List<ClassroomCensorWord> words) {
-        List<String> wordStrings = words.stream().map(ClassroomCensorWord::getWord).toList();
-        profanityFilterService.putClassroomPatterns(classroomId, wordStrings);
     }
 
     private CensorWordResponse toResponse(ClassroomCensorWord entity) {

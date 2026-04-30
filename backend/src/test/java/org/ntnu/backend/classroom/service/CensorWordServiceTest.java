@@ -15,7 +15,6 @@ import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
 import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
-import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,7 +27,6 @@ class CensorWordServiceTest {
     private ClassroomCensorWordRepository censorWordRepository;
     private ClassroomRepository classroomRepository;
     private ClassroomAuthorizationService classroomAuthorizationService;
-    private ProfanityFilterService profanityFilterService;
     private JwtAuthenticatedPrincipal principal;
 
     private CensorWordService censorWordService;
@@ -44,14 +42,12 @@ class CensorWordServiceTest {
         censorWordRepository = mock(ClassroomCensorWordRepository.class);
         classroomRepository = mock(ClassroomRepository.class);
         classroomAuthorizationService = mock(ClassroomAuthorizationService.class);
-        profanityFilterService = mock(ProfanityFilterService.class);
         principal = mock(JwtAuthenticatedPrincipal.class);
 
         censorWordService = new CensorWordService(
                 censorWordRepository,
                 classroomRepository,
-                classroomAuthorizationService,
-                profanityFilterService
+                classroomAuthorizationService
         );
 
         classroomId = UUID.fromString("11111111-1111-1111-1111-111111111111");
@@ -80,30 +76,24 @@ class CensorWordServiceTest {
     }
 
     @Test
-    void listWords_shouldVerifyAccessReturnWordsAndSyncCache() {
+    void listWords_shouldVerifyAccessAndReturnWords() {
         when(censorWordRepository.findByClassroomId(classroomId))
                 .thenReturn(List.of(wordOne, wordTwo));
 
         List<CensorWordResponse> result = censorWordService.listWords(classroomId, principal);
 
         assertEquals(2, result.size());
-
         assertEquals(wordId, result.get(0).getId());
         assertEquals("badword", result.get(0).getWord());
         assertEquals(Instant.parse("2026-04-28T12:30:00Z"), result.get(0).getCreatedAt());
-
         assertEquals("anotherword", result.get(1).getWord());
 
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verify(censorWordRepository).findByClassroomId(classroomId);
-        verify(profanityFilterService).putClassroomPatterns(
-                classroomId,
-                List.of("badword", "anotherword")
-        );
     }
 
     @Test
-    void listWords_whenNoWords_shouldReturnEmptyListAndSyncEmptyCache() {
+    void listWords_whenNoWords_shouldReturnEmptyList() {
         when(censorWordRepository.findByClassroomId(classroomId))
                 .thenReturn(List.of());
 
@@ -113,11 +103,10 @@ class CensorWordServiceTest {
 
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verify(censorWordRepository).findByClassroomId(classroomId);
-        verify(profanityFilterService).putClassroomPatterns(classroomId, List.of());
     }
 
     @Test
-    void addWord_shouldNormalizeSaveReturnResponseAndSyncCache() {
+    void addWord_shouldNormalizeSaveAndReturnResponse() {
         AddCensorWordRequest request = new AddCensorWordRequest("  BadWord  ");
 
         when(censorWordRepository.existsByClassroomIdAndWord(classroomId, "badword"))
@@ -126,8 +115,6 @@ class CensorWordServiceTest {
                 .thenReturn(Optional.of(classroom));
         when(censorWordRepository.save(any(ClassroomCensorWord.class)))
                 .thenReturn(wordOne);
-        when(censorWordRepository.findByClassroomId(classroomId))
-                .thenReturn(List.of(wordOne));
 
         CensorWordResponse result = censorWordService.addWord(classroomId, request, principal);
 
@@ -138,14 +125,10 @@ class CensorWordServiceTest {
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verify(censorWordRepository).existsByClassroomIdAndWord(classroomId, "badword");
         verify(classroomRepository).findById(classroomId);
-
         verify(censorWordRepository).save(argThat(entity ->
                 entity.getClassroom().equals(classroom)
                         && entity.getWord().equals("badword")
         ));
-
-        verify(censorWordRepository).findByClassroomId(classroomId);
-        verify(profanityFilterService).putClassroomPatterns(classroomId, List.of("badword"));
     }
 
     @Test
@@ -166,7 +149,6 @@ class CensorWordServiceTest {
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verifyNoInteractions(censorWordRepository);
         verifyNoInteractions(classroomRepository);
-        verifyNoInteractions(profanityFilterService);
     }
 
     @Test
@@ -185,7 +167,6 @@ class CensorWordServiceTest {
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verifyNoInteractions(censorWordRepository);
         verifyNoInteractions(classroomRepository);
-        verifyNoInteractions(profanityFilterService);
     }
 
     @Test
@@ -206,7 +187,6 @@ class CensorWordServiceTest {
         verify(censorWordRepository).existsByClassroomIdAndWord(classroomId, "badword");
         verify(classroomRepository, never()).findById(any());
         verify(censorWordRepository, never()).save(any());
-        verify(profanityFilterService, never()).putClassroomPatterns(any(), any());
     }
 
     @Test
@@ -229,26 +209,18 @@ class CensorWordServiceTest {
         verify(censorWordRepository).existsByClassroomIdAndWord(classroomId, "badword");
         verify(classroomRepository).findById(classroomId);
         verify(censorWordRepository, never()).save(any());
-        verify(profanityFilterService, never()).putClassroomPatterns(any(), any());
     }
 
     @Test
-    void deleteWord_shouldDeleteWordAndSyncCache() {
+    void deleteWord_shouldDeleteWord() {
         when(censorWordRepository.findByIdAndClassroomId(wordId, classroomId))
                 .thenReturn(Optional.of(wordOne));
-        when(censorWordRepository.findByClassroomId(classroomId))
-                .thenReturn(List.of(wordTwo));
 
         censorWordService.deleteWord(classroomId, wordId, principal);
 
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verify(censorWordRepository).findByIdAndClassroomId(wordId, classroomId);
         verify(censorWordRepository).delete(wordOne);
-        verify(censorWordRepository).findByClassroomId(classroomId);
-        verify(profanityFilterService).putClassroomPatterns(
-                classroomId,
-                List.of("anotherword")
-        );
     }
 
     @Test
@@ -266,8 +238,6 @@ class CensorWordServiceTest {
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verify(censorWordRepository).findByIdAndClassroomId(wordId, classroomId);
         verify(censorWordRepository, never()).delete(any());
-        verify(censorWordRepository, never()).findByClassroomId(classroomId);
-        verify(profanityFilterService, never()).putClassroomPatterns(any(), any());
     }
 
     @Test
@@ -286,6 +256,5 @@ class CensorWordServiceTest {
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verifyNoInteractions(censorWordRepository);
         verifyNoInteractions(classroomRepository);
-        verifyNoInteractions(profanityFilterService);
     }
 }
