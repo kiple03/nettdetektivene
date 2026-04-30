@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { DashboardItem } from "@/types/dashboard.ts";
 import './BoardItem.css';
@@ -6,11 +7,13 @@ import {Header as UserProfileHeader} from "@/components/dashboard/BoardProfile";
 type BoardItemProps = DashboardItem;
 
 function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onClick} :BoardItemProps) {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+
   const inner = (
     <>
       {image && (
         <>
-          <img src={image} alt="" className="board-item-img"/>
+          <img src={image} alt="" className={`board-item-img${overlay ? ' board-item-img--dimmed' : ''}`}/>
           {id === "map" && (
             <img src={circle} className="map-circle" alt=""/>
           )}
@@ -27,8 +30,25 @@ function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onC
       <div className="board-item">
         {label}
       </div>
+      {overlay && tooltipOpen && (
+        <div className="board-item-tooltip">
+          Denne funksjonen er under utvikling!
+        </div>
+      )}
     </>
   );
+
+  if (overlay) {
+    return (
+      <button
+        className={`board-item-wrapper board-item-${size}`}
+        style={{top, left, background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}
+        onClick={() => setTooltipOpen((prev) => !prev)}
+      >
+        {inner}
+      </button>
+    );
+  }
 
   if (onClick) {
     return (
