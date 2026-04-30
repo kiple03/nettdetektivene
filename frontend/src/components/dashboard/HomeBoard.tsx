@@ -24,7 +24,7 @@ function HomeBoard({ items }: HomeBoardProps) {
               <BoardItem key={items.id} {...items} />
           ))}
         </div>
-        <div style={{ position: 'absolute', bottom: '24px', left: '24px' }}>
+        <div className="logout-wrapper">
           <LogoutButton />
         </div>
       </div>
