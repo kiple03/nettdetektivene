@@ -35,7 +35,7 @@ export default function MysterySubmissions() {
   const rejectMutation = useRejectMysterySubmission(classroomId);
   const featureMutation = useFeatureMysterySubmission(classroomId);
 
-  useBackTo(`/teacher/classrooms/${classroomId}`);
+  useBackTo(`/teacher/classrooms/${classroomId}`, "Tilbake til klasserom");
 
   function approve(id: string) {
     approveMutation.mutate(id);

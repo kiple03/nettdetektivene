@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getGameStops } from '@/api/gameApi';
 import { useClassroom } from '@/hooks/teacher/useTeacherQueries';
@@ -27,7 +27,7 @@ export default function TeacherMapPage() {
     const urlStopIdStr = searchParams.get('stopId');
     const urlStopId = urlStopIdStr ? parseInt(urlStopIdStr) : null;
 
-    useBackTo(`/teacher/classrooms/${classroomId}`)
+    useBackTo(`/teacher/classrooms/${classroomId}`, "Tilbake til klasserom")
 
     const pendingStop: TeacherStopInfo | null =
         comingSoonStop ??

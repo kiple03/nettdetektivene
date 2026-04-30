@@ -26,7 +26,7 @@ export default function StudentDetail() {
     const [editValue, setEditValue] = useState('');
     const [usernameError, setUsernameError] = useState<string | null>(null);
 
-    useBackTo(`/teacher/classrooms/${classroomId}`);
+    useBackTo(`/teacher/classrooms/${classroomId}`, "Tilbake til klasserom");
 
 
     function startEdit() {

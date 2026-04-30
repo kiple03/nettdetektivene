@@ -71,7 +71,7 @@ export default function Notifications() {
 
   const unreadCount = fetchedNotifications.filter((n) => !n.read).length;
 
-  useBackTo('/teacher');
+  useBackTo('/teacher', "Tilbake til oversikt");
 
   const grouped = useMemo<DateGroup[]>(() => {
     const byDay = new Map<string, TeacherNotification[]>();

@@ -20,7 +20,7 @@ export default function CodePage() {
 
     const classroomTitle = classroom?.title ?? "klasserommet";
 
-    useBackTo(`/teacher/classrooms/${classroomId}`);
+    useBackTo(`/teacher/classrooms/${classroomId}`, "Tilbake til klasserommet");
 
     return (
         <div className={styles.page}>

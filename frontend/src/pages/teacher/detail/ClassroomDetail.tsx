@@ -11,7 +11,7 @@ import { useBackTo } from '@/hooks/teacher/useBackTo';
 export default function ClassroomDetailPage() {
     const { id: classroomId = '' } = useParams<{ id: string }>();
 
-    useBackTo('/teacher');
+    useBackTo('/teacher', "Tilbake til oversikt");
 
     const {
         classroom,
