@@ -10,6 +10,18 @@ const HAIR_COLOR_PROFILES: Record<string, HairColorProfile> = {
     { original: 'rgb(105,63,42)', ratio: 1.0    },
     { original: 'rgb(60,32,11)',  ratio: 0.4905 },
   ],
+  afro: [
+    { original: 'rgb(74,46,35)', ratio: 1.0  },
+    { original: 'rgb(28,9,3)',   ratio: 0.38 },
+  ],
+  mohawk: [
+    { original: 'rgb(54,63,72)', ratio: 1.0  },
+    { original: 'rgb(24,8,8)',   ratio: 0.44 },
+  ],
+  girl_bob_hair: [
+    { original: 'rgb(154,90,54)', ratio: 1.0  },
+    { original: 'rgb(85,42,25)',  ratio: 0.55 },
+  ],
 };
 
 function hexToRgbChannels(hex: string): [number, number, number] {

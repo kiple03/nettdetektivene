@@ -23,6 +23,8 @@ const ITEM_GENDER: Record<string, Gender> = {
   face_girl: 'girl',
   boy_hair: 'boy',
   girl_hair: 'girl',
+  girl_bob_hair: 'girl',
+  mohawk: 'boy',
 };
 
 const DEFAULT_FACE: Record<Gender, string> = {
