@@ -111,12 +111,10 @@ public class GameService {
         ? questionRepository.findByLevelIdForClassroom(levelId, classroomId)
         : questionRepository.findByLevelIdAndClassroomIdIsNull(levelId);
 
+    noteService.saveCompletionTipIfNeeded(principal.getUserId(), level);
+
     levelSubmissionValidator.validate(questions, request.answers());
 
-    boolean newlyCompleted = progressService.recordCompletionOfLevel(principal.getUserId(), principal.getRole(), level);
-
-    if (newlyCompleted) {
-      noteService.saveCompletionTipIfNeeded(principal.getUserId(), level);
-    }
+    progressService.recordCompletionOfLevel(principal.getUserId(), principal.getRole(), level);
   }
 }

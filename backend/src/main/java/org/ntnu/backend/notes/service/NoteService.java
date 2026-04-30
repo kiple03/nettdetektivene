@@ -29,6 +29,7 @@ import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -191,6 +192,7 @@ public class NoteService {
             ));
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveCompletionTipIfNeeded(UUID userId, Level level) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
