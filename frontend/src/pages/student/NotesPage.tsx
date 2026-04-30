@@ -109,11 +109,14 @@ function getTabConfig(tabId: TabId): TabConfig {
     return TABS.find((tab) => tab.id === tabId)!;
 }
 
-function formatDate(iso: string): string {
+function formatDate(iso: string | null | undefined): string {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime()) || d.getFullYear() < 2000) return "";
     return new Intl.DateTimeFormat("nb-NO", {
         day: "numeric", month: "short", year: "numeric",
         hour: "2-digit", minute: "2-digit",
-    }).format(new Date(iso));
+    }).format(d);
 }
 
 function getPossessive(name: string): string {
@@ -444,7 +447,7 @@ export default function NotesPage() {
                                                                         <p className={styles.savedNoteText}>
                                                                             {note.content}
                                                                         </p>
-                                                                        <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>
+                                                                        {formatDate(note.createdAt) && <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>}
                                                                     </div>
                                                                 );
                                                             })}
@@ -475,7 +478,7 @@ export default function NotesPage() {
                                                                         <p className={styles.savedNoteText}>
                                                                             {note.content}
                                                                         </p>
-                                                                        <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>
+                                                                        {formatDate(note.createdAt) && <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>}
                                                                         <Button
                                                                             variant="destructive"
                                                                             className={styles.deleteButton}
