@@ -24,10 +24,14 @@
 .destructive {
     background: #dc2626;
     color: white;
+    box-shadow:
+        0 4px 14px rgba(91, 42, 134, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
 }
 
 .destructive:hover {
-    background: #b91c1c;
+    background: #e43b3b;
 }
 
 .fun {
