@@ -4,16 +4,16 @@ import {
   approveMysterySubmission,
   rejectMysterySubmission,
   featureMysterySubmission,
-} from '../api/teacherApi';
+} from '../../api/teacherApi.ts';
 
-vi.mock('../api/client', () => ({
+vi.mock('../../api/client', () => ({
   default: {
     get: vi.fn(),
     patch: vi.fn(),
   },
 }));
 
-import apiClient from '../api/client';
+import apiClient from '../../api/client.ts';
 const mockedGet = apiClient.get as ReturnType<typeof vi.fn>;
 const mockedPatch = apiClient.patch as ReturnType<typeof vi.fn>;
 

@@ -19,7 +19,7 @@ vi.mock('axios', () => ({
   },
 }));
 
-import { sharedRefresh } from '@/api/client';
+import { sharedRefresh } from '@/api/client.ts';
 
 describe('sharedRefresh', () => {
   beforeEach(() => {
