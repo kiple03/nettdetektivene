@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.model.ClassroomCensorWord;
 import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
+import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.user.service.ProfanityFilterService;
@@ -57,6 +58,7 @@ public class NoteService {
     private final ProfanityFilterService profanityFilter;
     private final NotificationService notificationService;
     private final ClassroomCensorWordRepository classroomCensorWordRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     /**
      * Returns the full notebook for the authenticated user, including both personal notes and
@@ -87,7 +89,9 @@ public class NoteService {
         User user = getAuthenticatedUser(authentication);
         NoteCategory category = parseCategory(categoryRaw);
 
-        UUID classroomId = JwtAuthenticatedPrincipal.from(authentication).getClassroomId();
+        UUID classroomId = enrollmentRepository.findByUserAndLeftAtIsNull(user)
+                .map(e -> e.getClassroom().getId())
+                .orElse(null);
         List<String> classroomWords = classroomId == null ? List.of() :
                 classroomCensorWordRepository.findByClassroomId(classroomId)
                         .stream().map(ClassroomCensorWord::getWord).toList();

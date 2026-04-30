@@ -30,7 +30,9 @@ import org.ntnu.backend.notes.repository.LevelNoteTemplateRepository;
 import org.ntnu.backend.notes.repository.NoteRepository;
 import org.ntnu.backend.notes.repository.StudentLevelNoteRepository;
 import org.ntnu.backend.classroom.model.ClassroomCensorWord;
+import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
+import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.User;
@@ -62,6 +64,8 @@ class NoteServiceTest {
     private NotificationService notificationService;
     @Mock
     private ClassroomCensorWordRepository classroomCensorWordRepository;
+    @Mock
+    private EnrollmentRepository enrollmentRepository;
 
     @InjectMocks
     private NoteService noteService;
