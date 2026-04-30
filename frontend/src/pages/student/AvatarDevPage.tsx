@@ -10,7 +10,7 @@ import {
 } from '@/hooks/useUserProfile';
 import { getClassroomId } from '@/stores/authStore';
 import styles from './AvatarDevPage.module.css';
-import {useNavigate} from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 import BackButton from '@/components/ui/buttons/BackButton';
 
@@ -72,6 +72,8 @@ type Tab = 'profil' | 'garderobe';
 
 function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], inventory: EquippedItem[] }) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const hideBackButton = location.state?.fromAuth === true;
 
   const { data: userProfile } = useUserProfile();
   const { mutate: updateUserProfile } = useUpdateUserProfile();
@@ -96,6 +98,8 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     userProfile?.username?.replace("Detektiv ", "") || ""
   );
   const [usernameError, setUsernameError] = useState('');
+  const nameInputMouseRef = useRef(false);
+  const [nameInputKeyboardFocused, setNameInputKeyboardFocused] = useState(false);
 
   const [skinToneKey, setSkinToneKey] = useState<string>(() => {
     const existing = initialItems.find(i => i.category === 'skin_tone');
@@ -200,7 +204,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
 
   return (
     <div className={styles.page}>
-      <BackButton className={styles.backBtn} ariaLabel='Gå tilbake'/>
+      {!hideBackButton && <BackButton className={styles.backBtn} ariaLabel='Gå tilbake'/>}
       <img src={detectiveRoom} alt="" className={styles.bg}/>
       <div className={styles.container} data-tab={activeTab}>
 
@@ -309,7 +313,13 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
                   setUsername(e.target.value);
                   if (usernameError) setUsernameError('');
                 }}
-                className={styles.nameInput}
+                onMouseDown={() => { nameInputMouseRef.current = true; }}
+                onFocus={() => {
+                  if (!nameInputMouseRef.current) setNameInputKeyboardFocused(true);
+                  nameInputMouseRef.current = false;
+                }}
+                onBlur={() => setNameInputKeyboardFocused(false)}
+                className={`${styles.nameInput}${nameInputKeyboardFocused ? ` ${styles.nameInputKeyboardFocused}` : ''}`}
                 placeholder="Ditt detektivnavn"
                 required
                 minLength={3}
