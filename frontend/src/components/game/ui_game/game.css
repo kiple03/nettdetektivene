@@ -45,6 +45,10 @@
   background-image: url("@/assets/images/game/marked.png");
 }
 
+.station-social {
+  background-image: url("@/assets/images/game/social.png");
+}
+
 /* Stop name */
 .station-title {
   position: fixed;
