@@ -1129,10 +1129,10 @@ public class GameSeeder implements CommandLineRunner {
     });
 
     Level l1 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Tenk før du deler")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 1: Tenk før du deler")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Tenk før du deler");
+          l.setTitle("Nivå 1: Tenk før du deler");
           l.setDescription("Du ser innlegg på sosiale medier. Hva ville du gjort?");
           l.setLevelType(LevelType.MULTIPLE_CHOICE);
           l.setStop(stop);
@@ -1181,10 +1181,10 @@ public class GameSeeder implements CommandLineRunner {
 
     // ---------- LEVEL 2 — PICTURE_QUIZ: Finn advarselstegnene ----------
     Level l2 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Finn advarselstegnene")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 2: Finn advarselstegnene")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Finn advarselstegnene");
+          l.setTitle("Nivå 2: Finn advarselstegnene");
           l.setDescription("Se på innleggene og velg alle advarselstegnene du finner.");
           l.setLevelType(LevelType.PICTURE_QUIZ);
           l.setStop(stop);
@@ -1225,10 +1225,10 @@ public class GameSeeder implements CommandLineRunner {
 
     // ---------- LEVEL 3 — CLASSIFY_ITEMS: Vurder innlegget ----------
     Level l3 = levelRepository
-        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Vurder innlegget")
+        .findTopByStopIdAndTitleOrderByIdAsc(stop.getId(), "Nivå 3: Vurder innlegget")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Vurder innlegget");
+          l.setTitle("Nivå 3: Vurder innlegget");
           l.setDescription("Les hvert element fra et innlegg på sosiale medier og vurder hva det er.");
           l.setLevelType(LevelType.CLASSIFY_ITEMS);
           l.setStop(stop);

@@ -5,45 +5,37 @@ export type TutorialStep = {
   description: string;
 };
 
+const LURT = {
+  title: "Lurt å vite",
+  description:
+      "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
+};
+
 export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
   [STATION_TYPE.NEWS]: [
     {
       title: "Nyhetskvartal 📰",
       description:
-        "Her møter du falske nyheter! Du skal lese en påstand og velge om du tror den er ekte eller fabrikkert.",
+        "Her møter du falske nyheter! Du skal lese en påstand og velge om du tror den er ekte.",
     },
     {
       title: "Slik svarer du",
       description:
-        "Les alle svaralternativene nøye og velg det du tror er riktig. Det finnes bare ett riktig svar.",
+        "Les begge nyhetsartiklene nøye og velg det du tror er riktig. Det finnes bare ett riktig svar.",
     },
-    {
-      title: "Lurt å vite",
-      description:
-        "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
-    },
+      LURT
   ],
   [STATION_TYPE.PHOTO]: [
     {
       title: "Fotooppgave 📷",
-      description: "(Kommer snart) Her skal du undersøke bilder.",
+      description: "Her skal du undersøke ulike bilder, og velge om du tror det er ekte eller KI-genererte.",
     },
     {
-      title: "Lurt å vite",
+      title: "Slik svarer du",
       description:
-        "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
+          "Les spørsmålene og alle svaralternativene nøye og velg det du tror er riktig. Det kan være at flere svaralternativ er riktige.",
     },
-  ],
-  [STATION_TYPE.QUIZ]: [
-    {
-      title: "Quiz 🧠",
-      description: "(Kommer snart) Her skal du svare på quizspørsmål.",
-    },
-    {
-      title: "Lurt å vite",
-      description:
-        "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
-    },
+      LURT
   ],
   [STATION_TYPE.SOCIAL]: [
       {
@@ -54,21 +46,18 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
           title: "Slik svarer du",
           description: "Noen oppgaver har ett riktig svar, noen ber deg velge flere, og noen ber deg vurdere hvert element for seg.",
       },
-      {
-          title: "Lurt å vite",
-          description: "Trykk på ?-knappen øverst til høyre for å se denne guiden igjen.",
-      },
+      LURT
   ],
   [STATION_TYPE.PASSWORD]: [
     {
       title: "Passord 🔒",
-      description: "(Kommer snart) Her skal du lære om trygge passord.",
+      description: "Her skal du lære om trygge passord.",
     },
     {
-      title: "Lurt å vite",
-      description:
-        "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
+      title: "Slik svarer du",
+      description: "I nivå 1 skal du skrive passord som passer med kravene i oppgavene. I nivå 2 og 3 finnes det ett riktig svar",
     },
+      LURT
   ],
   [STATION_TYPE.MARKETPLACE]: [
     {
@@ -79,10 +68,7 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
         title: "Slik svarer du",
         description: "Noen oppgaver har vanlige valg, andre ber deg vurdere flere ting hver for seg. Les nøye og velg det du mener passer best.",
     },
-    {
-        title: "Lurt å vite",
-        description: "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
-    },
+      LURT
 ],
   [STATION_TYPE.POST]: [
     {
@@ -94,21 +80,17 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
       description:
           "Les hele eposten, og trykk på alle mistenkelige elemeter.",
     },
-    {
-      title: "Lurt å vite",
-      description:
-          "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
-    },
+      LURT
   ],
-  
 };
 
-const storageKey = (type: StationType) => `nettdetektivene_tutorial_${type}`;
+const storageKey = (type: StationType, email?: string | null | undefined) =>
+    `nettdetektivene_tutorial_${type}_${email ?? "anonymous"}`;
 
-export function hasSeenTutorial(type: StationType): boolean {
-  return localStorage.getItem(storageKey(type)) === "true";
+export function hasSeenTutorial(type: StationType, email?: string | null): boolean {
+  return localStorage.getItem(storageKey(type, email)) === "true";
 }
 
-export function markTutorialSeen(type: StationType): void {
-  localStorage.setItem(storageKey(type), "true");
+export function markTutorialSeen(type: StationType, email?: string | null | undefined): void {
+  localStorage.setItem(storageKey(type, email), "true");
 }
