@@ -1,22 +1,31 @@
 package org.ntnu.backend.notes.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
+import org.ntnu.backend.classroom.repository.EnrollmentRepository;
+import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.notes.dto.NoteResponse;
 import org.ntnu.backend.notes.dto.NotesOverviewResponse;
@@ -29,17 +38,11 @@ import org.ntnu.backend.notes.model.enums.NoteCategory;
 import org.ntnu.backend.notes.repository.LevelNoteTemplateRepository;
 import org.ntnu.backend.notes.repository.NoteRepository;
 import org.ntnu.backend.notes.repository.StudentLevelNoteRepository;
-import org.ntnu.backend.classroom.model.ClassroomCensorWord;
-import org.ntnu.backend.classroom.model.Enrollment;
-import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
-import org.ntnu.backend.classroom.repository.EnrollmentRepository;
-import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.ntnu.backend.user.service.ProfanityFilterService;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.server.ResponseStatusException;
@@ -257,36 +260,36 @@ class NoteServiceTest {
     }
 
     @Test
-    void createNote_withProfanity_shouldCensorContentAndNotifyTeacher() {
+    void createNote_withProfanity_shouldSaveRawContentReturnCensoredAndNotifyTeacher() {
         UpsertNoteRequest request = new UpsertNoteRequest("  faen dette var dårlig  ");
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-        when(profanityFilter.containsProfanity("faen dette var dårlig", List.of())).thenReturn(true);
-        when(profanityFilter.censor("faen dette var dårlig", List.of())).thenReturn("*** dette var dårlig");
+        when(profanityFilter.containsProfanity(eq("faen dette var dårlig"), anyList())).thenReturn(true);
+        when(profanityFilter.censor(eq("faen dette var dårlig"), anyList())).thenReturn("*** dette var dårlig");
 
         Note savedNote = Note.builder()
                 .id(UUID.randomUUID())
                 .user(testUser)
                 .category(NoteCategory.EGNE)
-                .content("*** dette var dårlig")
+                .content("faen dette var dårlig")
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
 
-        NoteResponse expectedResponse = new NoteResponse(
+        NoteResponse mapperResponse = new NoteResponse(
                 savedNote.getId().toString(),
                 "egne",
-                "*** dette var dårlig",
+                "faen dette var dårlig",
                 savedNote.getCreatedAt(),
                 savedNote.getUpdatedAt()
         );
 
         when(noteRepository.save(any(Note.class))).thenReturn(savedNote);
-        when(noteMapper.toResponse(savedNote)).thenReturn(expectedResponse);
+        when(noteMapper.toResponse(savedNote)).thenReturn(mapperResponse);
 
         NoteResponse response = noteService.createNote(authentication, "egne", request);
 
-        assertThat(response).isEqualTo(expectedResponse);
+        assertThat(response.content()).isEqualTo("*** dette var dårlig");
 
         ArgumentCaptor<Note> noteCaptor = ArgumentCaptor.forClass(Note.class);
         verify(noteRepository).save(noteCaptor.capture());
@@ -294,7 +297,7 @@ class NoteServiceTest {
         Note captured = noteCaptor.getValue();
         assertThat(captured.getUser()).isEqualTo(testUser);
         assertThat(captured.getCategory()).isEqualTo(NoteCategory.EGNE);
-        assertThat(captured.getContent()).isEqualTo("*** dette var dårlig");
+        assertThat(captured.getContent()).isEqualTo("faen dette var dårlig");
 
         verify(notificationService).notifyInappropriateNote(testUser);
     }
@@ -321,7 +324,7 @@ class NoteServiceTest {
         );
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-        when(profanityFilter.containsProfanity("vanlig note", List.of())).thenReturn(false);
+        when(profanityFilter.containsProfanity(eq("vanlig note"), anyList())).thenReturn(false);
         when(noteRepository.save(any(Note.class))).thenReturn(savedNote);
         when(noteMapper.toResponse(savedNote)).thenReturn(expectedResponse);
 
@@ -333,9 +336,7 @@ class NoteServiceTest {
     }
 
     @Test
-    void getNotesForUser_success_shouldReturnCensoredOverview() {
-        UUID classroomId = UUID.randomUUID();
-
+    void getNotesForUser_success_shouldReturnRawOverview() {
         Note ownNote = Note.builder()
                 .id(UUID.randomUUID())
                 .user(testUser)
@@ -381,15 +382,10 @@ class NoteServiceTest {
         when(noteMapper.toOverviewResponse(List.of(ownNote), List.of(levelNote)))
                 .thenReturn(rawResponse);
 
-        when(classroomCensorWordRepository.findByClassroomId(classroomId)).thenReturn(List.of());
-        when(profanityFilter.containsProfanity("faen note", List.of())).thenReturn(true);
-        when(profanityFilter.censor("faen note", List.of())).thenReturn("*** note");
-        when(profanityFilter.containsProfanity("vanlig level note", List.of())).thenReturn(false);
-
-        NotesOverviewResponse response = noteService.getNotesForUser(testUser.getId(), classroomId);
+        NotesOverviewResponse response = noteService.getNotesForUser(testUser.getId());
 
         assertThat(response.reflections()).containsKey("egne");
-        assertThat(response.reflections().get("egne").getFirst().content()).isEqualTo("*** note");
+        assertThat(response.reflections().get("egne").getFirst().content()).isEqualTo("faen note");
 
         assertThat(response.levelNotes()).containsKey("nyheter");
         assertThat(response.levelNotes().get("nyheter").getFirst().content())
@@ -399,11 +395,10 @@ class NoteServiceTest {
     @Test
     void getNotesForUser_userNotFound_throws404() {
         UUID userId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> noteService.getNotesForUser(userId, classroomId))
+        assertThatThrownBy(() -> noteService.getNotesForUser(userId))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("404 NOT_FOUND")
                 .hasMessageContaining("User not found");

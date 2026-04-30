@@ -355,7 +355,7 @@ class TeacherClassroomServiceTest {
 
         when(enrollmentRepository.findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId))
                 .thenReturn(Optional.of(enrollment));
-        when(noteService.getNotesForUser(studentId, classroomId))
+        when(noteService.getNotesForUser(studentId))
                 .thenReturn(notebook);
 
         NotesOverviewResponse result =
@@ -365,7 +365,7 @@ class TeacherClassroomServiceTest {
 
         verify(classroomAuthorizationService).verifyAccess(principal, classroomId);
         verify(enrollmentRepository).findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId);
-        verify(noteService).getNotesForUser(studentId, classroomId);
+        verify(noteService).getNotesForUser(studentId);
     }
 
     @Test
