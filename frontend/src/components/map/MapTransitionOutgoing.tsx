@@ -6,7 +6,7 @@ export function MapTransitionOutgoing() {
   return (
     <div
       className={styles.overlay}
-      onAnimationEnd={() => navigate("/map")}
+      onAnimationEnd={() => navigate("/map", { state: { fromHome: true } })}
     />
   );
 }

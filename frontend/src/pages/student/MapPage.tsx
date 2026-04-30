@@ -1,5 +1,5 @@
 import { type CSSProperties, useState, useMemo } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { getGameStops } from "@/api/gameApi";
@@ -43,6 +43,7 @@ export default function MapPage() {
   );
   const equippedItems: EquippedItem[] = profile?.equippedItems ?? [];
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const autoStopId = Number(searchParams.get("levelId")) || null;
   const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
@@ -116,7 +117,7 @@ export default function MapPage() {
 
   return (
     <>
-      <MapLoadingOverlay />
+      {location.state?.fromHome && <MapLoadingOverlay />}
       <StopMap
         stops={MAP_STOPS}
         onStopClick={handleStopClick}
