@@ -1,15 +1,10 @@
 import type { LeaderboardPage } from '@/hooks/student/useLeaderboard';
+import apiClient from './client';
 
-const BASE_URL = import.meta.env.VITE_API_URL;
 
-export async function fetchLeaderboard(page: number, size: number = 10): Promise<LeaderboardPage> {
-  const response = await fetch(`${BASE_URL}/api/leaderboard?page=${page}&size=${size}`, {
-    credentials: 'include',
+export async function fetchLeaderboard(page: number, size: number = 2): Promise<LeaderboardPage> {
+  const { data } = await apiClient.get<LeaderboardPage>('/leaderboard/classrooms', {
+    params: { page, size },
   });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch leaderboard');
-  }
-
-  return response.json();
+  return data;
 }

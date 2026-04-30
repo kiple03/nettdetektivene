@@ -29,13 +29,14 @@ function getPageNumbers(current: number, total: number): (number | '...')[] {
 }
 
 export default function LeaderboardPagination({
-                                                  currentPage,
-                                                  totalPages,
-                                                  totalElements,
-                                                  pageSize,
-                                                  onPageChange,
-                                              }: Props) {
-    const start = currentPage * pageSize + 1;
+        currentPage,
+        totalPages,
+        totalElements,
+        pageSize,
+        onPageChange,
+    }: Props) {
+
+    const start = Math.min(currentPage * pageSize + 1, totalElements);
     const end = Math.min((currentPage + 1) * pageSize, totalElements);
     const pageNumbers = getPageNumbers(currentPage, totalPages);
 

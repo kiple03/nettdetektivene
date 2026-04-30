@@ -1,5 +1,7 @@
 package org.ntnu.backend.classroom.controller;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -30,8 +32,8 @@ public class LeaderboardController {
 
   @GetMapping("/classrooms")
   public Page<RankedClassroomResponse> getGlobalLeaderboard(
-      @RequestParam(defaultValue = "0") int page,
-      @RequestParam(defaultValue = "10") int size
+      @RequestParam(defaultValue = "0") @Min(0) int page,
+      @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size
   ) {
     return leaderboardService.getGlobalLeaderboard(PageRequest.of(page, size));
   }
