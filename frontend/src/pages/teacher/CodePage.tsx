@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useClassroom } from "@/hooks/teacher/useTeacherQueries";
 import styles from "./CodePage.module.css";
 import detectiveImage from "@/assets/images/joinWithCode/detective.png";
+import { useBackTo } from "@/hooks/teacher/useBackTo";
 
 export default function CodePage() {
     const { id: classroomId = '' } = useParams<{ id: string }>();
@@ -18,6 +19,8 @@ export default function CodePage() {
     }, [classroom?.joinCode]);
 
     const classroomTitle = classroom?.title ?? "klasserommet";
+
+    useBackTo(`/teacher/classrooms/${classroomId}`);
 
     return (
         <div className={styles.page}>

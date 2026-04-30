@@ -8,6 +8,7 @@ import {
   useRejectMysterySubmission,
 } from '@/hooks/teacher/useTeacherMutations';
 import './MysterySubmissions.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 type Filter = 'all' | MysterySubmissionResponse['status'];
 
@@ -33,6 +34,8 @@ export default function MysterySubmissions() {
   const approveMutation = useApproveMysterySubmission(classroomId);
   const rejectMutation = useRejectMysterySubmission(classroomId);
   const featureMutation = useFeatureMysterySubmission(classroomId);
+
+  useBackTo(`/teacher/classrooms/${classroomId}`);
 
   function approve(id: string) {
     approveMutation.mutate(id);

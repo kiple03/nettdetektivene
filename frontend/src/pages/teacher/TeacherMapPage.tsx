@@ -8,6 +8,7 @@ import { TeacherStopLevelsModal, type TeacherStopInfo } from '@/components/map/T
 import { MAP_STOPS, type StopData } from '@/data/mapStops';
 import { MapLoadingOverlay } from '@/components/map/MapLoadingOverlay';
 import styles from './TeacherMapPage.module.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 export default function TeacherMapPage() {
     const location = useLocation();
@@ -25,6 +26,8 @@ export default function TeacherMapPage() {
 
     const urlStopIdStr = searchParams.get('stopId');
     const urlStopId = urlStopIdStr ? parseInt(urlStopIdStr) : null;
+
+    useBackTo(`/teacher/classrooms/${classroomId}`)
 
     const pendingStop: TeacherStopInfo | null =
         comingSoonStop ??

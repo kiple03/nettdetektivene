@@ -5,6 +5,7 @@ import type { TeacherNotification, TeacherNotificationType } from '@/api/notific
 import { useClassroomSummaries } from '@/hooks/teacher/useTeacherQueries';
 import { useDeleteNotification, useMarkAsRead, useNotifications } from '@/hooks/teacher/useNotifications';
 import './Notifications.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 const TYPE_LABELS: Record<TeacherNotificationType, string> = {
   AREA_COMPLETED: 'Område fullført',
@@ -69,6 +70,8 @@ export default function Notifications() {
   const deleteMutation = useDeleteNotification();
 
   const unreadCount = fetchedNotifications.filter((n) => !n.read).length;
+
+  useBackTo('/teacher');
 
   const grouped = useMemo<DateGroup[]>(() => {
     const byDay = new Map<string, TeacherNotification[]>();
