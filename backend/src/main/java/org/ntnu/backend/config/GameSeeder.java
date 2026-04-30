@@ -192,8 +192,8 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level1,
         "Hvilken adressa-artikkel er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "EKSTRA penger til flere ansate i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-1.png", false, "I denne artikelen blir det brukt store bokstavene og Ukjent stortingspolitker"),
-            new MultipleChoiceOption(2, "Ekstra penger til flere ansate i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-2.png", true, "Oppdaget du de store bokstavene og den Ukjente stortingspolitikeren?")
+            new MultipleChoiceOption(1, "EKSTRA penger til flere ansatte i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-1.png", false, "I denne artikelen blir det brukt store bokstavene og Ukjent stortingspolitker"),
+            new MultipleChoiceOption(2, "Ekstra penger til flere ansatte i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-2.png", true, "Oppdaget du de store bokstavene og den Ukjente stortingspolitikeren?")
         )
     );
 
@@ -219,16 +219,16 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level2,
         "Hvilken nyhetssak fra Bergens tidene er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-1.png", true, "Den andre atrikkelen inneholder en ukjent mann og 2600-tallet!"),
-            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-2.png", false, "Denne artikkelen innholder en ukjent mann og 2600-tallet")
+            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-1.png", true, "Den andre atrikkelen inneholder en ukjent mann og 2600-tallet!"),
+            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-2.png", false, "Denne artikkelen innholder en ukjent mann og 2600-tallet")
         )
     );
 
     ensureQuestion(level2,
         "Hvilken BT-artikkel er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-1.png", false, "Hvor er etternavnet til næringsminsteren? Nåer er klokken 09:71?"),
-            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-2.png", true, "Flott! Du oppdaget at næringsministeren mangler etternavn og at det var noe rart med klokkeslettet?")
+            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-1.png", false, "Hvor er etternavnet til næringsminsteren? Nåer er klokken 09:71?"),
+            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-2.png", true, "Flott! Du oppdaget at næringsministeren mangler etternavn og at det var noe rart med klokkeslettet?")
         )
     );
 
@@ -262,8 +262,8 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level3,
         "Hvilken NRK-nyhetssak er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-1.png", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
-            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-2.png", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
+            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-1.png", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
+            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-2.png", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
         )
     );
 
@@ -362,12 +362,12 @@ public class GameSeeder implements CommandLineRunner {
 
     ensurePictureQuizQuestion(
         level2,
-        "Hvilket bilde er av ekte natur?",
+        "Hvilket bilde er IKKE av ekte natur?",
         List.of(
-            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png", false,
-                "Feil!, ingen natur ser slik ut!"),
-            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png", true,
-                "Helt riktig!, dette er helt nydelig norsk natur!")
+            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png", true,
+                "Helt riktig! Ingen natur ser slik ut!"),
+            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png", false,
+                "Feil! Dette er helt nydelig norsk natur!")
         )
     );
 
@@ -378,9 +378,9 @@ public class GameSeeder implements CommandLineRunner {
             new PictureQuizOption(1, "Bildet er ikke ekte fordi mange rare ting skjer samtidig," +
                 " og sånt finnes ikke i virkeligheten.",
                 null, true, "Helt riktig!"),
-            new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, false, "Helt feil!"),
-            new PictureQuizOption(3, "Jeg vet ikke", null, false, "Helt feil!"),
-            new PictureQuizOption(4, "Bildet er ekte fordi alt ser helt naturlig ut", null, false, "Helt feil!")
+            new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, false, "Feil, Tviler veldig på at du har sett det bildet før"),
+            new PictureQuizOption(3, "Jeg vet ikke", null, false, "Feil, men heldigvis skal du lære deg dette!"),
+            new PictureQuizOption(4, "Bildet er ekte fordi alt ser helt naturlig ut", null, false, "Feil! Det er ikke naturlig å se natur med gigantiske mennesker!")
         )
     );
 
