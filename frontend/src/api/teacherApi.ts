@@ -199,12 +199,6 @@ function mapStudentDetail(raw: RawStudentDetail, userId: string): StudentDetail 
   };
 }
 
-const STATUS_MAP = {
-  PENDING: 'pending',
-  APPROVED: 'approved',
-  REJECTED: 'rejected',
-} as const;
-
 const NOTIFICATION_TYPE_MAP: Record<string, NotificationResponse['type']> = {
   LEVEL_COMPLETED: 'stop_completed',
   CO_TEACHER_ADDED: 'co_teacher_added',

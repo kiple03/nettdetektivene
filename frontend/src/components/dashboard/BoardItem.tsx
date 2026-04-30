@@ -6,7 +6,7 @@ import {Header as UserProfileHeader} from "@/components/dashboard/BoardProfile";
 
 type BoardItemProps = DashboardItem;
 
-function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onClick} :BoardItemProps) {
+function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onClick, tourOrder} :BoardItemProps) {
   
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const inner = (
