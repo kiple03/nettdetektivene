@@ -1,7 +1,7 @@
 /* same background as log in */
 .home-board {
-  min-height: 100vh;
-  height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,4 +43,119 @@
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.logout-wrapper {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+}
+
+@media (max-width: 768px) {
+  .home-board {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    padding: 0;
+  }
+
+  .cork-board {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: unset;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-content: center;
+    overflow: hidden;
+    padding: 24px;
+    gap: 16px 0;
+  }
+
+  /* Swap kart (1st) and ledertavle (3rd) visually */
+  .board-item-wrapper:nth-child(1) { order: 3; }
+  .board-item-wrapper:nth-child(3) { order: 1; }
+
+  /* Override absolute positioning from inline styles */
+  .board-item-wrapper {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Stagger right column down */
+  .board-item-wrapper:nth-child(even) {
+    margin-top: 48px;
+  }
+
+  .board-item-wrapper:hover {
+    transform: scale(1.05) !important;
+  }
+
+  /* Unified image size — 20% larger than previous 38vw */
+  .board-item-large .board-item-img,
+  .board-item-medium .board-item-img,
+  .board-item-small .board-item-img {
+    width: 46vw;
+  }
+
+  /* Label card — 20% larger */
+  .board-item {
+    width: 41vw;
+    font-size: clamp(12px, 4.2vw, 20px);
+    top: -6vw;
+  }
+
+  /* Pull bottom-left item (leaderBoard, 3rd child) up */
+  .board-item-wrapper:nth-child(3) {
+    margin-top: -72px;
+  }
+
+  /* leaderBoard (3rd DOM child = top-left after swap) at half size */
+  .board-item-wrapper:nth-child(3) .board-item-img {
+    width: 23vw;
+  }
+
+  .board-item-wrapper:nth-child(3) .board-item {
+    width: 20vw;
+    font-size: clamp(10px, 3vw, 14px);
+    top: -3vw;
+  }
+
+  /* Logout always visible, above cork board content */
+  .logout-wrapper {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 100;
+  }
+}
+
+@media (min-width: 480px) and (max-width: 768px) {
+  .board-item-large .board-item-img,
+  .board-item-medium .board-item-img,
+  .board-item-small .board-item-img {
+    width: 30vw;
+  }
+
+  .board-item {
+    width: 27vw;
+    font-size: clamp(10px, 2.8vw, 16px);
+    top: -4vw;
+  }
+
+  .board-item-wrapper:nth-child(3) .board-item-img {
+    width: 15vw;
+  }
+
+  .board-item-wrapper:nth-child(3) .board-item {
+    width: 13vw;
+    font-size: clamp(9px, 2vw, 13px);
+    top: -2vw;
+  }
 }

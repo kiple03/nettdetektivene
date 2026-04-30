@@ -47,7 +47,12 @@ public class AvatarDataSeeder implements CommandLineRunner{
             AvatarItem.builder().name("tone_wacky").category("skin_tone").build(),
             AvatarItem.builder().name("boy_hair").category("hair").build(),
             AvatarItem.builder().name("girl_hair").category("hair").build(),
+            AvatarItem.builder().name("afro").category("hair").build(),
+            AvatarItem.builder().name("girl_bob_hair").category("hair").build(),
+            AvatarItem.builder().name("mohawk").category("hair").build(),
             AvatarItem.builder().name("face_girl").category("face").imageFile("face_girl.png").build(),
+            AvatarItem.builder().name("face_girl_2").category("face").imageFile("face_girl_2.png").build(),
+            AvatarItem.builder().name("face_girl_3").category("face").imageFile("girl_face_3.png").build(),
             AvatarItem.builder().name("VR_goggles").category("head").imageFile("boss-goggles.png").unlockCondition("BOSS_DEFEAT").build(),
             AvatarItem.builder().name("burning_hand").category("accessories").imageFile("burning-hand.gif").build()
         );
