@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -174,6 +175,27 @@ public class ClassroomService {
     public Optional<ClassroomResponse> getMyClassroom(UUID userId) {
         return enrollmentRepository.findByUserIdAndLeftAtIsNull(userId)
             .map(e -> classroomMapper.toResponse(e.getClassroom()));
+    }
+
+    /**
+     * Removes the student from their current classroom by setting leftAt on the enrollment.
+     * Returns a new JWT without classroomId.
+     *
+     * @param userId The student's user ID.
+     * @return A new access token without classroomId.
+     */
+    @Transactional
+    public String leaveClassroom(UUID userId) {
+        User student = userRepository.findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bruker ikke funnet"));
+
+        Enrollment enrollment = enrollmentRepository.findByUserIdAndLeftAtIsNull(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Ikke i et klasserom"));
+
+        enrollment.setLeftAt(Instant.now());
+        enrollmentRepository.save(enrollment);
+
+        return jwtService.generateToken(new UserPrincipal(student), null);
     }
 
     /**

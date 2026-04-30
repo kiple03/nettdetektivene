@@ -1,6 +1,7 @@
 package org.ntnu.backend.classroom.controller;
 
 import jakarta.validation.Valid;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.ntnu.backend.classroom.dto.*;
@@ -68,5 +69,18 @@ public class ClassroomController {
     public JoinClassroomResponse joinClassroom(@Valid @RequestBody JoinClassroomRequest request,
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return classroomService.joinClassroom(request, principal.getUserId());
+    }
+
+    /**
+     * Removes the authenticated student from their current classroom.
+     * Returns a new access token without classroomId.
+     */
+    @DeleteMapping("/my")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('STUDENT')")
+    public Map<String, String> leaveClassroom(
+        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        String accessToken = classroomService.leaveClassroom(principal.getUserId());
+        return Map.of("accessToken", accessToken);
     }
 }
