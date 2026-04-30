@@ -36,7 +36,6 @@ public final class MultipleChoiceOption implements Option {
     @NotNull
     private Integer id;
 
-    @NotBlank
     private String text;
 
     private String imageUrl;
