@@ -107,6 +107,16 @@
   pointer-events: none;
 }
 
+.board-item-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50%;
+  transform: translate(-50%, -50%) rotate(16deg);
+  pointer-events: none;
+  z-index: 5;
+}
+
 .board-item-wrapper:focus-visible {
   outline: 3px solid #1a73e8;
   outline-offset: 4px;

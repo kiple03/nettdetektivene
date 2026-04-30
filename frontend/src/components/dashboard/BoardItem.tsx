@@ -5,7 +5,7 @@ import {Header as UserProfileHeader} from "@/components/dashboard/BoardProfile";
 
 type BoardItemProps = DashboardItem;
 
-function BoardItem( {id, label, to, top, left, image, size, circle, onClick} :BoardItemProps) {
+function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onClick} :BoardItemProps) {
   const inner = (
     <>
       {image && (
@@ -13,6 +13,9 @@ function BoardItem( {id, label, to, top, left, image, size, circle, onClick} :Bo
           <img src={image} alt="" className="board-item-img"/>
           {id === "map" && (
             <img src={circle} className="map-circle" alt=""/>
+          )}
+          {overlay && (
+            <img src={overlay} alt="Kommer snart" className="board-item-overlay"/>
           )}
         </>
       )}

@@ -5,6 +5,7 @@ import mysteryImg from '@/assets/images/studentHomeBoard/mystery.png';
 import profileImg from '@/assets/images/studentHomeBoard/profile.png';
 import leaderBoard from '@/assets/images/studentHomeBoard/leaderBoard.png'
 import circle from '@/assets/images/studentHomeBoard/red_circle.png'
+import kommerSnart from '@/assets/images/studentHomeBoard/kommer_snart.png'
 
 import type { DashboardItem } from "@/types/dashboard.ts";
 
@@ -53,7 +54,8 @@ export const studentBoardItems: DashboardItem[] = [
     top: '34%',
     left: '85%',
     image: mysteryImg,
-    size: 'medium'
+    size: 'medium',
+    overlay: kommerSnart
   },
   {
     id: 'profile',

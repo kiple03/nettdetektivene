@@ -8,5 +8,6 @@ export type DashboardItem = {
   image?: string;
   size?: 'small' | 'medium' | 'large',
   circle?: string,
+  overlay?: string,
   onClick?: () => void,
 }
