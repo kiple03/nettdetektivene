@@ -1,123 +1,181 @@
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(31, 41, 55, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 16px;
-    backdrop-filter: blur(4px);
-}
-
-.modal {
+/* ── Wooden board shell ──────────────────────────────────────────────────── */
+.board {
     position: relative;
-    overflow: hidden;
-    border-radius: 28px;
-    padding: 28px 24px 24px;
-    background: linear-gradient(180deg, #f8efb8 0%, #dff1ff 55%, #d7f4e4 100%);
-    border: 5px solid #ffffff;
+    border-radius: 14px;
+    padding: 1.4rem 1.5rem 1.4rem;
+    background:
+        repeating-linear-gradient(
+            -52deg,
+            transparent 0px,
+            transparent 3px,
+            rgba(0, 0, 0, 0.018) 3px,
+            rgba(0, 0, 0, 0.018) 5px
+        ),
+        linear-gradient(170deg, #7a4820 0%, #5e3210 55%, #4a2408 100%);
     box-shadow:
-        0 18px 38px rgba(0, 0, 0, 0.16),
-        inset 0 0 0 3px rgba(255, 255, 255, 0.35);
+        0 24px 64px rgba(0, 0, 0, 0.42),
+        0  6px 18px rgba(0, 0, 0, 0.22),
+        inset 0  1px 0 rgba(255, 255, 255, 0.22),
+        inset 0 -3px 0 rgba(0, 0, 0, 0.18);
+}
+
+/* ── White paper sheet ───────────────────────────────────────────────────── */
+.paper {
+    background: #ffffff;
+    background-image: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 27px,
+        rgba(100, 149, 220, 0.11) 27px,
+        rgba(100, 149, 220, 0.11) 28px
+    );
+    border-radius: 6px;
+    padding: 28px 22px 24px;
+}
+
+/* ── Stop title area ─────────────────────────────────────────────────────── */
+.titleArea {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid rgba(91, 42, 134, 0.15);
     text-align: center;
-    width: 100%;
-    max-width: 480px;
 }
 
-.decorations {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    user-select: none;
-}
-
-.decorations span {
-    position: absolute;
-    font-size: 1.35rem;
-    opacity: 0.9;
-    line-height: 1;
-}
-
-.decorations span:nth-child(1) { top: 14px; left: 20px; }
-.decorations span:nth-child(2) { top: 16px; right: 20px; }
-.decorations span:nth-child(3) { bottom: 18px; left: 22px; }
-.decorations span:nth-child(4) { bottom: 18px; right: 22px; }
-
-.title {
-    margin: 0 0 20px;
-    font-size: 1.9rem;
+.stopTitle {
+    margin: 0 0 4px;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 2rem;
     font-weight: 800;
     color: #5b2a86;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
 }
 
-.loading,
-.comingSoon {
-    margin: 0 0 20px;
-    font-size: 1.08rem;
-    line-height: 1.55;
-    color: #334155;
-    font-weight: 700;
+.stopSubtitle {
+    margin: 0;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.95rem;
+    color: #5b2a86;
+    opacity: 0.6;
 }
 
+/* ── list ──────────────────────────────────────────────────────────── */
 .levelList {
     list-style: none;
-    margin: 0 0 20px;
+    margin: 0;
     padding: 0;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.levelButton {
+.levelCard {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    padding: 14px 18px;
-    border-radius: 16px;
-    border: 3px solid rgba(255, 255, 255, 0.7);
-    background: rgba(255, 255, 255, 0.55);
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    min-height: 64px;
+    border-radius: 14px;
+    border: 2.5px solid rgba(91, 42, 134, 0.15);
+    background: rgba(91, 42, 134, 0.06);
     cursor: pointer;
     text-align: left;
-    transition: background 0.15s, transform 0.1s;
-    position: relative;
+    transition: background 0.15s, transform 0.12s, box-shadow 0.12s;
 }
 
-.levelButton:hover {
-    background: rgba(255, 255, 255, 0.8);
-    transform: scale(1.02);
+.levelCard:hover {
+    background: rgba(91, 42, 134, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(91, 42, 134, 0.18);
 }
 
-.levelButton:active {
-    transform: scale(0.98);
+.levelCard:active {
+    transform: translateY(0);
+    box-shadow: none;
 }
 
-.levelTitle {
-    font-size: 1.1rem;
+.levelCard:focus-visible {
+    outline: 3px solid #5b2a86;
+    outline-offset: 3px;
+}
+
+/* ── Number badge ────────────────────────────────────────────────────────── */
+.badge {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #5b2a86;
+    color: #fff;
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cardBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.cardTitle {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 1.08rem;
     font-weight: 800;
     color: #5b2a86;
+    line-height: 1.25;
 }
 
-.levelDesc {
-    font-size: 0.9rem;
-    font-weight: 600;
+.cardDesc {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 0.92rem;
     color: #475569;
     line-height: 1.4;
 }
 
-.actions {
-    display: flex;
-    justify-content: center;
-}
-
-.levelLocked {
-    opacity: 0.4;
+/* ── Locked state — contrast-safe (#767676 on white = 4.54:1) ────────────── */
+.locked {
+    opacity: 0.55;
     cursor: not-allowed;
 }
 
-.levelLocked .levelTitle {
-    color: #999;
+.locked .badge {
+    background: #767676;
+}
+
+.locked .cardTitle {
+    color: #767676;
+}
+
+/* ── Status text (loading / coming-soon) ─────────────────────────────────── */
+.status {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #334155;
+    line-height: 1.55;
+    margin: 0 0 16px;
+    text-align: center;
+}
+
+/* ── Close button row ────────────────────────────────────────────────────── */
+.actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.lukkBtn {
+    min-width: 160px;
+    min-height: 48px;
+    padding: 12px 40px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
 }
