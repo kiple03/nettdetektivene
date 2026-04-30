@@ -122,6 +122,10 @@
 }
 
 @media (orientation: portrait) {
+  .mapContainer {
+    --map-header-h: 97px;
+  }
+
   .header {
     position: sticky;
     top: 0;
@@ -130,7 +134,9 @@
     transform: none;
     width: 100%;
     text-align: center;
-    background: #e9e9e9;
+    background: rgba(150, 206, 155, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     color: #111827;
     padding: 8px;
     border-bottom: 1px solid #111827;

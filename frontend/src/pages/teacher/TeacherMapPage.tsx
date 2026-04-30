@@ -56,6 +56,7 @@ export default function TeacherMapPage() {
         <>
             {location.state?.fromHome && <MapLoadingOverlay />}
             <StopMap
+                className={styles.mapContainer}
                 stops={MAP_STOPS}
                 onStopClick={handleStopClick}
                 header={
