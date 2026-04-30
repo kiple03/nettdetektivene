@@ -246,7 +246,7 @@ export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Pro
                                                 />
                                                 <div className={styles.saveRow}>
                                                     <Button
-                                                        variant="fun"
+                                                        variant="unstyled"
                                                         onClick={handleSave}
                                                         disabled={
                                                             isLoading ||

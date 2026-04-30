@@ -360,7 +360,7 @@ export default function NotesPage() {
 
                                                 <div className={styles.saveRow}>
                                                     <Button
-                                                        variant="fun"
+                                                        variant="unstyled"
                                                         onClick={handleSave}
                                                         disabled={
                                                             isLoading ||
