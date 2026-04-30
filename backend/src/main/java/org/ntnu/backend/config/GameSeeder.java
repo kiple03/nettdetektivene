@@ -362,12 +362,12 @@ public class GameSeeder implements CommandLineRunner {
 
     ensurePictureQuizQuestion(
         level2,
-        "Hvilket bilde er av ekte natur?",
+        "Hvilket bilde er IKKE av ekte natur?",
         List.of(
-            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png", false,
-                "Feil!, ingen natur ser slik ut!"),
-            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png", true,
-                "Helt riktig!, dette er helt nydelig norsk natur!")
+            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png", true,
+                "Helt riktig! Ingen natur ser slik ut!"),
+            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png", false,
+                "Feil! Dette er helt nydelig norsk natur!")
         )
     );
 
@@ -378,9 +378,9 @@ public class GameSeeder implements CommandLineRunner {
             new PictureQuizOption(1, "Bildet er ikke ekte fordi mange rare ting skjer samtidig," +
                 " og sånt finnes ikke i virkeligheten.",
                 null, true, "Helt riktig!"),
-            new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, false, "Helt feil!"),
-            new PictureQuizOption(3, "Jeg vet ikke", null, false, "Helt feil!"),
-            new PictureQuizOption(4, "Bildet er ekte fordi alt ser helt naturlig ut", null, false, "Helt feil!")
+            new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, false, "Feil, Tviler veldig på at du har sett det bildet før"),
+            new PictureQuizOption(3, "Jeg vet ikke", null, false, "Feil, men heldigvis skal du lære deg dette!"),
+            new PictureQuizOption(4, "Bildet er ekte fordi alt ser helt naturlig ut", null, false, "Feil! Det er ikke naturlig å se natur med gigantiske mennesker!")
         )
     );
 
