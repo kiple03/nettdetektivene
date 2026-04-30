@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link, useSearchParams, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getGameStops } from '@/api/gameApi';
 import { useClassroom } from '@/hooks/teacher/useTeacherQueries';
@@ -8,6 +8,7 @@ import { TeacherStopLevelsModal, type TeacherStopInfo } from '@/components/map/T
 import { MAP_STOPS, type StopData } from '@/data/mapStops';
 import { MapLoadingOverlay } from '@/components/map/MapLoadingOverlay';
 import styles from './TeacherMapPage.module.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 export default function TeacherMapPage() {
     const location = useLocation();
@@ -25,6 +26,8 @@ export default function TeacherMapPage() {
 
     const urlStopIdStr = searchParams.get('stopId');
     const urlStopId = urlStopIdStr ? parseInt(urlStopIdStr) : null;
+
+    useBackTo(`/teacher/classrooms/${classroomId}`, "Tilbake til klasserom")
 
     const pendingStop: TeacherStopInfo | null =
         comingSoonStop ??
@@ -56,11 +59,11 @@ export default function TeacherMapPage() {
         <>
             {location.state?.fromHome && <MapLoadingOverlay />}
             <StopMap
+                className={styles.mapContainer}
                 stops={MAP_STOPS}
                 onStopClick={handleStopClick}
                 header={
                     <div className={styles.header}>
-                        <Link to={`/teacher/classrooms/${classroomId}`} className={styles.back}>← Tilbake</Link>
                         <h1 className={styles.title}>
                             {classroom ? `Kart — ${classroom.title}` : 'Kart'}
                         </h1>

@@ -6,9 +6,12 @@ import { ClassroomDetailBoard } from '@/components/teacher/classroomDetail/Class
 import { ClassroomDetailHeader } from '@/components/teacher/classroomDetail/ClassroomDetailHeader';
 import { ClassroomDetailDeleteDialog } from '@/components/teacher/classroomDetail/ClassroomDetailDeleteDialog';
 import './ClassroomDetail.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 export default function ClassroomDetailPage() {
     const { id: classroomId = '' } = useParams<{ id: string }>();
+
+    useBackTo('/teacher', "Tilbake til oversikt");
 
     const {
         classroom,

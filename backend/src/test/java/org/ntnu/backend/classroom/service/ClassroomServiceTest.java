@@ -1,17 +1,24 @@
 package org.ntnu.backend.classroom.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.JoinClassroomRequest;
@@ -27,11 +34,9 @@ import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.util.JoinCodeGenerator;
 import org.ntnu.backend.medalion.service.MedalionService;
-import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtService;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -42,7 +47,6 @@ class ClassroomServiceTest {
     private UserRepository userRepository;
     private EnrollmentRepository enrollmentRepository;
     private ClassroomTeacherRepository classroomTeacherRepository;
-    private MysterySubmissionRepository mysterySubmissionRepository;
     private ClassroomCensorWordRepository classroomCensorWordRepository;
     private ClassroomMapper classroomMapper;
     private JoinCodeGenerator joinCodeGenerator;
@@ -67,7 +71,6 @@ class ClassroomServiceTest {
         userRepository = mock(UserRepository.class);
         enrollmentRepository = mock(EnrollmentRepository.class);
         classroomTeacherRepository = mock(ClassroomTeacherRepository.class);
-        mysterySubmissionRepository = mock(MysterySubmissionRepository.class);
         classroomCensorWordRepository = mock(ClassroomCensorWordRepository.class);
         classroomMapper = mock(ClassroomMapper.class);
         joinCodeGenerator = mock(JoinCodeGenerator.class);
@@ -79,7 +82,6 @@ class ClassroomServiceTest {
                 userRepository,
                 enrollmentRepository,
                 classroomTeacherRepository,
-                mysterySubmissionRepository,
                 classroomCensorWordRepository,
                 classroomMapper,
                 joinCodeGenerator,
@@ -250,7 +252,6 @@ class ClassroomServiceTest {
         classroomService.deleteClassroom(classroomId);
 
         verify(classroomRepository).existsById(classroomId);
-        verify(mysterySubmissionRepository).deleteByEnrollmentClassroomId(classroomId);
         verify(enrollmentRepository).deleteByClassroomId(classroomId);
         verify(classroomTeacherRepository).deleteByClassroomId(classroomId);
         verify(classroomCensorWordRepository).deleteByClassroomId(classroomId);
@@ -269,7 +270,6 @@ class ClassroomServiceTest {
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
 
         verify(classroomRepository).existsById(classroomId);
-        verify(mysterySubmissionRepository, never()).deleteByEnrollmentClassroomId(any());
         verify(enrollmentRepository, never()).deleteByClassroomId(any());
         verify(classroomTeacherRepository, never()).deleteByClassroomId(any());
         verify(classroomCensorWordRepository, never()).deleteByClassroomId(any());

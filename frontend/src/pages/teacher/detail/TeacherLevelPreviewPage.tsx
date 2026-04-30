@@ -13,6 +13,7 @@ import { makeOptionId } from '@/components/teacher/questionEditor/types';
 import type { SubmitAnswerRequest, LevelType } from '@/api/gameApi';
 import '@/components/game/ui_game/game.css';
 import './TeacherLevelPreviewPage.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     switch (q.levelType) {
@@ -124,6 +125,9 @@ export default function TeacherLevelPreviewPage() {
 
     const questionsListPath = `/teacher/classrooms/${classroomId}/levels/${levelId}/questions`;
 
+    useBackTo(questionsListPath)
+
+
     if (isNaN(levelId) || !classroomId) {
         return (
             <div className="teacher-preview">
@@ -159,10 +163,12 @@ export default function TeacherLevelPreviewPage() {
         );
     }
 
+
     const currentQuestion = questions[questionIndex];
     const isLastQuestion = questionIndex === questions.length - 1;
     const stationType = STOP_TO_TYPE[level?.stopName ?? ''] ?? STATION_TYPE.NEWS;
     const station = mapToStation(currentQuestion, stationType);
+
 
     const handleAnswer = (result: SubmitAnswerResult, _request: SubmitAnswerRequest) => {
         setSubmitResult(result);
@@ -235,13 +241,11 @@ export default function TeacherLevelPreviewPage() {
             navigate(questionsListPath);
         }
     };
+    
 
     return (
         <div className="teacher-preview">
             <div className="teacher-preview__nav">
-                <Link to={questionsListPath} className="teacher-preview__back">
-                    ← Tilbake til spørsmålslisten
-                </Link>
                 <span className="teacher-preview__counter">
                     Spørsmål {questionIndex + 1} av {questions.length}
                 </span>

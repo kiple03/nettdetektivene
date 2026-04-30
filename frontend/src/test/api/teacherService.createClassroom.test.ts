@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createClassroom } from '../api/teacherApi';
+import { createClassroom } from '../../api/teacherApi.ts';
 
-vi.mock('../api/client', () => ({
+vi.mock('../../api/client', () => ({
   default: {
     get: vi.fn(),
     post: vi.fn(),
   },
 }));
 
-import apiClient from '../api/client';
+import apiClient from '../../api/client.ts';
 const mockedPost = apiClient.post as ReturnType<typeof vi.fn>;
 
 const RAW_DETAIL = {

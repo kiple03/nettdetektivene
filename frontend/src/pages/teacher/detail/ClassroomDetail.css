@@ -621,23 +621,6 @@
   border-color: rgba(90, 62, 27, 0.5);
 }
 
-/* MYSTERY LINK */
-.classroom-detail__mystery-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: #7a5c30;
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.classroom-detail__mystery-link:hover {
-  color: #2c1a06;
-}
-
 .classroom-detail__edit-game-btn {
   display: block;
   width: 100%;

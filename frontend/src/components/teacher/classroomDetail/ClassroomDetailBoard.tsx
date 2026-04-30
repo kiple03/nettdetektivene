@@ -115,17 +115,6 @@ export function ClassroomDetailBoard({
 
                     <CensorWordPanel classroomId={classroomId} />
 
-                    <div className="classroom-detail__note">
-                        <div className="classroom-detail__note-tape" />
-                        <h2 className="classroom-detail__section-title">Mystery-innleveringer</h2>
-                        <Link
-                            to={`/teacher/classrooms/${classroomId}/mystery-submissions`}
-                            className="classroom-detail__mystery-link"
-                        >
-                            Se alle innleveringer →
-                        </Link>
-                    </div>
-
                     <ClassroomDetailTeacherCard
                         teachers={teachers}
                         currentUserId={currentUserId}

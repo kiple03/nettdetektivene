@@ -39,3 +39,9 @@ export async function getMyClassroom(): Promise<ClassroomDetail | null> {
   if (res.status === 204) return null;
   return mapClassroomDetail(res.data);
 }
+
+export async function leaveClassroom(): Promise<void> {
+  const res = await apiClient.delete<{ accessToken: string }>('/classrooms/my');
+  setToken(res.data.accessToken);
+  window.dispatchEvent(new Event('auth-changed'));
+}

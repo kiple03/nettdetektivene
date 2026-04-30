@@ -1,13 +1,13 @@
 package org.ntnu.backend.classroom.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
+
 import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardClassroomResponse;
 import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardStudentResponse;
 import org.ntnu.backend.classroom.dto.leaderboard.RankedClassroomResponse;
@@ -15,7 +15,6 @@ import org.ntnu.backend.classroom.dto.leaderboard.RankedStudentResponse;
 import org.ntnu.backend.classroom.mapper.LeaderboardMapper;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.Enrollment;
-import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.model.UserProgress;
@@ -26,6 +25,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor

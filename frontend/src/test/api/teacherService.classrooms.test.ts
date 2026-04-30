@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getClassroomSummaries, getClassroom } from '../api/teacherApi';
+import { getClassroomSummaries, getClassroom } from '../../api/teacherApi.ts';
 
-vi.mock('../api/client', () => ({
+vi.mock('../../api/client', () => ({
   default: {
     get: vi.fn(),
   },
 }));
 
-import apiClient from '../api/client';
+import apiClient from '../../api/client.ts';
 const mockedGet = apiClient.get as ReturnType<typeof vi.fn>;
 
 const RAW_SUMMARY = {

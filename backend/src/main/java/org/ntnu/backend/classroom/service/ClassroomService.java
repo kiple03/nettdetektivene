@@ -1,7 +1,14 @@
 package org.ntnu.backend.classroom.service;
 
-import lombok.AllArgsConstructor;
-import org.ntnu.backend.classroom.dto.*;
+import java.time.Instant;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.ntnu.backend.classroom.dto.ClassroomResponse;
+import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
+import org.ntnu.backend.classroom.dto.JoinClassroomRequest;
+import org.ntnu.backend.classroom.dto.JoinClassroomResponse;
+import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.mapper.ClassroomMapper;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomTeacher;
@@ -13,18 +20,16 @@ import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.util.JoinCodeGenerator;
 import org.ntnu.backend.medalion.service.MedalionService;
-import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.security.JwtService;
 import org.ntnu.backend.security.UserPrincipal;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import java.util.Optional;
-import java.util.UUID;
+
+import lombok.AllArgsConstructor;
 
 /**
  * Service class for classroom logic. 
@@ -38,7 +43,6 @@ public class ClassroomService {
     private final UserRepository userRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final ClassroomTeacherRepository classroomTeacherRepository;
-    private final MysterySubmissionRepository mysterySubmissionRepository;
     private final ClassroomCensorWordRepository classroomCensorWordRepository;
 
     private final ClassroomMapper classroomMapper;
@@ -88,7 +92,7 @@ public class ClassroomService {
 
     /**
      * Completely deletes a classroom and cascades the deletion to all associated records,
-     * including mystery submissions, level completions, enrollments, and teacher links.
+     * including level completions, enrollments, and teacher links.
      *
      * @param id The unique identifier of the classroom to delete.
      * @throws ResponseStatusException if the classroom does not exist.
@@ -98,7 +102,6 @@ public class ClassroomService {
         if (!classroomRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Klasserom ikke funnet");
         }
-        mysterySubmissionRepository.deleteByEnrollmentClassroomId(id);
         enrollmentRepository.deleteByClassroomId(id);
         classroomTeacherRepository.deleteByClassroomId(id);
         classroomCensorWordRepository.deleteByClassroomId(id);
@@ -174,6 +177,27 @@ public class ClassroomService {
     public Optional<ClassroomResponse> getMyClassroom(UUID userId) {
         return enrollmentRepository.findByUserIdAndLeftAtIsNull(userId)
             .map(e -> classroomMapper.toResponse(e.getClassroom()));
+    }
+
+    /**
+     * Removes the student from their current classroom by setting leftAt on the enrollment.
+     * Returns a new JWT without classroomId.
+     *
+     * @param userId The student's user ID.
+     * @return A new access token without classroomId.
+     */
+    @Transactional
+    public String leaveClassroom(UUID userId) {
+        User student = userRepository.findById(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Bruker ikke funnet"));
+
+        Enrollment enrollment = enrollmentRepository.findByUserIdAndLeftAtIsNull(userId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "Ikke i et klasserom"));
+
+        enrollment.setLeftAt(Instant.now());
+        enrollmentRepository.save(enrollment);
+
+        return jwtService.generateToken(new UserPrincipal(student), null);
     }
 
     /**
