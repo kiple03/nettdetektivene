@@ -143,6 +143,10 @@ export const router = createBrowserRouter([
                 path: '/teacher/notifications',
                 element: <Notifications />,
             },
+            {
+                path: '/teacher/classrooms/:classroomId/boss',
+                element: <RequireAuth role="TEACHER"><BossBattlePage /></RequireAuth> 
+            },
         ],
     },
 ]);
