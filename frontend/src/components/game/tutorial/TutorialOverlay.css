@@ -77,8 +77,8 @@
 
 /* ? button inside .station-container */
 .tutorial-help-btn {
-  width: 4rem;
-  height: 4rem;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   border: 2px solid var(--accent);
   background: var(--white);
