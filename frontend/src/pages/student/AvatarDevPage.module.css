@@ -248,8 +248,15 @@
   font-style: italic;
 }
 
-.nameInput:focus {
+.nameInput:focus-visible {
   border-bottom-color: #2563eb;
+  box-shadow: none;
+}
+
+.nameInputKeyboardFocused {
+  outline: 4px solid #ffbf00 !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 8px rgba(255, 191, 0, 0.35) !important;
 }
 
 /* Right column */
@@ -521,7 +528,6 @@
 
 .editBtn:focus-visible,
 .genderButton:focus-visible,
-.nameInput:focus-visible,
 .itemButton:focus-visible,
 .saveButton:focus-visible,
 .usernameInput:focus-visible {
