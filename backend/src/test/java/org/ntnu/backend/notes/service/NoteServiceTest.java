@@ -29,8 +29,6 @@ import org.ntnu.backend.notes.model.enums.NoteCategory;
 import org.ntnu.backend.notes.repository.LevelNoteTemplateRepository;
 import org.ntnu.backend.notes.repository.NoteRepository;
 import org.ntnu.backend.notes.repository.StudentLevelNoteRepository;
-import org.ntnu.backend.classroom.model.ClassroomCensorWord;
-import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
@@ -39,7 +37,6 @@ import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.ntnu.backend.user.service.ProfanityFilterService;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.server.ResponseStatusException;
@@ -333,9 +330,7 @@ class NoteServiceTest {
     }
 
     @Test
-    void getNotesForUser_success_shouldReturnCensoredOverview() {
-        UUID classroomId = UUID.randomUUID();
-
+    void getNotesForUser_success_shouldReturnRawOverview() {
         Note ownNote = Note.builder()
                 .id(UUID.randomUUID())
                 .user(testUser)
@@ -381,15 +376,10 @@ class NoteServiceTest {
         when(noteMapper.toOverviewResponse(List.of(ownNote), List.of(levelNote)))
                 .thenReturn(rawResponse);
 
-        when(classroomCensorWordRepository.findByClassroomId(classroomId)).thenReturn(List.of());
-        when(profanityFilter.containsProfanity("faen note", List.of())).thenReturn(true);
-        when(profanityFilter.censor("faen note", List.of())).thenReturn("*** note");
-        when(profanityFilter.containsProfanity("vanlig level note", List.of())).thenReturn(false);
-
-        NotesOverviewResponse response = noteService.getNotesForUser(testUser.getId(), classroomId);
+        NotesOverviewResponse response = noteService.getNotesForUser(testUser.getId());
 
         assertThat(response.reflections()).containsKey("egne");
-        assertThat(response.reflections().get("egne").getFirst().content()).isEqualTo("*** note");
+        assertThat(response.reflections().get("egne").getFirst().content()).isEqualTo("faen note");
 
         assertThat(response.levelNotes()).containsKey("nyheter");
         assertThat(response.levelNotes().get("nyheter").getFirst().content())
@@ -399,11 +389,10 @@ class NoteServiceTest {
     @Test
     void getNotesForUser_userNotFound_throws404() {
         UUID userId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> noteService.getNotesForUser(userId, classroomId))
+        assertThatThrownBy(() -> noteService.getNotesForUser(userId))
                 .isInstanceOf(ResponseStatusException.class)
                 .hasMessageContaining("404 NOT_FOUND")
                 .hasMessageContaining("User not found");

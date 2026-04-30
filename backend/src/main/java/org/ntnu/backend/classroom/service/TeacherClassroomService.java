@@ -230,7 +230,7 @@ public class TeacherClassroomService {
         enrollmentRepository
             .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        return noteService.getNotesForUser(studentId, classroomId);
+        return noteService.getNotesForUser(studentId);
     }
 
     @Transactional

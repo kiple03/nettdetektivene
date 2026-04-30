@@ -71,10 +71,14 @@ public class NoteService {
     @Transactional(readOnly = true)
     public NotesOverviewResponse getMyNotes(Authentication authentication) {
         User user = getAuthenticatedUser(authentication);
+        UUID classroomId = enrollmentRepository.findByUserAndLeftAtIsNull(user)
+                .map(e -> e.getClassroom().getId())
+                .orElse(null);
         List<Note> ownNotes = noteRepository.findAllByUserOrderByCategoryAsc(user);
         List<StudentLevelNote> levelNotes = studentLevelNoteRepository.findAllByUserOrderByCategoryAsc(
             user);
-        return noteMapper.toOverviewResponse(ownNotes, levelNotes);
+        NotesOverviewResponse raw = noteMapper.toOverviewResponse(ownNotes, levelNotes);
+        return applyCensoring(raw, classroomId);
     }
 
     /**
@@ -98,9 +102,6 @@ public class NoteService {
                         .stream().map(ClassroomCensorWord::getWord).toList();
         String content = request.content().trim();
         boolean hasProfanity = profanityFilter.containsProfanity(content, classroomWords);
-        if (hasProfanity) {
-            content = profanityFilter.censor(content, classroomWords);
-        }
 
         Note note = Note.builder()
             .user(user)
@@ -111,6 +112,13 @@ public class NoteService {
         NoteResponse response = noteMapper.toResponse(noteRepository.save(note));
         if (hasProfanity) {
             notificationService.notifyInappropriateNote(user);
+            return new NoteResponse(
+                response.id(),
+                response.category(),
+                profanityFilter.censor(content, classroomWords),
+                response.createdAt(),
+                response.updatedAt()
+            );
         }
         return response;
     }
@@ -155,13 +163,12 @@ public class NoteService {
     }
 
     @Transactional(readOnly = true)
-    public NotesOverviewResponse getNotesForUser(UUID userId, UUID classroomId) {
+    public NotesOverviewResponse getNotesForUser(UUID userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         List<Note> ownNotes = noteRepository.findAllByUserOrderByCategoryAsc(user);
         List<StudentLevelNote> levelNotes = studentLevelNoteRepository.findAllByUserOrderByCategoryAsc(user);
-        NotesOverviewResponse raw = noteMapper.toOverviewResponse(ownNotes, levelNotes);
-        return applyCensoring(raw, classroomId);
+        return noteMapper.toOverviewResponse(ownNotes, levelNotes);
     }
 
     private NotesOverviewResponse applyCensoring(NotesOverviewResponse response, UUID classroomId) {
