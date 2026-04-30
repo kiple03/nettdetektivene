@@ -99,6 +99,7 @@ interface RawStudentProgress {
   medalsEarned: number;
   score: number;
   equippedItems?: RawEquippedItem[] | null;
+  hairColor?: string;
 }
 
 interface RawClassroomSummary {
@@ -170,6 +171,7 @@ function mapStudentProgress(raw: RawStudentProgress): StudentSummary {
     medalsEarned: raw.medalsEarned,
     score: raw.score,
     equippedItems: raw.equippedItems ?? [],
+    hairColor: raw.hairColor,
   };
 }
 

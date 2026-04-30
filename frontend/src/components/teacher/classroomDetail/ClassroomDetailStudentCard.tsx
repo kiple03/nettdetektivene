@@ -50,7 +50,7 @@ export function ClassroomDetailStudentCard({
             ) : (
                 <ul className="classroom-detail__student-list">
                     {students.map((student) => {
-                        const { userId, username, email, currentStopDisplayOrder, totalStops: studentTotalStops, medalsEarned, score, equippedItems } = student;
+                        const { userId, username, email, currentStopDisplayOrder, totalStops: studentTotalStops, medalsEarned, score, equippedItems, hairColor } = student;
                         const rank = getLeaderboardRank(userId);
                         const isEditing = editingStudentId === userId;
                         const isConfirmingRemove = confirmRemoveId === userId;
@@ -62,7 +62,7 @@ export function ClassroomDetailStudentCard({
                                     className="classroom-detail__student-avatar-link"
                                     tabIndex={-1}
                                 >
-                                    <LayeredAvatar items={equippedItems} size={52} />
+                                    <LayeredAvatar items={equippedItems} size={52} hairColor={hairColor} />
                                 </Link>
 
                                 <div className="classroom-detail__student-body">

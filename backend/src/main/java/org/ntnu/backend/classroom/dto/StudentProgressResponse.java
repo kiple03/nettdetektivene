@@ -21,4 +21,5 @@ public class StudentProgressResponse {
     private final int score;
     private final int medalsEarned;
     private final List<EquippedItemDto> equippedItems;
+    private final String hairColor;
 }
