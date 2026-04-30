@@ -3,7 +3,7 @@ import type { SubmitAnswerRequest, SubmitSingleChoiceAnswerRequest, SubmitMultiS
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper.ts";
 import type { StationData, SubmitAnswerResult } from "@/types/station.ts";
 import { useState } from "react";
-import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 import ClassifyItems from "@/components/game/tasks/ClassifyItems.tsx";
 

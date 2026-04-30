@@ -38,7 +38,7 @@
 
 .next {
     background: rgba(255, 248, 220, 0.94);
-    border: 2px dashed rgb(99, 75, 44);
+    border: 2px solid rgb(99, 75, 44);
     color: #2d1b0f;
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);

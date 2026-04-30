@@ -11,7 +11,7 @@ import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherQuestionOption
 import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
 import { makeOptionId } from '@/components/teacher/questionEditor/types';
 import type { SubmitAnswerRequest, LevelType } from '@/api/gameApi';
-import '@/components/game/ui/game.css';
+import '@/components/game/ui_game/game.css';
 import './TeacherLevelPreviewPage.css';
 
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {

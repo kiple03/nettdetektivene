@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { AxiosError } from 'axios';
-import { LayeredAvatar, SKIN_TONES } from '@/components/user/LayeredAvatar';
+import { LayeredAvatar, SKIN_TONES } from '@/components/miscellaneous/LayeredAvatar';
 import {
   useSaveAvatarOutfit,
   useUserInventory,

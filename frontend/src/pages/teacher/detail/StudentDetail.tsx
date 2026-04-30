@@ -73,6 +73,7 @@ export default function StudentDetail() {
                         enrolledAt={enrolledAt}
                         completedCount={completedCount}
                         avatarItems={studentProfile?.equippedItems ?? []}
+                        hairColor={studentProfile?.hairColor}
                         editing={editing}
                         editValue={editValue}
                         onEditValueChange={setEditValue}

@@ -6,17 +6,17 @@ import styles from "@/pages/student/ProfilePage.module.css";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyClassroom } from "@/hooks/student/useMyClassroom";
-import { LayeredAvatar } from "@/components/user/LayeredAvatar";
+import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 import { getGameStops, getLevelsForStop } from "@/api/gameApi";
 import { studentKeys } from "@/hooks/student/queryKeys";
-import nyhetskvartalet from "@/assets/images/map/nyhetskvartalet.svg";
-import fotografen from "@/assets/images/map/fotografen.svg";
-import postkontoret from "@/assets/images/map/postkontoret.svg";
-import passordbanken from "@/assets/images/map/passordbanken.svg";
-import markedsplassen from "@/assets/images/map/markedsplassen.svg";
-import moteplassen from "@/assets/images/map/møteplassen.svg";
-import datasenteret from "@/assets/images/map/datasenteret.svg";
+import nyhetskvartalet from "@/assets/stops/nyhetIcon.png";
+import fotografen from "@/assets/stops/fotoIcon.png";
+import postkontoret from "@/assets/stops/postIcon.png";
+import passordbanken from "@/assets/stops/passIcon.png";
+import markedsplassen from "@/assets/stops/markedIcon.png";
+import moteplassen from "@/assets/stops/sosialIcon.png";
+import datasenteret from "@/assets/stops/dataIcon.png";
 
 const STOP_ICONS: Record<string, string> = {
   "Nyhetskvartalet": nyhetskvartalet,

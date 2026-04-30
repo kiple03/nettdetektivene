@@ -5,7 +5,7 @@ import {
 } from "@/api/gameApi.ts";
 import {mapSubmitResponseToSubmitAnswer} from "@/utils/gameMapper.ts";
 import type {StationData, SubmitAnswerResult} from "@/types/station.ts";
-import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 
 type NyhetsKvartalStationProps = {
@@ -13,6 +13,7 @@ type NyhetsKvartalStationProps = {
   levelTitle: string,
   onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void,
   disabled?: boolean,
+  isTearing?: boolean
 };
 
 function NyhetsKvartalStation({
@@ -20,6 +21,7 @@ function NyhetsKvartalStation({
                                 levelTitle,
                                 onAnswer,
                                 disabled = false,
+                                isTearing
                               }: NyhetsKvartalStationProps) {
   const handleSumbit = async (selectedIds: number[]) => {
     const request: SubmitSingleChoiceAnswerRequest = {
@@ -47,6 +49,7 @@ function NyhetsKvartalStation({
         <DetectiveBook
             title={levelTitle}
             subtitle={station.questionText}
+            isTearing={isTearing}
         >
           <PictureGrid
               questionId={station.questionId}

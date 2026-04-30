@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { StationType, SubmitAnswerResult } from "@/types/station.ts";
-import FeedbackBox from "@/components/game/ui/FeedbackBox.tsx";
+import FeedbackBox from "@/components/game/ui_game/FeedbackBox";
 import { Button } from '@/components/ui/buttons/Button.tsx'
 import TutorialOverlay from "@/components/game/tutorial/TutorialOverlay.tsx";
 import { TUTORIAL_STEPS, hasSeenTutorial } from "@/components/game/tutorial/tutorialContent.ts";
@@ -15,6 +15,7 @@ type Props = {
   children: React.ReactNode;
   submitResult: SubmitAnswerResult | null;
   onNext: () => void;
+  isTearing?: boolean;
 };
 
 function StationContainer({ title, type, children, submitResult, onNext }: Props) {

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import ConfettiComp from "@/components/ConfettiComp";
+import ConfettiComp from "@/components/miscellaneous/ConfettiComp";
 import heartImg from "@/assets/images/boss/heart.png";
 import styles from "./VictoryScreen.module.css";
 

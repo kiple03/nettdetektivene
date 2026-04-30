@@ -14,6 +14,9 @@ import org.ntnu.backend.classroom.dto.leaderboard.RankedStudentResponse;
 import org.ntnu.backend.classroom.service.LeaderboardService;
 import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 
 class LeaderboardControllerTest {
@@ -41,35 +44,36 @@ class LeaderboardControllerTest {
         teacherId = UUID.fromString("22222222-2222-2222-2222-222222222222");
     }
 
+
     @Test
     void getGlobalLeaderboard_shouldReturnGlobalLeaderboardFromService() {
-        RankedClassroomResponse first = mock(RankedClassroomResponse.class);
-        RankedClassroomResponse second = mock(RankedClassroomResponse.class);
+      RankedClassroomResponse first = mock(RankedClassroomResponse.class);
+      RankedClassroomResponse second = mock(RankedClassroomResponse.class);
 
-        when(leaderboardService.getGlobalLeaderboard())
-                .thenReturn(List.of(first, second));
+      when(leaderboardService.getGlobalLeaderboard(any(Pageable.class)))
+          .thenReturn(new PageImpl<>(List.of(first, second)));
 
-        List<RankedClassroomResponse> result =
-                leaderboardController.getGlobalLeaderboard();
+      Page<RankedClassroomResponse> result =
+          leaderboardController.getGlobalLeaderboard(0, 10);
 
-        assertEquals(List.of(first, second), result);
+      assertEquals(List.of(first, second), result.getContent());
 
-        verify(leaderboardService).getGlobalLeaderboard();
-        verifyNoInteractions(classroomAuthorizationService);
+      verify(leaderboardService).getGlobalLeaderboard(any(Pageable.class));
+      verifyNoInteractions(classroomAuthorizationService);
     }
 
     @Test
     void getGlobalLeaderboard_whenServiceReturnsEmptyList_shouldReturnEmptyList() {
-        when(leaderboardService.getGlobalLeaderboard())
-                .thenReturn(List.of());
+      when(leaderboardService.getGlobalLeaderboard(any(Pageable.class)))
+          .thenReturn(new PageImpl<>(List.of()));
 
-        List<RankedClassroomResponse> result =
-                leaderboardController.getGlobalLeaderboard();
+      Page<RankedClassroomResponse> result =
+          leaderboardController.getGlobalLeaderboard(0, 10);
 
-        assertEquals(List.of(), result);
+      assertEquals(List.of(), result.getContent());
 
-        verify(leaderboardService).getGlobalLeaderboard();
-        verifyNoInteractions(classroomAuthorizationService);
+      verify(leaderboardService).getGlobalLeaderboard(any(Pageable.class));
+      verifyNoInteractions(classroomAuthorizationService);
     }
 
     @Test

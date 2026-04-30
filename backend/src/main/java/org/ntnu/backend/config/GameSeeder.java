@@ -192,8 +192,8 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level1,
         "Hvilken adressa-artikkel er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "EKSTRA penger til flere ansate i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-1.png", false, "I denne artikelen blir det brukt store bokstavene og Ukjent stortingspolitker"),
-            new MultipleChoiceOption(2, "Ekstra penger til flere ansate i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-2.png", true, "Oppdaget du de store bokstavene og den Ukjente stortingspolitikeren?")
+            new MultipleChoiceOption(1, "EKSTRA penger til flere ansatte i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-1.png", false, "I denne artikelen blir det brukt store bokstavene og Ukjent stortingspolitker"),
+            new MultipleChoiceOption(2, "Ekstra penger til flere ansatte i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-2.png", true, "Oppdaget du de store bokstavene og den Ukjente stortingspolitikeren?")
         )
     );
 
@@ -219,16 +219,16 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level2,
         "Hvilken nyhetssak fra Bergens tidene er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-1.png", true, "Den andre atrikkelen inneholder en ukjent mann og 2600-tallet!"),
-            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-2.png", false, "Denne artikkelen innholder en ukjent mann og 2600-tallet")
+            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-1.png", true, "Den andre atrikkelen inneholder en ukjent mann og 2600-tallet!"),
+            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-2.png", false, "Denne artikkelen innholder en ukjent mann og 2600-tallet")
         )
     );
 
     ensureQuestion(level2,
         "Hvilken BT-artikkel er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-1.png", false, "Hvor er etternavnet til næringsminsteren? Nåer er klokken 09:71?"),
-            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-2.png", true, "Flott! Du oppdaget at næringsministeren mangler etternavn og at det var noe rart med klokkeslettet?")
+            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-1.png", false, "Hvor er etternavnet til næringsminsteren? Nåer er klokken 09:71?"),
+            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-2.png", true, "Flott! Du oppdaget at næringsministeren mangler etternavn og at det var noe rart med klokkeslettet?")
         )
     );
 
@@ -262,8 +262,8 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level3,
         "Hvilken NRK-nyhetssak er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Artikkel 1", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-1.png", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
-            new MultipleChoiceOption(2, "Artikkel 2", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-2.png", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
+            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-1.png", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
+            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-2.png", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
         )
     );
 
@@ -301,13 +301,13 @@ public class GameSeeder implements CommandLineRunner {
         "Hvilke bilder er AI-generert?",
         List.of(
             new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseReal.png", false,
-                "Bildet er ikke ekte. Det har tegn på KI-generering."),
+                "Feil! Bildet er ekte!"),
             new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseAi.png", true,
-                "Riktig. Ansiktstrekkene og detaljene i bildet tyder på at det er KI-generert."),
+                "Riktig! Dette ser AI-generert ut fordi bildet har rare ting som ikke passer med virkeligheten, for eksempel en trikk som flyr og litt uvanlige detaljer på mennesker og bygninger."),
             new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aiFake.png", true,
-                "Riktig! Dette bildet er KI generert"),
+                "Riktig! Dette ser AI-generert ut fordi det viser en fantasiverden med rare planeter, unaturlige farger og en stor bue midt i landskapet som ikke ser ut som et ekte sted."),
             new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_2.png", false,
-                "Bildet er ikke ekte. Det har tegn på KI-generering.")
+                "Feil! Bildet er helt ekte")
         )
     );
 
@@ -362,25 +362,25 @@ public class GameSeeder implements CommandLineRunner {
 
     ensurePictureQuizQuestion(
         level2,
-        "Hvilket bilde er av ekte natur?",
+        "Hvilket bilde er IKKE av ekte natur?",
         List.of(
-            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png", false,
-                "Feil!, ingen natur ser slik ut!"),
-            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png", true,
-                "Helt riktig!, dette er helt nydelig norsk natur!")
+            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png", true,
+                "Helt riktig! Ingen natur ser slik ut!"),
+            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png", false,
+                "Feil! Dette er helt nydelig norsk natur!")
         )
     );
 
     ensurePictureQuizQuestion(
         level2,
-        "Hva er riktig påstand?",
+        "Hva er riktig påstand om forrige oppgave?",
         List.of(
             new PictureQuizOption(1, "Bildet er ikke ekte fordi mange rare ting skjer samtidig," +
                 " og sånt finnes ikke i virkeligheten.",
                 null, true, "Helt riktig!"),
-            new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, false, "Helt feil!"),
-            new PictureQuizOption(3, "Jeg vet ikke", null, false, "Helt feil!"),
-            new PictureQuizOption(4, "Bildet er ekte fordi alt ser helt naturlig ut", null, false, "Helt feil!")
+            new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, false, "Feil, Tviler veldig på at du har sett det bildet før"),
+            new PictureQuizOption(3, "Jeg vet ikke", null, false, "Feil, men heldigvis skal du lære deg dette!"),
+            new PictureQuizOption(4, "Bildet er ekte fordi alt ser helt naturlig ut", null, false, "Feil! Det er ikke naturlig å se natur med gigantiske mennesker!")
         )
     );
 
@@ -389,13 +389,13 @@ public class GameSeeder implements CommandLineRunner {
         "Hvilke reklamer er AI-generert?",
         List.of(
             new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aireklame.png",
-                true, "Helt riktig!"),
+                true, "Helt riktig! Dette ser AI-generert ut fordi bildet har veldig sterke lilla og blå farger, masse glans og perfekte detaljer som ofte er tegn på AI-bilder."),
             new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/ektereklame.png",
                 false, "Feil!, Denne reklamen er ikke AI generert."),
             new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/ektereklame2.png",
                 false, "Feil!, Denne reklamen er ikke AI generert."),
             new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aireklameigjen.png",
-                true, "Helt riktig!")
+                true, "Helt riktig! Dette ser AI-generert ut fordi bildet har veldig sterke lilla og blå farger, masse glans og perfekte detaljer som ofte er tegn på AI-bilder.")
 
         )
     );
@@ -425,7 +425,7 @@ public class GameSeeder implements CommandLineRunner {
             new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/zebra.jpg",
                 false, "Feil! Det er et ekte zebra"),
             new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/zebraFake.png",
-                true, "Riktig! dette bildet er faktisk generert av AI")
+                true, "Riktig! dette bildet er faktisk generert av AI. Som du kan se på håret til zebraen, ser det veldig unaturlig ut.")
         )
     );
 
@@ -436,7 +436,7 @@ public class GameSeeder implements CommandLineRunner {
             new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fotballai.png",
                 false, "Feil! Det er et AI generert bilde!"),
             new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fotballnotai.png",
-                true, "Riktig! dette bildet er faktisk ikke generert av AI")
+                true, "Riktig! dette bildet er faktisk ikke generert av AI. Om du ser nøye på bildet, kan du se at personen ikke er ekte.")
         )
     );
 
@@ -463,7 +463,7 @@ public class GameSeeder implements CommandLineRunner {
         .findTopByStopIdAndTitleOrderByIdAsc(stop3.getId(), "Nivå 1: Finn det mistenklige i mailen!")
         .orElseGet(() -> {
           Level l = new Level();
-          l.setTitle("Nivå 1: Finn det mistenklige i mailen! 1");
+          l.setTitle("Nivå 1: Finn det mistenklige i mailen!");
           l.setDescription("Kan du hva som er mistenkelig i mailene?");
           l.setLevelType(LevelType.POST_OFFICE);
           l.setStop(stop3);
@@ -582,7 +582,7 @@ public class GameSeeder implements CommandLineRunner {
             ),
             List.of(
                 new PostOfficeOption("senderEmail", "senderEmail", true,  "Avsenderadressen er ikke fra en kjent organisasjon."),
-                new PostOfficeOption("signup",      "link",        true,  "Lenken peker til et ukjent nettsted og du vet ikke hvor du havner."),
+                new PostOfficeOption("signup",      "link",        true,  "Lenken peker til et ukjent nettsted."),
                 new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
                 new PostOfficeOption("body",        "body",        false, "Innholdet ser normalt ut."),
                 new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
@@ -709,13 +709,13 @@ public class GameSeeder implements CommandLineRunner {
             ),
             List.of(
                 new PostOfficeOption("senderEmail", "senderEmail", false,  "Avsendermailen er ekte"),
-                new PostOfficeOption("reset",      "link",        true,  "Lenke med knapp uten lenkeadresse er mistenkelig."),
+                new PostOfficeOption("reset",      "link",        true,  "Lenke med knapp med ukjent og falsk lenke er mistenkelig."),
                 new PostOfficeOption("promo",       "image",       false, "Bildet ser normalt ut."),
                 new PostOfficeOption("body",        "body",        true, "Den inneholder en uekte mail og vil at du skal trykke på en knapp."),
                 new PostOfficeOption("subject",     "subject",     false, "Emnefeltet ser normalt ut."),
-                new PostOfficeOption("signature",   "signature",   true, "Signaturen er ekte.")
+                new PostOfficeOption("signature",   "signature",   false, "Signaturen er ekte.")
             ),
-            List.of("senderEmail", "signature"),
+            List.of("link", "body"),
             "Spør en voksen"
         )
     );
