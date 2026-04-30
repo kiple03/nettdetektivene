@@ -48,6 +48,16 @@ function getTabConfig(tabId: TabId): TabConfig {
     return TABS.find((tab) => tab.id === tabId)!;
 }
 
+function formatDate(iso: string | null | undefined): string {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime()) || d.getFullYear() < 2000) return "";
+    return new Intl.DateTimeFormat("nb-NO", {
+        day: "numeric", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+    }).format(d);
+}
+
 function getPossessive(name: string): string {
     return /[sxzSXZ]$/.test(name) ? `${name}'` : `${name}`;
 }
@@ -114,20 +124,27 @@ export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Pro
         return () => { isMounted = false; };
     }, []);
 
+    const byNewest = (a: { createdAt: string }, b: { createdAt: string }) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
     const visibleNotes = useMemo(() => {
         if (activeTab === "egne") {
             const relevantTabs = TAB_ORDER.filter((t) => t !== "egne");
-            const own = relevantTabs.flatMap((tabId) =>
-                savedNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: false }))
-            );
-            const level = relevantTabs.flatMap((tabId) =>
-                levelNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: true }))
-            );
+            const own = relevantTabs
+                .flatMap((tabId) => savedNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: false })))
+                .sort(byNewest);
+            const level = relevantTabs
+                .flatMap((tabId) => levelNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: true })))
+                .sort(byNewest);
             return { own, level };
         }
         return {
-            own: savedNotes[activeTab].map((note) => ({ ...note, category: activeTab, isLevel: false })),
-            level: levelNotes[activeTab].map((note) => ({ ...note, category: activeTab, isLevel: true })),
+            own: savedNotes[activeTab]
+                .map((note) => ({ ...note, category: activeTab, isLevel: false }))
+                .sort(byNewest),
+            level: levelNotes[activeTab]
+                .map((note) => ({ ...note, category: activeTab, isLevel: true }))
+                .sort(byNewest),
         };
     }, [activeTab, savedNotes, levelNotes]);
 
@@ -232,7 +249,7 @@ export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Pro
                                                 />
                                                 <div className={styles.saveRow}>
                                                     <Button
-                                                        variant="fun"
+                                                        variant="unstyled"
                                                         onClick={handleSave}
                                                         disabled={
                                                             isLoading ||
@@ -298,6 +315,7 @@ export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Pro
                                                                             </div>
                                                                         )}
                                                                         <p className={styles.savedNoteText}>{note.content}</p>
+                                                                        {formatDate(note.createdAt) && <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>}
                                                                     </div>
                                                                 );
                                                             })}
@@ -321,6 +339,7 @@ export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Pro
                                                                             </div>
                                                                         )}
                                                                         <p className={styles.savedNoteText}>{note.content}</p>
+                                                                        {formatDate(note.createdAt) && <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>}
                                                                         <Button
                                                                             variant="destructive"
                                                                             className={styles.deleteButton}

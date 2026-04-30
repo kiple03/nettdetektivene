@@ -38,6 +38,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 12px;
   padding: 24px 24px 0;
   max-width: 740px;
@@ -48,7 +49,8 @@
 
 /* Hide the TextInput label visually — we only want the input */
 .teacher-dashboard__search-wrap {
-  flex: 1;
+  flex: 1 1 320px;
+  min-width: min(100%, 320px);
 }
 
 .teacher-dashboard__search-wrap > div > label {
@@ -208,7 +210,7 @@
 
 .teacher-dashboard__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 26px;
 }
 
@@ -441,9 +443,10 @@
   color: #7a6040;
   padding: 0 18px 8px;
   margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.35;
 }
 
 /* Footer */
@@ -454,6 +457,8 @@
   padding: 12px 18px 16px;
   border-top: 1px solid rgba(0,0,0,0.06);
   margin-top: auto;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .classroom-card__join-code {
@@ -462,6 +467,7 @@
   font-weight: 700;
   letter-spacing: 0.05em;
   color: #7a5c30;
+  word-break: break-word;
 }
 
 .classroom-card__copy-btn {
@@ -687,14 +693,155 @@ a.bottom-nav-chip:hover {
 
 }
 
-/* For shorter laptop screens */
-@media (min-width: 900px) and (max-height: 760px) {
-  .teacher-dashboard {
-    transform: scale(0.92);
-    transform-origin: top center;
-    width: 108.7%;
-    margin-left: -4.35%;
-    height: 108vh;
-    overflow: hidden;
+@media (max-width: 900px) {
+  .teacher-dashboard__hero {
+    padding: 28px 20px 8px;
+  }
+
+  .teacher-dashboard__title {
+    font-size: 30px;
+  }
+
+  .teacher-dashboard__toolbar-wrap {
+    align-items: stretch;
+    padding: 18px 20px 0;
+  }
+
+  .teacher-dashboard__search-wrap {
+    min-width: 0;
+  }
+
+  .teacher-dashboard__new-link {
+    align-self: stretch;
+  }
+
+  .teacher-dashboard__new-btn {
+    width: 100% !important;
+  }
+
+  .teacher-dashboard__board-wrap {
+    padding: 22px 16px 28px;
+  }
+
+  .teacher-corkboard {
+    padding: 28px 18px 22px;
+    border-width: 8px;
+  }
+
+  .teacher-dashboard__grid {
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px;
+  }
+
+  .classroom-card,
+  .classroom-card--new {
+    min-height: 220px;
+  }
+
+  .classroom-card__top {
+    padding: 18px 16px 8px;
+  }
+
+  .classroom-card__stats {
+    padding: 14px 16px 6px;
+  }
+
+  .classroom-card__stat-value {
+    font-size: 24px;
+  }
+
+  .classroom-card__footer {
+    padding: 10px 16px 14px;
+  }
+
+  .teacher-dashboard__bottom-nav {
+    min-height: 72px;
+    padding: 12px 16px 22px;
+  }
+}
+
+@media (max-width: 700px) {
+  .teacher-dashboard__hero {
+    padding: 24px 16px 6px;
+  }
+
+  .teacher-dashboard__title {
+    font-size: 26px;
+  }
+
+  .teacher-dashboard__subtitle {
+    font-size: 13px;
+  }
+
+  .teacher-dashboard__toolbar-wrap {
+    gap: 10px;
+    padding: 14px 16px 0;
+  }
+
+  .teacher-dashboard__board-wrap {
+    padding: 18px 12px 22px;
+  }
+
+  .teacher-corkboard {
+    padding: 22px 14px 18px;
+    border-width: 6px;
+  }
+
+  .teacher-corkboard__header {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 16px;
+  }
+
+  .teacher-corkboard__count-label {
+    text-align: center;
+  }
+
+  .teacher-corkboard__view-toggle {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .teacher-dashboard__grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .teacher-dashboard__grid--list .classroom-card {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .teacher-dashboard__grid--list .classroom-card__stats,
+  .teacher-dashboard__grid--list .classroom-card__progress-wrap,
+  .teacher-dashboard__grid--list .classroom-card__footer {
+    min-width: 0;
+    border-left: none;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .teacher-dashboard__grid--list .classroom-card__footer {
+    align-items: flex-start;
+  }
+
+  .classroom-card__join-code {
+    font-size: 14px;
+  }
+
+  .classroom-card__copy-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .teacher-dashboard__bottom-nav-center {
+    gap: 10px;
+    width: 100%;
+  }
+
+  .bottom-nav-chip {
+    width: 100%;
+    text-align: center;
+    padding: 10px 16px;
   }
 }

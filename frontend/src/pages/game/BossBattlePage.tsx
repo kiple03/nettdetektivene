@@ -16,6 +16,9 @@ import sharkHurt from "@/assets/images/boss/shark-hurt.png";
 import arenaBg from "@/assets/images/boss/arena-bg.png";
 import styles from "./BossBattlePage.module.css";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { useParams } from "react-router-dom";
+import QuitButton from "@/components/ui/buttons/QuitButton";
 
 type Phase = "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
 
@@ -33,7 +36,14 @@ function bossPageMusicRef(el: HTMLDivElement | null) {
 
 export default function BossBattlePage() {
     const { data: profile } = useUserProfile();
-    const equippedItems = profile?.equippedItems ?? [];
+    const { role } = useAuth();
+    const { classroomId } = useParams<{ classroomId?: string }>();
+    const queryClient = useQueryClient();
+
+    const isTeacher = role === 'TEACHER';
+    const equippedItems = isTeacher ? [] : (profile?.equippedItems ?? []);
+    const username = isTeacher ? 'Lærer' : (profile?.username ?? 'Spiller');
+    const backTo = isTeacher ? `/teacher/classrooms/${classroomId}/map` : '/map';
 
     const [phase, setPhase] = useState<Phase>("intro");
     const [playerHp, setPlayerHp] = useState(MAX_HP);
@@ -43,7 +53,6 @@ export default function BossBattlePage() {
     const [currentSprite, setCurrentSprite] = useState<string>(sharkBase);
     const [introPlayerRevealed, setIntroPlayerRevealed] = useState(false);
     const startTimeRef = useRef<number | null>(null);
-    const queryClient = useQueryClient();
 
     const beginFade = () => setPhase("intro-fading");
 
@@ -68,8 +77,10 @@ export default function BossBattlePage() {
                 setFinalSeconds(secs);
                 setCurrentSprite(sharkHurt);
                 playMusic('background');
-                saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
-                    .catch((err) => console.error("Failed to save boss battle result", err));
+                if (!isTeacher) {
+                    saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
+                        .catch((err) => console.error("Failed to save boss battle result", err));
+                }
                 setPhase("victory");
                 queryClient.invalidateQueries({queryKey: ['medalions']});
                 return;
@@ -81,8 +92,10 @@ export default function BossBattlePage() {
                 const secs = captureTime();
                 setFinalSeconds(secs);
                 playMusic('background');
-                saveBossBattleResult({ won: false, timeSeconds: secs, playerHpRemaining: 0 })
-                    .catch((err) => console.error("Failed to save boss battle result", err));
+                if (!isTeacher) {
+                    saveBossBattleResult({ won: false, timeSeconds: secs, playerHpRemaining: 0 })
+                        .catch((err) => console.error("Failed to save boss battle result", err));
+                }
                 setPhase("defeat");
                 return;
             }
@@ -127,9 +140,16 @@ export default function BossBattlePage() {
                 <div className={styles.playerCharArea}>
                     <LayeredAvatar items={equippedItems} size={120} circular={false} />
                     {showBattle && (
-                        <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
+                        <HealthBar label={username} hp={playerHp} maxHp={MAX_HP} side="player" />
                     )}
                 </div>
+            )}
+
+            {showBattle && (
+                <QuitButton
+                    to={backTo}
+                    style={{ position: "absolute", top: "1rem", left: "1rem", zIndex: 70 }}
+                />
             )}
 
             {/* Attack orchestrator — always mounted so admin panel is visible from page load */}
@@ -171,7 +191,7 @@ export default function BossBattlePage() {
             {/* VICTORY SCREEN */}
             {phase === "victory-screen" && (
                 <div className={styles.cutsceneOverlay}>
-                    <VictoryScreen timeSeconds={finalSeconds} playerHp={playerHp} maxHp={MAX_HP} />
+                    <VictoryScreen timeSeconds={finalSeconds} playerHp={playerHp} maxHp={MAX_HP} backTo={backTo} />
                 </div>
             )}
 

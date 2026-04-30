@@ -30,7 +30,7 @@
 
 /* different sizes of board items */
 .board-item-large .board-item-img {
-  width: 35vw;
+  width: 31vw;
   margin-bottom: 6px;
   pointer-events: none;
 }
