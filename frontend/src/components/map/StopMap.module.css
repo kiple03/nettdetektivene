@@ -35,7 +35,7 @@
 .stopGrid {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 .hotspot {
@@ -121,7 +121,8 @@
     height: max(calc(100vw * 1440 / 810), 100dvh);
   }
 
-  .mapBg {
+  .mapBg,
+  .mapBgOverlay {
     width: max(calc(100vw * 1440 / 810), 100dvh);
     height: max(100vw, calc(100dvh * 810 / 1440));
     top: 50%;

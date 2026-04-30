@@ -9,13 +9,17 @@ import {
 import styles from "@/pages/student/MapPage.module.css";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { MapTransitionOutgoing } from "@/components/map/MapTransitionOutgoing";
 
 export default function StudentHomePage() {
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
+    const [transitioning, setTransitioning] = useState(false);
     const helpButtonRef = useRef<HTMLButtonElement>(null);
     const { email } = useAuth();
-    
+    const navigate = useNavigate();
+
     useEffect(() => {
         if(!email) return;
         const key = `hasSeenWelcomeDialog_${email}`;
@@ -27,11 +31,25 @@ export default function StudentHomePage() {
         }
     }, [email]);
 
+    const handleMapClick = () => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            navigate("/map");
+        } else {
+            setTransitioning(true);
+        }
+    };
+
+    const items = studentBoardItems.map((item) =>
+        item.id === "map" ? { ...item, onClick: handleMapClick } : item
+    );
+
     return (
         <>
             <section>
-                <HomeBoard items={studentBoardItems} />
+                <HomeBoard items={items} />
             </section>
+
+            {transitioning && <MapTransitionOutgoing />}
 
             <button
                 ref={helpButtonRef}
