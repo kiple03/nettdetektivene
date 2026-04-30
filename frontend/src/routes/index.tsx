@@ -14,12 +14,10 @@ const StudentHomePage = lazy(() => import("@/pages/student/StudentHomePage"));
 const ClassroomDetail = lazy(() => import("@/pages/teacher/detail/ClassroomDetail"));
 const StudentDetail = lazy(() => import("@/pages/teacher/detail/StudentDetail"));
 const LevelQuestionsPage = lazy(() => import("@/pages/teacher/detail/LevelQuestionsPage"));
-const MysterySubmissions = lazy(() => import("@/pages/teacher/MysterySubmissions"));
 const Notifications = lazy(() => import("@/pages/teacher/Notifications"));
 const LeaderboardPage = lazy(() => import("@/pages/student/LeaderboardPage.tsx"));
 const NotesPage = lazy(() => import("@/pages/student/NotesPage"));
 const BadgesPage = lazy(() => import("@/pages/student/MedalionPage"));
-const WeeklyMysteryPage = lazy(() => import("@/pages/student/WeeklyMysteryPage"));
 const JoinWithCodePage = lazy(() => import("@/pages/student/JoinWithCodePage"));
 const MyClassroomsPage = lazy(() => import("@/pages/teacher/MyClassroomsPage"));
 const AvatarDevPage = lazy(() => import("@/pages/student/AvatarDevPage"));
@@ -62,7 +60,6 @@ export const router = createBrowserRouter([
             { path: '/leaderboard', element: <LeaderboardPage /> },
             { path: '/notes', element: <NotesPage /> },
             { path: '/badges', element: <BadgesPage /> },
-            { path: '/weekly-mystery', element: <WeeklyMysteryPage /> },
             { path: '/game/:levelId', element: <GamePage /> },
             { path: '/boss', element: <BossBattlePage /> },
         ],
@@ -113,10 +110,6 @@ export const router = createBrowserRouter([
             {
                 path: '/teacher/classrooms/:id/students/:studentId',
                 element: <StudentDetail />,
-            },
-            {
-                path: '/teacher/classrooms/:id/mystery-submissions',
-                element: <MysterySubmissions />,
             },
             {
                 path: '/teacher/classrooms/:classroomId/levels/:levelId/questions',

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import ConfettiComp from "@/components/miscellaneous/ConfettiComp";
 import heartImg from "@/assets/images/boss/heart.png";
 import styles from "./VictoryScreen.module.css";
+import gogglesImg from "/assets/boss-goggles.png";
 
 interface Props {
   timeSeconds: number;
@@ -37,6 +38,10 @@ export function VictoryScreen({ timeSeconds, playerHp, maxHp, backTo }: Props) {
               className={i < playerHp ? styles.heartFull : styles.heartLost}
             />
           ))}
+        </div>
+        <div className={styles.unlockBanner}>
+          <img src={gogglesImg} alt="VR-briller" className={styles.unlockImg} />
+          <p className={styles.unlockText}>Du låste opp VR-brillene som avatargjenstand!</p>
         </div>
         <Link to={backTo ?? "/map"} className={styles.btn}>
           Tilbake til kartet

@@ -53,19 +53,8 @@ export interface StudentDetail {
   gameCompleted: boolean | null;
 }
 
-export interface MysterySubmissionResponse {
-  id: string;
-  studentUsername: string;
-  content: string | null;
-  imageUrl: string | null;
-  status: 'pending' | 'approved' | 'rejected';
-  featured: boolean;
-  submittedAt: string;
-  reviewedAt: string | null;
-}
-
 export interface NotificationResponse {
-  type: 'stop_completed' | 'student_stuck' | 'mystery_submission' | 'inappropriate_name' | 'co_teacher_added';
+  type: 'stop_completed' | 'student_stuck' | 'inappropriate_name' | 'co_teacher_added';
   message: string;
   classroomId: string;
   studentUsername: string;

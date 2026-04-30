@@ -323,7 +323,7 @@ export default function GamePage() {
                     <AlertDialogDescription>
                         {levelPassed
                             ? newMedalion
-                                ? `Du fullførte stoppen og fikk medaljongen "${newMedalion.name}"! Alle tips for dette stoppet finner du i notisboken. Du kan også skrive inn dine egne tips i notisboken for å huske dem senere!`
+                                ? `Du fullførte stoppet og fikk medaljongen "${newMedalion.name}"! Alle tips for dette stoppet finner du i notisboken. Du kan også skrive inn dine egne tips i notisboken for å huske dem senere!`
                                 : "Du fullførte nivået! Tips for dette nivået er lagret i notatboken."
                             : "Du svarte feil på minst ett spørsmål. Tips for dette nivået finner du i notatboken!"}
                     </AlertDialogDescription>

@@ -74,6 +74,30 @@
     filter: grayscale(100%) opacity(0.35);
 }
 
+.unlockBanner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 215, 0, 0.12);
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  border-radius: 14px;
+  padding: 10px 22px;
+}
+
+.unlockImg {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px gold);
+}
+
+.unlockText {
+  margin: 0;
+  font-size: 1rem;
+  color: #ffe97a;
+  font-weight: bold;
+}
+
 .btn {
     display: inline-block;
     padding: 14px 36px;

@@ -9,7 +9,6 @@ export const teacherKeys = {
     studentNotebook: (classroomId: string, studentId: string) =>
         ['teacher', 'classrooms', classroomId, 'students', studentId, 'notebook'] as const,
     coTeachers: (id: string) => ['teacher', 'classrooms', id, 'teachers'] as const,
-    mysterySubmissions: (id: string) => ['teacher', 'classrooms', id, 'mystery'] as const,
     leaderboard: (classroomId: string) => ['teacher', 'leaderboard', classroomId] as const,
     stops: ['teacher', 'stops'] as const,
     notifications: ['teacher', 'notifications'] as const,
