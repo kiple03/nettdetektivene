@@ -7,7 +7,7 @@ function WeeklyMysteryPage() {
         <p>Kommer snart</p>
         <BackButton
             className={styles.hotspot}
-            style={{ top: "6%", left: "1.5%" }}
+            style={{ position: "fixed", top: "1rem", left: "1rem", zIndex: 50 }}
             ariaLabel="Gå tilbake"
         />
     </div>;

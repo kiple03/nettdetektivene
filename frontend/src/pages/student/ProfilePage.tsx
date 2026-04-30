@@ -57,7 +57,7 @@ function ProfilePage() {
 
       <BackButton
         className={mapStyles.backBtn}
-        style={{ position: "fixed", top: "6%", left: "1.5%", zIndex: 10 }}
+        style={{ position: "fixed", top: "1rem", left: "1rem", zIndex: 50 }}
         ariaLabel="Gå tilbake"
       />
 
