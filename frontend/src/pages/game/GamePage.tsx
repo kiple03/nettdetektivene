@@ -324,9 +324,9 @@ export default function GamePage() {
                     <AlertDialogDescription>
                         {levelPassed
                             ? newMedalion
-                                ? `Du fullførte stoppen og fikk medaljongen "${newMedalion.name}"!`
-                                : "Du fullførte nivået!"
-                            : "Du svarte feil på minst ett spørsmål."}
+                                ? `Du fullførte stoppen og fikk medaljongen "${newMedalion.name}"! Alle tips for dette stoppet finner du i notisboken. Du kan også skrive inn dine egne tips i notisboken for å huske dem senere!`
+                                : "Du fullførte nivået! Tips for dette nivået er lagret i notatboken."
+                            : "Du svarte feil på minst ett spørsmål. Tips for dette nivået finner du i notatboken!"}
                     </AlertDialogDescription>
                     <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "1rem" }}>
                         <Button variant="primary" type="button" onClick={handleRetry}>
