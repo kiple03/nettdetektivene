@@ -9,4 +9,5 @@ export type DashboardItem = {
   size?: 'small' | 'medium' | 'large',
   circle?: string,
   onClick?: () => void,
+  tourOrder?: number,
 }
