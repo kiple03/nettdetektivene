@@ -28,7 +28,7 @@
   z-index: 1102;
   background: var(--white, #fff);
   border-radius: 1.25rem;
-  padding: 1.25rem 1.5rem 1rem;
+  padding: 1.25rem 2.5rem 1rem 1.5rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
   display: flex;
   flex-direction: column;
@@ -63,6 +63,7 @@
   margin-top: 0.5rem;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
 }
 
 .btnPrimary {
@@ -102,24 +103,28 @@
   cursor: not-allowed;
 }
 
-.btnExit {
+.btnClose {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
   background: none;
-  color: var(--gray-500, #6b7280);
   border: none;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.9rem;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--gray-400, #9ca3af);
   cursor: pointer;
-  text-decoration: underline;
-  margin-left: auto;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
 }
 
-.btnExit:hover {
+.btnClose:hover {
   color: var(--gray-700, #374151);
+  background: var(--gray-100, #f3f4f6);
 }
 
 .btnPrimary:focus-visible,
 .btnSecondary:focus-visible,
-.btnExit:focus-visible {
+.btnClose:focus-visible {
   outline: 3px solid var(--accent, #aa3bff);
   outline-offset: 3px;
 }

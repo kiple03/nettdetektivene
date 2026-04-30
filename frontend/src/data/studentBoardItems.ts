@@ -18,7 +18,7 @@ export const studentBoardItems: DashboardItem[] = [
     image: mapImg,
     size: 'large',
     circle: circle,
-    tourOrder: 1,
+    tourOrder: 3,
   },
   {
     id: 'badges',
@@ -28,7 +28,7 @@ export const studentBoardItems: DashboardItem[] = [
     left: '49%',
     image: badgeImg,
     size: 'medium',
-    tourOrder: 5,
+    tourOrder: 4,
   },
   {
     id: 'leaderBoard',
@@ -38,7 +38,7 @@ export const studentBoardItems: DashboardItem[] = [
     image: leaderBoard,
     left: '25%',
     size: 'small',
-    tourOrder: 6,
+    tourOrder: 2,
   },
   {
     id: 'notebook',
@@ -48,7 +48,7 @@ export const studentBoardItems: DashboardItem[] = [
     left: '75%',
     image: noteImg,
     size: 'medium',
-    tourOrder: 4,
+    tourOrder: 5,
   },
   {
     id: 'mystery',
@@ -58,7 +58,7 @@ export const studentBoardItems: DashboardItem[] = [
     left: '85%',
     image: mysteryImg,
     size: 'medium',
-    tourOrder: 3,
+    tourOrder: 6,
   },
   {
     id: 'profile',
@@ -68,6 +68,6 @@ export const studentBoardItems: DashboardItem[] = [
     left: '15%',
     image: profileImg,
     size: 'medium',
-    tourOrder: 2,
+    tourOrder: 1,
   }
 ];

@@ -91,6 +91,13 @@ function HomeTour({ steps, onExit }: HomeTourProps) {
 
       {rect && (
         <div className={styles.tooltip} style={tooltipStyle}>
+          <button
+            className={styles.btnClose}
+            onClick={onExit}
+            aria-label="Avslutt omvisning"
+          >
+            ×
+          </button>
           <span className={styles.stepCounter}>{index + 1} / {steps.length}</span>
           <h2 className={styles.title}>{step.title}</h2>
           <p className={styles.body}>{step.body}</p>
@@ -107,12 +114,6 @@ function HomeTour({ steps, onExit }: HomeTourProps) {
               onClick={handleNext}
             >
               {isLast ? 'Ferdig' : 'Neste'}
-            </button>
-            <button
-              className={styles.btnExit}
-              onClick={onExit}
-            >
-              Avslutt
             </button>
           </div>
         </div>
