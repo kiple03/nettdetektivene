@@ -26,6 +26,9 @@ export default function StudentDetail() {
     const [editValue, setEditValue] = useState('');
     const [usernameError, setUsernameError] = useState<string | null>(null);
 
+    useBackTo(`/teacher/classrooms/${classroomId}`);
+
+
     function startEdit() {
         setEditValue(studentDetail?.username ?? '');
         setUsernameError(null);
@@ -63,8 +66,6 @@ export default function StudentDetail() {
 
     const { username, email, enrolledAt, levelCompletions } = studentDetail;
     const completedCount = studentDetail.totalLevelsCompleted ?? levelCompletions.length;
-
-    useBackTo(`/teacher/classrooms/${id}`);
 
     return (
         <div className="student-detail">
