@@ -1,10 +1,14 @@
 import { TeacherLayoutContext } from "@/components/teacher_layout/TeacherLayoutContext";
 import { useContext, useEffect } from "react";
 
-export function useBackTo(path: string) {
-    const { setBackTo } = useContext(TeacherLayoutContext);
+export function useBackTo(path: string, label?: string) {
+    const { setBackTo, setBackLabel } = useContext(TeacherLayoutContext);
     useEffect(() => {
         setBackTo(path);
-        return () => setBackTo(null);
-    }, [path, setBackTo]);
+        setBackLabel(label ?? null);
+        return () => {
+            setBackTo(null);
+            setBackLabel(null);
+        };
+    }, [path, label, setBackTo, setBackLabel]);
 }

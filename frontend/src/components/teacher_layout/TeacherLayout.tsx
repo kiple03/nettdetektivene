@@ -14,7 +14,8 @@ export default function TeacherLayout() {
     const [hideBack, setHideBack] = useState(false);
     const showBack = location.pathname !== '/teacher' && !hideBack;
 
-const [backTo, setBackTo] = useState<string | null>(null);
+    const [backTo, setBackTo] = useState<string | null>(null);
+    const [backLabel, setBackLabel] = useState<string | null>(null);
 
     const [profileOpen, setProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDetailsElement>(null);
@@ -38,15 +39,11 @@ const [backTo, setBackTo] = useState<string | null>(null);
 }, []);
 
     return (
-        <TeacherLayoutContext.Provider value={{ setHideBack, setBackTo }}>
+        <TeacherLayoutContext.Provider value={{ setHideBack, setBackTo, setBackLabel }}>
             <div className="teacher-layout">
             {showBack && (
-                <Link
-                    to={backTo ?? '/teacher'}
-                    className="teacher-layout__back"
-                    aria-label="Gå tilbake"
-                >
-                    ← Tilbake
+                <Link to={backTo ?? '/teacher'} className="teacher-layout__back" aria-label="Gå tilbake">
+                    ← {backLabel ?? 'Tilbake'}
                 </Link>
             )}
             <div className="teacher-layout__controls" aria-label="Brukermeny og varsler">
