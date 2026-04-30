@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import BackButton from "@/components/ui/buttons/BackButton";
 import styles from "@/pages/student/LeaderboardPage.module.css";
 import { useGlobalLeaderboard } from '@/hooks/student/useLeaderboard';
 import LeaderboardTable from '@/components/leaderboard/LeaderboardTable';
@@ -22,10 +21,6 @@ export default function LeaderboardPage() {
     
     return (
         <div className={styles.page} style={{ backgroundImage: `url(${detectiveRoom})` }}>
-            <BackButton
-                className={styles.backBtn}
-                ariaLabel="Gå tilbake"
-            />
             <div className={styles.board} style={{ backgroundImage: `url(${corkBoard})` }}>
                 <div className={styles.note}>
                     <div className={styles.tape} />
@@ -49,7 +44,7 @@ export default function LeaderboardPage() {
                                     totalPages={totalPages}
                                     totalElements={totalElements}
                                     pageSize={PAGE_SIZE}
-                                      numberOfElements={entries.length}
+                                    numberOfElements={entries.length}
                                     onPageChange={setCurrentPage}
                                 />
                             )}

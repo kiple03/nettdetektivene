@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import LogoutButton from '@/components/ui/buttons/LogoutButton';
 import { decodeToken } from '@/stores/authStore';
@@ -14,6 +14,27 @@ export default function TeacherLayout() {
     const navigate = useNavigate();
     const [hideBack, setHideBack] = useState(false);
     const showBack = location.pathname !== '/teacher' && !hideBack;
+
+    const [profileOpen, setProfileOpen] = useState(false);
+    const profileRef = useRef<HTMLDetailsElement>(null);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setProfileOpen(false);
+        };
+        const handleClickOutside = (e: MouseEvent) => {
+            if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+                setProfileOpen(false);
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+}, []);
 
     return (
         <TeacherLayoutContext.Provider value={{ setHideBack }}>
@@ -41,7 +62,8 @@ export default function TeacherLayout() {
                     )}
                 </Link>
 
-                <details className="teacher-layout__profile-menu">
+                <details className="teacher-layout__profile-menu" ref={profileRef}
+                    open={profileOpen} onToggle={(e) => setProfileOpen((e.target as HTMLDetailsElement).open)}>
                     <summary className="teacher-layout__profile-trigger" aria-label="Åpne profilmeny">
                         <span className="teacher-layout__profile-avatar" aria-hidden="true">
                             {username ? username.charAt(0).toUpperCase() : 'L'}
@@ -53,17 +75,6 @@ export default function TeacherLayout() {
                         {username && (
                             <div className="teacher-layout__dropdown-user">Logget inn som {username}</div>
                         )}
-
-                        <button type="button" className="teacher-layout__dropdown-item" disabled>
-                            Innstillinger (kommer snart)
-                        </button>
-
-                        <button type="button" className="teacher-layout__dropdown-item" disabled>
-                            Konto (kommer snart)
-                        </button>
-
-                        <div className="teacher-layout__dropdown-divider" />
-
                         <LogoutButton className="teacher-layout__logout" />
                     </div>
                 </details>
