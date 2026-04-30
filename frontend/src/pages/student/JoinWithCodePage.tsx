@@ -39,6 +39,7 @@ export default function JoinWithCodePage() {
             .slice(0, 6);
         reset();
         setCode(cleaned);
+
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
