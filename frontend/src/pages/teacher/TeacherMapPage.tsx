@@ -52,7 +52,6 @@ export default function TeacherMapPage() {
                 onStopClick={handleStopClick}
                 header={
                     <div className={styles.header}>
-                        <Link to={`/teacher/classrooms/${classroomId}`} className={styles.back}>← Tilbake</Link>
                         <h1 className={styles.title}>
                             {classroom ? `Kart — ${classroom.title}` : 'Kart'}
                         </h1>
