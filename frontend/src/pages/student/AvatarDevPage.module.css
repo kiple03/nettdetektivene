@@ -605,3 +605,146 @@
     transform: none;
   }
 }
+
+/* ── Tab bar: hidden on desktop ── */
+.tabBar {
+  display: none;
+}
+
+.tabButton {
+  flex: 1;
+  padding: 10px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-family: 'Georgia', serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #5a3e10;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+
+.tabButton:hover {
+  background: rgba(200, 169, 110, 0.2);
+}
+
+.tabButtonActive {
+  background: rgba(139, 105, 20, 0.15);
+  color: #3b2a10;
+  border-bottom-color: #8b6914;
+}
+
+/* ── Mobile layout ── */
+@media (max-width: 640px) {
+  .tabContentHidden {
+    display: none !important;
+  }
+
+  .page {
+    padding: 10px 8px;
+    align-items: stretch;
+  }
+
+  .backBtn {
+    top: 12px;
+    left: 10px;
+    z-index: 50;
+  }
+
+  .container {
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* previewSection always visible — contains avatar, tab bar, and (optionally) controls */
+  .previewSection {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    padding: 12px 16px 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  /* When profil tab active, previewSection grows to fill remaining height */
+  .container[data-tab="profil"] .previewSection {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .previewTop {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  /* Tab bar between avatar and content */
+  .tabBar {
+    display: flex;
+    flex-shrink: 0;
+    border-top: 1px solid #c8a96e;
+    border-bottom: 2px solid #8b6914;
+    background: rgba(225, 205, 155, 0.85);
+    margin: 8px -16px 0;
+  }
+
+  /* Controls scroll within previewSection when profil tab active */
+  .previewScrollable {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    padding-top: 8px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  /* Wardrobe fills remaining space when garderobe tab active */
+  .wardrobeSection {
+    display: block; /* override desktop flex so overflow-y scroll works */
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    padding: 12px 16px max(16px, env(safe-area-inset-bottom));
+  }
+
+  .categoriesContainer {
+    overflow-y: unset;
+    flex: unset;
+  }
+
+  .sectionTitle {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+
+  .horizontalRow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    overflow-x: unset;
+    padding-bottom: 0;
+    flex-shrink: unset;
+  }
+
+  .itemButton {
+    width: 100%;
+  }
+
+  .imageWrapper {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .lockedOverlay {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+}
