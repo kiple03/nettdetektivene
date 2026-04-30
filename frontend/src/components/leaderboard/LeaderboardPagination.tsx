@@ -5,6 +5,7 @@ interface Props {
     totalPages: number;
     totalElements: number;
     pageSize: number;
+    numberOfElements: number;
     onPageChange: (page: number) => void;
 }
 
@@ -33,12 +34,14 @@ export default function LeaderboardPagination({
         totalPages,
         totalElements,
         pageSize,
+        numberOfElements,
         onPageChange,
     }: Props) {
 
     const start = Math.min(currentPage * pageSize + 1, totalElements);
-    const end = Math.min((currentPage + 1) * pageSize, totalElements);
+    const end = Math.min(currentPage * pageSize + numberOfElements, totalElements);
     const pageNumbers = getPageNumbers(currentPage, totalPages);
+    
 
     return (
         <div className={styles.wrapper}>
