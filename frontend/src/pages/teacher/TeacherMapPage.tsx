@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link, useSearchParams, useLocation } from 'react-router-dom';
+import { useParams, Link, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getGameStops } from '@/api/gameApi';
 import { useClassroom } from '@/hooks/teacher/useTeacherQueries';
@@ -15,6 +15,7 @@ export default function TeacherMapPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const { data: classroom } = useClassroom(classroomId);
     const { data: backendStops = [] } = useQuery({ queryKey: ['game', 'stops'], queryFn: getGameStops });
+    const navigate = useNavigate();
 
     const stopIdByTitle = Object.fromEntries(backendStops.map(s => [s.name, s.id]));
     const stopById = Object.fromEntries(backendStops.map(s => [s.id, s]));
@@ -32,6 +33,10 @@ export default function TeacherMapPage() {
             : null);
 
     const handleStopClick = (stop: StopData) => {
+        if(stop.title === 'Datasenteret'){
+            navigate(`/teacher/classrooms/${classroomId}/boss`);
+            return;
+        }
         const stopId = stopIdByTitle[stop.title] ?? null;
         if (stopId != null) {
             setComingSoonStop(null);
