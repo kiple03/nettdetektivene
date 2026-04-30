@@ -33,7 +33,7 @@ export default function StudentHomePage() {
 
     const handleMapClick = () => {
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-            navigate("/map");
+            navigate("/map", { state: { fromHome: true } });
         } else {
             setTransitioning(true);
         }

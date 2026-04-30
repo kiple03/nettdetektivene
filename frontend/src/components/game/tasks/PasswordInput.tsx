@@ -26,11 +26,12 @@ function PasswordInput({
             </ul>
 
             <label htmlFor="password-field">
-                Skriv inn passord
+                Skriv inn passord:
             </label>
 
             <input
                 id="password-field"
+                className="password-field"
                 type="text"
                 value={pw}
                 onChange={(e) => setPw(e.target.value)}
