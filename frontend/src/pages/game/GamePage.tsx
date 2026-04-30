@@ -34,8 +34,7 @@ const STATION_TO_TAB: Record<StationType, TabId> = {
     [STATION_TYPE.POST]: "epost",
     [STATION_TYPE.PASSWORD]: "passord",
     [STATION_TYPE.MARKETPLACE]: "nett",
-    [STATION_TYPE.SOCIAL]: "sosiale",
-    [STATION_TYPE.QUIZ]: "egne",
+    [STATION_TYPE.SOCIAL]: "sosiale"
 };
 
 const STOP_TO_TYPE: Record<string, StationType> = {
