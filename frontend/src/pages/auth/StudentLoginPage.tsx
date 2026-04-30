@@ -58,7 +58,7 @@ function StudentLoginPage() {
 
       queryClient.clear();
 
-      navigate('/avatar');
+      navigate('/avatar', { state: { fromAuth: true } });
     } catch (err) {
       const axiosErr = err as AxiosError<ApiErrorBody>;
       if (axiosErr.response?.status === 409) {

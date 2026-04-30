@@ -19,7 +19,7 @@ function RequireClassroom({ children }: Props) {
 
   if (role !== 'STUDENT') return <>{children}</>;
   if (isLoading) return null;
-  if (!data?.username) return <Navigate to="/avatar" replace />;
+  if (!data?.username) return <Navigate to="/avatar" replace state={{ fromAuth: true }} />;
   if (!getClassroomId()) return <Navigate to="/join-with-code" replace />;
 
   return <>{children}</>;
