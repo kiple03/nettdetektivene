@@ -119,6 +119,7 @@ export default function MapPage() {
     <>
       {location.state?.fromHome && <MapLoadingOverlay />}
       <StopMap
+        className={styles.mapContainer}
         stops={MAP_STOPS}
         onStopClick={handleStopClick}
         onBackClick={handleBackClick}

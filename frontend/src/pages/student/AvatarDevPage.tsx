@@ -68,12 +68,16 @@ export default function AvatarDevPage() {
   return <ChangingRoom initialItems={userProfile.equippedItems || []} inventory={inventory} />;
 }
 
+type Tab = 'profil' | 'garderobe';
+
 function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], inventory: EquippedItem[] }) {
   const navigate = useNavigate();
 
   const { data: userProfile } = useUserProfile();
   const { mutate: updateUserProfile } = useUpdateUserProfile();
   const {mutate: saveOutfit, isPending: isSaving} = useSaveAvatarOutfit();
+
+  const [activeTab, setActiveTab] = useState<Tab>('profil');
 
   const [equipped, setEquipped] = useState<EquippedItem[]>(() => {
     let items = [...initialItems];
@@ -110,7 +114,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   });
   const hairColorHex = HAIR_COLORS.find(c => c.name === hairColor)?.color;
 
-  const [saveButtonVisible, setSaveButtonVisible] = useState(false);
+  const [_saveButtonVisible, setSaveButtonVisible] = useState(false);
   const scrollableRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const saveButtonRef = useCallback((node: HTMLButtonElement | null) => {
@@ -119,40 +123,12 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     if (!node) return;
     observerRef.current = new IntersectionObserver(
       ([entry]) => setSaveButtonVisible(entry.isIntersecting),
-      { root: scrollableRef.current, threshold: 0.1 }
+      { root: null, threshold: 0.1 }
     );
     observerRef.current.observe(node);
   }, []);
 
-  // Derive initial equipped for edit detection (props don't change across renders)
-  const initEquipped: EquippedItem[] = (() => {
-    let items = [...initialItems];
-    if (!items.some(i => i.category === 'skin_tone')) {
-      const defaultTone = inventory.find(i => i.name === 'tone_dark' && i.category === 'skin_tone');
-      if (defaultTone) items = [...items, defaultTone];
-    }
-    if (!items.some(i => i.category === 'hair')) {
-      const defaultHair = inventory.find(i => i.name === 'boy_hair' && i.category === 'hair');
-      if (defaultHair) items = [...items, defaultHair];
-    }
-    return items;
-  })();
-  const initEquippedIds = new Set(initEquipped.map(i => i.id));
-  const initGender: Gender = (() => {
-    const hair = initEquipped.find(i => i.category === 'hair');
-    return (hair && ITEM_GENDER[hair.name] === 'girl') ? 'girl' : 'boy';
-  })();
-  const initHairColor = HAIR_COLORS.find(c => c.color === userProfile?.hairColor)?.name ?? HAIR_COLORS[0].name;
-  const initSkinTone = initEquipped.find(i => i.category === 'skin_tone')?.name || 'tone_dark';
-  const initUsername = userProfile?.username?.replace("Detektiv ", "") || "";
 
-  const hasEdited =
-    username !== initUsername ||
-    gender !== initGender ||
-    hairColor !== initHairColor ||
-    skinToneKey !== initSkinTone ||
-    equipped.length !== initEquippedIds.size ||
-    equipped.some(i => !initEquippedIds.has(i.id));
 
   const toggleItem = (item: EquippedItem) => {
     setEquipped((prev) => {
@@ -226,21 +202,37 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     <div className={styles.page}>
       <BackButton className={styles.backBtn} ariaLabel='Gå tilbake'/>
       <img src={detectiveRoom} alt="" className={styles.bg}/>
-      <div className={styles.container}>
+      <div className={styles.container} data-tab={activeTab}>
 
         {/* Left column */}
         <div className={styles.previewSection}>
-          {hasEdited && !saveButtonVisible && <div className={styles.bouncingArrow}>▼</div>}
+          {/* {hasEdited && !saveButtonVisible && <div className={styles.bouncingArrow}>▼</div>} */}
           {/* Sticky top: title + avatar */}
           <div className={styles.previewTop}>
             <h2 className={styles.sectionTitle}>Din profil</h2>
             <div className={styles.avatarWrapper}>
               <LayeredAvatar items={equipped} size={160} skinToneBase={colors.base} skinToneShadowDark={colors.shadowDark} skinToneShadowLight={colors.shadowLight} hairColor={hairColorHex} />
             </div>
-            </div>
+          </div>
 
-          {/* Scrollable controls */}
-          <div className={styles.previewScrollable} ref={scrollableRef}>
+          {/* Tab bar — mobile only, sits between avatar and tab content */}
+          <div className={styles.tabBar}>
+            <button
+              className={`${styles.tabButton} ${activeTab === 'profil' ? styles.tabButtonActive : ''}`}
+              onClick={() => setActiveTab('profil')}
+            >
+              Profil
+            </button>
+            <button
+              className={`${styles.tabButton} ${activeTab === 'garderobe' ? styles.tabButtonActive : ''}`}
+              onClick={() => setActiveTab('garderobe')}
+            >
+              Garderobe
+            </button>
+          </div>
+
+          {/* Scrollable controls — hidden when garderobe tab active */}
+          <div className={`${styles.previewScrollable} ${activeTab === 'garderobe' ? styles.tabContentHidden : ''}`} ref={scrollableRef}>
             <div className={styles.genderRow}>
               <button
                 className={`${styles.genderButton} ${gender === 'boy' ? styles.genderButtonActive : ''}`}
@@ -340,7 +332,7 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
         </div>
 
         {/* Right column: wardrobe */}
-        <div className={styles.wardrobeSection}>
+        <div className={`${styles.wardrobeSection} ${activeTab !== 'garderobe' ? styles.tabContentHidden : ''}`}>
           <h2 className={styles.sectionTitle}>Din garderobe</h2>
           <div className={styles.categoriesContainer}>
             {CATEGORY_ORDER.map((cat) => {

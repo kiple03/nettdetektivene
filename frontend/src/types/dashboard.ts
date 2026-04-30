@@ -10,4 +10,5 @@ export type DashboardItem = {
   circle?: string,
   overlay?: string,
   onClick?: () => void,
+  tourOrder?: number,
 }

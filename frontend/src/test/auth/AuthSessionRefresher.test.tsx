@@ -22,7 +22,7 @@ vi.mock('@/stores/authStore', () => ({
   decodeToken: mockDecodeToken,
 }));
 
-import AuthSessionRefresher from '@/components/auth/AuthSessionRefresher';
+import AuthSessionRefresher from '@/components/auth/AuthSessionRefresher.tsx';
 
 describe('AuthSessionRefresher', () => {
   beforeEach(() => {

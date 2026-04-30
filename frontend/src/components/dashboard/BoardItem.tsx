@@ -7,8 +7,8 @@ import {Header as UserProfileHeader} from "@/components/dashboard/BoardProfile";
 type BoardItemProps = DashboardItem;
 
 function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onClick} :BoardItemProps) {
+  
   const [tooltipOpen, setTooltipOpen] = useState(false);
-
   const inner = (
     <>
       {image && (
@@ -56,6 +56,7 @@ function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onC
         className={`board-item-wrapper board-item-${size}`}
         style={{top, left, background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}
         onClick={onClick}
+        {...(tourOrder !== undefined ? { 'data-tour-order': tourOrder } : {})}
       >
         {inner}
       </button>
@@ -66,6 +67,7 @@ function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onC
     <Link to={to}
           className={`board-item-wrapper board-item-${size}`}
           style={{top, left}}
+          {...(tourOrder !== undefined ? { 'data-tour-order': tourOrder } : {})}
     >
       {inner}
     </Link>
