@@ -34,7 +34,6 @@ import org.ntnu.backend.game.service.ClassroomAuthorizationService;
 import org.ntnu.backend.game.service.ProgressService;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.medalion.service.MedalionService;
-import org.ntnu.backend.mystery.repository.MysterySubmissionRepository;
 import org.ntnu.backend.notes.dto.NotesOverviewResponse;
 import org.ntnu.backend.notes.service.NoteService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -59,7 +58,6 @@ class TeacherClassroomServiceTest {
     private EnrollmentRepository enrollmentRepository;
     private LevelRepository levelRepository;
     private StopRepository stopRepository;
-    private MysterySubmissionRepository mysterySubmissionRepository;
     private UserRepository userRepository;
     private ProgressService progressService;
     private ClassroomMapper classroomMapper;
@@ -94,7 +92,6 @@ class TeacherClassroomServiceTest {
         enrollmentRepository = mock(EnrollmentRepository.class);
         levelRepository = mock(LevelRepository.class);
         stopRepository = mock(StopRepository.class);
-        mysterySubmissionRepository = mock(MysterySubmissionRepository.class);
         userRepository = mock(UserRepository.class);
         progressService = mock(ProgressService.class);
         classroomMapper = mock(ClassroomMapper.class);
@@ -112,7 +109,6 @@ class TeacherClassroomServiceTest {
                 enrollmentRepository,
                 levelRepository,
                 stopRepository,
-                mysterySubmissionRepository,
                 userRepository,
                 progressService,
                 classroomMapper,

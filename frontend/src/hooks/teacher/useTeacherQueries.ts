@@ -7,7 +7,6 @@ import {
     getStudentMedalions,
     getStudentNotebook,
     getCoTeachers,
-    getMysterySubmissions,
     getStops,
     getNotifications,
     getClassroomLeaderboard,
@@ -70,14 +69,6 @@ export function useCoTeachers(classroomId: string) {
     return useQuery({
         queryKey: teacherKeys.coTeachers(classroomId),
         queryFn: () => getCoTeachers(classroomId),
-        enabled: !!classroomId,
-    });
-}
-
-export function useMysterySubmissions(classroomId: string) {
-    return useQuery({
-        queryKey: teacherKeys.mysterySubmissions(classroomId),
-        queryFn: () => getMysterySubmissions(classroomId),
         enabled: !!classroomId,
     });
 }

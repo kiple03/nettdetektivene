@@ -7,9 +7,6 @@ import {
     updateStudentUsername,
     inviteCoTeacher,
     removeCoTeacher,
-    approveMysterySubmission,
-    rejectMysterySubmission,
-    featureMysterySubmission,
     addCensorWord,
     deleteCensorWord,
     createQuestion,
@@ -18,7 +15,7 @@ import {
     uploadImage,
 } from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
-import type { ClassroomDetail, CoTeacher, MysterySubmissionResponse, StudentSummary } from '@/types/classroom';
+import type { ClassroomDetail, CoTeacher, StudentSummary } from '@/types/classroom';
 import type { CensorWord, TeacherQuestion, CreateQuestionPayload, UpdateQuestionPayload, TeacherImage } from '@/api/teacherApi';
 
 export function useUpdateClassroom(classroomId: string) {
@@ -93,46 +90,6 @@ export function useRemoveCoTeacher(classroomId: string) {
             queryClient.setQueryData<CoTeacher[]>(
                 teacherKeys.coTeachers(classroomId),
                 (prev) => prev?.filter((t) => t.userId !== userId) ?? [],
-            );
-        },
-    });
-}
-
-export function useApproveMysterySubmission(classroomId: string) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (submissionId: string) => approveMysterySubmission(classroomId, submissionId),
-        onSuccess: (updated: MysterySubmissionResponse) => {
-            queryClient.setQueryData<MysterySubmissionResponse[]>(
-                teacherKeys.mysterySubmissions(classroomId),
-                (prev) => prev?.map((s) => (s.id === updated.id ? updated : s)) ?? [],
-            );
-        },
-    });
-}
-
-export function useRejectMysterySubmission(classroomId: string) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (submissionId: string) => rejectMysterySubmission(classroomId, submissionId),
-        onSuccess: (updated: MysterySubmissionResponse) => {
-            queryClient.setQueryData<MysterySubmissionResponse[]>(
-                teacherKeys.mysterySubmissions(classroomId),
-                (prev) => prev?.map((s) => (s.id === updated.id ? updated : s)) ?? [],
-            );
-        },
-    });
-}
-
-export function useFeatureMysterySubmission(classroomId: string) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ submissionId, featured }: { submissionId: string; featured: boolean }) =>
-            featureMysterySubmission(classroomId, submissionId, featured),
-        onSuccess: (updated: MysterySubmissionResponse) => {
-            queryClient.setQueryData<MysterySubmissionResponse[]>(
-                teacherKeys.mysterySubmissions(classroomId),
-                (prev) => prev?.map((s) => (s.id === updated.id ? updated : s)) ?? [],
             );
         },
     });

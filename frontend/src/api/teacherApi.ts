@@ -4,7 +4,6 @@ import type {
   StudentSummary,
   StudentDetail,
   LevelEntry,
-  MysterySubmissionResponse,
   NotificationResponse,
   StopSummary,
   CoTeacher,
@@ -69,16 +68,6 @@ interface RawNotification {
   classroomId: string;
   studentUsername: string;
   timestamp: string;
-}
-
-interface RawMysterySubmission {
-  id: string;
-  studentUsername: string;
-  content: string | null;
-  imageUrl: string | null;
-  submittedAt: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  featured: boolean;
 }
 
 interface RawEquippedItem {
@@ -216,22 +205,8 @@ const STATUS_MAP = {
   REJECTED: 'rejected',
 } as const;
 
-function mapMysterySubmission(raw: RawMysterySubmission): MysterySubmissionResponse {
-  return {
-    id: raw.id,
-    studentUsername: raw.studentUsername,
-    content: raw.content,
-    imageUrl: raw.imageUrl,
-    submittedAt: raw.submittedAt,
-    status: STATUS_MAP[raw.status],
-    featured: raw.featured,
-    reviewedAt: null,
-  };
-}
-
 const NOTIFICATION_TYPE_MAP: Record<string, NotificationResponse['type']> = {
   LEVEL_COMPLETED: 'stop_completed',
-  MYSTERY_SUBMISSION: 'mystery_submission',
   CO_TEACHER_ADDED: 'co_teacher_added',
 };
 
@@ -326,35 +301,6 @@ export async function getStudentDetail(classroomId: string, studentId: string): 
     }
     throw err;
   }
-}
-
-export async function getMysterySubmissions(classroomId: string): Promise<MysterySubmissionResponse[]> {
-  const res = await apiClient.get<RawMysterySubmission[]>(`/teacher/classrooms/${classroomId}/mystery`);
-  return res.data.map(mapMysterySubmission);
-}
-
-export async function approveMysterySubmission(classroomId: string, submissionId: string): Promise<MysterySubmissionResponse> {
-  const res = await apiClient.patch<RawMysterySubmission>(
-    `/teacher/classrooms/${classroomId}/mystery/${submissionId}`,
-    { status: 'APPROVED', featured: false },
-  );
-  return mapMysterySubmission(res.data);
-}
-
-export async function rejectMysterySubmission(classroomId: string, submissionId: string): Promise<MysterySubmissionResponse> {
-  const res = await apiClient.patch<RawMysterySubmission>(
-    `/teacher/classrooms/${classroomId}/mystery/${submissionId}`,
-    { status: 'REJECTED', featured: false },
-  );
-  return mapMysterySubmission(res.data);
-}
-
-export async function featureMysterySubmission(classroomId: string, submissionId: string, featured: boolean): Promise<MysterySubmissionResponse> {
-  const res = await apiClient.patch<RawMysterySubmission>(
-    `/teacher/classrooms/${classroomId}/mystery/${submissionId}`,
-    { featured },
-  );
-  return mapMysterySubmission(res.data);
 }
 
 export async function getNotifications(): Promise<NotificationResponse[]> {
