@@ -10,13 +10,13 @@ import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 import { getGameStops, getLevelsForStop } from "@/api/gameApi";
 import { studentKeys } from "@/hooks/student/queryKeys";
-import nyhetskvartalet from "/public/assets/stops/nyhetIcon.png";
-import fotografen from "/public/assets/stops/fotoIcon.png";
-import postkontoret from "/public/assets/stops/postIcon.png";
-import passordbanken from "/public/assets/stops/passIcon.png";
-import markedsplassen from "/public/assets/stops/markedIcon.png";
-import moteplassen from "/public/assets/stops/sosialIcon.png";
-import datasenteret from "/public/assets/stops/dataIcon.png";
+import nyhetskvartalet from "@/assets/stops/nyhetIcon.png";
+import fotografen from "@/assets/stops/fotoIcon.png";
+import postkontoret from "@/assets/stops/postIcon.png";
+import passordbanken from "@/assets/stops/passIcon.png";
+import markedsplassen from "@/assets/stops/markedIcon.png";
+import moteplassen from "@/assets/stops/sosialIcon.png";
+import datasenteret from "@/assets/stops/dataIcon.png";
 
 const STOP_ICONS: Record<string, string> = {
   "Nyhetskvartalet": nyhetskvartalet,
