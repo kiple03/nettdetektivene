@@ -3,6 +3,8 @@ import { Eye, EyeOff, X } from 'lucide-react';
 import type { FormEvent } from 'react';
 import type { AuthFieldErrors } from '@/utils/validators';
 
+import './AuthRegisterModal.css';
+
 interface AuthRegisterModalProps {
   open: boolean;
   title: string;
