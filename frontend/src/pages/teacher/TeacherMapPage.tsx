@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { useParams, Link, useSearchParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getGameStops } from '@/api/gameApi';
 import { useClassroom } from '@/hooks/teacher/useTeacherQueries';
 import { StopMap } from '@/components/map/StopMap';
 import { TeacherStopLevelsModal, type TeacherStopInfo } from '@/components/map/TeacherStopLevelsModal';
 import { MAP_STOPS, type StopData } from '@/data/mapStops';
+import { MapLoadingOverlay } from '@/components/map/MapLoadingOverlay';
 import styles from './TeacherMapPage.module.css';
 
 export default function TeacherMapPage() {
+    const location = useLocation();
     const { classroomId = '' } = useParams<{ classroomId: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
     const { data: classroom } = useClassroom(classroomId);
@@ -47,6 +49,7 @@ export default function TeacherMapPage() {
 
     return (
         <>
+            {location.state?.fromHome && <MapLoadingOverlay />}
             <StopMap
                 stops={MAP_STOPS}
                 onStopClick={handleStopClick}

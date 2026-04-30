@@ -11,6 +11,7 @@ export function ClassroomQuestionsCard({ classroomId }: Props) {
             <h2 className="classroom-detail__section-title">Rediger spill</h2>
             <Link
                 to={`/teacher/classrooms/${classroomId}/map`}
+                state={{ fromHome: true }}
                 className="classroom-detail__edit-game-btn"
             >
                 Til kartet →
