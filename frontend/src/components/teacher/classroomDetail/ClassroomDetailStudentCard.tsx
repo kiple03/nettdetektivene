@@ -154,6 +154,7 @@ export function ClassroomDetailStudentCard({
                                     ) : !isEditing ? (
                                         <>
                                             <button
+                                                type={"button"}
                                                 className="classroom-detail__icon-btn"
                                                 aria-label="Rediger brukernavn"
                                                 onClick={() => onStartEditUsername(student)}

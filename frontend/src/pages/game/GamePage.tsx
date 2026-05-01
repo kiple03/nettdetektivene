@@ -327,13 +327,15 @@ export default function GamePage() {
                                 : "Du fullførte nivået! Tips for dette nivået er lagret i notatboken."
                             : "Du svarte feil på minst ett spørsmål. Tips for dette nivået finner du i notatboken!"}
                     </AlertDialogDescription>
-                    <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "1rem" }}>
+                    <div className={alertStyles.dialogActions}>
                         <Button variant="primary" type="button" onClick={handleRetry}>
                             Prøv igjen
                         </Button>
+
                         <Button variant="primary" type="button" onClick={handleBackToMap}>
                             Tilbake til kartet
                         </Button>
+
                         {levelPassed && levelLeft > 0 && (
                             <Button variant="primary" type="button" onClick={handleNextLevel}>
                                 Neste nivå →

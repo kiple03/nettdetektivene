@@ -298,3 +298,20 @@
   outline: 4px solid #8b5cf6;
   outline-offset: 3px;
 }
+
+.card:focus-visible {
+    z-index: 10;
+    outline: 4px solid #8b5cf6;
+    outline-offset: 5px;
+    box-shadow:
+            0 0 0 8px rgba(139, 92, 246, 0.22),
+            0 16px 28px rgba(76, 42, 148, 0.22),
+            0 28px 46px rgba(71, 48, 27, 0.16);
+}
+
+.card:focus-visible .image {
+    transform: scale(2.0);
+    z-index: 9;
+    box-shadow: none;
+    pointer-events: none;
+}

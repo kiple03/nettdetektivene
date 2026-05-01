@@ -37,6 +37,7 @@ export function ImagePickerModal({ onSelect, onClose }: Props) {
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
+        role="presentation"
       >
         <div
           className="img-picker-modal"

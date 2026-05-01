@@ -105,10 +105,13 @@ export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Pro
         [activeTab]
     );
 
-    useEffect(() => {
+    const handleTabChange = (tabId: TabId) => {
+        if (tabId === activeTab) return;
+
+        setActiveTab(tabId);
         setDraft("");
         setSaveState("idle");
-    }, [activeTab]);
+    };
 
     useEffect(() => {
         let isMounted = true;
@@ -204,7 +207,20 @@ export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Pro
     const isEgneTab = activeTab === "egne";
 
     return (
-        <div className={overlayStyles.backdrop} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+        <div
+            className={overlayStyles.backdrop}
+            role="button"
+            tabIndex={0}
+            onClick={(e) => {
+                if (e.target === e.currentTarget) onClose();
+            }}
+            onKeyDown={(e) => {
+                if (e.target === e.currentTarget && (e.key === "Enter" || e.key === " ")) {
+                    e.preventDefault();
+                    onClose();
+                }
+            }}
+        >
             <div className={overlayStyles.container}>
                 <div className={styles.notebookOpen}>
                     <div className={styles.openBook}>
@@ -294,7 +310,7 @@ export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Pro
                                                             ? { background: tab.color, borderColor: tab.color, color: "#fff" }
                                                             : { color: tab.color, borderColor: tab.color }
                                                     }
-                                                    onClick={() => setActiveTab(tab.id)}
+                                                    onClick={() => handleTabChange(tab.id)}
                                                 >
                                                     {tab.icon} {tab.label}
                                                 </Button>

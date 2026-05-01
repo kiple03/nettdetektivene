@@ -82,6 +82,7 @@ export function CensorWordPanel({ classroomId }: Props) {
                     onClick={(e) => {
                         if (e.target === e.currentTarget) handleClose();
                     }}
+                    role="presentation"
                     >
                     <div
                         className="censor-modal"
@@ -134,6 +135,7 @@ export function CensorWordPanel({ classroomId }: Props) {
                             <div className="censor-modal__input-row">
                                 <input
                                     type="text"
+                                    aria-label="Nytt sensurert ord"
                                     placeholder="Nytt ord"
                                     value={input}
                                     maxLength={50}

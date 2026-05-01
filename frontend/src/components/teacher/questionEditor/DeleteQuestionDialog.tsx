@@ -51,6 +51,7 @@ export function DeleteQuestionDialog({
         onClick={(e) => {
           if (e.target === e.currentTarget && !deleting) onCancel();
         }}
+        role="presentation"
       >
         <div
           className="level-questions__modal"
@@ -58,11 +59,21 @@ export function DeleteQuestionDialog({
           aria-modal="true"
           aria-labelledby="delete-question-title"
         >
-          <h2 id="delete-question-title" className="level-questions__modal-title">Slett spørsmål?</h2>
-          <p className="level-questions__modal-body">
+          <h2
+              id="delete-question-title"
+              className="level-questions__modal-title"
+          >
+              Slett spørsmål?
+          </h2>
+          <p
+              id="delete-question-dialog-description"
+              className="level-questions__modal-body"
+          >
             Spørsmålet vil bli slettet permanent. Handlingen kan ikke angres.
           </p>
+
           {error && <p className="level-questions__modal-error">{error}</p>}
+
           <div className="level-questions__modal-actions">
             <button
               ref={cancelRef}

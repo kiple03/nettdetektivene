@@ -65,6 +65,7 @@ export function QuestionEditorModal({ mode, initialValue, saving, error, onClose
         onClick={(e) => {
           if (e.target === e.currentTarget && !saving) onClose();
         }}
+        role="presentation"
       >
         <div
           ref={modalRef}
