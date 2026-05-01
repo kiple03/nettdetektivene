@@ -10,6 +10,7 @@ interface Props {
   onChange: (v: PictureQuizQuestionDraft) => void;
 }
 
+/** Editor for picture quiz questions where each option has an image, text label, and explanation. */
 export function PictureQuizEditor({ value, onChange }: Props) {
   const setQuestion = (questionText: string) => onChange({ ...value, questionText });
 
