@@ -1,7 +1,9 @@
 package org.ntnu.backend.image.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import org.ntnu.backend.image.dto.TeacherImageResponse;
 import org.ntnu.backend.image.service.ImageService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -14,16 +16,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 /** REST controller for teacher image upload and retrieval. */
 @RestController
+@AllArgsConstructor
+@Tag(name = "Images", description = "Image upload and retrieval for teachers")
 public class ImageController {
 
     private final ImageService imageService;
-
-    public ImageController(ImageService imageService) {
-        this.imageService = imageService;
-    }
 
     /**
      * Uploads an image file for the authenticated teacher.
@@ -35,6 +37,10 @@ public class ImageController {
      */
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(
+        summary = "Upload an image",
+        description = "Uploads a multipart image file and stores it. Returns metadata including the image URL"
+    )
     public ResponseEntity<TeacherImageResponse> uploadImage(
             @RequestParam("file") MultipartFile file,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) throws IOException {
@@ -49,6 +55,7 @@ public class ImageController {
      */
     @GetMapping("/teacher/images")
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "List all images uploaded by the authenticated teacher")
     public List<TeacherImageResponse> listMyImages(
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return imageService.getTeacherImages(principal.getUserId());
