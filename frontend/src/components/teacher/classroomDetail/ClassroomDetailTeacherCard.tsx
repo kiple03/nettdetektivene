@@ -39,7 +39,7 @@ export function ClassroomDetailTeacherCard({
 
     return (
         <div className="classroom-detail__note">
-            <div className="classroom-detail__note-tape" />
+            <div className="classroom-detail__note-tape note-tape" />
             <h2 className="classroom-detail__section-title">
                 Lærere <span className="classroom-detail__count">({teachers.length})</span>
             </h2>

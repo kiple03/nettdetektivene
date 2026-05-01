@@ -80,12 +80,12 @@ export function ClassroomDetailBoard({
 }: ClassroomDetailBoardProps) {
     return (
         <div className="classroom-detail__board-wrap">
-            <div className="classroom-detail__corkboard">
-                <div className="classroom-detail__corkboard-pin" />
+            <div className="classroom-detail__corkboard teacher-corkboard">
+                <div className="teacher-corkboard__pin" />
 
                 <div className="classroom-detail__top-notes">
                     <div className="classroom-detail__note">
-                        <div className="classroom-detail__note-tape" />
+                        <div className="classroom-detail__note-tape note-tape" />
                         <h2 className="classroom-detail__section-title">Klasseinformasjon</h2>
                         <div className="classroom-detail__info">
                             <div className="classroom-detail__info-row">

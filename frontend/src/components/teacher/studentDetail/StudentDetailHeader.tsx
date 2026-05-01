@@ -31,7 +31,7 @@ export function StudentDetailHeader({
 
     return (
         <header className="student-detail__header student-detail__note">
-            <div className="student-detail__note-tape" />
+            <div className="student-detail__note-tape note-tape note-tape--cw" />
             <div className="student-detail__avatar-ring">
                 <LayeredAvatar items={avatarItems} size={132} hairColor={hairColor} />
             </div>

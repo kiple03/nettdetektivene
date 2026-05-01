@@ -1,0 +1,166 @@
+/* ── Censor note card (on the corkboard) ───────────────────── */
+.classroom-detail__censor-desc {
+  font-size: 0.8125rem;
+  color: #6b4c28;
+  margin: -0.5rem 0 1rem;
+  line-height: 1.5;
+}
+
+.classroom-detail__censor-open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: #2c1a06;
+  color: #f5edd8;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.classroom-detail__censor-open-btn:hover {
+  background: #4a2e10;
+}
+
+.classroom-detail__censor-badge {
+  background: #c0392b;
+  color: #fff;
+  border-radius: 99px;
+  padding: 1px 7px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  margin-left: 0.125rem;
+}
+
+/* ── Censor word modal ──────────────────────────────────────── */
+.censor-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.censor-modal {
+  background: #fffdf5;
+  border-radius: 12px;
+  padding: 1.75rem 1.75rem 1.5rem;
+  width: min(30rem, 92vw);
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.censor-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.censor-modal__title {
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: #2c1a06;
+  margin: 0;
+}
+
+.censor-modal__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b4c28;
+  padding: 2px;
+  display: flex;
+  flex-shrink: 0;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.censor-modal__close:hover {
+  color: #2c1a06;
+}
+
+.censor-modal__info {
+  font-size: 0.8125rem;
+  color: #6b4c28;
+  margin: 0;
+  line-height: 1.5;
+  background: #f5edd8;
+  border-radius: 6px;
+  padding: 0.625rem 0.75rem;
+}
+
+.censor-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.censor-modal__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5edd8;
+  border-radius: 6px;
+  padding: 0.4375rem 0.625rem;
+}
+
+.censor-modal__word {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #2c1a06;
+}
+
+.censor-modal__remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9a7040;
+  display: flex;
+  padding: 2px;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.censor-modal__remove:hover {
+  color: #c0392b;
+}
+
+.censor-modal__empty {
+  font-size: 0.8125rem;
+  color: #9a7040;
+  font-style: italic;
+}
+
+.censor-modal__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.censor-modal__input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .censor-modal {
+    max-height: 70vh;
+  }
+}
