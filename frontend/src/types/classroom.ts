@@ -53,15 +53,6 @@ export interface StudentDetail {
   gameCompleted: boolean | null;
 }
 
-export interface NotificationResponse {
-  type: 'stop_completed' | 'student_stuck' | 'inappropriate_name' | 'co_teacher_added';
-  message: string;
-  classroomId: string;
-  studentUsername: string;
-  timestamp: string;
-  read: boolean; // client-side only, from localStorage
-}
-
 export interface StopSummary {
   id: string;
   title: string;

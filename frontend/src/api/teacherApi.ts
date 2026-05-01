@@ -4,7 +4,6 @@ import type {
   StudentSummary,
   StudentDetail,
   LevelEntry,
-  NotificationResponse,
   StopSummary,
   CoTeacher,
 } from '../types/classroom';
@@ -61,14 +60,6 @@ import type { RankedStudent } from '@/types/leaderboard';
 export type { MedalionResponse };
 
 // --- Raw response types (internal, not exported) ---
-
-interface RawNotification {
-  type: string;
-  message: string;
-  classroomId: string;
-  studentUsername: string;
-  timestamp: string;
-}
 
 interface RawEquippedItem {
   id: string;
@@ -199,32 +190,6 @@ function mapStudentDetail(raw: RawStudentDetail, userId: string): StudentDetail 
   };
 }
 
-const NOTIFICATION_TYPE_MAP: Record<string, NotificationResponse['type']> = {
-  LEVEL_COMPLETED: 'stop_completed',
-  CO_TEACHER_ADDED: 'co_teacher_added',
-};
-
-/** Stable localStorage key for a notification's read state. */
-export function notifLsKey(username: string, timestamp: string): string {
-  return `notif:${username}:${timestamp}`;
-}
-
-function mapNotification(raw: RawNotification): NotificationResponse {
-  const mapped = NOTIFICATION_TYPE_MAP[raw.type];
-  if (!mapped) {
-    console.warn(`[teacherApi] Unknown notification type from API: "${raw.type}"`);
-  }
-  const type: NotificationResponse['type'] = mapped ?? 'stop_completed';
-  const read = localStorage.getItem(notifLsKey(raw.studentUsername, raw.timestamp)) === 'true';
-  return {
-    type,
-    message: raw.message,
-    classroomId: raw.classroomId,
-    studentUsername: raw.studentUsername,
-    timestamp: raw.timestamp,
-    read,
-  };
-}
 
 function mapCoTeacher(raw: RawCoTeacher): CoTeacher {
   return { userId: raw.userId, username: raw.username, email: raw.email, isOwner: raw.owner };
@@ -295,11 +260,6 @@ export async function getStudentDetail(classroomId: string, studentId: string): 
     }
     throw err;
   }
-}
-
-export async function getNotifications(): Promise<NotificationResponse[]> {
-  const res = await apiClient.get<RawNotification[]>('/teacher/notifications');
-  return res.data.map(mapNotification);
 }
 
 export async function getStops(): Promise<StopSummary[]> {
