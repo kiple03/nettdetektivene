@@ -387,8 +387,8 @@ export default function LevelQuestionsPage() {
             </div>
 
             <div className="level-questions__board-wrap">
-                <div className="level-questions__board">
-                    <div className="level-questions__board-pin" />
+                <div className="level-questions__board teacher-corkboard">
+                    <div className="teacher-corkboard__pin" />
 
                     <div className="level-questions__toolbar">
                         <button

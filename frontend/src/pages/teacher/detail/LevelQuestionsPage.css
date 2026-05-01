@@ -1,7 +1,9 @@
+@import '../../../components/teacher_layout/corkboard-shared.css';
+
 .level-questions {
     width: 100%;
     box-sizing: border-box;
-    padding: 24px 32px 40px;
+    padding: 1.5rem 2rem 2.5rem;
     color: #fff;
 }
 

@@ -73,7 +73,7 @@ export default function StudentDetail() {
     return (
         <div className="student-detail">
             <div className="student-detail__board-wrap">
-                <div className="student-detail__corkboard">
+                <div className="student-detail__corkboard teacher-corkboard">
                     <StudentDetailHeader
                         username={username}
                         email={email}
