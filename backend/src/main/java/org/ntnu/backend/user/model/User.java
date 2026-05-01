@@ -57,6 +57,7 @@ public class User {
   @Column(nullable = false)
   private RoleEnum role;
 
+  /** Display name chosen by the user; optional (nullable). */
   @Column(nullable = true)
   private String username;
 
@@ -81,6 +82,7 @@ public class User {
   @Column(nullable = false, updatable = false)
   private Instant createdAt;
 
+  /** Hex colour value for the user's avatar hair; optional (nullable). */
   @Column(nullable = true)
   private String hairColor;
 }
