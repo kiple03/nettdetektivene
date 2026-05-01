@@ -41,9 +41,7 @@ Nettdetektivene is a gamified web application that teaches children (3rd–7th g
 ## Links
 
 - [GitHub Repository](https://git.ntnu.no/fredritb/idatt2106_2026_11)
-- [Issue Board](https://git.ntnu.no/fredritb/idatt2106_2026_11/-/boards)
-
-> TODO: Add a link to the deployed/hosted version of the app once it is available
+- [Wiki](https://git.ntnu.no/team-11/idatt2106_2026_11/wiki)
 
 ---
 
@@ -87,7 +85,7 @@ mvn spring-boot:run
 ```
 
 The API starts at `http://localhost:8080`.
-Swagger UI is available at `http://localhost:8080/swagger-ui.html`.
+Swagger UI is available at `http://localhost:8080/api/swagger-ui/index.html`.
 
 ### Frontend (React + Vite)
 
@@ -173,7 +171,7 @@ A `STUDENT` account cannot authenticate on the teacher portal and vice versa —
 ## API Documentation
 
 Interactive documentation is available via Swagger UI at
-`http://localhost:8080/swagger-ui.html` when the backend is running.
+`http://localhost:8080/api/swagger-ui/index.html` when the backend is running.
 
 | Feature Area          | Base Path(s)                                    | Key Operations                                    |
 | --------------------- | ----------------------------------------------- | ------------------------------------------------- |
@@ -215,6 +213,7 @@ npm run test
 Requires the backend to be running on `http://localhost:8080`.
 
 ```bash
+npx playwright install # first time only
 cd frontend
 npm run test:e2e
 ```
@@ -222,26 +221,3 @@ npm run test:e2e
 Playwright auto-starts the frontend dev server. Results and failure screenshots/videos are saved to `playwright-report/`.
 
 ---
-
-## Wiki Structure
-
-### Requirements
-
-- [User Stories Overview](User-Stories-Overview)
-- [Domain Model](Domain-Model)
-
-### User Testing and Models
-
-- [User Tests](User-Tests)
-
-### System
-
-- [Architecture](Architecture)
-- [Project Structure](Project-Structure)
-- [Class Diagram](Class-Diagram)
-- [Server Services](Server-Services)
-- [Database Model](Database-Model)
-- [Source Code](Source-Code)
-- [Installation](Installation)
-- [CI and Testing](CI-and-Testing)
-- [Security](Security)
