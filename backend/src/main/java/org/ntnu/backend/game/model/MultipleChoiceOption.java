@@ -43,11 +43,23 @@ public final class MultipleChoiceOption implements Option {
     /** Optional image URL shown alongside the text. */
     private String imageUrl;
 
-    /** Whether this option is the correct answer; never exposed in API responses. */
+    /** Response images for news **/
+    private String responseImageUrl;
+
+  /** Whether this option is the correct answer; never exposed in API responses. */
     @JsonProperty("isCorrect")
     private boolean isCorrect;
 
     /** Explanation shown after the student answers; never exposed before submission. */
     @NotBlank
     private String explanation;
+
+    public MultipleChoiceOption(Integer id, String text, String imageUrl, boolean isCorrect,
+        String explanation) {
+        this.id = id;
+        this.text = text;
+        this.imageUrl = imageUrl;
+        this.isCorrect = isCorrect;
+        this.explanation = explanation;
+    }
 }

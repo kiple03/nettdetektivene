@@ -279,10 +279,10 @@ class LevelSubmissionValidatorTest {
     }
 
     private ValidationResult correctResponse() {
-        return new ValidationResult(true, null, List.of(), List.of());
+        return new ValidationResult(true, null, List.of(), List.of(), List.of());
     }
 
     private ValidationResult incorrectResponse() {
-        return new ValidationResult(false, "Wrong answer", List.of(), List.of());
+        return new ValidationResult(false, "Wrong answer", List.of(), List.of(), List.of());
     }
 }

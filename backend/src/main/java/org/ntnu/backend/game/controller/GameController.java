@@ -115,12 +115,12 @@ public class GameController {
 
 
   /**
-   * Returns a single question with its options. Answer data (correct
+   * Returns a single question with its responseUrls. Answer data (correct
    * flags and explanations) is excluded from the response by the
    * sealed {@link OptionResponse} hierarchy.
    */
   @Operation(
-      summary = "Get a single questions data, with all the answer options"
+      summary = "Get a single questions data, with all the answer responseUrls"
   )
   @ApiErrorResponse(responseCode = "404", description = "Question was not found")
   @GetMapping("/questions/{questionId}")

@@ -49,10 +49,19 @@ export type StationData = {
   email?: EmailContent; // only for POST_OFFICE
 };
 
+/** Format when returning response image**/
+export type OptionImageResponse = {
+  optionId: number;
+  responseImageUrl: string;
+}
+
 /** Result returned after the player submits an answer. */
 export type SubmitAnswerResult = {
   correct: boolean;
   feedback: string;
+  correctOptionIds?: string[];
+  wrongSelectedOptionIds?: string[];
+  responseImages?: OptionImageResponse[];
 };
 
 /** Detailed result with which option IDs were correct/wrong. */

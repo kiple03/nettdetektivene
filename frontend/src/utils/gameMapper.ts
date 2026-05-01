@@ -63,5 +63,8 @@ export function mapSubmitResponseToSubmitAnswer(
   return {
     correct: response.correct,
     feedback: response.feedback,
+    correctOptionIds: response.correctOptionIds ?? [],
+    wrongSelectedOptionIds: response.wrongSelectedOptionIds ?? [],
+    responseImages: response.responseUrls ?? [],
   };
 }

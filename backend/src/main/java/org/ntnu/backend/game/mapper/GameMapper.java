@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.dto.ClassifyItemsOptionResponse;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.OptionImageResponse;
 import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
 import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;

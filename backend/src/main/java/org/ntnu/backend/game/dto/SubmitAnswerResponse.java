@@ -14,5 +14,6 @@ public record SubmitAnswerResponse(
     boolean correct,
     String feedback,
     List<String> correctOptionIds,
-    List<String> wrongSelectedOptionIds
+    List<String> wrongSelectedOptionIds,
+    List<OptionImageResponse> responseUrls
 ) {}

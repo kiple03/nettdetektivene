@@ -23,7 +23,7 @@
     box-sizing: border-box;
 }
 
-/* grid options for two or four card options */
+/* grid responseUrls for two or four card responseUrls */
 .gridTwoOptions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;

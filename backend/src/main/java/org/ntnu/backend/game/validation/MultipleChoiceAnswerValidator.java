@@ -1,6 +1,7 @@
 package org.ntnu.backend.game.validation;
 
 import java.util.List;
+import org.ntnu.backend.game.dto.OptionImageResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 import org.ntnu.backend.game.dto.subtypes.SingleChoiceAnswer;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
@@ -23,7 +24,7 @@ public class MultipleChoiceAnswerValidator implements SubmittedAnswerValidator {
    *
    * <p>It should be a instance of {@link SingleChoiceAnswer}, and only have one correct answer</p>
    *
-   * @param options the question's parsed options including correct flags
+   * @param options the question's parsed responseUrls including correct flags
    * @param submission must be a {@link SingleChoiceAnswer}
    * @return correct/incorrect with the option's explanation
    * @throws IllegalArgumentException if submission is not a {@link SingleChoiceAnswer}
@@ -37,23 +38,30 @@ public class MultipleChoiceAnswerValidator implements SubmittedAnswerValidator {
               + submission.getClass().getSimpleName());
     }
 
-    List<Integer> correctOptionIds = options.stream()
-            .map(o -> (MultipleChoiceOption) o)
-            .filter(MultipleChoiceOption::isCorrect)
-            .map(MultipleChoiceOption::getId)
-            .toList();
+    List<MultipleChoiceOption> mcOptions = options.stream()
+        .map(o -> (MultipleChoiceOption) o)
+        .toList();
 
-    return options.stream()
-            .filter(o -> o instanceof MultipleChoiceOption mc && mc.getId() == choice.getSelectedId())
-            .map(o -> (MultipleChoiceOption) o)
-            .findFirst()
-            .map(mc -> new ValidationResult(
-                    mc.isCorrect(),
-                    mc.getExplanation(),
-                    correctOptionIds.stream().map(String::valueOf).toList(),
-                    List.of()
-            ))
-            .orElseThrow(() -> new IllegalArgumentException(
-                    "Option not found: " + choice.getSelectedId()));
+    List<Integer> correctOptionIds = mcOptions.stream()
+        .filter(MultipleChoiceOption::isCorrect)
+        .map(MultipleChoiceOption::getId)
+        .toList();
+
+    List<OptionImageResponse> responseImages = mcOptions.stream()
+        .map(mc -> new OptionImageResponse(mc.getId(), mc.getResponseImageUrl()))
+        .toList();
+
+    return mcOptions.stream()
+        .filter(mc -> mc.getId() == choice.getSelectedId())
+        .findFirst()
+        .map(mc -> new ValidationResult(
+            mc.isCorrect(),
+            mc.getExplanation(),  // always return explanation, not null
+            correctOptionIds.stream().map(String::valueOf).toList(),
+            mc.isCorrect() ? List.of() : List.of(String.valueOf(mc.getId())),
+            responseImages
+        ))
+        .orElseThrow(() -> new IllegalArgumentException(
+            "Option not found: " + choice.getSelectedId()));
   }
 }

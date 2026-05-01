@@ -18,7 +18,7 @@ public class ContentRead {
   /**
    * Deserializes a JSON array string into a list of {@link Option} objects.
    *
-   * @param json a JSON array string representing a list of options
+   * @param json a JSON array string representing a list of responseUrls
    * @return a {@link List} of deserialized {@link Option} instances
    * @throws RuntimeException if the JSON is malformed or cannot be mapped to {@link Option}
    */
@@ -26,7 +26,7 @@ public class ContentRead {
     try {
       return mapper.readValue(json, new TypeReference<List<Option>>() {});
     } catch (Exception e) {
-      throw new RuntimeException("Kunne ikke lese options fra JSON", e);
+      throw new RuntimeException("Kunne ikke lese responseUrls fra JSON", e);
     }
   }
 }

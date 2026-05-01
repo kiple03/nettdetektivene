@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/buttons/Button";
 import styles from "./PictureGrid.module.css";
+import type {OptionImageResponse} from "@/types/station.ts";
 
 /** An image/text option card in the picture grid. */
 type PictureOption = {
@@ -24,6 +25,7 @@ type PictureGridProps = {
     wrongIds?: number[];
     selectionMode?: "single" | "multiple";
     gridClassName?: string;
+    responseImages?: OptionImageResponse[];
 };
 
 /**
@@ -31,14 +33,15 @@ type PictureGridProps = {
  * In `single` mode, selecting a card submits immediately; in `multiple` mode a submit button is shown.
  */
 export default function PictureGrid({
-                                        questionId,
-                                        options,
-                                        onSubmit,
-                                        disabled = false,
-                                        correctIds = [],
-                                        wrongIds = [],
+                                      questionId,
+                                      options,
+                                      onSubmit,
+                                      disabled = false,
+                                      correctIds = [],
+                                      wrongIds = [],
                                       selectionMode = "multiple",
                                       gridClassName = "",
+                                      responseImages = [],
                                     }: PictureGridProps) {
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,12 +94,16 @@ export default function PictureGrid({
     const gridSizeClass =
         options.length <= 2 ? styles.gridTwoOptions : styles.gridFourOptions;
 
+  console.log("responseImages", responseImages);
+  console.log("options", options);
+
     return (
         <div className={styles.wrapper}>
             <div className={`${styles.grid} ${gridSizeClass} ${gridClassName}`}>
                 {options.map((option) => {
-                    const hasImage = Boolean(option.imageUrl?.trim());
-                    const hasText = Boolean(option.text?.trim());
+                  const displayUrl = responseImages.find(r => r.optionId === option.id)?.responseImageUrl ?? option.imageUrl;
+                  const hasImage = Boolean(displayUrl?.trim());
+                  const hasText = Boolean(option.text?.trim());
 
                     return (
                         <Button
@@ -110,7 +117,7 @@ export default function PictureGrid({
                             {hasImage && (
                                 <div className={styles.imageFrame}>
                                     <img
-                                        src={option.imageUrl!}
+                                        src={displayUrl!}
                                         alt={option.altText ?? option.text ?? ""}
                                         className={styles.image}
                                     />

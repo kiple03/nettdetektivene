@@ -26,7 +26,7 @@ public interface SubmittedAnswerValidator {
    * Compares the submitted answer against the correct answer stored in the
    * option content JSON.
    *
-   * @param options list of the question options from {@code Question.optionContent}
+   * @param options list of the question responseUrls from {@code Question.optionContent}
    * @param submission the student's submission
    * @return the validation result, including feedback for the student
    * @throws IllegalArgumentException if the submission shape doesn't match this level type

@@ -269,7 +269,7 @@ public class TeacherQuestionService {
         try {
             return objectMapper.writeValueAsString(options);
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to serialize options", e);
+            throw new IllegalStateException("Failed to serialize responseUrls", e);
         }
     }
 
