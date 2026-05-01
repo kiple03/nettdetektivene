@@ -1,12 +1,18 @@
+/** Props for {@link ClassroomDetailDeleteDialog}. */
 type ClassroomDetailDeleteDialogProps = {
+    /** Name of the classroom being deleted, shown in the confirmation message. */
     title: string;
+    /** Whether the dialog is visible. */
     open: boolean;
+    /** Whether a delete request is in flight; disables action buttons while true. */
     deleting: boolean;
+    /** Error message to display, or null if there is no error. */
     error: string | null;
     onCancel: () => void;
     onConfirm: () => void;
 };
 
+/** Confirmation dialog for permanently deleting a classroom. */
 export function ClassroomDetailDeleteDialog({
     title,
     open,

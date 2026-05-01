@@ -1,9 +1,12 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/buttons/Button';
 
+/** Props for {@link ClassroomDetailHeader}. */
 type ClassroomDetailHeaderProps = {
     title: string;
+    /** Whether the title is currently being edited. */
     editMode: boolean;
+    /** Draft title value while in edit mode. */
     editTitle: string;
     saving: boolean;
     saveError: string | null;
@@ -14,6 +17,7 @@ type ClassroomDetailHeaderProps = {
     onDelete: () => void;
 };
 
+/** Header for the classroom detail page, with inline title editing and delete action. */
 export function ClassroomDetailHeader({
     title,
     editMode,
