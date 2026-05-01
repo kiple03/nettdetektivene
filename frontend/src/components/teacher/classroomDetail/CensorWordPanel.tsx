@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { X, ShieldAlert } from 'lucide-react';
 import './CensorWordPanel.css';
 import { useCensorWords } from '@/hooks/teacher/useTeacherQueries';
@@ -30,11 +30,26 @@ export function CensorWordPanel({ classroomId }: Props) {
     }
 
     /** Closes the modal and resets input and mutation state. */
-    function handleClose() {
+    const handleClose = useCallback(() => {
         setOpen(false);
         setInput('');
         addMutation.reset();
-    }
+    }, [addMutation]);
+
+    useEffect(() => {
+        if (!open) return;
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') handleClose();
+        };
+        document.addEventListener('keydown', handler);
+        return () => document.removeEventListener('keydown', handler);
+    }, [open, handleClose]);
+
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (open) inputRef.current?.focus();
+    }, [open]);
 
     return (
         <>
@@ -60,14 +75,16 @@ export function CensorWordPanel({ classroomId }: Props) {
 
             {/* Modal popup */}
             {open && (
+                <>
+                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <div
                     className="censor-modal__backdrop"
-                    onClick={handleClose}
-                    role="presentation"
-                >
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) handleClose();
+                    }}
+                    >
                     <div
                         className="censor-modal"
-                        onClick={(e) => e.stopPropagation()}
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="censor-modal-title"
@@ -82,7 +99,7 @@ export function CensorWordPanel({ classroomId }: Props) {
                                 onClick={handleClose}
                                 aria-label="Lukk"
                             >
-                                <X size={18} strokeWidth={2.5} />
+                                <X size={18} strokeWidth={2.5} aria-hidden="true"/>
                             </button>
                         </div>
 
@@ -101,7 +118,7 @@ export function CensorWordPanel({ classroomId }: Props) {
                                         disabled={deleteMutation.isPending}
                                         aria-label={`Fjern ${w.word}`}
                                     >
-                                        <X size={13} strokeWidth={2.5} />
+                                        <X size={13} strokeWidth={2.5} aria-hidden="true"/>
                                     </button>
                                 </li>
                             ))}
@@ -122,7 +139,7 @@ export function CensorWordPanel({ classroomId }: Props) {
                                     maxLength={50}
                                     onChange={(e) => setInput(e.target.value)}
                                     className="classroom-detail__invite-input"
-                                    autoFocus
+                                    ref={inputRef}
                                 />
                                 <button
                                     type="submit"
@@ -135,6 +152,8 @@ export function CensorWordPanel({ classroomId }: Props) {
                         </form>
                     </div>
                 </div>
+                </>
+
             )}
         </>
     );

@@ -78,29 +78,35 @@ export function ClassroomDetailStudentCard({
                                             {usernameError && (
                                                 <span className="classroom-detail__save-error">{usernameError}</span>
                                             )}
+                                            {/* eslint-disable jsx-a11y/no-autofocus */}
                                             <input
-                                                className="classroom-detail__username-input"
-                                                value={editUsernameValue}
-                                                onChange={(event) => onEditUsernameChange(event.target.value)}
-                                                onKeyDown={(event) => {
-                                                    if (event.key === 'Enter') onSaveUsername(student);
-                                                    if (event.key === 'Escape') onCancelEditUsername();
-                                                }}
-                                                maxLength={30}
-                                                autoFocus
+                                            className="classroom-detail__username-input"
+                                            value={editUsernameValue}
+                                            onChange={(event) => onEditUsernameChange(event.target.value)}
+                                            onKeyDown={(event) => {
+                                                if (event.key === 'Enter') onSaveUsername(student);
+                                                if (event.key === 'Escape') onCancelEditUsername();
+                                            }}
+                                            maxLength={30}
+                                            autoFocus
                                             />
+                                            {/* eslint-enable jsx-a11y/no-autofocus */}
                                             <button
+                                                type="button"
                                                 className="classroom-detail__action-btn classroom-detail__action-btn--save"
                                                 onClick={() => onSaveUsername(student)}
                                                 disabled={savingUsername}
-                                            >
+                                                aria-label={`Lagre brukernavn for ${username}`}
+                                                >
                                                 {savingUsername ? '…' : 'Lagre'}
-                                            </button>
-                                            <button
+                                                </button>
+                                                <button
+                                                type="button"
                                                 className="classroom-detail__action-btn"
                                                 onClick={onCancelEditUsername}
                                                 disabled={savingUsername}
-                                            >
+                                                aria-label={`Avbryt redigering av ${username}`}
+                                                >
                                                 Avbryt
                                             </button>
                                         </div>
@@ -127,6 +133,8 @@ export function ClassroomDetailStudentCard({
                                         <>
                                             <span className="classroom-detail__confirm-label">Fjerne?</span>
                                             <button
+                                                type="button"
+                                                aria-label={`Bekreft fjerning av ${username}`}
                                                 className="classroom-detail__action-btn classroom-detail__action-btn--danger"
                                                 onClick={() => onRemoveStudent(userId)}
                                                 disabled={removingId === userId}
@@ -134,6 +142,8 @@ export function ClassroomDetailStudentCard({
                                                 {removingId === userId ? '…' : 'Ja'}
                                             </button>
                                             <button
+                                                type="button"
+                                                aria-label={`Avbryt fjerning av ${username}`}
                                                 className="classroom-detail__action-btn"
                                                 onClick={() => onConfirmRemoveChange(null)}
                                                 disabled={removingId === userId}

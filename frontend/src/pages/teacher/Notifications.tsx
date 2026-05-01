@@ -155,19 +155,12 @@ export default function Notifications() {
                     const noteTint = notification.read ? '#f8f0dc' : NOTE_TINTS[notification.type];
 
                     return (
-                      <li
-                        key={notification.id}
-                        className={`notifs__item${notification.read ? ' notifs__item--read' : ' notifs__item--unread'}`}
+                      <li key={notification.id}>
+                      <button
+                        type="button"
+                        className={`notifs__item btn-unstyled ${notification.read ? 'notifs__item--read' : 'notifs__item--unread'}`}
                         style={{ background: noteTint }}
                         onClick={() => handleNotificationClick(notification)}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handleNotificationClick(notification);
-                          }
-                        }}
                       >
                         <div
                           className="notifs__pin"
@@ -204,7 +197,7 @@ export default function Notifications() {
                                 }
                               }}
                             >
-                              <Check size={16} />
+                              <Check size={16} aria-hidden="true" />
                             </button>
                           )}
                           <button
@@ -216,10 +209,11 @@ export default function Notifications() {
                               handleDelete(notification.id);
                             }}
                           >
-                            <Trash2 size={16} />
+                            <Trash2 size={16} aria-hidden="true" />
                           </button>
                         </div>
-                      </li>
+                      </button>
+                    </li>
                     );
                   })}
                 </ul>

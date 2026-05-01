@@ -32,8 +32,9 @@ export function TextQuizEditor({ value, onChange }: Props) {
   return (
     <div className="mc-editor">
       <div className="mc-editor__field">
-        <label className="mc-editor__label">Spørsmålstekst</label>
+        <label className="mc-editor__label" htmlFor='question-text'>Spørsmålstekst</label>
         <textarea
+          id="question-text"
           className="mc-editor__textarea"
           value={value.questionText}
           onChange={e => setQuestion(e.target.value)}
