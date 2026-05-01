@@ -78,8 +78,9 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
   const hideBackButton = location.state?.fromAuth === true;
 
   const { data: userProfile } = useUserProfile();
-  const { mutate: updateUserProfile } = useUpdateUserProfile();
+  const { mutate: updateUserProfile, isPending: isUpdatingProfile } = useUpdateUserProfile();
   const {mutate: saveOutfit, isPending: isSaving} = useSaveAvatarOutfit();
+  const isSavingAny = isSaving || isUpdatingProfile;
 
   const [activeTab, setActiveTab] = useState<Tab>('profil');
 
@@ -180,20 +181,25 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
     setUsernameError('');
 
     const itemIds = equipped.map(item => item.id);
-    saveOutfit(itemIds);
-
-    updateUserProfile({ username: `Detektiv ${trimmed}`, hairColor: hairColorHex }, {
+    saveOutfit(itemIds, {
       onSuccess: () => {
-        navigate(getClassroomId() ? '/home' : '/join-with-code');
+        updateUserProfile({ username: `Detektiv ${trimmed}`, hairColor: hairColorHex }, {
+          onSuccess: () => {
+            navigate(getClassroomId() ? '/home' : '/join-with-code');
+          },
+          onError: (err) => {
+            const axiosErr = err as AxiosError<{ message?: string }>;
+            const status = axiosErr.response?.status;
+            if (status === 400) {
+              setUsernameError(axiosErr.response?.data?.message ?? 'Ugyldig brukernavn');
+            } else {
+              setUsernameError('Kunne ikke lagre brukernavn. Prøv igjen.');
+            }
+          },
+        });
       },
-      onError: (err) => {
-        const axiosErr = err as AxiosError<{ message?: string }>;
-        const status = axiosErr.response?.status;
-        if (status === 400) {
-          setUsernameError(axiosErr.response?.data?.message ?? 'Ugyldig brukernavn');
-        } else {
-          setUsernameError('Kunne ikke lagre brukernavn. Prøv igjen.');
-        }
+      onError: () => {
+        setUsernameError('Kunne ikke lagre antrekk. Prøv igjen.');
       },
     });
   };
@@ -335,10 +341,10 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
             <button
               onClick={handleSave}
               ref={saveButtonRef}
-              disabled={isSaving || username.trim().length < 3}
+              disabled={isSavingAny || username.trim().length < 3}
               className={styles.saveButton}
             >
-              {isSaving ? "Lagrer..." : "Lagre antrekk"}
+              {isSavingAny ? "Lagrer..." : "Lagre antrekk"}
             </button>
           </div>
         </div>
