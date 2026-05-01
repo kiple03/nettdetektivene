@@ -1,8 +1,7 @@
 package org.ntnu.backend.game.dto.subtype;
 
-import org.ntnu.backend.game.dto.SubmitAnswerRequest;
-
 import lombok.Getter;
+import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 
 /** Answer payload for password-strength question types. */
 @Getter

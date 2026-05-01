@@ -2,11 +2,9 @@ package org.ntnu.backend.classroom.dto;
 
 import java.time.Instant;
 import java.util.UUID;
-
-import org.ntnu.backend.classroom.model.enums.NotificationType;
-
 import lombok.Builder;
 import lombok.Value;
+import org.ntnu.backend.classroom.model.enums.NotificationType;
 
 /**
  * DTO representing a notification sent to a teacher about activity in their classroom

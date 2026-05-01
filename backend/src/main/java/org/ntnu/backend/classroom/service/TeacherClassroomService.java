@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import lombok.AllArgsConstructor;
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
@@ -45,8 +45,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import lombok.AllArgsConstructor;
 
 /**
  * Service class handling teacher-specific views, dashboards, and authorization

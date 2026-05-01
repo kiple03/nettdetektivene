@@ -1,11 +1,11 @@
 package org.ntnu.backend.game.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.dto.bossbattle.BossBattleResultResponse;
 import org.ntnu.backend.game.dto.bossbattle.BossBattleSaveRequest;
 import org.ntnu.backend.game.service.BossBattleService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

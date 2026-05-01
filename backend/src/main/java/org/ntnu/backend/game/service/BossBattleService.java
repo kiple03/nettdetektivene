@@ -3,7 +3,6 @@ package org.ntnu.backend.game.service;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.avatar.service.UserAvatarService;
 import org.ntnu.backend.classroom.model.Enrollment;

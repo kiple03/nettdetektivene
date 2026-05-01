@@ -3,22 +3,22 @@ package org.ntnu.backend.avatar.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.dto.UpdateEquippedItemsRequest;
 import org.ntnu.backend.avatar.dto.UpdateUserProfileRequest;
 import org.ntnu.backend.avatar.dto.UserProfileResponse;
 import org.ntnu.backend.avatar.service.UserAvatarService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import lombok.RequiredArgsConstructor;
 
 
 /**

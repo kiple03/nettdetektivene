@@ -11,9 +11,9 @@ import org.ntnu.backend.exception.OptionValidationException;
 import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.PostOfficeOption;
-import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 

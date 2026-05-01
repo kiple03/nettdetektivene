@@ -1,16 +1,15 @@
 package org.ntnu.backend.notes.mapper;
 
-import org.ntnu.backend.notes.dto.NoteResponse;
-import org.ntnu.backend.notes.dto.NotesOverviewResponse;
-import org.ntnu.backend.notes.model.Note;
-import org.ntnu.backend.notes.model.StudentLevelNote;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.ntnu.backend.notes.dto.NoteResponse;
+import org.ntnu.backend.notes.dto.NotesOverviewResponse;
+import org.ntnu.backend.notes.model.Note;
+import org.ntnu.backend.notes.model.StudentLevelNote;
+import org.springframework.stereotype.Component;
 
 /**
  * Maps note domain objects to DTOs used by the notebook API.

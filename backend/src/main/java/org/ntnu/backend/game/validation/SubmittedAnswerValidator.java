@@ -3,8 +3,8 @@ package org.ntnu.backend.game.validation;
 import java.util.List;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 import org.ntnu.backend.game.model.Option;
-import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.model.Question;
+import org.ntnu.backend.game.model.enums.LevelType;
 
 /**
  * Strategy for validating a student's submitted answer against a {@link Question}'s

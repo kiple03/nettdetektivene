@@ -3,7 +3,6 @@ package org.ntnu.backend.classroom.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.ntnu.backend.classroom.model.Notification;
 import org.ntnu.backend.classroom.model.enums.NotificationType;
 import org.springframework.data.jpa.repository.JpaRepository;

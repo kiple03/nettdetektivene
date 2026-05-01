@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.NotificationResponse;
 import org.ntnu.backend.classroom.mapper.NotificationMapper;
 import org.ntnu.backend.classroom.model.Enrollment;
@@ -27,8 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import lombok.RequiredArgsConstructor;
 
 /** Manages teacher notifications for student activity events and scheduled stuck-student checks. */
 @Service

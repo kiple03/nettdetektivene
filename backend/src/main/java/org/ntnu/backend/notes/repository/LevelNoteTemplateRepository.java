@@ -1,11 +1,10 @@
 package org.ntnu.backend.notes.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.ntnu.backend.notes.model.LevelNoteTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Repository for predefined note templates attached to levels.

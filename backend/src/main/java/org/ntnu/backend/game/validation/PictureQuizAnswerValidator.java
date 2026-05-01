@@ -3,7 +3,6 @@ package org.ntnu.backend.game.validation;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 import org.ntnu.backend.game.dto.subtype.MultiSelectAnswer;
 import org.ntnu.backend.game.model.Option;

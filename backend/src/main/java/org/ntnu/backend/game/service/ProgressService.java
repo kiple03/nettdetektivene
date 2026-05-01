@@ -16,11 +16,11 @@ import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.StopLevelCount;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.repository.UserProgressRepository;
+import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.ntnu.backend.medalion.service.MedalionService;
 
 /**
  * Manages student progression through the game's stops and levels.

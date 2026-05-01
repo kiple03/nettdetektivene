@@ -3,11 +3,10 @@ package org.ntnu.backend.classroom.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-
-import org.ntnu.backend.classroom.dto.censor.AddCensorWordRequest;
-import org.ntnu.backend.classroom.dto.censor.CensorWordResponse;
+import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CoTeacherResponse;
@@ -17,6 +16,8 @@ import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
+import org.ntnu.backend.classroom.dto.censor.AddCensorWordRequest;
+import org.ntnu.backend.classroom.dto.censor.CensorWordResponse;
 import org.ntnu.backend.classroom.service.CensorWordService;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.config.openapi.ApiErrorResponse;
@@ -35,9 +36,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 
 /**
  * REST controller exposing classroom-management endpoints for teachers.

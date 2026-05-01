@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.config.openapi.ApiErrorResponse;
-import org.ntnu.backend.config.openapi.ApiErrorResponses;
 import org.ntnu.backend.config.openapi.PublicEndpoint;
 import org.ntnu.backend.user.dto.CreateUserRequest;
 import org.ntnu.backend.user.dto.LoginRequest;

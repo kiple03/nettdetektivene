@@ -1,8 +1,8 @@
 package org.ntnu.backend.game.validation;
 
 import java.util.List;
-import org.ntnu.backend.game.dto.optionresponse.OptionImageResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
+import org.ntnu.backend.game.dto.optionresponse.OptionImageResponse;
 import org.ntnu.backend.game.dto.subtype.SingleChoiceAnswer;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;

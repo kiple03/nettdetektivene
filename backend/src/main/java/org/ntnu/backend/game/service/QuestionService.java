@@ -7,7 +7,6 @@ import org.ntnu.backend.exception.LevelLockedException;
 import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.QuestionResponse;
-
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
 import org.ntnu.backend.game.mapper.GameMapper;
@@ -19,10 +18,10 @@ import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.QuestionRepository;
 import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidator;
+import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
 import org.ntnu.backend.game.validation.ValidationResult;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
-import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
 
 /**
  * Handles the question read and answer submission flow.

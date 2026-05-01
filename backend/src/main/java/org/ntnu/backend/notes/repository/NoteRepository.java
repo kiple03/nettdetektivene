@@ -2,7 +2,6 @@ package org.ntnu.backend.notes.repository;
 
 import java.util.List;
 import java.util.UUID;
-
 import org.ntnu.backend.notes.model.Note;
 import org.ntnu.backend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

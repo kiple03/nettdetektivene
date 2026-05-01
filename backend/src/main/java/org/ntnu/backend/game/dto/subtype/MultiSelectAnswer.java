@@ -2,7 +2,6 @@ package org.ntnu.backend.game.dto.subtype;
 
 
 import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;

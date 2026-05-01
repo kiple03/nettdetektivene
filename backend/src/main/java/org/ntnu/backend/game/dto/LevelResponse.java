@@ -1,7 +1,7 @@
 package org.ntnu.backend.game.dto;
 
-import org.ntnu.backend.game.model.enums.LevelType;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.ntnu.backend.game.model.enums.LevelType;
 
 /**
  * Response DTO representing a single level within a game stop.

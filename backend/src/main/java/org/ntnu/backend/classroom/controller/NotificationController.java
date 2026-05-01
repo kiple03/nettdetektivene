@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
-
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.NotificationResponse;
 import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * REST controller for teacher notification management.
