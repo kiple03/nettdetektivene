@@ -1,6 +1,7 @@
 package org.ntnu.backend.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -112,6 +113,17 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUserExists(UserAlreadyExistsException ex) {
         return ResponseEntity.status(ex.getStatus())
                 .body(ErrorResponse.of(ex.getMessage(), ex.getField()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex) {
+        String msg = ex.getMessage() != null ? ex.getMessage() : "";
+        if (msg.contains("email") || msg.contains("UK")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(ErrorResponse.of("E-posten er allerede i bruk.", "email"));
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.of("Conflict"));
     }
 
     /**
