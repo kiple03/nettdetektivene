@@ -1,5 +1,8 @@
 package org.ntnu.backend.classroom.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import java.util.List;
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/leaderboard")
+@Tag(name = "Leaderboard", description = "Classroom and student rankings")
 public class LeaderboardController {
 
   private final LeaderboardService leaderboardService;
@@ -41,6 +45,11 @@ public class LeaderboardController {
    * @return paginated list of ranked classrooms
    */
   @GetMapping("/classrooms")
+  @Operation(
+      summary = "Get global classroom leaderboard",
+      description = "Paginated ranking of all classrooms by score. Accessible to all authenticated users"
+  )
+  @ApiResponse(responseCode = "200", description = "Paginated leaderboard returned")
   public Page<RankedClassroomResponse> getGlobalLeaderboard(
       @RequestParam(defaultValue = "0") @Min(0) int page,
       @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size
@@ -59,6 +68,10 @@ public class LeaderboardController {
    */
   @GetMapping("/classrooms/{classroomId}")
   @PreAuthorize("hasRole('TEACHER')")
+  @Operation(
+      summary = "Get student leaderboard for a classroom",
+      description = "Returns students ranked by score. Only accessible by a teacher with access to the classroom"
+  )
   public List<RankedStudentResponse> getClassroomLeaderboard(
       @PathVariable UUID classroomId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal
@@ -77,10 +90,14 @@ public class LeaderboardController {
    */
   @GetMapping("teachers/{teacherId}")
   @PreAuthorize("hasRole('TEACHER')")
+  @Operation(
+      summary = "Get leaderboard scores for a teacher's classrooms",
+      description = "Returns score summaries for all classrooms owned by the given teacher"
+  )
   public List<LeaderboardClassroomResponse> getTeacherClassroomScores(
       @PathVariable UUID teacherId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal
   ) {
-    return leaderboardService.getTeacherClassroomScores(teacherId);
+    return leaderboardService.getTeacherClassroomScores(teacherId );
   }
 }
