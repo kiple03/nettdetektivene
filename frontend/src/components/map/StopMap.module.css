@@ -98,7 +98,11 @@
   left: 24px;
 }
 
-.scrollBtnRight,
+.scrollBtnRight {
+  /* shifted left to avoid overlapping the fixed mute button (3.25rem wide at right:1rem) */
+  right: 5.5rem;
+}
+
 .scrollBtnDown {
   right: 24px;
 }
@@ -109,6 +113,15 @@
 }
 
 @media (orientation: portrait) {
+  /* lift scroll buttons above the mute button (mute occupies bottom: 1rem–4.25rem) */
+  .scrollBtnDown {
+    bottom: 5.25rem;
+  }
+
+  .scrollBtnUp {
+    bottom: 10.25rem; /* scrollBtnDown (5.25rem) + btn height (4rem) + gap (1rem) */
+  }
+
   .container {
     overflow-x: hidden;
     overflow-y: auto;

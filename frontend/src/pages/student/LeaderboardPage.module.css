@@ -19,6 +19,20 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
+@media (max-width: 480px) {
+  .page {
+    padding: 3rem 0.75rem 1rem;
+  }
+
+  .board {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .note {
+    padding: 1rem 0.75rem;
+  }
+}
+
 .backBtn {
   position: fixed;
   top: 1rem;
