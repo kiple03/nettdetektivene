@@ -186,16 +186,20 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level1,
         "Hvilken NRK-artikkel er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Norge mangler en plan for matberedskap - løsningen er 5000 nye 'Jon Almaas-er'", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-1.png", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr1-1.png", true, "Den andre artikelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid."),
-            new MultipleChoiceOption(2, "Jon Almaas er den aller beste", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-2.png", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr1-2.png", false, "Denne artikkelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid.")
+            new MultipleChoiceOption(1, "Norge mangler en plan for matberedskap - løsningen er 5000 nye 'Jon Almaas-er'", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-1.png",
+                "Skjermbilde av Jon Almaas artikkel", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr1-1.png", true, "Den andre artikelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid."),
+            new MultipleChoiceOption(2, "Jon Almaas er den aller beste", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-2.png",
+                "Skjermbilde av Jon Almaas artikkel men med skrivefeil","http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr1-2.png", false, "Denne artikkelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid.")
         )
     );
 
     ensureQuestion(level1,
         "Hvilken adressa-artikkel er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "EKSTRA penger til flere ansatte i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-1.png", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr2-1.png", false, "I denne artikelen blir det brukt store bokstavene og Ukjent stortingspolitker"),
-            new MultipleChoiceOption(2, "Ekstra penger til flere ansatte i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-2.png", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr2-2.png", true, "Oppdaget du de store bokstavene og den Ukjente stortingspolitikeren?")
+            new MultipleChoiceOption(1, "EKSTRA penger til flere ansatte i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-1.png",
+                "Skjermbilde av barnehage artikkel med store bokstaver", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr2-1.png", false, "I denne artikelen blir det brukt store bokstavene og Ukjent stortingspolitker"),
+            new MultipleChoiceOption(2, "Ekstra penger til flere ansatte i barnehagen: -Jeg er jublende glad", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News2-2.png",
+                "Skjermbilde av barnehage artikkel", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr2-2.png", true, "Oppdaget du de store bokstavene og den Ukjente stortingspolitikeren?")
         )
     );
 
@@ -221,16 +225,20 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level2,
         "Hvilken nyhetssak fra Bergens tidene er ekte?",
         List.of(
-            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-1.png", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr3-1.png", true, "Den andre atrikkelen inneholder en ukjent mann og 2600-tallet!"),
-            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-2.png", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr3-2.png", false, "Denne artikkelen innholder en ukjent mann og 2600-tallet")
+            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-1.png",
+                "Skjermbilde av bergens tide artikkel", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr3-1.png", true, "Den andre atrikkelen inneholder en ukjent mann og 2600-tallet!"),
+            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News3-2.png",
+                "Skjermbilde av bergens tide artikkel med ukjent mann", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr3-2.png", false, "Denne artikkelen innholder en ukjent mann og 2600-tallet")
         )
     );
 
     ensureQuestion(level2,
         "Hvilken BT-artikkel er ekte?",
         List.of(
-            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-1.png","http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr4-1.png", false, "Hvor er etternavnet til næringsminsteren? Når er er klokken 09:71?"),
-            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-2.png", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr4-2.png", true, "Flott! Du oppdaget at næringsministeren mangler etternavn og at det var noe rart med klokkeslettet?")
+            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-1.png",
+                "Skjermbilde av BT artikkel med rar klokkeslett", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr4-1.png", false, "Hvor er etternavnet til næringsminsteren? Når er klokken 09:71?"),
+            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News4-2.png",
+                "Skjermbilde av BT artikkel med riktig klokkeslett", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr4-2.png", true, "Flott! Du oppdaget at næringsministeren mangler etternavn og at det var noe rart med klokkeslettet?")
         )
     );
 
@@ -256,16 +264,20 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level3,
         "Hvilken adressa-artikkel er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Har solgt over 40 000 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News5-1.png","http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr5-1.png", true, "Det stemmer! Det er mer logisk riktig å lage artikkel på at 40 000 biletter er solgt! I tilegg fant du kanskje det manglende etternavnet i bildeteksten?"),
-            new MultipleChoiceOption(2, "Har solgt over 20 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News5-2.png", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr5-1.png", false, "Fornavn brukes sjeldent alene i nyhetsartikler og 20 billetter solgt er ikke logisk å lage artikkel på.")
+            new MultipleChoiceOption(1, "Har solgt over 40 000 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News5-1.png",
+                "Skjermbilde av artikkel hvor nye hjorten teater solgte 40 000 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr5-1.png", true, "Det stemmer! Det er mer logisk riktig å lage artikkel på at 40 000 biletter er solgt! I tilegg fant du kanskje det manglende etternavnet i bildeteksten?"),
+            new MultipleChoiceOption(2, "Har solgt over 20 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News5-2.png",
+                "Skjermbilde av artikkel hvor nye hjorten teater solgte 20 biletter", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr5-1.png", false, "Fornavn brukes sjeldent alene i nyhetsartikler og 20 billetter solgt er ikke logisk å lage artikkel på.")
         )
     );
 
     ensureQuestion(level3,
         "Hvilken NRK-nyhetssak er ekte?",
         List.of(
-            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-1.png","http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr6-1.png", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
-            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-2.png","http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr6-2.png", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
+            new MultipleChoiceOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-1.png",
+                "Skjermbilde av NRK artikkel hvor alder stemmer", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr6-1.png", true, "Veldig bra! Her stemte alderen overens, det var ingen store bokstaver for å skape frykt og begge journalistene hadde etternavn."),
+            new MultipleChoiceOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News6-2.png",
+                "Skjermbilde av NRK artikkel hvor alder ikke stemmer", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/Newsr6-2.png", false, "Her stemte ikke alderen overens, det er brukt store bokstaver og en av journalistene mangler etternavn")
         )
     );
 
@@ -302,14 +314,14 @@ public class GameSeeder implements CommandLineRunner {
         level,
         "Hvilke bilder er AI-generert?",
         List.of(
-            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseReal.png", false,
-                "Feil! Bildet er ekte!"),
-            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseAi.png", true,
-                "Riktig! Dette ser AI-generert ut fordi bildet har rare ting som ikke passer med virkeligheten, for eksempel en trikk som flyr og litt uvanlige detaljer på mennesker og bygninger."),
-            new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aiFake.png", true,
-                "Riktig! Dette ser AI-generert ut fordi det viser en fantasiverden med rare planeter, unaturlige farger og en stor bue midt i landskapet som ikke ser ut som et ekte sted."),
-            new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_2.png", false,
-                "Feil! Bildet er helt ekte")
+            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseReal.png",
+                "Bilde av en person utkledd som nisse med Tine logo foran", false, "Feil! Bildet er ekte!"),
+            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/SantaClauseAi.png",
+                "To ulike bilder av en nisse som kjører tog", true, "Riktig! Dette ser AI-generert ut fordi bildet har rare ting som ikke passer med virkeligheten, for eksempel en trikk som flyr og litt uvanlige detaljer på mennesker og bygninger."),
+            new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aiFake.png",
+                "Bilde av en stor bøyle midt i en rosa natur", true, "Riktig! Dette ser AI-generert ut fordi det viser en fantasiverden med rare planeter, unaturlige farger og en stor bue midt i landskapet som ikke ser ut som et ekte sted."),
+            new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_2.png",
+                "Bilde av ei jente med mørkt hår som smiler", false, "Feil! Bildet er helt ekte")
         )
     );
 
@@ -317,29 +329,29 @@ public class GameSeeder implements CommandLineRunner {
         level,
         "Hvilket bilde er IKKE ekte?",
         List.of(
-            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/robben.png", false,
-                "Feil! Bildet er Helt ekte!"),
-            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/FootballFakePic.png", true,
-                "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt."),
-            new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/FootballReal.png", false,
-                "Feil! Bildet er Helt ekte!"),
-            new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/crouch.png", false,
-                "Feil! Bildet er Helt ekte!")
+            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/robben.png",
+                "Bilde av to fotballspillere hvor han i rød skjorte blir taklet", false, "Feil! Bildet er helt ekte!"),
+            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/FootballFakePic.png",
+                "Bilde av et straffespark hvor det er en gul pil som viser hvordan ballen skal komme i mål", true,  "Riktig. Bildet er manipulert, altså endret fra et ekte utgangspunkt."),
+            new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/FootballReal.png",
+                "Bilde av en fotballspiller i rød skjorte som skal til å sparke ballen i mål",false, "Feil! Bildet er helt ekte!"),
+            new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/crouch.png",
+                "Bilde av en fotballspiller i blå skjorte som skal til å gi en klem",false, "Feil! Bildet er helt ekte!")
         )
     );
 
     ensurePictureQuizQuestion(
         level,
-        "Marker bildet genrert av AI",
+        "Marker bildet generert av AI",
         List.of(
-            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/manAI.png", true,
-                "Riktig. Rare detaljer som glinsende, ren og myk hud er lette identifikatorer"),
-            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_1.png", false,
-                "Feil!, Dette er et helt ekte bilde!"),
-            new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/beetle.png", false,
-                "Feil!, Dette er et helt ekte bilde!"),
-            new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/john.png", false,
-                "Feil!, Dette er et helt ekte bilde!")
+            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/manAI.png",
+                "En mann med et seriøst uttrykk, og huden ser litt oljet ut", true, "Riktig. Rare detaljer som glinsende, ren og myk hud er lette identifikatorer"),
+            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/img_1.png",
+                "En dame som står og smiler med gul bakgrunn", false, "Feil!, Dette er et helt ekte bilde!"),
+            new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/beetle.png",
+                "En mann som viser musklene sine, med stort mellomrom mellom fortennene", false, "Feil!, Dette er et helt ekte bilde!"),
+            new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/john.png",
+                "En mann som smiler med supermanndrakt", false, "Feil!, Dette er et helt ekte bilde!")
         )
     );
 
@@ -366,10 +378,10 @@ public class GameSeeder implements CommandLineRunner {
         level2,
         "Hvilket bilde er IKKE av ekte natur?",
         List.of(
-            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png", true,
-                "Helt riktig! Ingen natur ser slik ut!"),
-            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png", false,
-                "Feil! Dette er helt nydelig norsk natur!")
+            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fakeAI.png",
+                "Bilde av natur med masse ting som et stort øye på venstre side og et hode på høyre med puslespillhull", true, "Helt riktig! Ingen natur ser slik ut!"),
+            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/norsknatur.png",
+                "Bilde av natur med rolig hav og fjell",false, "Feil! Dette er helt nydelig norsk natur!")
         )
     );
 
@@ -379,10 +391,10 @@ public class GameSeeder implements CommandLineRunner {
         List.of(
             new PictureQuizOption(1, "Bildet er ikke ekte fordi mange rare ting skjer samtidig," +
                 " og sånt finnes ikke i virkeligheten.",
-                null, true, "Helt riktig!"),
-            new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, false, "Feil, Tviler veldig på at du har sett det bildet før"),
-            new PictureQuizOption(3, "Jeg vet ikke", null, false, "Feil, men heldigvis skal du lære deg dette!"),
-            new PictureQuizOption(4, "Bildet er ekte fordi alt ser helt naturlig ut", null, false, "Feil! Det er ikke naturlig å se natur med gigantiske mennesker!")
+                null, null, true, "Helt riktig!"),
+            new PictureQuizOption(2, "Bildet er ekte fordi jeg har sett det", null, null, false, "Feil, Tviler veldig på at du har sett det bildet før"),
+            new PictureQuizOption(3, "Jeg vet ikke", null, null, false, "Feil, men heldigvis skal du lære deg dette!"),
+            new PictureQuizOption(4, "Bildet er ekte fordi alt ser helt naturlig ut", null, null, false, "Feil! Det er ikke naturlig å se natur med gigantiske mennesker!")
         )
     );
 
@@ -390,13 +402,13 @@ public class GameSeeder implements CommandLineRunner {
         level2,
         "Hvilke reklamer er AI-generert?",
         List.of(
-            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aireklame.png",
+            new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aireklame.png", "En reklame av en vitaminboks med masse farge og ikoner. Vitaminboksen heter Vita Boost",
                 true, "Helt riktig! Dette ser AI-generert ut fordi bildet har veldig sterke lilla og blå farger, masse glans og perfekte detaljer som ofte er tegn på AI-bilder."),
-            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/ektereklame.png",
+            new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/ektereklame.png", "Reklame av burger king sin whopper",
                 false, "Feil!, Denne reklamen er ikke AI generert."),
-            new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/ektereklame2.png",
+            new PictureQuizOption(3, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/ektereklame2.png", "Coca cola sin reklame med et bilde av et stort glass med coca cola",
                 false, "Feil!, Denne reklamen er ikke AI generert."),
-            new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aireklameigjen.png",
+            new PictureQuizOption(4, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/aireklameigjen.png", "En reklame for hodetelefoner med masse farger og ikoner. Hodetelefonene er uten merke",
                 true, "Helt riktig! Dette ser AI-generert ut fordi bildet har veldig sterke lilla og blå farger, masse glans og perfekte detaljer som ofte er tegn på AI-bilder.")
 
         )
@@ -425,9 +437,9 @@ public class GameSeeder implements CommandLineRunner {
         "Hvilket bilde er AI?",
         List.of(
             new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/zebra.jpg",
-                false, "Feil! Det er et ekte zebra"),
+                "Bilde av en zebra med litt bustete hår",false, "Feil! Det er et ekte zebra"),
             new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/zebraFake.png",
-                true, "Riktig! dette bildet er faktisk generert av AI. Som du kan se på håret til zebraen, ser det veldig unaturlig ut.")
+                "Bilde av en zenbra med rett hår",true, "Riktig! dette bildet er faktisk generert av AI. Som du kan se på håret til zebraen, ser det veldig unaturlig ut.")
         )
     );
 
@@ -436,9 +448,9 @@ public class GameSeeder implements CommandLineRunner {
         "Hvilket bilde er ekte",
         List.of(
             new PictureQuizOption(1, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fotballai.png",
-                false, "Feil! Det er et AI generert bilde!"),
+                "Bilde av en gutt som sparker fotball. Han ser litt tegneserie-aktig ut",false, "Feil! Det er et AI generert bilde!"),
             new PictureQuizOption(2, null, "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/fotballnotai.png",
-                true, "Riktig! dette bildet er faktisk ikke generert av AI. Om du ser nøye på bildet, kan du se at personen ikke er ekte.")
+                "Bilde av to gutter som spiller fotball",true, "Riktig! dette bildet er faktisk ikke generert av AI. Om du ser nøye på bildet, kan du se at personen ikke er ekte.")
         )
     );
 

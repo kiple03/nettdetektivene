@@ -65,11 +65,10 @@ function MarkedsplassenStation({ station, levelTitle, onAnswer, disabled = false
                 ) : (
                     <PictureGrid
                         questionId={station.questionId}
-                        options={station.options.map((option, index) => ({
+                        options={station.options.map((option) => ({
                             id: option.id,
                             imageUrl: option.imageUrl ?? null,
                             text: option.label ?? "",
-                            altText: option.label ?? `Alternativ ${index + 1}`,
                         }))}
                         onSubmit={handleSingleChoice}
                         disabled={disabled}

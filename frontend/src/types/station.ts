@@ -20,6 +20,7 @@ export type StationOption = {
   id: number;
   label: string;
   imageUrl?: string;
+  imageAlt?: string,
 
   /** Key used for classify-items questions. */
   key?: string;

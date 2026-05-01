@@ -16,5 +16,7 @@ public record PictureQuizOptionResponse(
         /** Category label the student selects as their answer. */
         String text,
         /** URL of the image the student must classify. */
-        String imageUrl
+        String imageUrl,
+        /** ALt text describing the image content for accessibility. */
+        String imageAlt
 ) implements OptionResponse {}

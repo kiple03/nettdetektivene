@@ -130,8 +130,8 @@ class GameControllerTest {
   @Test
   void getQuestionsForLevel_returnsQuestions() throws Exception {
     List<OptionResponse> options = List.of(
-            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg"),
-            new MultipleChoiceOptionResponse(2, "Option B", "img2.jpg")
+            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg", "imageAlt"),
+            new MultipleChoiceOptionResponse(2, "Option B", "img2.jpg", "imageAlt")
     );
 
     when(questionService.getQuestionsForLevel(anyInt(), any(), any(), any()))
@@ -149,7 +149,7 @@ class GameControllerTest {
   @Test
   void getQuestionsForLevel_optionsDontContainAnswers() throws Exception {
     List<OptionResponse> options = List.of(
-            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg")
+            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg", "imageAlt")
     );
 
     when(questionService.getQuestionsForLevel(anyInt(), any(), any(), any())).thenReturn(List.of(
@@ -165,8 +165,8 @@ class GameControllerTest {
   @Test
   void getQuestion_returnsSingleQuestion() throws Exception {
     List<OptionResponse> options = List.of(
-            new MultipleChoiceOptionResponse(1, "A", "img.jpg"),
-            new MultipleChoiceOptionResponse(2, "B", "img.jpg")
+            new MultipleChoiceOptionResponse(1, "A", "img.jpg", "imageAlt"),
+            new MultipleChoiceOptionResponse(2, "B", "img.jpg", "imageAlt")
     );
 
     when(questionService.getQuestionById(anyInt(), any(), any())).thenReturn(

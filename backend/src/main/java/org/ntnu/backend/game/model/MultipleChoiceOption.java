@@ -43,6 +43,9 @@ public final class MultipleChoiceOption implements Option {
     /** Optional image URL shown alongside the text. */
     private String imageUrl;
 
+    /** Alt text describing the image content for accessibility.*/
+    private String imageAlt;
+
     /** Response images for news **/
     private String responseImageUrl;
 
@@ -54,12 +57,34 @@ public final class MultipleChoiceOption implements Option {
     @NotBlank
     private String explanation;
 
-    public MultipleChoiceOption(Integer id, String text, String imageUrl, boolean isCorrect,
-        String explanation) {
-        this.id = id;
-        this.text = text;
-        this.imageUrl = imageUrl;
-        this.isCorrect = isCorrect;
-        this.explanation = explanation;
-    }
+  public MultipleChoiceOption(
+      Integer id,
+      String text,
+      String imageUrl,
+      boolean isCorrect,
+      String explanation
+  ) {
+    this.id = id;
+    this.text = text;
+    this.imageUrl = imageUrl;
+    this.isCorrect = isCorrect;
+    this.explanation = explanation;
+  }
+
+  public MultipleChoiceOption(
+      Integer id,
+      String text,
+      String imageUrl,
+      String responseImageUrl,
+      boolean isCorrect,
+      String explanation
+  ) {
+    this.id = id;
+    this.text = text;
+    this.imageUrl = imageUrl;
+    this.responseImageUrl = responseImageUrl;
+    this.isCorrect = isCorrect;
+    this.explanation = explanation;
+  }
+
 }
