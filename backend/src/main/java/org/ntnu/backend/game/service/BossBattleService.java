@@ -54,6 +54,7 @@ public class BossBattleService {
         bossBattleResultRepository.save(result);
 
         if (request.won()) {
+            progressService.markGameCompleted(userId);
             medalionService.awardInternalUsage(userId, "Platinum", "Du fanget skurken!");
             userAvatarService.unlockByCondition(userId, "BOSS_DEFEAT");
         }

@@ -244,6 +244,20 @@ public class ProgressService {
   }
 
   /**
+   * Marks the game as completed for the given student.
+   * Called by the boss battle flow on victory, since the boss fight is a separate
+   * code path that does not go through {@link #advanceToNextLevel}.
+   *
+   * @param userId the student's user ID
+   * @throws UserProgressNotFoundException if the student has no progress row
+   */
+  @Transactional
+  public void markGameCompleted(UUID userId) {
+    UserProgress progress = getProgressOrThrow(userId);
+    progress.setGameCompleted(true);
+  }
+
+  /**
    * Returns whether the student's progress should advance in response to
    * completing the given level.
    *
