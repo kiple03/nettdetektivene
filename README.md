@@ -77,6 +77,10 @@ Nettdetektivene is a gamified web application that teaches children (3rd–7th g
 
 ## Running for Development
 
+### .evn file
+The .env file can be found [here](https://git.ntnu.no/team-11/idatt2106_2026_11/wiki/Env-File), and must
+be placed in the root directory before running the program. 
+
 ### Backend (Spring Boot)
 
 ```bash
