@@ -14,8 +14,9 @@ export function PasswordStrengthEditor({ value, onChange }: Props) {
   return (
     <div className="mc-editor">
       <div className="mc-editor__field">
-        <label className="mc-editor__label">Spørsmålstekst</label>
+        <label className="mc-editor__label" htmlFor='question-text'>Spørsmålstekst</label>
         <textarea
+          id='question-text'
           className="mc-editor__textarea"
           value={value.questionText}
           onChange={e => set({ questionText: e.target.value })}
@@ -25,8 +26,9 @@ export function PasswordStrengthEditor({ value, onChange }: Props) {
       </div>
 
       <div className="mc-editor__field">
-        <label className="mc-editor__label">Minimum lengde (1–64)</label>
+        <label className="mc-editor__label" htmlFor='question-length'>Minimum lengde (1–64)</label>
         <input
+          id='question-length'
           type="number"
           className="mc-editor__input"
           min={1}
@@ -77,8 +79,9 @@ export function PasswordStrengthEditor({ value, onChange }: Props) {
       </div>
 
       <div className="mc-editor__field">
-        <label className="mc-editor__label">Tilbakemelding ved suksess</label>
+        <label className="mc-editor__label" htmlFor='question-message'>Tilbakemelding ved suksess</label>
         <input
+          id='question-message'
           className="mc-editor__input"
           value={value.successFeedback}
           onChange={e => set({ successFeedback: e.target.value })}
@@ -87,8 +90,9 @@ export function PasswordStrengthEditor({ value, onChange }: Props) {
       </div>
 
       <div className="mc-editor__field">
-        <label className="mc-editor__label">Tilbakemelding ved feil</label>
+        <label className="mc-editor__label" htmlFor='question-feedback'>Tilbakemelding ved feil</label>
         <input
+          id="question-feedback"
           className="mc-editor__input"
           value={value.failureFeedback}
           onChange={e => set({ failureFeedback: e.target.value })}

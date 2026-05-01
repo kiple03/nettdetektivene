@@ -30,14 +30,31 @@ export function ImagePickerModal({ onSelect, onClose }: Props) {
   };
 
   return (
-    <div className="img-picker-modal__backdrop" onClick={onClose}>
-      <div className="img-picker-modal" onClick={e => e.stopPropagation()}>
-        <div className="img-picker-modal__header">
-          <h3 className="img-picker-modal__title">Velg bilde</h3>
-          <button type="button" className="img-picker-modal__close" onClick={onClose} aria-label="Lukk">
-            ×
-          </button>
-        </div>
+    <>
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+    <div
+        className="img-picker-modal__backdrop"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+      >
+        <div
+          className="img-picker-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="img-picker-title"
+        >
+          <div className="img-picker-modal__header">
+            <h3 id="img-picker-title" className="img-picker-modal__title">Velg bilde</h3>
+            <button
+              type="button"
+              className="img-picker-modal__close"
+              onClick={onClose}
+              aria-label="Lukk"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
 
         <div className="img-picker-modal__body">
           {isLoading && <p className="img-picker-modal__loading">Laster bilder...</p>}
@@ -87,5 +104,6 @@ export function ImagePickerModal({ onSelect, onClose }: Props) {
         </div>
       </div>
     </div>
+    </>
   );
 }
