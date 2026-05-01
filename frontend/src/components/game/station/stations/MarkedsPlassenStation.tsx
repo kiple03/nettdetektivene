@@ -14,6 +14,9 @@ type Props = {
     disabled?: boolean;
 };
 
+/**
+ * Station component for Markedsplassen, supporting picture-grid (single-choice) and classify-items question types.
+ */
 function MarkedsplassenStation({ station, levelTitle, onAnswer, disabled = false }: Props) {
     const handleSingleChoice = async (selectedIds: number[]) => {
         const request: SubmitSingleChoiceAnswerRequest = {

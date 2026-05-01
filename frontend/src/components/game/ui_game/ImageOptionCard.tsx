@@ -1,11 +1,14 @@
+/** Props for {@link ImageOptionCard}. */
 type ImageOptionCardProps = {
     imageUrl: string;
     imageAlt: string;
     buttonLabel: string;
+    /** Called when the user clicks the option button. */
     onSelect: () => void;
     disabled?: boolean;
 };
 
+/** Displays an image alongside a selectable button for quiz-style option cards. */
 function ImageOptionCard({
                              imageUrl,
                              buttonLabel,

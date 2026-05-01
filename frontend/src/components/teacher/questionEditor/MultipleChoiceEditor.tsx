@@ -10,6 +10,10 @@ interface Props {
   onChange: (v: MultipleChoiceQuestionDraft) => void;
 }
 
+/**
+ * Editor for creating and editing multiple-choice questions with up to 6 options.
+ * Exactly one option can be marked as correct at a time.
+ */
 export function MultipleChoiceEditor({ value, onChange }: Props) {
   const setQuestion = (questionText: string) => onChange({ ...value, questionText });
 

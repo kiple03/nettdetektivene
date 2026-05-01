@@ -4,6 +4,7 @@ interface Props {
     onComplete: () => void;
 }
 
+/** Stub cutscene played after the boss is defeated; immediately calls {@link Props.onComplete}. */
 export function DefeatCutscene({ onComplete }: Props) {
     // Stub animation sequence:
     // 1. Boss disappears (fade out)

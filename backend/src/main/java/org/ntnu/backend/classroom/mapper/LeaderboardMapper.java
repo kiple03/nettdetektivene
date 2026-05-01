@@ -8,15 +8,28 @@ import org.ntnu.backend.classroom.dto.leaderboard.RankedClassroomResponse;
 import org.ntnu.backend.classroom.dto.leaderboard.RankedStudentResponse;
 import org.springframework.stereotype.Component;
 
+/** Maps pre-sorted leaderboard entries to rank-annotated response objects. */
 @Component
 public class LeaderboardMapper {
 
+  /**
+   * Assigns 1-based ranks to a pre-sorted list of classroom leaderboard entries.
+   *
+   * @param sorted classrooms ordered by score descending
+   * @return ranked list preserving the input order
+   */
   public List<RankedClassroomResponse> toRankedList(List<LeaderboardClassroomResponse> sorted) {
     return IntStream.range(0, sorted.size())
         .mapToObj(i -> new RankedClassroomResponse(i + 1, sorted.get(i)))
         .toList();
   }
 
+  /**
+   * Assigns 1-based ranks to a pre-sorted list of student leaderboard entries.
+   *
+   * @param sorted students ordered by score descending
+   * @return ranked list preserving the input order
+   */
   public List<RankedStudentResponse> toRankedStudentList(List<LeaderboardStudentResponse> sorted) {
     return IntStream.range(0, sorted.size())
         .mapToObj(i -> new RankedStudentResponse(i + 1, sorted.get(i)))

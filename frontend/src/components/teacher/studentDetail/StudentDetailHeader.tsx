@@ -8,6 +8,7 @@ type StudentDetailHeaderProps = {
     completedCount: number;
     avatarItems: EquippedItem[];
     hairColor?: string;
+    /** Whether the username is currently being edited inline. */
     editing: boolean;
     editValue: string;
     onEditValueChange: (v: string) => void;
@@ -18,6 +19,7 @@ type StudentDetailHeaderProps = {
     usernameError: string | null;
 };
 
+/** Header section of the student detail view showing avatar, username (with inline edit), and key info. */
 export function StudentDetailHeader({
     username, email, enrolledAt, completedCount, avatarItems, hairColor,
     editing, editValue, onEditValueChange, onStartEdit, onCancelEdit, onSaveUsername,

@@ -4,6 +4,10 @@ import { decodeToken, getToken, isAuthReady, isSessionEnded, setAuthReady } from
 
 const REFRESH_LEEWAY_MS = 15_000;
 
+/**
+ * Invisible component that keeps the JWT session alive by proactively refreshing
+ * tokens before expiry and syncing auth state across tabs via storage/auth-changed events.
+ */
 function AuthSessionRefresher() {
   const [token, setTokenState] = useState<string | null>(getToken());
 

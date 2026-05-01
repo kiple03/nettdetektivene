@@ -82,6 +82,14 @@ public class GameService {
         )).orElseThrow(() -> new LevelNotFoundException(levelId));
   }
 
+  /**
+   * Returns all levels for a stop, ordered for display, with per-user lock state applied.
+   *
+   * @param stopId the stop whose levels to fetch
+   * @param userId the requesting user
+   * @param role   the user's role, used to determine accessible levels
+   * @return ordered list of levels with lock status
+   */
   @Transactional(readOnly = true)
   public List<LevelResponse> getLevelsForStop(int stopId, UUID userId, RoleEnum role) {
     return levelRepository.findByStopIdOrderByOrderAsc(stopId)
@@ -92,6 +100,14 @@ public class GameService {
         )).toList();
   }
 
+  /**
+   * Bypasses answer validation and marks a level as completed — for admin/cheat use only.
+   * Also saves the completion tip note if this is the first completion.
+   *
+   * @param levelId   the level to complete
+   * @param principal the authenticated admin/teacher performing the action
+   * @throws LevelNotFoundException if no level exists with this ID
+   */
   @Transactional
   public void adminCompleteLevel(int levelId, JwtAuthenticatedPrincipal principal) {
     Level level = levelRepository.findById(levelId)
@@ -103,6 +119,17 @@ public class GameService {
     }
   }
 
+  /**
+   * Validates the student's answers for a level and records completion if they pass.
+   * Questions are scoped to the student's classroom when one is active; otherwise
+   * only default (non-classroom) questions are used.
+   *
+   * @param levelId   the level being submitted
+   * @param request   the student's answers
+   * @param principal the authenticated student
+   * @throws LevelNotFoundException         if no level exists with this ID
+   * @throws org.ntnu.backend.exception.InvalidLevelSubmissionException if answers fail validation
+   */
   @Transactional
   public void submitLevel(int levelId, SubmitLevelRequest request, JwtAuthenticatedPrincipal principal) {
     Level level = levelRepository.findById(levelId)

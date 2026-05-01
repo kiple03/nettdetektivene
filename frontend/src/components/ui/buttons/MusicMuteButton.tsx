@@ -2,6 +2,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { playMusic, stopMusic, getMuted, setMuted as setMutedManager, subscribeMute, getCurrentTrack } from "@/audio/musicManager";
 
+/**
+ * Floating mute/unmute button for background music, visible only to logged-in students.
+ * Starts background music on mount if no track is already playing, and stops it on logout.
+ */
 export default function BackgroundMusic() {
     const { isLoggedIn, role } = useAuth();
     const [muted, setMutedState] = useState(getMuted);

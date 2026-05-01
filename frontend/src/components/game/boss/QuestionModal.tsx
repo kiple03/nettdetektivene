@@ -8,12 +8,16 @@ import type { SubmitAnswerResult } from "@/types/station";
 import "@/components/game/ui_game/game.css";                                                            
 import styles from "./QuestionModal.module.css";                                                   
 
-interface Props {                                                                                  
+interface Props {
     label: string;
     question: GameQuestion | null;
     onAnswer: (correct: boolean) => void;
-}                                                                                                  
+}
 
+/**
+ * Modal overlay that presents a boss-battle question to the player and reports whether the answer was correct.
+ * Falls back to manual correct/wrong buttons when no question is available (admin flow).
+ */
 export function QuestionModal({ label, question, onAnswer }: Props) {                              
     const answered = useRef(false);
     const [submitResult, setSubmitResult] = useState<SubmitAnswerResult | null>(null);

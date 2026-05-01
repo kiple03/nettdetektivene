@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
  */
 public class InvalidLevelSubmissionException extends ApiException {
 
+  /**
+   * @param message description of the submission problem
+   */
   public InvalidLevelSubmissionException(String message) {
     super(HttpStatus.BAD_REQUEST, message);
   }

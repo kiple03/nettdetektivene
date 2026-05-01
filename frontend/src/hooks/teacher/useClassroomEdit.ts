@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useClassroom } from './useTeacherQueries';
 import { useDeleteClassroom, useUpdateClassroom } from './useTeacherMutations';
 
+/**
+ * Manages classroom editing state and actions for a teacher, including title edits,
+ * deletion, and copying the join code.
+ *
+ * @param classroomId - The ID of the classroom to manage.
+ */
 export function useClassroomEdit(classroomId: string) {
     const navigate = useNavigate();
     const classroomQuery = useClassroom(classroomId);

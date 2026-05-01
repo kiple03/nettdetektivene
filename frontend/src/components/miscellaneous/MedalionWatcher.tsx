@@ -4,6 +4,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useRef, useState } from "react";
 import MedalionToast from "./MedalionToast";
 
+/**
+ * Silently watches for newly awarded medalions and displays a toast when one appears.
+ * Resets tracking when the authenticated user changes.
+ */
 function MedalionWatcher(){
     const { data: medalions } = useMedalions();
     const { email } = useAuth();

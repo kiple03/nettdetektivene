@@ -58,6 +58,7 @@ const HAIR_COLORS: { name: string; color: string }[] = [
   { name: 'grey',        color: '#888888' },
 ];
 
+/** Avatar customization page — loads user profile and inventory, then renders the changing room. */
 export default function AvatarDevPage() {
   const {data: userProfile, isLoading: isProfileLoading} = useUserProfile();
   const {data: inventory, isLoading: isInventoryLoading } = useUserInventory();
@@ -70,6 +71,7 @@ export default function AvatarDevPage() {
 
 type Tab = 'profil' | 'garderobe';
 
+/** Full avatar editor with wardrobe, gender/skin/hair pickers, username field, and save action. */
 function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], inventory: EquippedItem[] }) {
   const navigate = useNavigate();
   const location = useLocation();

@@ -15,6 +15,7 @@ import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
 import backgroundImg from "@/assets/detective_room_interior.png";
 import {useUserProfile} from "@/hooks/useUserProfile.ts";
 
+/** Configuration for a single notebook tab. */
 interface TabConfig {
     id: TabId;
     label: string;
@@ -87,6 +88,7 @@ const TABS: TabConfig[] = [
     },
 ];
 
+/** Returns a fresh empty NotesMap with all categories initialised to empty arrays. */
 const EMPTY_NOTES_MAP = (): NotesMap => ({
     nyheter: [],
     bilder: [],
@@ -97,6 +99,7 @@ const EMPTY_NOTES_MAP = (): NotesMap => ({
     egne: [],
 });
 
+/** Decorative spiral-binding strip rendered at the left edge of the notebook. */
 const Spirals = ({ count = 16 }: { count?: number }) => (
     <div className={styles.spiralStrip}>
         {Array.from({ length: count }).map((_, i) => (
@@ -109,6 +112,7 @@ function getTabConfig(tabId: TabId): TabConfig {
     return TABS.find((tab) => tab.id === tabId)!;
 }
 
+/** Formats an ISO timestamp to a human-readable Norwegian date/time string; returns empty string for invalid/missing dates. */
 function formatDate(iso: string | null | undefined): string {
     if (!iso) return "";
     const d = new Date(iso);
@@ -119,10 +123,12 @@ function formatDate(iso: string | null | undefined): string {
     }).format(d);
 }
 
+/** Returns the possessive form of a name, omitting the trailing "s" for names already ending in s/x/z. */
 function getPossessive(name: string): string {
     return /[sxzSXZ]$/.test(name) ? `${name}'` : `${name}`;
 }
 
+/** Student notebook page — displays a closed notebook that opens to reveal tabbed note categories, letting the student write, save, and delete personal reflections alongside game-generated level notes. */
 export default function NotesPage() {
     const { data: userProfile } = useUserProfile();
     const username = userProfile?.username;

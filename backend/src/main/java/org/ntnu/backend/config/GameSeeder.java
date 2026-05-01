@@ -97,6 +97,7 @@ public class GameSeeder implements CommandLineRunner {
         });
   }
 
+  /** Deletes a stop and all its associated levels, questions, and note templates. */
   private void deleteStop(Stop stop) {
     List<Level> levels = levelRepository.findByStopIdOrderByIdAsc(stop.getId());
     for (Level level : levels) {
@@ -147,6 +148,7 @@ public class GameSeeder implements CommandLineRunner {
     }
   }
 
+  /** Deletes a level along with its note templates and questions. Templates are removed first due to a NOT NULL FK constraint. */
   private void deleteLevel(Level level) {
     // Templates must go before the level itself (FK on level_id is NOT NULL).
     levelNoteTemplateRepository.deleteAll(levelNoteTemplateRepository
@@ -726,6 +728,13 @@ public class GameSeeder implements CommandLineRunner {
     );
   }
 
+  /**
+   * Upserts a post-office question for the given level. Skips insertion if the question already exists.
+   *
+   * @param level the level to attach the question to
+   * @param questionText unique question text used to detect duplicates
+   * @param postOfficeQuestion the structured email content and options
+   */
   private void ensureQuestion(Level level, String questionText, PostOfficeQuestion postOfficeQuestion) {
     boolean exists = questionRepository
         .findByLevelIdAndQuestionText(level.getId(), questionText)
@@ -739,6 +748,13 @@ public class GameSeeder implements CommandLineRunner {
     questionRepository.save(question);
   }
 
+  /**
+   * Serializes a {@link PostOfficeQuestion} to a JSON string for storage in the question's option content field.
+   *
+   * @param postOfficeQuestion the object to serialize
+   * @return JSON string representation
+   * @throws RuntimeException if serialization fails
+   */
   private String writePostOfficeQuestion(PostOfficeQuestion postOfficeQuestion) {
     try {
       return new ObjectMapper().writeValueAsString(postOfficeQuestion);
@@ -746,6 +762,13 @@ public class GameSeeder implements CommandLineRunner {
       throw new RuntimeException("Failed to serialize PostOfficeQuestion", e);
     }
   }
+  /**
+   * Upserts a picture-quiz question. Skips insertion if the question already exists for the level.
+   *
+   * @param level the level to attach the question to
+   * @param questionText unique question text used to detect duplicates
+   * @param options the picture options for this question
+   */
   private void ensurePictureQuizQuestion(Level level, String questionText, List<PictureQuizOption> options) {
     boolean exists = questionRepository
         .findByLevelIdAndQuestionText(level.getId(), questionText)
@@ -764,6 +787,14 @@ public class GameSeeder implements CommandLineRunner {
     questionRepository.save(question);
   }
 
+  /**
+   * Upserts a generic question (multiple-choice, classify-items, password-strength).
+   * Skips insertion if the question already exists for the level.
+   *
+   * @param level the level to attach the question to
+   * @param questionText unique question text used to detect duplicates
+   * @param options the answer options for this question
+   */
   private void ensureQuestion(Level level, String questionText, List<Option> options) {
     boolean exists = questionRepository
         .findByLevelIdAndQuestionText(level.getId(), questionText)
@@ -784,6 +815,13 @@ public class GameSeeder implements CommandLineRunner {
     questionRepository.save(question);
   }
 
+  /**
+   * Serializes a list of options to JSON for storage in the question's option content field.
+   *
+   * @param options the options to serialize
+   * @return JSON string representation
+   * @throws IllegalStateException if serialization fails
+   */
   private String writeOptions(List<? extends Option> options) {
     try {
       return new ObjectMapper().writeValueAsString(options);
@@ -819,6 +857,7 @@ public class GameSeeder implements CommandLineRunner {
         );
   }
 
+  /** Seeds the Passordbanken stop with password-strength and multiple-choice levels about password security. */
   private void seedPasswords() {
       Stop stop = stopRepository.findByName("Passordbanken").orElseGet(() -> {
           Stop s = new Stop();
@@ -952,6 +991,7 @@ public class GameSeeder implements CommandLineRunner {
           "Bytt passord og skru på 2FA så fort du oppdager lekkasje.");
   }
 
+  /** Seeds the Markedsplassen stop with levels about identifying safe online shops. */
   private void seedMarkedsplassen() {
     Stop stop = stopRepository.findByName("Markedsplassen").orElseGet(() -> {
       Stop s = new Stop();
@@ -1119,7 +1159,7 @@ public class GameSeeder implements CommandLineRunner {
 
   }
 
-  /** Seed social stop, levels and questions **/
+  /** Seeds the social media stop with levels about safe sharing and recognising manipulation. */
   private void seedSocial() {
     Stop stop = stopRepository.findByName("Den sosiale møteplassen").orElseGet(() -> {
       Stop s = new Stop();
@@ -1281,6 +1321,7 @@ public class GameSeeder implements CommandLineRunner {
   }
 
 
+  /** Seeds the Datasenteret (boss) stop placeholder with no levels — reserved for future boss content. */
   private void seedBoos() {
     stopRepository.findByName("Datasenteret").orElseGet(() -> {
       Stop s = new Stop();

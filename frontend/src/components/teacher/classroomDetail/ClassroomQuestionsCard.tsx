@@ -4,6 +4,7 @@ type Props = {
     classroomId: string;
 };
 
+/** Card linking the teacher to the classroom map for editing game stops and questions. */
 export function ClassroomQuestionsCard({ classroomId }: Props) {
     return (
         <div className="classroom-detail__note">

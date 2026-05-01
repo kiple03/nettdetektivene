@@ -2,6 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from './BackButton.module.css';
 
+/** Props for {@link BackButton}. */
 interface BackButtonProps {
     children?: ReactNode;
     className?: string;
@@ -9,6 +10,10 @@ interface BackButtonProps {
     ariaLabel?: string;
 }
 
+/**
+ * Navigates one step back in browser history.
+ * Renders a default styled button unless `children` are provided.
+ */
 function BackButton({
                         children,
                         className = "",

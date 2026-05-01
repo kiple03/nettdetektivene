@@ -20,6 +20,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * A notification sent to a teacher about activity in one of their classrooms
+ * (e.g. a student joining or submitting a mystery answer).
+ */
 @Entity
 @Table(name = "notification")
 @Getter
@@ -33,25 +37,32 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /** Teacher who receives this notification. */
     @Column(nullable = false)
     private UUID teacherId;
 
+    /** Classroom the event originated in. */
     @Column(nullable = false)
     private UUID classroomId;
 
+    /** Student whose action triggered the notification. */
     @Column(nullable = false)
     private UUID studentId;
 
+    /** Categorises what kind of event this notification represents. */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(50)")
     private NotificationType type;
 
+    /** Human-readable description of the event, shown in the teacher UI. */
     @Column(nullable = false, length = 512)
     private String message;
 
+    /** {@code true} once the teacher has viewed/dismissed the notification. */
     @Column(name = "is_read", nullable = false)
     private boolean read;
 
+    /** Timestamp set automatically when the record is first persisted. */
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant createdAt;

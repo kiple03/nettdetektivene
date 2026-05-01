@@ -36,25 +36,31 @@ import org.ntnu.backend.user.model.User;
 
 public class Note {
 
+    /** Primary key, auto-generated UUID. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /** The student who owns this note. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    /** Notebook tab this note belongs to (e.g. CLUE, GENERAL). */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private NoteCategory category;
 
+    /** Free-text body of the note. */
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    /** When the note was first created; set automatically, never updated. */
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
+    /** When the note was last modified; updated automatically on every save. */
     @UpdateTimestamp
     @Column(nullable = false)
     private Instant updatedAt;

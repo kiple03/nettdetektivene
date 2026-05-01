@@ -1,14 +1,20 @@
 import styles from './LeaderboardPagination.module.css';
 
+/** Props for LeaderboardPagination. All page values are 0-indexed (Spring Boot default). */
 interface Props {
     currentPage: number;      // 0-indexed (Spring Boot default)
     totalPages: number;
     totalElements: number;
     pageSize: number;
     numberOfElements: number;
+    /** Called with the new 0-indexed page number when the user navigates. */
     onPageChange: (page: number) => void;
 }
 
+/**
+ * Returns a compact page-number sequence with ellipsis placeholders for large page counts.
+ * Always includes the first and last page; shows up to 3 pages around the current one.
+ */
 function getPageNumbers(current: number, total: number): (number | '...')[] {
     if (total <= 5) {
         return Array.from({ length: total }, (_, i) => i);
@@ -29,6 +35,7 @@ function getPageNumbers(current: number, total: number): (number | '...')[] {
     return pages;
 }
 
+/** Pagination controls and range summary for the leaderboard list. */
 export default function LeaderboardPagination({
         currentPage,
         totalPages,

@@ -102,6 +102,12 @@ public class ImageService {
                 saved.getOriginalFilename(), saved.getUploadedAt());
     }
 
+    /**
+     * Returns all images uploaded by the given teacher, newest first.
+     *
+     * @param teacherId the UUID of the teacher whose images to retrieve
+     * @return list of {@link TeacherImageResponse} with public URLs and metadata
+     */
     public List<TeacherImageResponse> getTeacherImages(UUID teacherId) {
         return imageRepository.findByUploadedByUserIdOrderByUploadedAtDesc(teacherId).stream()
                 .map(img -> new TeacherImageResponse(img.getId(), buildPublicUrl(img.getObjectKey()),
