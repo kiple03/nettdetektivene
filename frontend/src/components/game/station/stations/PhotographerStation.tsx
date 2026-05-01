@@ -43,8 +43,8 @@ export default function PhotographerStation({ station, levelTitle, onAnswer, dis
     try {
       const response = await submitMultiSelectAnswer(station.questionId, request);
 
-      setCorrectIds(response.correctOptionIds ?? []);
-      setWrongIds(response.wrongSelectedOptionIds ?? []);
+      setCorrectIds(response.correctOptionIds?.map(Number) ?? []);
+      setWrongIds(response.wrongSelectedOptionIds?.map(Number) ?? []);
       setSubmitted(true);
 
       onAnswer(mapSubmitResponseToSubmitAnswer(response), request);
