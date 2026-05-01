@@ -38,6 +38,7 @@ export function MyClassroomsBoard({
                             className={`view-toggle-btn ${view === 'grid' ? 'view-toggle-btn--active' : ''}`}
                             onClick={() => onViewChange('grid')}
                             aria-label="Rutenett"
+                            aria-pressed={view === 'grid'}
                         >
                             <Grid2x2 size={14} strokeWidth={2.2} aria-hidden="true" />
                             Rutenett
@@ -48,6 +49,7 @@ export function MyClassroomsBoard({
                             className={`view-toggle-btn ${view === 'list' ? 'view-toggle-btn--active' : ''}`}
                             onClick={() => onViewChange('list')}
                             aria-label="Liste"
+                            aria-pressed={view === 'list'}
                         >
                             <List size={14} strokeWidth={2.2} aria-hidden="true" />
                             Liste
@@ -77,7 +79,7 @@ export function MyClassroomsBoard({
                     })}
 
                     <Link to="/teacher/classrooms/new" className="classroom-card classroom-card--new">
-                        <span className="classroom-card__plus">+</span>
+                        <span className="classroom-card__plus" aria-hidden="true">+</span>
                         <span className="classroom-card__new-label">Opprett nytt klasserom</span>
                     </Link>
                 </div>

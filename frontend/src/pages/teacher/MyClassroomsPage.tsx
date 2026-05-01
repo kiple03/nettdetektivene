@@ -52,7 +52,7 @@ export default function MyClassroomsPage() {
                     <TextInput
                         label="Søk"
                         id="classroom-search"
-                        placeholder="🔎  Søk i klasserom…"
+                        placeholder="Søk i klasserom…"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="teacher-dashboard__search-input"
