@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { mapQuestionToStationData, mapSubmitResponseToSubmitAnswer} from "@/utils/gameMapper";
 import { STATION_TYPE } from "@/types/station";
-import type { SubmitAnswerResponse } from "@/api/gameApi.ts";
 
 describe("gameMapper", () => {
   it("mapper PASSWORD_STRENGTH til PASSWORD og tar med kravene", () => {
@@ -51,7 +50,12 @@ describe("gameMapper", () => {
   });
 
   it("mapper submit response til SubmitAnswerResult", () => {
-    const response: SubmitAnswerResponse = {
+    const response: {
+      feedback: string;
+      correctOptionIds: any[];
+      correct: boolean;
+      wrongSelectedOptionIds: any[]
+    } = {
       correct: true,
       feedback: "Riktig svar!",
       correctOptionIds: [],
@@ -62,7 +66,10 @@ describe("gameMapper", () => {
 
     expect(result).toEqual({
       correct: true,
+      correctOptionIds: [],
       feedback: "Riktig svar!",
+      responseImages: [],
+      wrongSelectedOptionIds: []
     });
   });
 

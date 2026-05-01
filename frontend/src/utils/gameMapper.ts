@@ -58,7 +58,12 @@ export function mapQuestionToStationData(question: GameQuestion, type?: StationT
 
 /** Extracts only the fields needed by UI from the raw submit-answer API response. */
 export function mapSubmitResponseToSubmitAnswer(
-    response: SubmitAnswerResponse,
+    response: {
+      feedback: string;
+      correctOptionIds: any[];
+      correct: boolean;
+      wrongSelectedOptionIds: any[]
+    },
 ): SubmitAnswerResult {
   return {
     correct: response.correct,
