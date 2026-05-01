@@ -115,3 +115,17 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+.btn-unstyled {
+  all: unset;
+  display: block;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-unstyled-inline {
+  all: unset;
+  display: inline;
+  cursor: pointer;
+}
