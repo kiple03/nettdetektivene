@@ -1,32 +1,39 @@
 import {
     useEffect,
     useRef,
+    type CSSProperties,
     type ReactNode,
     type RefObject,
 } from "react";
 import styles from "./alert-dialog.module.css";
+import internettbyenLogo from "@/assets/images/map/internettbyen-logo.png";
 
 interface AlertDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     children: ReactNode;
+    /** Element to restore focus to when the dialog closes. */
     returnFocusRef?: RefObject<HTMLElement | null>;
+    contentWrapperStyle?: CSSProperties;
 }
 
 interface AlertDialogContentProps {
     children: ReactNode;
-    icon?: ReactNode;
+    /** When provided, displays a "N levels left" counter above the content. */
+    stopsLeft?: number;
 }
 
 interface AlertDialogTextProps {
     children: ReactNode;
 }
 
+/** Accessible modal dialog with focus trapping, Escape-to-close, and backdrop click dismissal. */
 export function AlertDialog({
                                 open,
                                 onOpenChange,
                                 children,
                                 returnFocusRef,
+                                contentWrapperStyle,
                             }: AlertDialogProps) {
     const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -66,22 +73,32 @@ export function AlertDialog({
 
         window.addEventListener("keydown", handleKeyDown);
 
+        const returnFocusElement = returnFocusRef?.current;
+
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
-            returnFocusRef?.current?.focus();
+            returnFocusElement?.focus();
         };
     }, [open, onOpenChange, returnFocusRef]);
 
     if (!open) return null;
 
     return (
-        <div className={styles.overlay} onClick={() => onOpenChange(false)}>
+        <div
+            className={styles.overlay}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) {
+                    onOpenChange(false);
+                }
+            }}
+            role="presentation"
+        >
             <div
                 ref={dialogRef}
                 className={styles.contentWrapper}
+                style={contentWrapperStyle}
                 role="dialog"
                 aria-modal="true"
-                onClick={(event) => event.stopPropagation()}
             >
                 {children}
             </div>
@@ -89,34 +106,42 @@ export function AlertDialog({
     );
 }
 
+/** Styled paper-note content panel with logo and optional stop counter. */
 export function AlertDialogContent({
                                        children,
-                                       icon = "🔒",
+                                       stopsLeft,
                                    }: AlertDialogContentProps) {
     return (
         <div className={styles.content}>
-            <div className={styles.decorations} aria-hidden="true">
-                <span className={styles.emojiOne}>⭐</span>
-                <span className={styles.emojiTwo}>🧩</span>
-                <span className={styles.emojiThree}>🔍</span>
-                <span className={styles.emojiFive}>✨</span>
-                <span className={styles.emojiSeven}>🎉</span>
-                <span className={styles.emojiEight}>🔒</span>
+            <div className={styles.clipWrapper} aria-hidden="true">
+                <div className={styles.clip} />
             </div>
 
-            <div className={styles.heroIcon} aria-hidden="true">
-                {icon}
-            </div>
+            <div className={styles.paper}>
+                <img
+                    src={internettbyenLogo}
+                    alt="Internettbyen"
+                    className={styles.logo}
+                />
 
-            {children}
+                {stopsLeft !== undefined && (
+                    <p className={styles.stopsLeft}>
+                        {stopsLeft === 1 ? "1 nivå igjen" : `${stopsLeft} nivåer igjen`}
+                    </p>
+                )}
+
+                {children}
+            </div>
         </div>
     );
 }
 
+/** Dialog heading rendered as an `<h2>`. */
 export function AlertDialogTitle({ children }: AlertDialogTextProps) {
     return <h2 className={styles.title}>{children}</h2>;
 }
 
+/** Descriptive body text for the dialog. */
 export function AlertDialogDescription({ children }: AlertDialogTextProps) {
     return <p className={styles.description}>{children}</p>;
 }

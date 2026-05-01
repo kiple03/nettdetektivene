@@ -1,3 +1,4 @@
+/** React Query key factory for all teacher-scoped queries. */
 export const teacherKeys = {
     classrooms: ['teacher', 'classrooms'] as const,
     classroom: (id: string) => ['teacher', 'classrooms', id] as const,
@@ -9,7 +10,6 @@ export const teacherKeys = {
     studentNotebook: (classroomId: string, studentId: string) =>
         ['teacher', 'classrooms', classroomId, 'students', studentId, 'notebook'] as const,
     coTeachers: (id: string) => ['teacher', 'classrooms', id, 'teachers'] as const,
-    mysterySubmissions: (id: string) => ['teacher', 'classrooms', id, 'mystery'] as const,
     leaderboard: (classroomId: string) => ['teacher', 'leaderboard', classroomId] as const,
     stops: ['teacher', 'stops'] as const,
     notifications: ['teacher', 'notifications'] as const,

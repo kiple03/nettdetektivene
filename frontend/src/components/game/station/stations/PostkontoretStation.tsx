@@ -4,19 +4,25 @@ import type { SubmitMultiChoiceAnswerRequest, SubmitAnswerRequest } from "@/api/
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper.ts";
 import type { StationData, SubmitAnswerResult } from "@/types/station.ts";
 import type { PostkontoretTask } from "@/types/email.ts";
+import {useState} from "react";
+import type { SubmitResult } from "@/types/station.ts";
 
+/** Props for {@link PostOfficeStation}. */
 type PostOfficeStationProps = {
   station: StationData;
   onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
   disabled?: boolean;
 };
 
+/** Station component that renders an email phishing task and submits selected suspicious item IDs. */
 function PostOfficeStation({ station, onAnswer, disabled = false }: PostOfficeStationProps) {
   const task: PostkontoretTask = {
     email: station.email!,
     correctSuspicious: [],   // not used anymore, backend decides
     recommendedAction: "",   // can be included in feedback from backend
   };
+
+  const [result, setResult] = useState<SubmitResult | undefined>(undefined);
 
   const handleSubmit = async (selectedIds: string[]) => {
     const request: SubmitMultiChoiceAnswerRequest = {
@@ -25,6 +31,11 @@ function PostOfficeStation({ station, onAnswer, disabled = false }: PostOfficeSt
     };
     try {
       const response = await submitMultiChoiceAnswer(station.questionId, request);
+      setResult({
+        correct: response.correct,
+        correctOptionIds: response.correctOptionIds ?? [],
+        wrongSelectedOptionIds: response.wrongSelectedOptionIds ?? [],
+      });
       const mappedResult = mapSubmitResponseToSubmitAnswer(response);
       onAnswer(mappedResult, request);
     } catch (error: any) {
@@ -44,7 +55,8 @@ function PostOfficeStation({ station, onAnswer, disabled = false }: PostOfficeSt
         <EmailTask
             task={task}
             onSubmit={handleSubmit}
-            disabled={disabled} />
+            disabled={disabled}
+            result={result}/>
       </div>
   );
 }

@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import type { PostkontoretTask } from "@/types/email.ts";
-import "@/components/game/ui/game.css";
+import "@/components/game/ui_game/game.css";
 import styles from "@/components/game/tasks/PictureGrid.module.css";
+import type { SubmitResult } from "@/types/station.ts";
 
 interface Props {
   task: PostkontoretTask;
+  /** Called with the IDs of all parts the student flagged as suspicious. */
   onSubmit: (selectedIds: string[]) => void;
   disabled?: boolean;
+  /** Highlight feedback after submission; correct/wrong parts are coloured accordingly. */
+  result?: SubmitResult;
 }
 
-export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false }) => {
+/**
+ * Renders a fake Gmail-style email where students click suspicious parts
+ * (subject, sender, body, links, images, signature) before submitting.
+ */
+export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false, result }) => {
   const { email } = task;
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -23,6 +31,13 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false })
     setSelected((prev) =>
         prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
+  };
+
+  const getHighlightClass = (id: string): string => {
+    if (!result) return selected.includes(id) ? "selected" : "";
+    if (result.correctOptionIds.includes(id)) return "correct-highlight";
+    if (result.wrongSelectedOptionIds.includes(id)) return "wrong-highlight";
+    return "";
   };
 
   const formattedDate = new Date(email.timestamp).toLocaleString("nb-NO", {
@@ -41,15 +56,16 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false })
             </div>
           </div>
 
-          <div className="gmail-message">'
+          <div className="gmail-message">
             <div className="gmail-message-header">
-              <div className={`gmail-subject clickable ${
-                  selected.includes("subject") ? "selected" : ""
-              }`}
-                   onClick={() => toggleSelect("subject")}
-              >
-                {email.subject}
-              </div>
+            <button
+              type="button"
+              className={`gmail-subject btn-unstyled clickable ${getHighlightClass("subject")}`}
+              onClick={() => toggleSelect("subject")}
+              aria-pressed={selected.includes("subject")}
+            >
+              {email.subject}
+            </button>
               <div className="gmail-timestamp">{formattedDate}</div>
             </div>
 
@@ -58,42 +74,40 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false })
               <div className="gmail-from-info">
                 <div className="gmail-from-line">
                   <span className="gmail-from-name">{email.senderName}</span>
-                  <span
-                      className={`gmail-from-email clickable ${
-                          selected.includes("senderEmail") ? "selected" : ""
-                      }`}
-                      onClick={() => toggleSelect("senderEmail")}
+                  <button
+                    type="button"
+                    className={`gmail-from-email btn-unstyled-inline clickable ${getHighlightClass("senderEmail")}`}
+                    onClick={() => toggleSelect("senderEmail")}
+                    aria-pressed={selected.includes("senderEmail")}
                   >
                     &lt;{email.senderEmail}&gt;
-                  </span>
+                  </button>
                 </div>
                 <div className="gmail-to-line">til meg</div>
               </div>
             </div>
 
-            <div
-                className={`gmail-body clickable ${
-                    selected.includes("body") ? "selected" : ""
-                }`}
-                onClick={() => toggleSelect("body")}
+            <button
+              type="button"
+              className={`gmail-body btn-unstyled clickable ${getHighlightClass("body")}`}
+              onClick={() => toggleSelect("body")}
+              aria-pressed={selected.includes("body")}
             >
-              {email.body.map((p, idx) => (
-                  <p key={idx}>{p}</p>
-              ))}
-            </div>
+              {email.body.map((p, idx) => <p key={idx}>{p}</p>)}
+            </button>
 
             {email.images && email.images.length > 0 && (
                 <div className="gmail-images">
                   {email.images.map((img) => (
-                      <img
-                          key={img.id}
-                          src={img.url}
-                          alt={img.alt || ""}
-                          className={`gmail-image clickable ${
-                              selected.includes(img.id) ? "selected" : ""
-                          }`}
-                          onClick={() => toggleSelect(img.id)}
-                      />
+                      <button
+                        key={img.id}
+                        type="button"
+                        className={`gmail-image-btn btn-unstyled clickable ${getHighlightClass(img.id)}`}
+                        onClick={() => toggleSelect(img.id)}
+                        aria-pressed={selected.includes(img.id)}
+                      >
+                        <img src={img.url} alt={img.alt || ""} className="gmail-image" />
+                      </button>
                   ))}
                 </div>
             )}
@@ -105,35 +119,35 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false })
                           key={link.id}
                           type="button"
                           className={`gmail-link-button clickable ${
-                              selected.includes(link.id) ? "selected" : ""
+                              getHighlightClass(link.id)
                           }`}
                           onClick={() => toggleSelect(link.id)}
                       >
                         {link.text}
+                        <span className="show-button-link">{link.url}</span>
                       </button>
                   ))}
                 </div>
             )}
 
             {email.signature && (
-                <div
-                    className={`gmail-signature clickable ${
-                        selected.includes("signature") ? "selected" : ""
-                    }`}
-                    onClick={() => toggleSelect("signature")}
+                <button
+                  type="button"
+                  className={`gmail-signature btn-unstyled clickable ${getHighlightClass("signature")}`}
+                  onClick={() => toggleSelect("signature")}
+                  aria-pressed={selected.includes("signature")}
                 >
-                  {email.signature.split("\n").map((line, idx) => (
-                      <div key={idx}>{line}</div>
-                  ))}
-                </div>
+                  {email.signature.split("\n").map((line, idx) => <div key={idx}>{line}</div>)}
+                </button>
             )}
           </div>
         </div>
         <div className="gmail-result">
           <button
-              className={styles.submitButton}
-              onClick={handleSubmit}
-              disabled={disabled || selected.length === 0}
+            type="button"
+            className={styles.submitButton}
+            onClick={handleSubmit}
+            disabled={disabled || selected.length === 0}
           >
             Send inn svar
           </button>

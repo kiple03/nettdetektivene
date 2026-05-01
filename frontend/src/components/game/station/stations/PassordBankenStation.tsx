@@ -2,19 +2,24 @@ import { submitPasswordStrengthAnswer, submitSingleChoiceAnswer, type SubmitAnsw
 import type { StationData, SubmitAnswerResult } from "@/types/station";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
-import TaskHeader from "../../ui/TaskHeader";
+import TaskHeader from "../../ui_game/TaskHeader";
 import PasswordInput from "../../tasks/PasswordInput";
-import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
-import passwordImg1 from "@/assets/images/game/passord1.png"
-import passwordImg2 from "@/assets/images/game/passord2.png"
+import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 
+/** Props for {@link PassordBankenStation}. */
 type Props = {
     station: StationData;
+    levelTitle: string;
+    /** Called when the student submits an answer. */
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
 };
 
-function PassordBankenStation({ station, onAnswer, disabled = false }: Props) {
+/**
+ * Station component for "Passordbanken" — renders either a password-strength task
+ * or a single-choice picture grid depending on `station.levelType`.
+ */
+function PassordBankenStation({ station, levelTitle, onAnswer, disabled = false }: Props) {
     const handlePasswordSubmit = async (password: string) => {
         const request: SubmitPasswordStrengthAnswerRequest = {
             shape: "PASSWORD",
@@ -43,19 +48,13 @@ function PassordBankenStation({ station, onAnswer, disabled = false }: Props) {
         }
     };
 
-  // Midlertidig hardkodet mtp bilde for spørsmålene i level 1
-  const passwordImageByQuestionId: Record<number, string> = {
-    12: passwordImg1,
-    13: passwordImg2,
-  }
-
-  const passwordImage = passwordImageByQuestionId[station.questionId]
+  const passwordImage = station.options[0]?.imageUrl;
 
   if (station.levelType === "PASSWORD_STRENGTH") {
     return (
         <div className="passordbanken-station">
           <DetectiveBook
-              title={station.title || "Passordbanken"}
+              title={levelTitle}
               subtitle={station.questionText}
           >
             <div className={`password-layout ${passwordImage ? "" : "password-layout-no-image"}`}>

@@ -10,8 +10,10 @@ const ANCHOR_IDS = [
 ] as const;
 
 type AnchorId = (typeof ANCHOR_IDS)[number];
+/** Absolute pixel position relative to the map container. */
 type HotspotPos = { top: string; left: string };
 
+/** Props for {@link StopMap}. */
 interface StopMapProps {
     stops: StopData[];
     onStopClick: (stop: StopData) => void;
@@ -29,6 +31,12 @@ interface StopMapProps {
     className?: string;
 }
 
+/**
+ * Scrollable SVG-based map that positions clickable stop hotspots over named
+ * anchor elements baked into the SVG. Handles both landscape (horizontal scroll)
+ * and portrait (vertical scroll) layouts and exposes the car offset-path for
+ * the animated car overlay.
+ */
 export function StopMap({
     stops,
     onStopClick,
@@ -46,6 +54,7 @@ export function StopMap({
     });
     const containerNode = useRef<HTMLDivElement | null>(null);
 
+    /** Attaches scroll and resize listeners to track which scroll-arrow buttons should be visible. */
     const containerRef = useCallback((node: HTMLDivElement | null): void | (() => void) => {
         containerNode.current = node;
         if (!node) return;
@@ -68,6 +77,11 @@ export function StopMap({
         };
     }, []);
 
+    /**
+     * Reads named anchor elements from the SVG to derive hotspot positions, and
+     * recomputes the car offset-path in CSS-pixel space accounting for viewBox
+     * scaling and the portrait-mode CSS rotate(-90deg) transform.
+     */
     const svgRef = useCallback((node: SVGSVGElement | null): void | (() => void) => {
         if (!node) return;
 
@@ -89,14 +103,46 @@ export function StopMap({
             if (onCarPathReady) {
                 const carPathEl = node.getElementById("car-path") as SVGGraphicsElement | null;
                 const rawD = carPathEl?.getAttribute("d");
-                const ctm = carPathEl?.getScreenCTM();
-                if (rawD && ctm) {
+                if (rawD) {
+                    // Manually compute the path-to-mapInner transform instead of relying
+                    // on getScreenCTM(). On iOS Safari, getScreenCTM() does not include
+                    // CSS transforms applied to the SVG element, so the portrait-mode
+                    // rotate(-90deg) is silently dropped and the car ends up moving
+                    // along the unrotated (horizontal) path.
+                    const G = 0.135;          // <g transform="scale(0.135)"> wrapping car-path
+                    const VIEW_W = 1440;      // SVG viewBox width
+                    const VIEW_H = 810;       // SVG viewBox height
+                    const svgW = node.clientWidth;
+                    const svgH = node.clientHeight;
+                    // viewBox transform with preserveAspectRatio="xMidYMid slice"
+                    const s = Math.max(svgW / VIEW_W, svgH / VIEW_H);
+                    const vbTx = (svgW - VIEW_W * s) / 2;
+                    const vbTy = (svgH - VIEW_H * s) / 2;
+                    const portrait = window.matchMedia("(orientation: portrait)").matches;
+                    const cw = containerRect.width;
+                    const ch = containerRect.height;
                     const scaledD = rawD.replace(
                         /(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/g,
                         (_, x, y) => {
-                            const screenX = ctm.a * parseFloat(x) + ctm.c * parseFloat(y) + ctm.e;
-                            const screenY = ctm.b * parseFloat(x) + ctm.d * parseFloat(y) + ctm.f;
-                            return `${(screenX - containerRect.left).toFixed(1)},${(screenY - containerRect.top).toFixed(1)}`;
+                            // user-space → SVG CSS-pixel space (pre-CSS-transform)
+                            const px = parseFloat(x) * G * s + vbTx;
+                            const py = parseFloat(y) * G * s + vbTy;
+                            let cx: number;
+                            let cy: number;
+                            if (portrait) {
+                                // SVG is centered in mapInner and rotated -90deg around its
+                                // own center (CSS: top:50%; left:50%; translate(-50%,-50%) rotate(-90deg))
+                                // rotate(-90deg) sends (dx, dy) → (dy, -dx)
+                                const dx = px - svgW / 2;
+                                const dy = py - svgH / 2;
+                                cx = cw / 2 + dy;
+                                cy = ch / 2 - dx;
+                            } else {
+                                // Landscape: SVG fills mapInner at inset:0
+                                cx = px;
+                                cy = py;
+                            }
+                            return `${cx.toFixed(1)},${cy.toFixed(1)}`;
                         },
                     );
                     onCarPathReady(scaledD);
@@ -112,6 +158,7 @@ export function StopMap({
         return () => observer.disconnect();
     }, [onCarPathReady]);
 
+    /** Smoothly scrolls the map container to the edge in the given direction. */
     const scroll = (dir: "left" | "right" | "up" | "down") => {
         const node = containerNode.current;
         if (!node) return;
@@ -121,7 +168,7 @@ export function StopMap({
     };
 
     return (
-        <div className={`${styles.container}${className ? ` ${className}` : ''}`} ref={containerRef}>
+        <div className={`${styles.container}${className ? ` ${className}` : ''}`} ref={containerRef} tabIndex={-1}>
             {header}
 
             <div className={styles.mapInner}>

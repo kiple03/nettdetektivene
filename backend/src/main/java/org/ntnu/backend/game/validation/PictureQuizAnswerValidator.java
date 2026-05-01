@@ -3,9 +3,8 @@ package org.ntnu.backend.game.validation;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
-import org.ntnu.backend.game.dto.subtypes.MultiSelectAnswer;
+import org.ntnu.backend.game.dto.subtype.MultiSelectAnswer;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component;
  * Validates student submissions for {@link LevelType#PICTURE_QUIZ} questions.
  *
  * <p>Expects a {@link MultiSelectAnswer} where {@code selectedIds} contains
- * the IDs of all options the student selected. A submission is considered
+ * the IDs of all responseUrls the student selected. A submission is considered
  * correct only if:
  *
  * <ul>
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
 
+    /** @return {@link LevelType#PICTURE_QUIZ} */
     @Override
     public LevelType supportedType() {
         return LevelType.PICTURE_QUIZ;
@@ -39,11 +39,11 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
     /**
      * Validates a submitted answer for a picture quiz question.
      *
-     * @param options the question's parsed options including correct flags
+     * @param options the question's parsed responseUrls including correct flags
      * @param submission must be a {@link MultiSelectAnswer}
      * @return a {@link ValidationResult} indicating whether the selected option IDs
      *         exactly match the correct option IDs, along with an explanation from
-     *         one of the correct options
+     *         one of the correct responseUrls
      * @throws IllegalArgumentException if submission is not a {@link MultiSelectAnswer}
      *                                  or if any selected option ID does not exist
      */
@@ -104,10 +104,11 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
                   .orElse(null);
 
         return new ValidationResult(
-                isCorrect,
-                explanation,
-                correctOptionIds,
-                wrongSelectedOptionIds
+            isCorrect,
+            explanation,
+            correctOptionIds.stream().map(String::valueOf).toList(),
+            wrongSelectedOptionIds.stream().map(String::valueOf).toList(),
+            List.of()
         );
     }
 }

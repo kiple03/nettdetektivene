@@ -2,18 +2,22 @@ import { submitSingleChoiceAnswer, submitPerItemAnswer } from "@/api/gameApi.ts"
 import type { SubmitAnswerRequest, SubmitSingleChoiceAnswerRequest } from "@/api/gameApi.ts";
 import { mapSubmitResponseToSubmitAnswer } from "@/utils/gameMapper.ts";
 import type { StationData, SubmitAnswerResult } from "@/types/station.ts";
-import DetectiveBook from "@/components/game/ui/DetectiveBook.tsx";
+import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 import ClassifyItems from "@/components/game/tasks/ClassifyItems.tsx";
 import styles from "@/components/game/tasks/PictureGrid.module.css";
 
 type Props = {
     station: StationData;
+    levelTitle: string;
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
 };
 
-function MarkedsplassenStation({ station, onAnswer, disabled = false }: Props) {
+/**
+ * Station component for Markedsplassen, supporting picture-grid (single-choice) and classify-items question types.
+ */
+function MarkedsplassenStation({ station, levelTitle, onAnswer, disabled = false }: Props) {
     const handleSingleChoice = async (selectedIds: number[]) => {
         const request: SubmitSingleChoiceAnswerRequest = {
             shape: "SINGLE",
@@ -48,7 +52,7 @@ function MarkedsplassenStation({ station, onAnswer, disabled = false }: Props) {
     return (
         <div className="markedsplassen-station">
             <DetectiveBook
-                title={station.title || "Markedsplassen"}
+                title={levelTitle}
                 subtitle={station.questionText}
             >
                 {station.levelType === "CLASSIFY_ITEMS" ? (
@@ -61,11 +65,10 @@ function MarkedsplassenStation({ station, onAnswer, disabled = false }: Props) {
                 ) : (
                     <PictureGrid
                         questionId={station.questionId}
-                        options={station.options.map((option, index) => ({
+                        options={station.options.map((option) => ({
                             id: option.id,
                             imageUrl: option.imageUrl ?? null,
                             text: option.label ?? "",
-                            altText: option.label ?? `Alternativ ${index + 1}`,
                         }))}
                         onSubmit={handleSingleChoice}
                         disabled={disabled}

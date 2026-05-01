@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class JoinClassroomRequest {
 
+    /** Exactly 6-character code displayed to students by the teacher. */
     @NotBlank(message = "Bli-med-kode kan ikke være tom")
     @Size(min = 6, max = 6, message = "Bli-med-kode må være nøyaktig 6 tegn")
     private String joinCode;

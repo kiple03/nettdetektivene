@@ -25,6 +25,10 @@ function mapClassroomDetail(raw: RawClassroomResponse): ClassroomDetail {
   };
 }
 
+/**
+ * Joins a classroom by join code, stores the returned access token, and returns the classroom details.
+ * @param joinCode - The classroom's join code.
+ */
 export async function joinClassroom(joinCode: string): Promise<ClassroomDetail> {
   const res = await apiClient.post<RawJoinResponse>('/classrooms/join', { joinCode });
   setToken(res.data.accessToken);
@@ -32,10 +36,17 @@ export async function joinClassroom(joinCode: string): Promise<ClassroomDetail> 
   return mapClassroomDetail(res.data);
 }
 
+/** Returns the current student's enrolled classroom, or null if not enrolled. */
 export async function getMyClassroom(): Promise<ClassroomDetail | null> {
   const res = await apiClient.get<RawClassroomResponse>('/classrooms/my', {
     validateStatus: (s) => s === 200 || s === 204,
   });
   if (res.status === 204) return null;
   return mapClassroomDetail(res.data);
+}
+
+export async function leaveClassroom(): Promise<void> {
+  const res = await apiClient.delete<{ accessToken: string }>('/classrooms/my');
+  setToken(res.data.accessToken);
+  window.dispatchEvent(new Event('auth-changed'));
 }

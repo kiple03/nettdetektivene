@@ -1,29 +1,56 @@
 import { useState, useRef } from "react";
+import useSound from "use-sound";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { LayeredAvatar } from "@/components/user/LayeredAvatar";
-import { HealthBar } from "@/components/boss/HealthBar";
-import { BossCharacter } from "@/components/boss/BossCharacter";
-import { IntroCutscene } from "@/components/boss/IntroCutscene";
-import { AttackOrchestrator } from "@/components/boss/AttackOrchestrator";
-import { VictoryCutscene } from "@/components/boss/VictoryCutscene";
-import { DefeatCutscene } from "@/components/boss/DefeatCutscene";
-import { VictoryScreen } from "@/components/boss/VictoryScreen";
-import { DefeatScreen } from "@/components/boss/DefeatScreen";
+import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
+import { HealthBar } from "@/components/game/boss/HealthBar";
+import { BossCharacter } from "@/components/game/boss/BossCharacter";
+import { IntroCutscene } from "@/components/game/boss/IntroCutscene";
+import { AttackOrchestrator } from "@/components/game/boss/AttackOrchestrator";
+import { VictoryCutscene } from "@/components/game/boss/VictoryCutscene";
+import { DefeatCutscene } from "@/components/game/boss/DefeatCutscene";
+import { VictoryScreen } from "@/components/game/boss/VictoryScreen";
+import { DefeatScreen } from "@/components/game/boss/DefeatScreen";
 import { saveBossBattleResult } from "@/api/bossBattleApi";
+import { playMusic, getCurrentTrack } from "@/audio/musicManager";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import sharkHurt from "@/assets/images/boss/shark-hurt.png";
 import arenaBg from "@/assets/images/boss/arena-bg.png";
+import bossDamageFx from "@/assets/sounds/bossDamage.mp3";
+import playerDamageFx from "@/assets/sounds/playerDamage.mp3";
+import bossWinMusic from "@/assets/sounds/bossWinMusic.mp3";
 import styles from "./BossBattlePage.module.css";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { useParams } from "react-router-dom";
+import QuitButton from "@/components/ui/buttons/QuitButton";
 
-type Phase = "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
+type Phase = "black-in" | "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
 
 const MAX_HP = 5;
 
+// Stable ref callback — defined outside the component so React doesn't re-fire on every render.
+// Switches to boss music on mount, restores background music on unmount.
+function bossPageMusicRef(el: HTMLDivElement | null) {
+    if (el !== null) {
+        playMusic('boss');
+    } else if (getCurrentTrack() === 'boss') {
+        playMusic('background');
+    }
+}
+
+/** Full-screen boss battle arena managing phase transitions, HP, and result persistence. */
 export default function BossBattlePage() {
     const { data: profile } = useUserProfile();
-    const equippedItems = profile?.equippedItems ?? [];
+    const { role } = useAuth();
+    const { classroomId } = useParams<{ classroomId?: string }>();
+    const queryClient = useQueryClient();
 
-    const [phase, setPhase] = useState<Phase>("intro");
+    const isTeacher = role === 'TEACHER';
+    const equippedItems = isTeacher ? [] : (profile?.equippedItems ?? []);
+    const username = isTeacher ? 'Lærer' : (profile?.username ?? 'Spiller');
+    const backTo = isTeacher ? `/teacher/classrooms/${classroomId}/map` : '/map';
+
+    const [phase, setPhase] = useState<Phase>("black-in");
     const [playerHp, setPlayerHp] = useState(MAX_HP);
     const [bossHp, setBossHp] = useState(MAX_HP);
     const [bossHurt, setBossHurt] = useState(false);
@@ -31,6 +58,10 @@ export default function BossBattlePage() {
     const [currentSprite, setCurrentSprite] = useState<string>(sharkBase);
     const [introPlayerRevealed, setIntroPlayerRevealed] = useState(false);
     const startTimeRef = useRef<number | null>(null);
+
+    const [playBossDamage] = useSound(bossDamageFx);
+    const [playPlayerDamage] = useSound(playerDamageFx);
+    const [playWinMusic] = useSound(bossWinMusic);
 
     const beginFade = () => setPhase("intro-fading");
 
@@ -49,28 +80,44 @@ export default function BossBattlePage() {
             const next = bossHp - 1;
             setBossHp(next);
             setBossHurt(true);
+            playBossDamage();
             setTimeout(() => setBossHurt(false), 500);
             if (next <= 0) {
                 const secs = captureTime();
                 setFinalSeconds(secs);
-                saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
-                    .catch((err) => console.error("Failed to save boss battle result", err));
+                setCurrentSprite(sharkHurt);
+                playMusic('background');
+                playWinMusic();
+                if (!isTeacher) {
+                    saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
+                        .catch((err) => console.error("Failed to save boss battle result", err));
+                }
                 setPhase("victory");
+                queryClient.invalidateQueries({queryKey: ['medalions']});
                 return;
             }
         } else {
             const next = playerHp - 1;
             setPlayerHp(next);
+            playPlayerDamage();
             if (next <= 0) {
                 const secs = captureTime();
                 setFinalSeconds(secs);
-                saveBossBattleResult({ won: false, timeSeconds: secs, playerHpRemaining: 0 })
-                    .catch((err) => console.error("Failed to save boss battle result", err));
+                playMusic('background');
+                if (!isTeacher) {
+                    saveBossBattleResult({ won: false, timeSeconds: secs, playerHpRemaining: 0 })
+                        .catch((err) => console.error("Failed to save boss battle result", err));
+                }
                 setPhase("defeat");
                 return;
             }
         }
         setPhase("battle");
+    };
+
+    const replayVictory = () => {
+        setCurrentSprite(sharkHurt);
+        setPhase("victory");
     };
 
     const resetBattle = () => {
@@ -79,34 +126,42 @@ export default function BossBattlePage() {
         setFinalSeconds(0);
         startTimeRef.current = null;
         setIntroPlayerRevealed(false);
-        setPhase("intro");
+        setPhase("black-in");
     };
 
     const isIntroPhase = phase === "intro" || phase === "intro-fading";
-    const showBoss = isIntroPhase || phase === "battle" || phase === "attacking";
-    const showPlayer = (!isIntroPhase || introPlayerRevealed) && (phase !== "victory" && phase !== "victory-screen" && phase !== "defeat" && phase !== "defeat-screen");
+    const showBoss = isIntroPhase || phase === "battle" || phase === "attacking" || phase === "victory";
+    const showPlayer = phase !== "black-in" && (!isIntroPhase || introPlayerRevealed) && (phase !== "victory" && phase !== "victory-screen" && phase !== "defeat" && phase !== "defeat-screen");
     const showBattle = phase === "battle" || phase === "attacking";
     const bossSprite = bossHurt ? sharkHurt : currentSprite;
 
     return (
         <div className={styles.arena}>
+            <div ref={bossPageMusicRef} style={{ display: 'none' }} />
             <div className={styles.arenaBg} style={{ backgroundImage: `url(${arenaBg})` }} />
             {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
             {showBoss && (
-                <div className={styles.bossCharArea}>
-                    <BossCharacter sprite={bossSprite} isHurt={bossHurt}/>
+                <div className={styles.bossCharArea} style={isIntroPhase ? {pointerEvents: 'none'} : undefined}>
+                    <BossCharacter sprite={bossSprite} isHurt={bossHurt} isVictory={phase === "victory"} />
                     {showBattle && (
                         <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
                     )}
                 </div>
             )}
             {showPlayer && (
-                <div className={styles.playerCharArea}>
-                    <LayeredAvatar items={equippedItems} size={120} circular={false} />
+                <div className={styles.playerCharArea} style={isIntroPhase ? {pointerEvents: 'none'} : undefined}>
+                    <LayeredAvatar items={equippedItems} hairColor={profile?.hairColor} size={120} circular={false} />
                     {showBattle && (
-                        <HealthBar label={profile?.username ?? "Spiller"} hp={playerHp} maxHp={MAX_HP} side="player" />
+                        <HealthBar label={username} hp={playerHp} maxHp={MAX_HP} side="player" />
                     )}
                 </div>
+            )}
+
+            {showBattle && (
+                <QuitButton
+                    to={backTo}
+                    style={{ position: "absolute", top: "1rem", left: "1rem", zIndex: 70 }}
+                />
             )}
 
             {/* Attack orchestrator — always mounted so admin panel is visible from page load */}
@@ -115,8 +170,17 @@ export default function BossBattlePage() {
                     phase={phase}
                     onAnswer={handleAnswer}
                     onSpriteChange={setCurrentSprite}
+                    onReplayVictory={replayVictory}
                 />
             </div>
+
+            {/* BLACK SCREEN — flickers from opaque to transparent before intro starts */}
+            {phase === "black-in" && (
+                <div
+                    className={styles.blackScreenIn}
+                    onAnimationEnd={() => setPhase("intro")}
+                />
+            )}
 
             {/* INTRO — dark overlay + dialog; characters sit above it (z-index: 60) */}
             {phase === "intro" && (
@@ -147,7 +211,7 @@ export default function BossBattlePage() {
             {/* VICTORY SCREEN */}
             {phase === "victory-screen" && (
                 <div className={styles.cutsceneOverlay}>
-                    <VictoryScreen timeSeconds={finalSeconds} playerHp={playerHp} maxHp={MAX_HP} />
+                    <VictoryScreen timeSeconds={finalSeconds} playerHp={playerHp} maxHp={MAX_HP} backTo={backTo} />
                 </div>
             )}
 

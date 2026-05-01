@@ -1,14 +1,16 @@
-import { Link } from 'react-router-dom';
-import { LayeredAvatar } from '@/components/user/LayeredAvatar';
+import { LayeredAvatar } from '@/components/miscellaneous/LayeredAvatar';
 import type { EquippedItem } from '@/hooks/useUserProfile';
 
 type StudentDetailHeaderProps = {
-    backLink: string;
     username: string;
     email: string | null;
     enrolledAt: string | null;
     completedCount: number;
     avatarItems: EquippedItem[];
+    hairColor?: string;
+    score?: number;
+    medalsEarned?: number;
+    /** Whether the username is currently being edited inline. */
     editing: boolean;
     editValue: string;
     onEditValueChange: (v: string) => void;
@@ -19,8 +21,10 @@ type StudentDetailHeaderProps = {
     usernameError: string | null;
 };
 
+/** Header section of the student detail view showing avatar, username (with inline edit), and key info. */
 export function StudentDetailHeader({
-    backLink, username, email, enrolledAt, completedCount, avatarItems,
+    username, email, enrolledAt, completedCount, avatarItems, hairColor,
+    score, medalsEarned,
     editing, editValue, onEditValueChange, onStartEdit, onCancelEdit, onSaveUsername,
     savingUsername, usernameError,
 }: StudentDetailHeaderProps) {
@@ -30,11 +34,10 @@ export function StudentDetailHeader({
 
     return (
         <header className="student-detail__header student-detail__note">
-            <div className="student-detail__note-tape" />
+            <div className="student-detail__note-tape note-tape note-tape--cw" />
             <div className="student-detail__avatar-ring">
-                <LayeredAvatar items={avatarItems} size={132} />
+                <LayeredAvatar items={avatarItems} size={132} hairColor={hairColor} />
             </div>
-            <Link to={backLink} className="student-detail__back">← Tilbake</Link>
 
             {editing ? (
                 <div className="student-detail__username-edit">
@@ -43,7 +46,6 @@ export function StudentDetailHeader({
                         value={editValue}
                         onChange={(e) => onEditValueChange(e.target.value)}
                         onKeyDown={(e) => { if (e.key === 'Enter') onSaveUsername(); if (e.key === 'Escape') onCancelEdit(); }}
-                        autoFocus
                         maxLength={30}
                     />
                     <div className="student-detail__username-actions">
@@ -80,6 +82,18 @@ export function StudentDetailHeader({
                 )}
                 <dt>Nivåer fullført</dt>
                 <dd>{completedCount}</dd>
+                {score !== undefined && (
+                    <>
+                        <dt>Poeng</dt>
+                        <dd>{score.toLocaleString('nb-NO')}</dd>
+                    </>
+                )}
+                {medalsEarned !== undefined && (
+                    <>
+                        <dt>Medaljer</dt>
+                        <dd>{medalsEarned} opptjent</dd>
+                    </>
+                )}
             </dl>
         </header>
     );

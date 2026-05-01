@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.PostOfficeOptionResponse;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.util.OptionValidator;
@@ -32,15 +32,19 @@ import org.ntnu.backend.game.util.OptionValidator;
 @AllArgsConstructor
 public final class PostOfficeOption implements Option {
 
+  /** Unique identifier for this option within the question. */
   @NotBlank
   private String id;
 
+  /** Visual/semantic category of the postal element (e.g. "sender", "subject"). */
   @NotBlank
   private String type;
 
+  /** Whether this element is a red flag that the student should identify. */
   @JsonProperty("isSuspicious")
   private boolean isSuspicious;
 
+  /** Teacher-authored explanation shown after the student answers. */
   @NotBlank
   private String explanation;
 }

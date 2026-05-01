@@ -1,14 +1,10 @@
 package org.ntnu.backend.config.openapi;
 
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.ntnu.backend.exception.ErrorResponse;
 
 /**
  * Documents a non-standard error response on a controller endpoint.
@@ -30,7 +26,10 @@ import org.ntnu.backend.exception.ErrorResponse;
 @Target(ElementType.METHOD)
 @Repeatable(ApiErrorResponses.class)
 public @interface ApiErrorResponse {
+  /** HTTP status code string, e.g. {@code "404"}. */
   String responseCode();
+
+  /** Human-readable description shown in the Swagger UI for this error case. */
   String description();
 }
 

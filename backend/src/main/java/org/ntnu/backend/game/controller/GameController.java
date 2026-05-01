@@ -3,17 +3,16 @@ package org.ntnu.backend.game.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.config.openapi.ApiErrorResponse;
 import org.ntnu.backend.game.dto.LevelResponse;
-import org.ntnu.backend.game.dto.OptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
+import org.ntnu.backend.game.dto.optionresponse.OptionResponse;
 import org.ntnu.backend.game.dto.progress.SubmitLevelRequest;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.service.GameService;
@@ -94,7 +93,7 @@ public class GameController {
   public List<QuestionResponse> getQuestionsForLevel(
       @PathVariable int levelId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return questionService.getQuestionsForLevel(levelId, principal);
+    return questionService.getQuestionsForLevel(levelId, principal.getUserId(), principal.getRole(), principal.getClassroomId());
   }
 
   /**
@@ -115,12 +114,12 @@ public class GameController {
 
 
   /**
-   * Returns a single question with its options. Answer data (correct
+   * Returns a single question with its responseUrls. Answer data (correct
    * flags and explanations) is excluded from the response by the
    * sealed {@link OptionResponse} hierarchy.
    */
   @Operation(
-      summary = "Get a single questions data, with all the answer options"
+      summary = "Get a single questions data, with all the answer responseUrls"
   )
   @ApiErrorResponse(responseCode = "404", description = "Question was not found")
   @GetMapping("/questions/{questionId}")
@@ -128,7 +127,7 @@ public class GameController {
       @PathVariable int questionId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal
   ) {
-    return questionService.getQuestionById(questionId);
+    return questionService.getQuestionById(questionId, principal.getUserId(), principal.getRole());
   }
 
 
@@ -153,7 +152,8 @@ public class GameController {
       @PathVariable int questionId,
       @RequestBody SubmitAnswerRequest request,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-    return questionService.submitAnswer(questionId, request);
+    return questionService.submitAnswer(questionId, request,
+        principal.getUserId(), principal.getRole());
   }
 
   @Operation(

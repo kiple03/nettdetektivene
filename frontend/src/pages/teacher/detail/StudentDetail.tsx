@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useStudentDetail, useStudentProgress, useStudentMedalions, useStudentNotebook } from '@/hooks/teacher/useTeacherQueries';
 import { useUpdateStudentUsername } from '@/hooks/teacher/useTeacherMutations';
@@ -9,10 +9,11 @@ import { StudentDetailLevels } from '@/components/teacher/studentDetail/StudentD
 import { StudentNotebook } from '@/components/teacher/studentDetail/StudentNotebook';
 import './StudentDetail.css';
 import { ALL_MEDALS, getMedalImageUrl } from '@/data/allMedals';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
+/** Teacher page showing a single student's profile, progress, medals, and notebook. */
 export default function StudentDetail() {
     const { id: classroomId = '', studentId = '' } = useParams<{ id: string; studentId: string }>();
-    const backLink = `/teacher/classrooms/${classroomId}`;
     const queryClient = useQueryClient();
 
     const { data: studentDetail = null } = useStudentDetail(classroomId, studentId);
@@ -26,17 +27,22 @@ export default function StudentDetail() {
     const [editValue, setEditValue] = useState('');
     const [usernameError, setUsernameError] = useState<string | null>(null);
 
+    useBackTo(`/teacher/classrooms/${classroomId}`, "Tilbake til klasserom");
+
+    /** Enters username edit mode, pre-filling the current username. */
     function startEdit() {
         setEditValue(studentDetail?.username ?? '');
         setUsernameError(null);
         setEditing(true);
     }
 
+    /** Exits edit mode without saving. */
     function cancelEdit() {
         setEditing(false);
         setUsernameError(null);
     }
 
+    /** Validates and submits the new username, then invalidates the student detail query. */
     async function saveUsername() {
         const trimmed = editValue.trim();
         if (trimmed.length < 3) {
@@ -56,7 +62,6 @@ export default function StudentDetail() {
     if (!studentDetail) {
         return (
             <div className="student-detail">
-                <Link to={backLink} className="student-detail__back">← Tilbake</Link>
                 <p className="student-detail__empty">Eleven ble ikke funnet.</p>
             </div>
         );
@@ -68,14 +73,16 @@ export default function StudentDetail() {
     return (
         <div className="student-detail">
             <div className="student-detail__board-wrap">
-                <div className="student-detail__corkboard">
+                <div className="student-detail__corkboard teacher-corkboard">
                     <StudentDetailHeader
-                        backLink={backLink}
                         username={username}
                         email={email}
                         enrolledAt={enrolledAt}
                         completedCount={completedCount}
                         avatarItems={studentProfile?.equippedItems ?? []}
+                        hairColor={studentProfile?.hairColor}
+                        score={studentProfile?.score}
+                        medalsEarned={studentProfile?.medalsEarned}
                         editing={editing}
                         editValue={editValue}
                         onEditValueChange={setEditValue}
@@ -86,7 +93,7 @@ export default function StudentDetail() {
                         usernameError={usernameError}
                     />
 
-                    <StudentDetailLevels studentDetail={studentDetail} />
+                    <StudentDetailLevels studentDetail={studentDetail} studentProfile={studentProfile} />
 
                     <div className="student-detail__medals">
                         <h2 className="student-detail__medals-title">Medaljer</h2>
@@ -120,7 +127,13 @@ export default function StudentDetail() {
                         </div>
                     </div>
 
-                    {notebook && <StudentNotebook notes={notebook} />}
+                    {notebook && (
+                        <StudentNotebook 
+                            notes={notebook} 
+                            classroomId={classroomId}
+                            studentId={studentId}
+                        />
+                    )}
                 </div>
             </div>
         </div>

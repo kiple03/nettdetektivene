@@ -14,6 +14,7 @@ import { emptyDraftForType, makeOptionId } from '@/components/teacher/questionEd
 import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherPasswordStrengthOption, TeacherTextQuizOption } from '@/api/teacherApi';
 import { getImageDisplayUrl } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 const LEVEL_TYPE_LABELS: Record<string, string> = {
     MULTIPLE_CHOICE: 'Flervalg',
@@ -29,6 +30,7 @@ const LEVEL_TYPE_LABELS: Record<string, string> = {
 
 const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE', 'PICTURE_QUIZ', 'CLASSIFY_ITEMS', 'PASSWORD_STRENGTH', 'TEXT_QUIZ']);
 
+/** Converts a saved TeacherQuestion into the draft format used by the question editor. */
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     switch (q.levelType) {
         case 'CLASSIFY_ITEMS': {
@@ -70,21 +72,31 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
             return { kind: 'TEXT_QUIZ', questionText: q.questionText, options: tqOptions };
         }
         default: {
-            const options = (q.options as import('@/api/teacherApi').TeacherQuestionOption[]).map(o => ({
+            const rawOptions = q.options as import('@/api/teacherApi').TeacherQuestionOption[];
+            if (q.levelType === 'PICTURE_QUIZ') {
+                const pqOptions = rawOptions.map(o => ({
+                    id: o.id.toString(),
+                    text: o.text ?? '',
+                    isCorrect: o.isCorrect,
+                    explanation: o.explanation ?? '',
+                    imageUrl: o.imageUrl,
+                }));
+                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options: pqOptions };
+            }
+            const mcOptions = rawOptions.map(o => ({
                 id: o.id.toString(),
                 text: o.text ?? '',
                 isCorrect: o.isCorrect,
                 explanation: o.explanation ?? '',
                 imageUrl: o.imageUrl,
+                responseImageUrl: o.responseImageUrl ?? null,
             }));
-            if (q.levelType === 'PICTURE_QUIZ') {
-                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
-            }
-            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options };
+            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options: mcOptions };
         }
     }
 }
 
+/** Renders the options list for a question card, with type-specific formatting. */
 function renderQuestionOptions(q: TeacherQuestion) {
     if (q.levelType === 'CLASSIFY_ITEMS') {
         const ciOptions = q.options as TeacherClassifyItemsOption[];
@@ -112,14 +124,15 @@ function renderQuestionOptions(q: TeacherQuestion) {
     }
     if (q.options.length === 0) return null;
     const stdOptions = q.options as import('@/api/teacherApi').TeacherQuestionOption[];
+    const isPictureQuiz = q.levelType === 'PICTURE_QUIZ';
     return (
-        <ul className="level-questions__options">
+        <ul className={`level-questions__options${isPictureQuiz ? ' level-questions__options--grid' : ''}`}>
             {stdOptions.map(opt => (
                 <li
                     key={opt.id}
                     className={`level-questions__option${opt.isCorrect ? ' level-questions__option--correct' : ''}`}
                 >
-                    {q.levelType === 'PICTURE_QUIZ' && opt.imageUrl && (
+                    {isPictureQuiz && opt.imageUrl && (
                         <img
                             src={getImageDisplayUrl(opt.imageUrl)}
                             alt={opt.text ?? ''}
@@ -136,6 +149,7 @@ function renderQuestionOptions(q: TeacherQuestion) {
     );
 }
 
+/** Page for teachers to view and manage questions for a specific game level. */
 export default function LevelQuestionsPage() {
     const { classroomId = '', levelId: levelIdStr = '' } = useParams<{ classroomId: string; levelId: string }>();
     const levelId = parseInt(levelIdStr, 10);
@@ -168,6 +182,8 @@ export default function LevelQuestionsPage() {
     const modalSaving = createMutation.isPending || updateMutation.isPending;
     const modalError = editingQuestion ? updateError : createError;
 
+    useBackTo(backUrl);
+
     const handleCloseModal = () => {
         setCreateOpen(false);
         setEditingQuestion(null);
@@ -189,6 +205,7 @@ export default function LevelQuestionsPage() {
                 const options = draft.options.map(o => ({
                     text: o.text,
                     imageUrl: o.imageUrl,
+                    responseImageUrl: o.responseImageUrl,
                     isCorrect: o.isCorrect,
                     explanation: o.explanation,
                 }));
@@ -368,9 +385,6 @@ export default function LevelQuestionsPage() {
 
     return (
         <div className="level-questions">
-            <Link to={backUrl} className="level-questions__back">
-                ← Tilbake
-            </Link>
 
             <div className="level-questions__header">
                 {level && (
@@ -383,8 +397,8 @@ export default function LevelQuestionsPage() {
             </div>
 
             <div className="level-questions__board-wrap">
-                <div className="level-questions__board">
-                    <div className="level-questions__board-pin" />
+                <div className="level-questions__board teacher-corkboard">
+                    <div className="teacher-corkboard__pin" />
 
                     <div className="level-questions__toolbar">
                         <button

@@ -37,6 +37,13 @@ public class JwtService {
   @Value("${jwt.access-expiration-ms}")
   private long expiration;
 
+  /**
+   * Parses and verifies the token signature, then returns its claims payload.
+   *
+   * @param token signed JWT string
+   * @return the verified claims
+   * @throws io.jsonwebtoken.JwtException if the token is invalid or expired
+   */
   private Claims getClaims(String token) {
     return Jwts.parser()
         .verifyWith(getSigningKey())
@@ -61,8 +68,6 @@ public class JwtService {
   public String generateToken(UserPrincipal principal, UUID classroomId) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("userId", principal.getUser().getId().toString());
-    // Store bare role name (e.g. "TEACHER") so the JWT is decoupled from Spring's
-    // "ROLE_" authority prefix convention. JwtAuthFilter re-adds the prefix.
     claims.put("role", principal.getUser().getRole().name());
 
     if (classroomId != null) {
@@ -78,11 +83,19 @@ public class JwtService {
         .compact();
   }
 
+  /**
+   * Public entry point for token validation; delegates to {@link #getClaims}.
+   *
+   * @param token signed JWT string
+   * @return the verified claims
+   * @throws io.jsonwebtoken.JwtException if the token is invalid or expired
+   */
   public Claims parseAndValidate(String token) {
     return getClaims(token);
   }
 
 
+  /** Decodes the Base64 secret from config and returns a HMAC-SHA signing key. */
   private SecretKey getSigningKey() {
     return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
   }

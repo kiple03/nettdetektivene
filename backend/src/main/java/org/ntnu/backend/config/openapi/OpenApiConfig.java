@@ -1,12 +1,12 @@
 package org.ntnu.backend.config.openapi;
 
 import io.swagger.v3.core.converter.ModelConverters;
-import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -31,6 +31,12 @@ public class OpenApiConfig {
 
   private static final String BEARER_AUTH = "bearerAuth";
 
+  /**
+   * Builds the top-level OpenAPI object with API metadata, JWT security scheme, and the
+   * {@link ErrorResponse} schema registered for use in global error responses.
+   *
+   * @return configured {@link OpenAPI} instance
+   */
   @Bean
   public OpenAPI apiInfo() {
     OpenAPI api = new OpenAPI()
@@ -47,10 +53,6 @@ public class OpenApiConfig {
                 .description("JWT bearer token from /auth/login")))
         .security(List.of(new SecurityRequirement().addList(BEARER_AUTH)));
 
-      // Explicitly register the ErrorResponse schema so global error responses
-      // can reference it via $ref. Normally springdoc only picks up schemas
-      // from controller method signatures, and ErrorResponse is returned from
-      // exception handlers only.
       ModelConverters.getInstance()
           .readAllAsResolvedSchema(ErrorResponse.class)
           .referencedSchemas
@@ -62,6 +64,8 @@ public class OpenApiConfig {
   /**
    * Adds a default 401 response to every operation. Individual endpoints can
    * still declare their own 401 with a more specific description if needed.
+   *
+   * @return an {@link OperationCustomizer} that injects standard error responses
    */
   @Bean
   public OperationCustomizer globalResponseCustomizer() {

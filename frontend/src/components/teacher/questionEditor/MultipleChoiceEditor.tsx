@@ -10,6 +10,10 @@ interface Props {
   onChange: (v: MultipleChoiceQuestionDraft) => void;
 }
 
+/**
+ * Editor for creating and editing multiple-choice questions with up to 6 options.
+ * Exactly one option can be marked as correct at a time.
+ */
 export function MultipleChoiceEditor({ value, onChange }: Props) {
   const setQuestion = (questionText: string) => onChange({ ...value, questionText });
 
@@ -21,7 +25,7 @@ export function MultipleChoiceEditor({ value, onChange }: Props) {
 
   const addOption = () => {
     if (value.options.length >= MAX_OPTIONS) return;
-    onChange({ ...value, options: [...value.options, { id: makeOptionId(), text: '', isCorrect: false, explanation: '', imageUrl: null }] });
+    onChange({ ...value, options: [...value.options, { id: makeOptionId(), text: '', isCorrect: false, explanation: '', imageUrl: null, responseImageUrl: null }] });
   };
 
   const removeOption = (idx: number) => {
@@ -32,8 +36,9 @@ export function MultipleChoiceEditor({ value, onChange }: Props) {
   return (
     <div className="mc-editor">
       <div className="mc-editor__field">
-        <label className="mc-editor__label">Spørsmålstekst</label>
+        <label className="mc-editor__label" htmlFor='question-text'>Spørsmålstekst</label>
         <textarea
+          id="question-text"
           className="mc-editor__textarea"
           value={value.questionText}
           onChange={e => setQuestion(e.target.value)}
@@ -72,10 +77,22 @@ export function MultipleChoiceEditor({ value, onChange }: Props) {
                 onChange={e => setOption(idx, { explanation: e.target.value })}
                 placeholder="Forklaring (vises til eleven etter svar)"
               />
-              <ImagePickerField
-                value={opt.imageUrl}
-                onChange={(url) => setOption(idx, { imageUrl: url })}
-              />
+              <div className="mc-editor__image-row">
+                <div className="mc-editor__image-slot">
+                  <span className="mc-editor__image-label">Bilde (før svar)</span>
+                  <ImagePickerField
+                    value={opt.imageUrl}
+                    onChange={(url) => setOption(idx, { imageUrl: url })}
+                  />
+                </div>
+                <div className="mc-editor__image-slot">
+                  <span className="mc-editor__image-label">Bilde (etter svar — med markering)</span>
+                  <ImagePickerField
+                    value={opt.responseImageUrl}
+                    onChange={(url) => setOption(idx, { responseImageUrl: url })}
+                  />
+                </div>
+              </div>
             </div>
             <button
               type="button"

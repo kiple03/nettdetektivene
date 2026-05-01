@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useJoinClassroom } from '@/hooks/student/useJoinClassroom';
 import styles from './JoinWithCodePage.module.css';
@@ -8,10 +8,13 @@ import detectiveImage from '@/assets/images/joinWithCode/detective.png';
 import classroomBackground from '@/assets/images/joinWithCode/bgClassroomCode.png';
 import { useQueryClient } from '@tanstack/react-query';
 
+/** Page where a student enters a 6-character classroom join code. */
 export default function JoinWithCodePage() {
     const navigate = useNavigate();
     const { joinClassroom, reset, isPending, error } = useJoinClassroom();
     const [code, setCode] = useState('');
+    const [focused, setFocused] = useState(false);
+    const [cursorPos, setCursorPos] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const queryClient = useQueryClient(); //for award system
 
@@ -24,6 +27,22 @@ export default function JoinWithCodePage() {
         return `${padded.slice(0, 3)}-${padded.slice(3, 6)}`;
     }, [rawCode]);
 
+    // Display index where the caret sits. +1 for cursorPos >= 3 skips the dash at display index 3.
+    // cursorPos 6 (end of full code) maps to display index 6 (last slot) so the caret stays under the last char.
+    const activeDisplayIndex: number =
+        cursorPos === 6 ? 6 :
+        cursorPos < 3   ? cursorPos :
+                          cursorPos + 1;
+
+    // Keep the browser's hidden-input cursor in sync with our cursorPos.
+    useEffect(() => {
+        const input = inputRef.current;
+        if (input && document.activeElement === input) {
+            input.setSelectionRange(cursorPos, cursorPos);
+        }
+    }, [cursorPos, rawCode]);
+
+    // Mobile / paste fallback — keydown handles desktop typing, this handles the rest.
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const cleaned = e.target.value
             .replace(/[^a-zA-Z0-9]/g, '')
@@ -31,12 +50,58 @@ export default function JoinWithCodePage() {
             .slice(0, 6);
         reset();
         setCode(cleaned);
+        setCursorPos(cleaned.length);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Backspace' && rawCode.length > 0) {
+        // Single printable character — insert at cursorPos on desktop.
+        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
             e.preventDefault();
-            setCode((prev) => prev.slice(0, -1));
+            const char = e.key.toUpperCase();
+            if (/^[A-Z0-9]$/.test(char) && rawCode.length < 6) {
+                const newCode = rawCode.slice(0, cursorPos) + char + rawCode.slice(cursorPos);
+                setCode(newCode.slice(0, 6));
+                setCursorPos((prev) => Math.min(prev + 1, 6));
+                reset();
+            }
+            return;
+        }
+
+        switch (e.key) {
+            case 'Backspace':
+                e.preventDefault();
+                if (cursorPos > 0) {
+                    setCode(rawCode.slice(0, cursorPos - 1) + rawCode.slice(cursorPos));
+                    setCursorPos((prev) => prev - 1);
+                    reset();
+                }
+                break;
+            case 'Delete':
+                e.preventDefault();
+                if (cursorPos < rawCode.length) {
+                    setCode(rawCode.slice(0, cursorPos) + rawCode.slice(cursorPos + 1));
+                    reset();
+                }
+                break;
+            case 'ArrowLeft':
+                e.preventDefault();
+                setCursorPos((prev) => Math.max(0, prev - 1));
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                setCursorPos((prev) => Math.min(rawCode.length, prev + 1));
+                break;
+            case 'Home':
+                e.preventDefault();
+                setCursorPos(0);
+                break;
+            case 'End':
+                e.preventDefault();
+                setCursorPos(rawCode.length);
+                break;
+            case 'Enter':
+                handleJoin();
+                break;
         }
     };
 
@@ -78,9 +143,11 @@ export default function JoinWithCodePage() {
                             Skriv inn kode:
                         </label>
 
-                        <div
+                        <button
+                            type="button"
                             className={styles.codeInputWrapper}
                             onClick={() => inputRef.current?.focus()}
+                            aria-label="Fokuser kodefelt"
                         >
                             <img
                                 src={detectiveImage}
@@ -100,6 +167,8 @@ export default function JoinWithCodePage() {
                                 value={rawCode}
                                 onChange={handleChange}
                                 onKeyDown={handleKeyDown}
+                                onFocus={() => { setFocused(true); setCursorPos(rawCode.length); }}
+                                onBlur={() => setFocused(false)}
                                 aria-label="Skriv inn kode"
                             />
 
@@ -110,10 +179,11 @@ export default function JoinWithCodePage() {
                                         (index > 3 && Boolean(rawCode[index - 1]));
 
                                     const isDash = char === '-';
+                                    const isActive = focused && index === activeDisplayIndex;
 
                                     return (
                                         <span
-                                            key={`${char}-${index}`}
+                                            key={index}
                                             className={[
                                                 styles.codeChar,
                                                 isDash ? styles.codeDash : '',
@@ -122,6 +192,7 @@ export default function JoinWithCodePage() {
                                                 .filter(Boolean)
                                                 .join(' ')}
                                         >
+                                            {isActive && <span className={styles.caret} />}
                                             {char}
                                         </span>
                                     );
@@ -134,7 +205,7 @@ export default function JoinWithCodePage() {
                                 aria-hidden="true"
                                 className={`${styles.innerDetective} ${styles.rightDetective}`}
                             />
-                        </div>
+                        </button>
 
                         {error && <p className={styles.error}>{error}</p>}
 

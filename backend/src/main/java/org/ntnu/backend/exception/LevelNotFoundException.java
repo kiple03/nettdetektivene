@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
  */
 public class LevelNotFoundException extends ApiException {
 
+  /**
+   * @param id the ID of the missing level
+   */
   public LevelNotFoundException(int id) {
     super(HttpStatus.NOT_FOUND, "Level not found: " + id);
   }

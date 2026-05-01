@@ -10,11 +10,12 @@ import {
     type TabId,
     type NotesMap,
 } from "@/api/notesService";
-import { LayeredAvatar } from "@/components/user/LayeredAvatar.tsx";
+import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
 
 import backgroundImg from "@/assets/detective_room_interior.png";
 import {useUserProfile} from "@/hooks/useUserProfile.ts";
 
+/** Configuration for a single notebook tab. */
 interface TabConfig {
     id: TabId;
     label: string;
@@ -87,6 +88,7 @@ const TABS: TabConfig[] = [
     },
 ];
 
+/** Returns a fresh empty NotesMap with all categories initialised to empty arrays. */
 const EMPTY_NOTES_MAP = (): NotesMap => ({
     nyheter: [],
     bilder: [],
@@ -97,6 +99,7 @@ const EMPTY_NOTES_MAP = (): NotesMap => ({
     egne: [],
 });
 
+/** Decorative spiral-binding strip rendered at the left edge of the notebook. */
 const Spirals = ({ count = 16 }: { count?: number }) => (
     <div className={styles.spiralStrip}>
         {Array.from({ length: count }).map((_, i) => (
@@ -109,10 +112,23 @@ function getTabConfig(tabId: TabId): TabConfig {
     return TABS.find((tab) => tab.id === tabId)!;
 }
 
+/** Formats an ISO timestamp to a human-readable Norwegian date/time string; returns empty string for invalid/missing dates. */
+function formatDate(iso: string | null | undefined): string {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime()) || d.getFullYear() < 2000) return "";
+    return new Intl.DateTimeFormat("nb-NO", {
+        day: "numeric", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+    }).format(d);
+}
+
+/** Returns the possessive form of a name, omitting the trailing "s" for names already ending in s/x/z. */
 function getPossessive(name: string): string {
     return /[sxzSXZ]$/.test(name) ? `${name}'` : `${name}`;
 }
 
+/** Student notebook page — displays a closed notebook that opens to reveal tabbed note categories, letting the student write, save, and delete personal reflections alongside game-generated level notes. */
 export default function NotesPage() {
     const { data: userProfile } = useUserProfile();
     const username = userProfile?.username;
@@ -165,23 +181,27 @@ export default function NotesPage() {
         };
     }, []);
 
+    const byNewest = (a: { createdAt: string }, b: { createdAt: string }) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
     const visibleNotes = useMemo(() => {
         if (activeTab === "egne") {
             const relevantTabs = TAB_ORDER.filter((t) => t !== "egne");
-
-            const own = relevantTabs.flatMap((tabId) =>
-                savedNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: false }))
-            );
-            const level = relevantTabs.flatMap((tabId) =>
-                levelNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: true }))
-            );
-
+            const own = relevantTabs
+                .flatMap((tabId) => savedNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: false })))
+                .sort(byNewest);
+            const level = relevantTabs
+                .flatMap((tabId) => levelNotes[tabId].map((note) => ({ ...note, category: tabId, isLevel: true })))
+                .sort(byNewest);
             return { own, level };
         }
-
         return {
-            own: savedNotes[activeTab].map((note) => ({ ...note, category: activeTab, isLevel: false })),
-            level: levelNotes[activeTab].map((note) => ({ ...note, category: activeTab, isLevel: true })),
+            own: savedNotes[activeTab]
+                .map((note) => ({ ...note, category: activeTab, isLevel: false }))
+                .sort(byNewest),
+            level: levelNotes[activeTab]
+                .map((note) => ({ ...note, category: activeTab, isLevel: true }))
+                .sort(byNewest),
         };
     }, [activeTab, savedNotes, levelNotes]);
 
@@ -349,7 +369,7 @@ export default function NotesPage() {
 
                                                 <div className={styles.saveRow}>
                                                     <Button
-                                                        variant="fun"
+                                                        variant="unstyled"
                                                         onClick={handleSave}
                                                         disabled={
                                                             isLoading ||
@@ -433,6 +453,7 @@ export default function NotesPage() {
                                                                         <p className={styles.savedNoteText}>
                                                                             {note.content}
                                                                         </p>
+                                                                        {formatDate(note.createdAt) && <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>}
                                                                     </div>
                                                                 );
                                                             })}
@@ -463,6 +484,7 @@ export default function NotesPage() {
                                                                         <p className={styles.savedNoteText}>
                                                                             {note.content}
                                                                         </p>
+                                                                        {formatDate(note.createdAt) && <p className={styles.noteTimestamp}>{formatDate(note.createdAt)}</p>}
                                                                         <Button
                                                                             variant="destructive"
                                                                             className={styles.deleteButton}

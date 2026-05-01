@@ -6,6 +6,7 @@ import { MyClassroomsBoard } from '@/components/teacher/classroomList/MyClassroo
 import { useClassroomSummaries } from '@/hooks/teacher/useTeacherQueries';
 import './MyClassroomsPage.css';
 
+/** Teacher landing page showing all classrooms with search, view toggle, and join-code copy. */
 export default function MyClassroomsPage() {
     const { data: summaries = [] } = useClassroomSummaries();
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ export default function MyClassroomsPage() {
         );
     }, [summaries, search]);
 
+    /** Copies `joinCode` to clipboard and briefly highlights the card for `classroomId`. */
     async function handleCopyCode(joinCode: string, classroomId: string) {
         try {
             await navigator.clipboard.writeText(joinCode);
@@ -50,7 +52,7 @@ export default function MyClassroomsPage() {
                     <TextInput
                         label="Søk"
                         id="classroom-search"
-                        placeholder="🔎  Søk i klasserom…"
+                        placeholder="Søk i klasserom…"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="teacher-dashboard__search-input"
@@ -80,9 +82,6 @@ export default function MyClassroomsPage() {
                     </span>
                     <Link to="/teacher/leaderboard" className="bottom-nav-chip">
                         Ledertavle
-                    </Link>
-                    <Link to="/teacher/mystery-submission" className="bottom-nav-chip">
-                        Mystery submission
                     </Link>
                 </div>
             </nav>

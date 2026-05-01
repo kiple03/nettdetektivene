@@ -69,8 +69,6 @@ class NotificationControllerTest {
             .build();
     }
 
-    // ===== GET /teacher/notifications =====
-
     @Test
     void getNotifications_returnsAllWhenNoClassroomFilter() throws Exception {
         UUID teacherId = UUID.randomUUID();
@@ -102,8 +100,6 @@ class NotificationControllerTest {
         mockMvc.perform(get("/teacher/notifications"))
             .andExpect(status().isUnauthorized());
     }
-
-    // ===== PATCH /teacher/notifications/{id}/read =====
 
     @Test
     void markAsRead_returnsUpdatedNotification() throws Exception {
@@ -139,8 +135,6 @@ class NotificationControllerTest {
                 .with(authentication(teacherAuth(teacherId))))
             .andExpect(status().isNotFound());
     }
-
-    // ===== DELETE /teacher/notifications/{id} =====
 
     @Test
     void deleteNotification_returns204() throws Exception {

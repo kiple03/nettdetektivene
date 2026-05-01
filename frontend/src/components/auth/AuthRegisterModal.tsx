@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 import { Eye, EyeOff, X } from 'lucide-react';
 import type { FormEvent } from 'react';
 import type { AuthFieldErrors } from '@/utils/validators';
+import './AuthRegisterModal.css';
 
 interface AuthRegisterModalProps {
   open: boolean;
@@ -10,7 +11,9 @@ interface AuthRegisterModalProps {
   submitLabel: string;
   onClose: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  /** Top-level form error message (e.g. server error). */
   error: string;
+  /** Per-field validation errors. */
   fieldErrors: AuthFieldErrors;
   email: string;
   password: string;
@@ -21,9 +24,14 @@ interface AuthRegisterModalProps {
   onEmailBlur: () => void;
   onPasswordBlur: () => void;
   onConfirmBlur: () => void;
+  /** Element to restore focus to when the modal closes. */
   returnFocusRef?: RefObject<HTMLElement | null>;
 }
 
+/**
+ * Accessible modal dialog for email/password registration or login.
+ * Traps focus within the dialog and restores it on close.
+ */
 function AuthRegisterModal({
                              open,
                              title,
@@ -85,8 +93,17 @@ function AuthRegisterModal({
 
   if (!open) return null;
 
+  
+
   return (
-      <div className="register-overlay" onClick={onClose}>
+    <>        
+    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div
+        className="register-overlay"
+        onClick={(e) => {
+            if (e.target === e.currentTarget) onClose();
+        }}
+        >
         <div
             ref={modalRef}
             className="register-modal"
@@ -94,21 +111,18 @@ function AuthRegisterModal({
             aria-modal="true"
             aria-labelledby="register-modal-title"
             aria-describedby="register-modal-description"
-            onClick={(event) => event.stopPropagation()}
         >
-          <button
-              className="register-modal__close"
-              onClick={onClose}
-              type="button"
-              aria-label="Lukk registreringsvindu"
-          >
-            <X size={20} aria-hidden="true" />
-          </button>
-
-          <h2 id="register-modal-title" className="register-modal__title">
-            {title}
-          </h2>
-
+            <button
+            className="register-modal__close"
+            onClick={onClose}
+            type="button"
+            aria-label="Lukk registreringsvindu"
+        >
+          <X size={20} aria-hidden="true" />
+        </button>
+        <h2 id="register-modal-title" className="register-modal__title">
+          {title}
+        </h2>
           <p id="register-modal-description" className="register-modal__subtitle">
             {subtitle}
           </p>
@@ -116,7 +130,7 @@ function AuthRegisterModal({
           <form className="register-modal__form" onSubmit={onSubmit}>
             {error && <p className="register-modal__error">{error}</p>}
 
-            <div className="register-modal__field">
+          <div className="register-modal__field">
               <label htmlFor="reg-email">E-post</label>
               <input
                   className={fieldErrors.email ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
@@ -128,58 +142,73 @@ function AuthRegisterModal({
                   onBlur={onEmailBlur}
                   autoComplete="email"
               />
-              {fieldErrors.email && <p className="register-modal__field-error">{fieldErrors.email}</p>}
-            </div>
+              <p
+                  className={`register-modal__field-error ${fieldErrors.email ? '' : 'register-modal__field-error--hidden'}`}
+                  aria-live="polite"
+              >
+                  {fieldErrors.email || '\u00A0'}
+              </p>
+          </div>
 
-            <div className="register-modal__field">
+          <div className="register-modal__field">
               <label htmlFor="reg-password">Passord</label>
               <div className="register-modal__input-wrapper">
-                <input
-                    className={fieldErrors.password ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
-                    id="reg-password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Velg et passord"
-                    value={password}
-                    onChange={(event) => onPasswordChange(event.target.value)}
-                    onBlur={onPasswordBlur}
-                    autoComplete="new-password"
-                />
-                <button
-                    type="button"
-                    className="register-modal__toggle-password"
-                    onClick={() => setShowPassword((v) => !v)}
-                    aria-label={showPassword ? 'Skjul passord' : 'Vis passord'}
-                >
-                  {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
-                </button>
+                  <input
+                      className={fieldErrors.password ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
+                      id="reg-password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Velg et passord"
+                      value={password}
+                      onChange={(event) => onPasswordChange(event.target.value)}
+                      onBlur={onPasswordBlur}
+                      autoComplete="new-password"
+                  />
+                  <button
+                      type="button"
+                      className="register-modal__toggle-password"
+                      onClick={() => setShowPassword((v) => !v)}
+                      aria-label={showPassword ? 'Skjul passord' : 'Vis passord'}
+                  >
+                      {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+                  </button>
               </div>
-              {fieldErrors.password && <p className="register-modal__field-error">{fieldErrors.password}</p>}
-            </div>
+              <p
+                  className={`register-modal__field-error ${fieldErrors.password ? '' : 'register-modal__field-error--hidden'}`}
+                  aria-live="polite"
+              >
+                  {fieldErrors.password || '\u00A0'}
+              </p>
+          </div>
 
-            <div className="register-modal__field">
+          <div className="register-modal__field">
               <label htmlFor="reg-confirm">Bekreft passord</label>
               <div className="register-modal__input-wrapper">
-                <input
-                    className={fieldErrors.confirm ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
-                    id="reg-confirm"
-                    type={showConfirm ? 'text' : 'password'}
-                    placeholder="Skriv passordet på nytt"
-                    value={confirm}
-                    onChange={(event) => onConfirmChange(event.target.value)}
-                    onBlur={onConfirmBlur}
-                    autoComplete="new-password"
-                />
-                <button
-                    type="button"
-                    className="register-modal__toggle-password"
-                    onClick={() => setShowConfirm((v) => !v)}
-                    aria-label={showConfirm ? 'Skjul passord' : 'Vis passord'}
-                >
-                  {showConfirm ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
-                </button>
+                  <input
+                      className={fieldErrors.confirm ? 'register-modal__input register-modal__input--error' : 'register-modal__input'}
+                      id="reg-confirm"
+                      type={showConfirm ? 'text' : 'password'}
+                      placeholder="Skriv passordet på nytt"
+                      value={confirm}
+                      onChange={(event) => onConfirmChange(event.target.value)}
+                      onBlur={onConfirmBlur}
+                      autoComplete="new-password"
+                  />
+                  <button
+                      type="button"
+                      className="register-modal__toggle-password"
+                      onClick={() => setShowConfirm((v) => !v)}
+                      aria-label={showConfirm ? 'Skjul passord' : 'Vis passord'}
+                  >
+                      {showConfirm ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+                  </button>
               </div>
-              {fieldErrors.confirm && <p className="register-modal__field-error">{fieldErrors.confirm}</p>}
-            </div>
+              <p
+                  className={`register-modal__field-error ${fieldErrors.confirm ? '' : 'register-modal__field-error--hidden'}`}
+                  aria-live="polite"
+              >
+                  {fieldErrors.confirm || '\u00A0'}
+              </p>
+          </div>
 
             <button type="submit" className="register-modal__submit">
               {submitLabel}
@@ -187,6 +216,7 @@ function AuthRegisterModal({
           </form>
         </div>
       </div>
+    </>
   );
 }
 

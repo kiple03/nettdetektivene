@@ -16,11 +16,11 @@ import org.ntnu.backend.game.repository.LevelRepository;
 import org.ntnu.backend.game.repository.StopLevelCount;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.repository.UserProgressRepository;
+import org.ntnu.backend.medalion.service.MedalionService;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.ntnu.backend.medalion.service.MedalionService;
 
 /**
  * Manages student progression through the game's stops and levels.
@@ -164,8 +164,7 @@ public class ProgressService {
     Stop completedStop = progress.getCurrentStop();
     advanceToNextLevel(progress);
 
-    //Medalion progress
-    if(progress.isGameCompleted()){
+    if (progress.isGameCompleted()){
       medalionService.awardInternalUsage(userId, "platinum", "Du fanget skurken");
     } else if(progress.getCurrentStop().getId() != completedStop.getId()){
       awardStopCompletionMedal(userId, completedStop);
@@ -205,7 +204,9 @@ public class ProgressService {
       case "Nyhetskvartalet" -> Map.entry("Breaking news", "Du avslørte alle falske nyheter");
       case "Fotografen" -> Map.entry("Fanget på kamera", "Du gjennomskuet bildene!");
       case "Postkontoret" -> Map.entry("Ikke klikk!", "Du gjennomskuet falske eposter");
-      case "PassordBanken" -> Map.entry("Passordvokter", "Du bygde passord som holder skurker ute!");
+      case "Passordbanken" -> Map.entry("Passordvokter", "Du bygde passord som holder skurker ute!");
+      case "Markedsplassen" -> Map.entry  ("God Handel", "Du var varsom i bazaaren");
+      case "Den sosiale møteplassen" -> Map.entry("Den sosiale møteplassen", "Du navigerte sosiale medier trygt!");
       default -> null;
     };
     if(medal != null){
@@ -213,6 +214,12 @@ public class ProgressService {
     }
   }
 
+  /**
+   * Returns a progress summary for each student in the given collection.
+   *
+   * @param userIds student user IDs to look up
+   * @return map from user ID to their progress summary; users with no progress row are omitted
+   */
   public Map<UUID, ProgressSummaryResponse> getProgressForStudents(Collection<UUID> userIds) {
     List<StopLevelCount> stopLevelCounts = stopRepository.findAllWithLevelCounts();
     int totalLevelsInGame = stopLevelCounts.stream()
@@ -224,6 +231,30 @@ public class ProgressService {
             UserProgress::getId,
             progress -> progressMapper.toSummary(progress, stopLevelCounts, totalLevelsInGame)
         ));
+  }
+
+  /**
+   * Returns whether the boss fight is unlocked for the given student (reached stop 7).
+   *
+   * @param userId the student's user ID
+   * @throws UserProgressNotFoundException if the student has no progress row
+   */
+  public boolean boosFightUnlocked(UUID userId) {
+    return getProgressOrThrow(userId).getCurrentStop().getDisplayOrder() == 7;
+  }
+
+  /**
+   * Marks the game as completed for the given student.
+   * Called by the boss battle flow on victory, since the boss fight is a separate
+   * code path that does not go through {@link #advanceToNextLevel}.
+   *
+   * @param userId the student's user ID
+   * @throws UserProgressNotFoundException if the student has no progress row
+   */
+  @Transactional
+  public void markGameCompleted(UUID userId) {
+    UserProgress progress = getProgressOrThrow(userId);
+    progress.setGameCompleted(true);
   }
 
   /**

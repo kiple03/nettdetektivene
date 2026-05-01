@@ -45,8 +45,6 @@ class NoteControllerTest {
     @MockitoBean
     private AuthenticationEntryPoint authenticationEntryPoint;
 
-    // ===== GET MY NOTES =====
-
     @Test
     void getMyNotes_success() throws Exception {
         NoteResponse ownNote = new NoteResponse(
@@ -83,8 +81,6 @@ class NoteControllerTest {
 
         verify(noteService).getMyNotes(isNull());
     }
-
-    // ===== CREATE NOTE =====
 
     @Test
     void createNote_success() throws Exception {
@@ -139,8 +135,6 @@ class NoteControllerTest {
                                 """.formatted(longContent)))
                 .andExpect(status().isBadRequest());
     }
-
-    // ===== DELETE NOTE =====
 
     @Test
     void deleteMyNote_success() throws Exception {

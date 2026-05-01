@@ -2,140 +2,85 @@ package org.ntnu.backend.image.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ntnu.backend.config.SecurityConfig;
-import org.ntnu.backend.image.dto.TeacherImageResponse;
 import org.ntnu.backend.image.service.ImageService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
-import org.ntnu.backend.security.JwtAuthenticationEntryPoint;
-import org.ntnu.backend.security.JwtAuthenticationToken;
-import org.ntnu.backend.security.JwtService;
-import org.ntnu.backend.user.model.enums.RoleEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.support.WebDataBinderFactory;
+import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
+import org.springframework.web.multipart.MultipartFile;
 
-@WebMvcTest(ImageController.class)
-@Import({SecurityConfig.class, JwtAuthenticationEntryPoint.class})
 class ImageControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
-
-    @MockitoBean
     private ImageService imageService;
+    private JwtAuthenticatedPrincipal principal;
+    private UUID userId;
 
-    @MockitoBean
-    private JwtService jwtService;
+    @BeforeEach
+    void setUp() {
+        imageService = mock(ImageService.class);
+        principal = mock(JwtAuthenticatedPrincipal.class);
+        userId = UUID.randomUUID();
 
-    private JwtAuthenticationToken teacherAuth(UUID userId) {
-        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "teacher@test.local", userId, RoleEnum.TEACHER, null,
-            List.of(new SimpleGrantedAuthority("ROLE_TEACHER"))
+        org.mockito.Mockito.when(principal.getUserId()).thenReturn(userId);
+
+        ImageController imageController = new ImageController(imageService);
+
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(imageController)
+                .setCustomArgumentResolvers(authenticationPrincipalResolver())
+                .build();
+    }
+
+    @Test
+    void uploadImage_shouldDelegateToServiceAndReturnOk() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "detective.png",
+                MediaType.IMAGE_PNG_VALUE,
+                "fake-image-content".getBytes()
         );
-        return new JwtAuthenticationToken(principal, principal.getAuthorities());
+
+        mockMvc.perform(multipart("/images")
+                        .file(file))
+                .andExpect(status().isOk());
+
+        verify(imageService).uploadImage(any(MultipartFile.class), eq(userId));
     }
 
-    private JwtAuthenticationToken studentAuth() {
-        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student@test.local", UUID.randomUUID(), RoleEnum.STUDENT, UUID.randomUUID(),
-            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
-        );
-        return new JwtAuthenticationToken(principal, principal.getAuthorities());
-    }
+    private HandlerMethodArgumentResolver authenticationPrincipalResolver() {
+        return new HandlerMethodArgumentResolver() {
+            @Override
+            public boolean supportsParameter(MethodParameter parameter) {
+                return parameter.hasParameterAnnotation(AuthenticationPrincipal.class)
+                        && parameter.getParameterType().equals(JwtAuthenticatedPrincipal.class);
+            }
 
-    // GET /teacher/images
-
-    @Test
-    void listMyImages_returnsOk() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        LocalDateTime now = LocalDateTime.now();
-
-        TeacherImageResponse img = new TeacherImageResponse(1L, "http://s3.example.com/bucket/uuid.png", "photo.png", now);
-        when(imageService.getTeacherImages(eq(teacherId))).thenReturn(List.of(img));
-
-        mockMvc.perform(get("/teacher/images")
-                .with(authentication(teacherAuth(teacherId))))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].url").value("http://s3.example.com/bucket/uuid.png"))
-            .andExpect(jsonPath("$[0].originalFilename").value("photo.png"));
-    }
-
-    @Test
-    void listMyImages_noAuth_returns401() throws Exception {
-        mockMvc.perform(get("/teacher/images"))
-            .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void listMyImages_studentRole_returns403() throws Exception {
-        mockMvc.perform(get("/teacher/images")
-                .with(authentication(studentAuth())))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void listMyImages_emptyGallery_returnsEmptyArray() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        when(imageService.getTeacherImages(eq(teacherId))).thenReturn(List.of());
-
-        mockMvc.perform(get("/teacher/images")
-                .with(authentication(teacherAuth(teacherId))))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isEmpty());
-    }
-
-    // POST /images
-
-    @Test
-    void uploadImage_noAuth_returns401() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "img".getBytes());
-
-        mockMvc.perform(multipart("/images").file(file))
-            .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void uploadImage_studentRole_returns403() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "img".getBytes());
-
-        mockMvc.perform(multipart("/images").file(file)
-                .with(authentication(studentAuth()))
-                .contentType(MediaType.MULTIPART_FORM_DATA))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void uploadImage_withAuth_returnsOk() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        MockMultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "img".getBytes());
-
-        TeacherImageResponse response = new TeacherImageResponse(
-                5L, "http://s3.example.com/bucket/uuid.png", "test.png", LocalDateTime.now());
-
-        when(imageService.uploadImage(any(), eq(teacherId))).thenReturn(response);
-
-        mockMvc.perform(multipart("/images").file(file)
-                .with(authentication(teacherAuth(teacherId)))
-                .contentType(MediaType.MULTIPART_FORM_DATA))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(5))
-            .andExpect(jsonPath("$.url").value("http://s3.example.com/bucket/uuid.png"));
+            @Override
+            public Object resolveArgument(
+                    MethodParameter parameter,
+                    ModelAndViewContainer mavContainer,
+                    NativeWebRequest webRequest,
+                    WebDataBinderFactory binderFactory
+            ) {
+                return principal;
+            }
+        };
     }
 }

@@ -16,8 +16,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ntnu.backend.game.dto.LevelResponse;
-import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
-import org.ntnu.backend.game.dto.OptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.MultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.OptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
@@ -72,8 +72,6 @@ class GameControllerTest {
   void tearDown() {
     SecurityContextHolder.clearContext();
   }
-
-  // ===== GET /game/stops =====
 
   @Test
   void getStops_returnsListOfStops() throws Exception {
@@ -130,13 +128,14 @@ class GameControllerTest {
   @Test
   void getQuestionsForLevel_returnsQuestions() throws Exception {
     List<OptionResponse> options = List.of(
-            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg"),
-            new MultipleChoiceOptionResponse(2, "Option B", "img2.jpg")
+            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg", "imageAlt"),
+            new MultipleChoiceOptionResponse(2, "Option B", "img2.jpg", "imageAlt")
     );
 
-    when(questionService.getQuestionsForLevel(anyInt(), any())).thenReturn(List.of(
+    when(questionService.getQuestionsForLevel(anyInt(), any(), any(), any()))
+        .thenReturn(List.of(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which is real?", options, null)
-    ));
+        ));
 
     mockMvc.perform(get("/game/levels/1/questions").with(authentication(studentAuth)))
             .andExpect(status().isOk())
@@ -148,10 +147,10 @@ class GameControllerTest {
   @Test
   void getQuestionsForLevel_optionsDontContainAnswers() throws Exception {
     List<OptionResponse> options = List.of(
-            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg")
+            new MultipleChoiceOptionResponse(1, "Option A", "img1.jpg", "imageAlt")
     );
 
-    when(questionService.getQuestionsForLevel(anyInt(), any())).thenReturn(List.of(
+    when(questionService.getQuestionsForLevel(anyInt(), any(), any(), any())).thenReturn(List.of(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Test?", options, null)
     ));
 
@@ -164,11 +163,11 @@ class GameControllerTest {
   @Test
   void getQuestion_returnsSingleQuestion() throws Exception {
     List<OptionResponse> options = List.of(
-            new MultipleChoiceOptionResponse(1, "A", "img.jpg"),
-            new MultipleChoiceOptionResponse(2, "B", "img.jpg")
+            new MultipleChoiceOptionResponse(1, "A", "img.jpg", "imageAlt"),
+            new MultipleChoiceOptionResponse(2, "B", "img.jpg", "imageAlt")
     );
 
-    when(questionService.getQuestionById(anyInt())).thenReturn(
+    when(questionService.getQuestionById(anyInt(), any(), any())).thenReturn(
             new QuestionResponse(1, LevelType.MULTIPLE_CHOICE, "Which?", options, null));
 
     mockMvc.perform(get("/game/questions/1").with(authentication(studentAuth)))
@@ -180,12 +179,13 @@ class GameControllerTest {
 
   @Test
   void submitAnswer_correctAnswer_returnsTrue() throws Exception {
-    when(questionService.submitAnswer(anyInt(), any()))
+    when(questionService.submitAnswer(anyInt(), any(), any(), any()))
             .thenReturn(new SubmitAnswerResponse(
                     true,
                     "Correct!",
-                    List.of(2),
-                    List.of()
+                    List.of("2"),
+                    List.of(),
+                List.of()
             ));
 
     mockMvc.perform(post("/game/questions/1/submit")
@@ -201,12 +201,13 @@ class GameControllerTest {
 
   @Test
   void submitAnswer_wrongAnswer_returnsFalse() throws Exception {
-    when(questionService.submitAnswer(anyInt(), any()))
+    when(questionService.submitAnswer(anyInt(), any(), any(), any()))
             .thenReturn(new SubmitAnswerResponse(
                     false,
                     "Wrong!",
-                    List.of(2),
-                    List.of(1)
+                    List.of("2"),
+                    List.of("1"),
+                List.of()
             ));
 
     mockMvc.perform(post("/game/questions/1/submit")

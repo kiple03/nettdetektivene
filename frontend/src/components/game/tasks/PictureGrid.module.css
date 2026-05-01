@@ -23,7 +23,7 @@
     box-sizing: border-box;
 }
 
-/* grid options for two or four card options */
+/* grid responseUrls for two or four card responseUrls */
 .gridTwoOptions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
@@ -49,9 +49,13 @@
     overflow: hidden;
 }
 
+.gridFourOptions .card:hover .imageFrame {
+    overflow: visible;
+}
+
 .gridFourOptions .image {
-    width: 100%;
-    height: 100%;
+    width: auto;
+    height: auto;
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
@@ -69,7 +73,7 @@
 }
 
 .gridFourOptionsMarketplace .imageFrame {
-    max-height: 200px;
+    max-height: 260px;
 }
 
 .card {
@@ -119,9 +123,22 @@
 }
 
 .card:hover .image{
-    transform: scale(2.5);
+    transform: scale(2.0);
     z-index: 9;
+    box-shadow: none;
+    pointer-events: none;
+}
 
+.card.cardSelected:hover .image {
+    box-shadow: 0 0 0 3px #8b5cf6;
+}
+
+.card.cardCorrect:hover .image {
+    box-shadow: 0 0 0 3px #22c55e;
+}
+
+.card.cardWrong:hover .image {
+    box-shadow: 0 0 0 3px #ef4444;
 }
 
 /* teipbitene */
@@ -182,8 +199,7 @@
 .imageFrame {
     width: 100%;
     height: auto;
-    max-height: 220px;
-
+    max-height: 300px;
     border-radius: 6px;
     overflow: visible;
     display: flex;
@@ -196,7 +212,7 @@
     width: auto;
     height: auto;
     max-width: 100%;
-    max-height: 220px;
+    max-height: 300px;
     object-fit: contain;
     object-position: center;
     border-radius: 6px;
@@ -273,7 +289,29 @@
     transform: translateY(-2px);
 }
 
-.submitButton:disabled {
+.submitButton:disabled {    
     opacity: 0.65;
     cursor: not-allowed;
+}
+.submitButton:focus-visible {
+  transform: translateY(-2px);
+  outline: 4px solid #8b5cf6;
+  outline-offset: 3px;
+}
+
+.card:focus-visible {
+    z-index: 10;
+    outline: 4px solid #8b5cf6;
+    outline-offset: 5px;
+    box-shadow:
+            0 0 0 8px rgba(139, 92, 246, 0.22),
+            0 16px 28px rgba(76, 42, 148, 0.22),
+            0 28px 46px rgba(71, 48, 27, 0.16);
+}
+
+.card:focus-visible .image {
+    transform: scale(2.0);
+    z-index: 9;
+    box-shadow: none;
+    pointer-events: none;
 }

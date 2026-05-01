@@ -1,6 +1,5 @@
 package org.ntnu.backend.classroom.controller;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -8,18 +7,21 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.ntnu.backend.classroom.dto.censor.AddCensorWordRequest;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
-import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
+import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
+import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.service.CensorWordService;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
 import org.ntnu.backend.config.SecurityConfig;
-import org.ntnu.backend.mystery.model.enums.MysteryStatusEnum;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.security.JwtAuthenticationEntryPoint;
 import org.ntnu.backend.security.JwtAuthenticationToken;
@@ -28,16 +30,19 @@ import org.ntnu.backend.user.model.enums.RoleEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.web.server.ResponseStatusException;
 
 @WebMvcTest(TeacherClassroomController.class)
 @Import({SecurityConfig.class, JwtAuthenticationEntryPoint.class})
@@ -323,6 +328,319 @@ class TeacherClassroomControllerTest {
     }
 
     @Test
+    void deleteClassroom_returns204() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId)
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isNoContent());
+
+        verify(teacherClassroomService).deleteClassroom(eq(classroomId), any());
+    }
+
+    @Test
+    void deleteClassroom_noAuth_returns401() throws Exception {
+        mockMvc.perform(delete("/teacher/classrooms/" + UUID.randomUUID()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deleteClassroom_studentRole_returns403() throws Exception {
+        UUID userId = UUID.randomUUID();
+
+        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
+                "student1",
+                userId,
+                RoleEnum.STUDENT,
+                UUID.randomUUID(),
+                List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
+        );
+
+        JwtAuthenticationToken studentAuth =
+                new JwtAuthenticationToken(principal, principal.getAuthorities());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + UUID.randomUUID())
+                        .with(authentication(studentAuth)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void deleteClassroom_notOwnedByTeacher_returns403() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN))
+                .when(teacherClassroomService)
+                .deleteClassroom(eq(classroomId), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId)
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void removeStudent_returns204() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/students/" + studentId)
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isNoContent());
+
+        verify(teacherClassroomService).removeStudent(eq(classroomId), eq(studentId), any());
+    }
+
+    @Test
+    void removeStudent_notFound_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .when(teacherClassroomService)
+                .removeStudent(eq(classroomId), eq(studentId), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/students/" + studentId)
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getStudentNotebook_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+
+        when(teacherClassroomService.getStudentNotebook(eq(classroomId), eq(studentId), any()))
+                .thenReturn(null);
+
+        mockMvc.perform(get("/teacher/classrooms/" + classroomId + "/students/" + studentId + "/notebook")
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isOk());
+
+        verify(teacherClassroomService).getStudentNotebook(eq(classroomId), eq(studentId), any());
+    }
+
+    @Test
+    void getStudentNotebook_notFound_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+
+        when(teacherClassroomService.getStudentNotebook(eq(classroomId), eq(studentId), any()))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        mockMvc.perform(get("/teacher/classrooms/" + classroomId + "/students/" + studentId + "/notebook")
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getStudentMedalions_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+
+        when(teacherClassroomService.getStudentMedalions(eq(classroomId), eq(studentId), any()))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get("/teacher/classrooms/" + classroomId + "/students/" + studentId + "/medalions")
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+
+        verify(teacherClassroomService).getStudentMedalions(eq(classroomId), eq(studentId), any());
+    }
+
+    @Test
+    void updateStudentUsername_returns204() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+
+        mockMvc.perform(patch("/teacher/classrooms/" + classroomId + "/students/" + studentId)
+                        .with(authentication(teacherAuth(teacherId)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"NewName\"}"))
+                .andExpect(status().isNoContent());
+
+        verify(teacherClassroomService)
+                .updateStudentUsername(eq(classroomId), eq(studentId), any(UpdateStudentUsernameRequest.class), any());
+    }
+
+    @Test
+    void updateStudentUsername_notFound_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID studentId = UUID.randomUUID();
+
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .when(teacherClassroomService)
+                .updateStudentUsername(eq(classroomId), eq(studentId), any(UpdateStudentUsernameRequest.class), any());
+
+        mockMvc.perform(patch("/teacher/classrooms/" + classroomId + "/students/" + studentId)
+                        .with(authentication(teacherAuth(teacherId)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"NewName\"}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void listCoTeachers_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherClassroomService.listCoTeachers(eq(classroomId), any()))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get("/teacher/classrooms/" + classroomId + "/teachers")
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+
+        verify(teacherClassroomService).listCoTeachers(eq(classroomId), any());
+    }
+
+    @Test
+    void inviteCoTeacher_returnsCreated() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherClassroomService.inviteCoTeacher(eq(classroomId), any(InviteCoTeacherRequest.class), any()))
+                .thenReturn(null);
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/teachers")
+                        .with(authentication(teacherAuth(teacherId)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"teacher2@example.com\"}"))
+                .andExpect(status().isCreated());
+
+        verify(teacherClassroomService)
+                .inviteCoTeacher(eq(classroomId), any(InviteCoTeacherRequest.class), any());
+    }
+
+    @Test
+    void inviteCoTeacher_conflict_returns409() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(teacherClassroomService.inviteCoTeacher(eq(classroomId), any(InviteCoTeacherRequest.class), any()))
+                .thenThrow(new ResponseStatusException(HttpStatus.CONFLICT));
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/teachers")
+                        .with(authentication(teacherAuth(teacherId)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"teacher2@example.com\"}"))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void removeCoTeacher_returns204() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID coTeacherId = UUID.randomUUID();
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/teachers/" + coTeacherId)
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isNoContent());
+
+        verify(teacherClassroomService).removeCoTeacher(eq(classroomId), eq(coTeacherId), any());
+    }
+
+    @Test
+    void removeCoTeacher_notFound_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID coTeacherId = UUID.randomUUID();
+
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .when(teacherClassroomService)
+                .removeCoTeacher(eq(classroomId), eq(coTeacherId), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/teachers/" + coTeacherId)
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void listCensorWords_returnsOk() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(censorWordService.listWords(eq(classroomId), any()))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get("/teacher/classrooms/" + classroomId + "/censor-words")
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+
+        verify(censorWordService).listWords(eq(classroomId), any());
+    }
+
+    @Test
+    void addCensorWord_returnsCreated() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(censorWordService.addWord(eq(classroomId), any(AddCensorWordRequest.class), any()))
+                .thenReturn(null);
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/censor-words")
+                        .with(authentication(teacherAuth(teacherId)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"word\":\"badword\"}"))
+                .andExpect(status().isCreated());
+
+        verify(censorWordService).addWord(eq(classroomId), any(AddCensorWordRequest.class), any());
+    }
+
+    @Test
+    void addCensorWord_conflict_returns409() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+
+        when(censorWordService.addWord(eq(classroomId), any(AddCensorWordRequest.class), any()))
+                .thenThrow(new ResponseStatusException(HttpStatus.CONFLICT));
+
+        mockMvc.perform(post("/teacher/classrooms/" + classroomId + "/censor-words")
+                        .with(authentication(teacherAuth(teacherId)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"word\":\"badword\"}"))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void deleteCensorWord_returns204() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID wordId = UUID.randomUUID();
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/censor-words/" + wordId)
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isNoContent());
+
+        verify(censorWordService).deleteWord(eq(classroomId), eq(wordId), any());
+    }
+
+    @Test
+    void deleteCensorWord_notFound_returns404() throws Exception {
+        UUID teacherId = UUID.randomUUID();
+        UUID classroomId = UUID.randomUUID();
+        UUID wordId = UUID.randomUUID();
+
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
+                .when(censorWordService)
+                .deleteWord(eq(classroomId), eq(wordId), any());
+
+        mockMvc.perform(delete("/teacher/classrooms/" + classroomId + "/censor-words/" + wordId)
+                        .with(authentication(teacherAuth(teacherId))))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void getStudentDetail_returnsOk() throws Exception {
         UUID teacherId = UUID.randomUUID();
         UUID classroomId = UUID.randomUUID();
@@ -385,68 +703,6 @@ class TeacherClassroomControllerTest {
     }
 
     @Test
-    void listMysterySubmissions_returnsOk() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
-        UUID submissionId = UUID.randomUUID();
-        Instant submittedAt = Instant.parse("2025-03-01T10:00:00Z");
-
-        MysterySubmissionResponse submission = MysterySubmissionResponse.builder()
-            .id(submissionId)
-            .studentUsername("alice")
-            .content("My mystery answer")
-            .imageUrl(null)
-            .submittedAt(submittedAt)
-            .status(MysteryStatusEnum.PENDING)
-            .featured(false)
-            .build();
-
-        when(teacherClassroomService.listMysterySubmissions(eq(classroomId), any())).thenReturn(List.of(submission));
-
-        mockMvc.perform(get("/teacher/classrooms/" + classroomId + "/mystery")
-                .with(authentication(teacherAuth(teacherId))))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].id").value(submissionId.toString()))
-            .andExpect(jsonPath("$[0].studentUsername").value("alice"))
-            .andExpect(jsonPath("$[0].status").value("PENDING"))
-            .andExpect(jsonPath("$[0].featured").value(false));
-    }
-
-    @Test
-    void listMysterySubmissions_noAuth_returns401() throws Exception {
-        mockMvc.perform(get("/teacher/classrooms/" + UUID.randomUUID() + "/mystery"))
-            .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void listMysterySubmissions_studentRole_returns403() throws Exception {
-        UUID userId = UUID.randomUUID();
-        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
-            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
-        );
-        JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
-
-        mockMvc.perform(get("/teacher/classrooms/" + UUID.randomUUID() + "/mystery")
-                .with(authentication(studentAuth)))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void listMysterySubmissions_notOwnedByTeacher_returns403() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
-
-        when(teacherClassroomService.listMysterySubmissions(eq(classroomId), any()))
-            .thenThrow(new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.FORBIDDEN));
-
-        mockMvc.perform(get("/teacher/classrooms/" + classroomId + "/mystery")
-                .with(authentication(teacherAuth(teacherId))))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
     void updateClassroom_notOwnedByTeacher_returns403() throws Exception {
         UUID teacherId = UUID.randomUUID();
         UUID classroomId = UUID.randomUUID();
@@ -461,122 +717,4 @@ class TeacherClassroomControllerTest {
                 .content("{\"title\":\"Updated Title\"}"))
             .andExpect(status().isForbidden());
     }
-
-    @Test
-    void reviewMystery_approveSubmission_returnsOk() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
-        UUID submissionId = UUID.randomUUID();
-        Instant submittedAt = Instant.parse("2025-03-01T10:00:00Z");
-
-        MysterySubmissionResponse response = MysterySubmissionResponse.builder()
-            .id(submissionId)
-            .studentUsername("alice")
-            .content("My mystery answer")
-            .imageUrl(null)
-            .submittedAt(submittedAt)
-            .status(MysteryStatusEnum.APPROVED)
-            .featured(false)
-            .build();
-
-        when(teacherClassroomService.reviewMysterySubmission(eq(classroomId), eq(submissionId), any(), any()))
-            .thenReturn(response);
-
-        mockMvc.perform(patch("/teacher/classrooms/" + classroomId + "/mystery/" + submissionId)
-                .with(authentication(teacherAuth(teacherId)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"status\":\"APPROVED\"}"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(submissionId.toString()))
-            .andExpect(jsonPath("$.status").value("APPROVED"))
-            .andExpect(jsonPath("$.featured").value(false));
-    }
-
-    @Test
-    void reviewMystery_featureSubmission_returnsOk() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
-        UUID submissionId = UUID.randomUUID();
-        Instant submittedAt = Instant.parse("2025-03-01T10:00:00Z");
-
-        MysterySubmissionResponse response = MysterySubmissionResponse.builder()
-            .id(submissionId)
-            .studentUsername("alice")
-            .content("My mystery answer")
-            .imageUrl(null)
-            .submittedAt(submittedAt)
-            .status(MysteryStatusEnum.PENDING)
-            .featured(true)
-            .build();
-
-        when(teacherClassroomService.reviewMysterySubmission(eq(classroomId), eq(submissionId), any(), any()))
-            .thenReturn(response);
-
-        mockMvc.perform(patch("/teacher/classrooms/" + classroomId + "/mystery/" + submissionId)
-                .with(authentication(teacherAuth(teacherId)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"featured\":true}"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.featured").value(true))
-            .andExpect(jsonPath("$.status").value("PENDING"));
-    }
-
-    @Test
-    void reviewMystery_noAuth_returns401() throws Exception {
-        mockMvc.perform(patch("/teacher/classrooms/" + UUID.randomUUID() + "/mystery/" + UUID.randomUUID())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"status\":\"APPROVED\"}"))
-            .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void reviewMystery_studentRole_returns403() throws Exception {
-        UUID userId = UUID.randomUUID();
-        JwtAuthenticatedPrincipal principal = new JwtAuthenticatedPrincipal(
-            "student1", userId, RoleEnum.STUDENT, UUID.randomUUID(),
-            List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
-        );
-        JwtAuthenticationToken studentAuth = new JwtAuthenticationToken(principal, principal.getAuthorities());
-
-        mockMvc.perform(patch("/teacher/classrooms/" + UUID.randomUUID() + "/mystery/" + UUID.randomUUID())
-                .with(authentication(studentAuth))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"status\":\"APPROVED\"}"))
-            .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void reviewMystery_notFound_returns404() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
-        UUID submissionId = UUID.randomUUID();
-
-        when(teacherClassroomService.reviewMysterySubmission(eq(classroomId), eq(submissionId), any(), any()))
-            .thenThrow(new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.NOT_FOUND));
-
-        mockMvc.perform(patch("/teacher/classrooms/" + classroomId + "/mystery/" + submissionId)
-                .with(authentication(teacherAuth(teacherId)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"status\":\"APPROVED\"}"))
-            .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void reviewMystery_notOwnedByTeacher_returns403() throws Exception {
-        UUID teacherId = UUID.randomUUID();
-        UUID classroomId = UUID.randomUUID();
-        UUID submissionId = UUID.randomUUID();
-
-        when(teacherClassroomService.reviewMysterySubmission(eq(classroomId), eq(submissionId), any(), any()))
-            .thenThrow(new org.springframework.web.server.ResponseStatusException(
-                org.springframework.http.HttpStatus.FORBIDDEN));
-
-        mockMvc.perform(patch("/teacher/classrooms/" + classroomId + "/mystery/" + submissionId)
-                .with(authentication(teacherAuth(teacherId)))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"status\":\"APPROVED\"}"))
-            .andExpect(status().isForbidden());
-    }
-
 }

@@ -7,6 +7,7 @@ import {
   type SubmitAnswerResult,
 } from "@/types/station.ts";
 
+/** Maps a backend level type to the corresponding frontend station type. Defaults to NEWS. */
 function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationType {
   switch (levelType) {
     case "MULTIPLE_CHOICE":
@@ -15,7 +16,6 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
       return STATION_TYPE.POST;
     case "PICTURE_QUIZ":
       return STATION_TYPE.PHOTO;
-
     case "PASSWORD_STRENGTH":
       return STATION_TYPE.PASSWORD;
 
@@ -24,11 +24,13 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
   }
 }
 
+/** Maps a raw API question option to the station option shape used by components. */
 export function mapOptionToStation(option: QuestionOption): StationOption {
   return {
     id: option.id,
     label: option.text ?? "",
     imageUrl: option.imageUrl,
+    imageAlt: option.imageAlt ?? option.text ?? "",
     minLength: option.minLength,
     requireDigit:  option.requireDigit,
     requireUpper:  option.requireUpper,
@@ -39,6 +41,10 @@ export function mapOptionToStation(option: QuestionOption): StationOption {
   };
 }
 
+/**
+ * Converts a backend GameQuestion to the StationData shape consumed by station components.
+ * @param type - Override the derived station type; omit to infer from `question.levelType`.
+ */
 export function mapQuestionToStationData(question: GameQuestion, type?: StationType): StationData {
   return {
     questionId: question.id,
@@ -51,11 +57,15 @@ export function mapQuestionToStationData(question: GameQuestion, type?: StationT
   }
 }
 
+/** Extracts only the fields needed by UI from the raw submit-answer API response. */
 export function mapSubmitResponseToSubmitAnswer(
     response: SubmitAnswerResponse,
 ): SubmitAnswerResult {
   return {
     correct: response.correct,
     feedback: response.feedback,
+    correctOptionIds: response.correctOptionIds ?? [],
+    wrongSelectedOptionIds: response.wrongSelectedOptionIds ?? [],
+    responseImages: response.responseUrls ?? [],
   };
 }

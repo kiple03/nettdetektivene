@@ -4,10 +4,13 @@ import { getImageDisplayUrl } from '@/api/teacherApi';
 import './ImagePicker.css';
 
 interface Props {
+  /** Currently selected image URL, or null if none. */
   value: string | null;
+  /** Called with the new URL when the user picks an image, or null when cleared. */
   onChange: (url: string | null) => void;
 }
 
+/** Form field that shows a thumbnail preview and lets the user pick or clear an image via a modal. */
 export function ImagePickerField({ value, onChange }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
 

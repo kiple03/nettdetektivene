@@ -349,7 +349,7 @@
 }
 
 .codePlaceholder {
-    color: #b29a84;
+    color: #7a5035; /* darkened from #b29a84 — meets WCAG AA (≥4.5:1) against parchment background */
 }
 
 .codeDash {
@@ -395,10 +395,10 @@
 }
 
 .caret {
-    width: 2px;
-    height: 28px;
+    width: 20px;
+    height: 3px;
     background: #3b1a0a;
-    border-radius: 2px;
+    border-radius: 1px;
     animation: blinkCaret 1s steps(1) infinite;
 }
 
@@ -410,6 +410,16 @@
         opacity: 0;
     }
 }
+
+/* Underline caret sits directly below the character in its slot. */
+.codeChar .caret {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 2px);
+}
+
 
 /* ERROR MESSAGE */
 .error {
@@ -466,13 +476,10 @@
 }
 
 .logoutBtn {
-    position: absolute;
-    bottom: auto;
-    left: auto;
-    z-index: 10;
-    width: auto;
-    font-size: 0.85rem;
-    padding: 8px 14px;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
 }
 
 @media (max-width: 760px) {

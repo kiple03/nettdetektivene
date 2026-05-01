@@ -35,7 +35,7 @@
 .stopGrid {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 .hotspot {
@@ -98,7 +98,11 @@
   left: 24px;
 }
 
-.scrollBtnRight,
+.scrollBtnRight {
+  /* shifted left to avoid overlapping the fixed mute button (3.25rem wide at right:1rem) */
+  right: 5.5rem;
+}
+
 .scrollBtnDown {
   right: 24px;
 }
@@ -109,19 +113,29 @@
 }
 
 @media (orientation: portrait) {
+  /* lift scroll buttons above the mute button (mute occupies bottom: 1rem–4.25rem) */
+  .scrollBtnDown {
+    bottom: 5.25rem;
+  }
+
+  .scrollBtnUp {
+    bottom: 10.25rem; /* scrollBtnDown (5.25rem) + btn height (4rem) + gap (1rem) */
+  }
+
   .container {
     overflow-x: hidden;
     overflow-y: auto;
-    background: #e9e9e9;
+    background: #96ce9b;
   }
 
   .mapInner {
     position: relative;
     width: max(100vw, calc(100dvh * 810 / 1440));
-    height: max(calc(100vw * 1440 / 810), 100dvh);
+    height: max(calc(100vw * 1440 / 810), calc(100dvh - var(--map-header-h, 0px)));
   }
 
-  .mapBg {
+  .mapBg,
+  .mapBgOverlay {
     width: max(calc(100vw * 1440 / 810), 100dvh);
     height: max(100vw, calc(100dvh * 810 / 1440));
     top: 50%;

@@ -1,16 +1,22 @@
 .teacher-preview {
-    display: flex;
-    flex-direction: column;
     width: 100%;
+    height: 100%;
 }
 
 .teacher-preview__nav {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    z-index: 30;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 20px;
-    background: rgba(0, 0, 0, 0.35);
-    flex-shrink: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    backdrop-filter: blur(6px);
 }
 
 .teacher-preview__back {
@@ -31,19 +37,21 @@
     color: #fff;
 }
 
+.teacher-preview__back:focus-visible {
+    outline: 2px solid rgba(229, 242, 217, 0.9);
+    outline-offset: 2px;
+}
+
 .teacher-preview__counter {
     font-family: sans-serif;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.8);
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 5px 14px;
-    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.65);
 }
 
 .teacher-preview__station-wrap {
-    flex: 1;
+    width: 100%;
+    height: 100%;
     position: relative;
 }
 
@@ -77,6 +85,11 @@
 
 .teacher-preview__edit-btn:hover {
     background: rgba(0, 0, 0, 0.75);
+}
+
+.teacher-preview__edit-btn:focus-visible {
+    outline: 2px solid rgba(229, 242, 217, 0.9);
+    outline-offset: 2px;
 }
 
 .teacher-preview__locked-badge {

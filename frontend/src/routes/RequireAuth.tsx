@@ -4,11 +4,16 @@ import { useAuth } from '@/hooks/useAuth';
 import type { Role } from '@/types/user';
 
 interface Props {
-  role: Role;
+  /** Required role for the protected route. */
+  requiredRole: Role;
   children: ReactNode;
 }
 
-function RequireAuth({ role, children }: Props) {
+/**
+ * Blocks rendering until auth state is settled, then redirects unauthenticated
+ * users to the appropriate login page or cross-role users to their home route.
+ */
+function RequireAuth({ requiredRole, children }: Props) {
   const { isLoggedIn, role: currentRole, authReady, isRefreshing } = useAuth();
   const location = useLocation();
 
@@ -21,11 +26,11 @@ function RequireAuth({ role, children }: Props) {
   }
 
   if (!isLoggedIn) {
-    const loginPath = role === 'TEACHER' ? '/laerer/login' : '/';
+    const loginPath = requiredRole === 'TEACHER' ? '/laerer/login' : '/';
     return <Navigate to={loginPath} replace state={{ from: location }} />;
   }
 
-  if (currentRole !== role) {
+  if (currentRole !== requiredRole) {
     return <Navigate to={currentRole === 'TEACHER' ? '/teacher' : '/home'} replace />;
   }
 

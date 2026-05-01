@@ -2,12 +2,19 @@ import type { StationOption } from "@/types/station";
 import { useState } from "react";
 import styles from "@/components/game/tasks/PictureGrid.module.css";
 
+/** Props for {@link PasswordInput}. */
 type PasswordInputProps = {
+    /** Password rules that determine the requirements shown to the user. */
     rule: StationOption;
+    /** Called with the entered password when the user submits. */
     onSubmit: (password: string) => void;
     disabled?: boolean;
 };
 
+/**
+ * Password input field that displays the active password rules and lets the
+ * user type and submit a password attempt.
+ */
 function PasswordInput({
                            rule,
                            onSubmit,
@@ -26,12 +33,13 @@ function PasswordInput({
             </ul>
 
             <label htmlFor="password-field">
-                Skriv inn passord
+                Skriv inn passord:
             </label>
 
             <input
                 id="password-field"
-                type="password"
+                className="password-field"
+                type="text"
                 value={pw}
                 onChange={(e) => setPw(e.target.value)}
                 disabled={disabled}

@@ -1,12 +1,21 @@
 package org.ntnu.backend.game.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ntnu.backend.game.dto.OptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.OptionResponse;
 import org.ntnu.backend.game.mapper.GameMapper;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.util.OptionParser;
@@ -14,7 +23,7 @@ import org.ntnu.backend.game.util.OptionParser;
 
 /**
  * A question within a {@link Level}. The question text is displayed to the
- * student, and the options are stored as a JSON blob in {@code optionContent}.
+ * student, and the responseUrls are stored as a JSON blob in {@code optionContent}.
  *
  * <p>The JSON shape of {@code optionContent} depends on the parent level's
  * {@link LevelType}. Deserialization into typed {@link Option} subclasses is handled by
@@ -51,7 +60,7 @@ public class Question {
     private String questionText;
 
     /**
-     * JSON blob storing the options for this question. The shape varies
+     * JSON blob storing the responseUrls for this question. The shape varies
      * by {@link LevelType} and is parsed at runtime by {@link OptionParser}.
      * Contains answer data (correct flags, explanations) that must not
      * be sent to the client, the mapper {@link GameMapper} handles this via the sealed
@@ -60,6 +69,7 @@ public class Question {
     @Column(columnDefinition = "JSON", nullable = false)
     private String optionContent;
 
+    /** The level this question belongs to. */
     @ManyToOne(optional = false)
     @JoinColumn(name = "level_id")
     private Level level;
@@ -72,6 +82,7 @@ public class Question {
     @Column(name = "classroom_id", columnDefinition = "BINARY(16)")
     private UUID classroomId;
 
+    /** Enforces the {@code isDefault == (classroomId == null)} invariant on persist/update. */
     @PrePersist
     @PreUpdate
     void validateInvariant() {

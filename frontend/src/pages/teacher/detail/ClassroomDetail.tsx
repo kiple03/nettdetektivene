@@ -1,14 +1,24 @@
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useClassroomEdit } from '@/hooks/teacher/useClassroomEdit';
 import { useStudentManagement } from '@/hooks/teacher/useStudentManagement';
 import { useTeacherInvite } from '@/hooks/teacher/useTeacherInvite';
 import { ClassroomDetailBoard } from '@/components/teacher/classroomDetail/ClassroomDetailBoard';
 import { ClassroomDetailHeader } from '@/components/teacher/classroomDetail/ClassroomDetailHeader';
-import { ClassroomDetailDeleteDialog } from '@/components/teacher/classroomDetail/ClassroomDetailDeleteDialog';
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog/Alert-Dialog';
+import { Button } from '@/components/ui/buttons/Button';
 import './ClassroomDetail.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
+/** Full detail view for a single classroom — edit metadata, manage students and co-teachers, and delete the classroom. */
 export default function ClassroomDetailPage() {
     const { id: classroomId = '' } = useParams<{ id: string }>();
+
+    useBackTo('/teacher', "Tilbake til oversikt");
 
     const {
         classroom,
@@ -54,7 +64,6 @@ export default function ClassroomDetailPage() {
 
     return (
         <div className="classroom-detail">
-            <Link to="/teacher" className="classroom-detail__back">← Tilbake til oversikten</Link>
             <ClassroomDetailHeader
                 title={classroom.title}
                 editMode={editMode}
@@ -103,14 +112,29 @@ export default function ClassroomDetailPage() {
                 onConfirmRemoveChange={setConfirmRemoveId}
             />
 
-            <ClassroomDetailDeleteDialog
-                title={classroom.title}
+            <AlertDialog
                 open={showDeleteModal}
-                deleting={deleting}
-                error={deleteError}
-                onCancel={() => setShowDeleteModal(false)}
-                onConfirm={handleDelete}
-            />
+                onOpenChange={(open) => { if (!deleting) setShowDeleteModal(open); }}
+                contentWrapperStyle={{ maxWidth: '480px' }}
+            >
+                <AlertDialogContent>
+                    <AlertDialogTitle>Slett klasse?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Dette vil slette <strong>{classroom.title}</strong> og melde ut alle elever. Handlingen kan ikke angres.
+                    </AlertDialogDescription>
+                    {deleteError && (
+                        <p style={{ color: '#ff7070', fontSize: '0.8125rem', margin: '0 0 1rem' }}>{deleteError}</p>
+                    )}
+                    <div style={{ display: 'flex', gap: '0.625rem', justifyContent: 'flex-end', marginTop: '1.25rem' }}>
+                        <Button variant="primary" type="button" onClick={() => setShowDeleteModal(false)} disabled={deleting}>
+                            Avbryt
+                        </Button>
+                        <Button variant="destructive" type="button" onClick={handleDelete} disabled={deleting}>
+                            {deleting ? 'Sletter…' : 'Slett klasse'}
+                        </Button>
+                    </div>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

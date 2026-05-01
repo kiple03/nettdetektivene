@@ -1,0 +1,136 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  outline: none;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.highlight {
+  position: fixed;
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 1101;
+  /* box-shadow dims everything outside the highlight rect */
+  box-shadow:
+    0 0 0 9999px rgba(0, 0, 0, 0.65),
+    0 0 0 3px var(--accent),
+    0 0 16px rgba(170, 59, 255, 0.55);
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 1102;
+  background: var(--white, #fff);
+  border-radius: 1.25rem;
+  padding: 1.25rem 2.5rem 1rem 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stepCounter {
+  font-size: 0.75rem;
+  color: var(--gray-400, #9ca3af);
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--gray-900, #111827);
+  font-family: Rockwell, serif;
+}
+
+.body {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--gray-700, #374151);
+  line-height: 1.55;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.btnPrimary {
+  background: var(--accent, #aa3bff);
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btnPrimary:hover {
+  opacity: 0.85;
+}
+
+.btnSecondary {
+  background: var(--gray-100, #f3f4f6);
+  color: var(--gray-700, #374151);
+  border: 1px solid var(--gray-200, #e5e7eb);
+  border-radius: 2rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btnSecondary:hover:not(:disabled) {
+  background: var(--gray-200, #e5e7eb);
+}
+
+.btnSecondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btnClose {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--gray-400, #9ca3af);
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.btnClose:hover {
+  color: var(--gray-700, #374151);
+  background: var(--gray-100, #f3f4f6);
+}
+
+.btnPrimary:focus-visible,
+.btnSecondary:focus-visible,
+.btnClose:focus-visible {
+  outline: 3px solid var(--accent, #aa3bff);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    animation: none;
+  }
+}

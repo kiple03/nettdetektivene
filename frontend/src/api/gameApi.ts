@@ -1,5 +1,6 @@
 import client from "./client"
 import type { EmailContent } from "@/types/email";
+import type {OptionImageResponse} from "@/types/station.ts";
 
 export type LevelType = "MULTIPLE_CHOICE" | "PICTURE_QUIZ"| "PASSWORD_STRENGTH" | "CLASSIFY_ITEMS" | "POST_OFFICE"// legge til flere oppgavetyper senere
 
@@ -21,6 +22,7 @@ export interface QuestionOption {
   id: number;
   text?: string
   imageUrl?: string;
+  imageAlt?: string,
 
   key?: string;
   labels?: string[];
@@ -47,6 +49,7 @@ export interface GameLevel {
   description: string;
   stopName: string;
   levelType: LevelType;
+  order: number;
   locked: boolean;
 }
 
@@ -63,8 +66,9 @@ export interface SubmitMultiSelectAnswerRequest {
 export interface SubmitAnswerResponse {
   correct: boolean;
   feedback: string;
-  correctOptionIds: number[];
-  wrongSelectedOptionIds: number[];
+  correctOptionIds: string[];
+  wrongSelectedOptionIds: string[];
+  responseUrls?: OptionImageResponse[];
 }
 
 export interface QuestionAnswer {
@@ -86,6 +90,7 @@ export interface SubmitPerItemAnswerRequest {
     answers: Record<string, string>;
 }
 
+/** Submits a per-item classification answer for a question. */
 export const submitPerItemAnswer = async (
     questionId: number, body: SubmitPerItemAnswerRequest
 ): Promise<SubmitAnswerResponse> => {
@@ -93,6 +98,7 @@ export const submitPerItemAnswer = async (
     return response.data;
 };
 
+/** Submits all answers for a completed level. */
 export const submitLevel = async (
   levelId: number,
   body: SubmitLevelRequest
@@ -100,35 +106,46 @@ export const submitLevel = async (
   await client.post(`/game/levels/${levelId}/submit`, body);
 };
 
+/** Admin/cheat endpoint to force-complete a level. */
+export const adminCompleteLevel = async (levelId: number): Promise<void> => {
+  await client.post(`/game/levels/${levelId}/admin-complete`);
+};
+
+/** Fetches all game stops for the current user. */
 export const getGameStops = async (): Promise<GameStop[]> => {
   const response = await client.get("/game/stops");
   return response.data;
 }
 
+/** Fetches a single question by ID. */
 export const getGameQuestionById = async (
     questionId: number): Promise<GameQuestion> => {
   const response = await client.get(`/game/questions/${questionId}`);
   return response.data;
 }
 
+/** Fetches a single level by ID. */
 export const getGameLevelById = async (
     levelId: number): Promise<GameLevel> => {
   const response = await client.get(`/game/levels/${levelId}`);
   return response.data;
 };
 
+/** Fetches all levels belonging to a stop. */
 export const getLevelsForStop = async (
     stopId: number): Promise<GameLevel[]> => {
   const response = await client.get(`/game/stops/${stopId}/levels`);
   return response.data;
 };
 
+/** Fetches all questions for a level. */
 export const getLevelQuestions = async (
     levelId: number): Promise<GameQuestion[]> => {
   const response = await client.get(`/game/levels/${levelId}/questions`);
   return response.data;
 };
 
+/** Submits a single-choice answer for a question. */
 export const submitSingleChoiceAnswer = async (
     questionId: number, body: SubmitSingleChoiceAnswerRequest): Promise<SubmitAnswerResponse> => {
   const response =
@@ -136,6 +153,7 @@ export const submitSingleChoiceAnswer = async (
   return response.data;
 };
 
+/** Submits a multi-select answer for a question. */
 export const submitMultiSelectAnswer = async (
     questionId: number,
     body: SubmitMultiSelectAnswerRequest): Promise<SubmitAnswerResponse> => {
@@ -143,6 +161,7 @@ export const submitMultiSelectAnswer = async (
   return response.data;
 };
 
+/** Submits a password-strength answer for a question. */
 export const submitPasswordStrengthAnswer = async (
   questionId: number, body: SubmitPasswordStrengthAnswerRequest): Promise<SubmitAnswerResponse> => {
     const response = await client.post(`/game/questions/${questionId}/submit`, body);
@@ -154,6 +173,7 @@ export interface SubmitMultiChoiceAnswerRequest {
   selectedIds: string[];
 }
 
+/** Submits a multiple-choice answer (string IDs variant) for a question. */
 export async function submitMultiChoiceAnswer(
     questionId: number,
     request: SubmitMultiChoiceAnswerRequest

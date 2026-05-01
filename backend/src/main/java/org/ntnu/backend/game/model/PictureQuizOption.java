@@ -2,15 +2,14 @@ package org.ntnu.backend.game.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.PictureQuizOptionResponse;
 
 /**
  * Internal model for a PICTURE_QUIZ option.
  *
  * <p>Mirrors {@link MultipleChoiceOption} but belongs to the PICTURE_QUIZ level type.
  * Each question has exactly one image (carried by {@code imageUrl}) and exactly one
- * correct category option. The three options on a question share the same image —
+ * correct category option. The three responseUrls on a question share the same image —
  * they differ only by their {@code id}, {@code text} (the category label shown to
  * the student), and {@code isCorrect}.
  *
@@ -20,6 +19,7 @@ import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
  *   "id": 1,
  *   "text": "Ekte",
  *   "imageUrl": "https://example.com/photo.jpg",
+ *   "imageAlt": "Beskrivelse av bildet for skjermleser",
  *   "isCorrect": false,
  *   "explanation": "Dette bildet er faktisk KI-generert."
  * }
@@ -36,10 +36,23 @@ public record PictureQuizOption(
 
         String imageUrl,
 
+        String imageAlt,
+
         @NotNull
         boolean isCorrect,
 
         @NotBlank
         String explanation
 
-) implements Option {}
+) implements Option {
+
+        public PictureQuizOption(
+            int id,
+            String text,
+            String imageUrl,
+            boolean isCorrect,
+            String explanation
+        ) {
+                this(id, text, imageUrl, text, isCorrect, explanation);
+        }
+}

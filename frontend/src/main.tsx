@@ -4,9 +4,9 @@ import { RouterProvider } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {router} from './routes/index.tsx'
 import './index.css'
-import MedalionWatcher from './components/MedalionWatcher.tsx'
-import BackgroundMusic from './components/BackgroundMusic.tsx'
-import AuthSessionRefresher from './components/AuthSessionRefresher.tsx'
+import MedalionWatcher from './components/miscellaneous/MedalionWatcher.tsx'
+import BackgroundMusic from './components/ui/buttons/MusicMuteButton.tsx'
+import AuthSessionRefresher from './components/auth/AuthSessionRefresher.tsx'
 
 //Create client 
 const queryClient = new QueryClient({
@@ -23,10 +23,10 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <AuthSessionRefresher />
       <MedalionWatcher />
-      <BackgroundMusic />
       <Suspense fallback={<div style={{ minHeight: '100vh', background: '#121f0f' }} />}>
         <RouterProvider router={router} />
       </Suspense>
+      <BackgroundMusic />
     </QueryClientProvider>
   </StrictMode>,
 )

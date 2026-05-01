@@ -1,8 +1,8 @@
 package org.ntnu.backend.classroom.service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -15,15 +15,18 @@ import org.ntnu.backend.classroom.dto.leaderboard.RankedStudentResponse;
 import org.ntnu.backend.classroom.mapper.LeaderboardMapper;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.Enrollment;
-import org.ntnu.backend.classroom.repository.ClassroomRepository;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.game.model.UserProgress;
 import org.ntnu.backend.game.repository.StopLevelCount;
 import org.ntnu.backend.game.repository.StopRepository;
 import org.ntnu.backend.game.repository.UserProgressRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+/** Computes and returns leaderboard rankings for students and classrooms. */
 @Service
 @AllArgsConstructor
 public class LeaderboardService {
@@ -34,6 +37,12 @@ public class LeaderboardService {
   private final LeaderboardMapper leaderboardMapper;
   private final ClassroomTeacherRepository classroomTeacherRepository;
 
+  /**
+   * Returns students in a classroom ranked by their computed progress score.
+   *
+   * @param classroomId the classroom to rank students within
+   * @return ordered list of ranked students, highest score first
+   */
   public List<RankedStudentResponse> getRankedStudentLeaderboard(UUID classroomId) {
     List<Enrollment> enrollments = enrollmentRepository.findAllByClassroomIdAndLeftAtIsNull(classroomId);
     Map<UUID, Integer> scores = computeScores(enrollments);
@@ -49,6 +58,12 @@ public class LeaderboardService {
     return leaderboardMapper.toRankedStudentList(sorted);
   }
 
+  /**
+   * Returns aggregate scores for all classrooms owned by a teacher, sorted by average score.
+   *
+   * @param teacherId the teacher whose classrooms are fetched
+   * @return list of classroom leaderboard entries
+   */
   public List<LeaderboardClassroomResponse> getTeacherClassroomScores(UUID teacherId) {
     List<UUID> classroomIds = classroomTeacherRepository.findClassroomsByTeacherId(teacherId)
         .stream().map(Classroom::getId).toList();
@@ -59,7 +74,23 @@ public class LeaderboardService {
     return buildSortedLeaderboard(byClassroom);
   }
 
-  public List<RankedClassroomResponse> getGlobalLeaderboard() {
+  /**
+   * Returns a paginated global leaderboard of all classrooms ranked by average student score.
+   *
+   * @param pageable pagination parameters
+   * @return page of ranked classroom responses
+   */
+  public Page<RankedClassroomResponse> getGlobalLeaderboard(Pageable pageable) {
+    List<RankedClassroomResponse> allClassroomsRanked = buildGlobalLeaderboard();
+    int start = (int) pageable.getOffset();
+    int end = Math.min(start + pageable.getPageSize(), allClassroomsRanked.size());
+    List<RankedClassroomResponse> page = start >= allClassroomsRanked.size()
+        ? List.of()
+        : allClassroomsRanked.subList(start, end);
+    return new PageImpl<>(page, pageable, allClassroomsRanked.size());
+  }
+
+  private List<RankedClassroomResponse> buildGlobalLeaderboard() {
     List<Enrollment> enrollments = enrollmentRepository.findAllByLeftAtIsNull();
     Map<UUID, Integer> scores = computeScores(enrollments);
     Map<Classroom, List<Integer>> byClassroom = groupScoresByClassroom(enrollments, scores);
@@ -67,6 +98,12 @@ public class LeaderboardService {
     return leaderboardMapper.toRankedList(sorted);
   }
 
+  /**
+   * Computes a progress score for each enrolled user based on completed stops and levels.
+   *
+   * @param enrollments active enrollments to score
+   * @return map of user ID to computed score
+   */
   public Map<UUID, Integer> computeScores(List<Enrollment> enrollments) {
     Map<Integer, Long> levelsPerStop = stopRepository.findAllWithLevelCounts().stream()
         .collect(Collectors.toMap(StopLevelCount::getDisplayOrder, StopLevelCount::getLevelCount));

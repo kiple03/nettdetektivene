@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
  * Service for uploading and retrieving images via Amazon S3.
@@ -24,7 +26,7 @@ import software.amazon.awssdk.services.s3.model.*;
  * database via {@link ImageRepository} so images can be looked up by ID without
  * querying S3 directly.
  *
- * <p>Only JPEG, PNG, and WEBP files up to {@value MAX_FILE_SIZE} MB are accepted.
+ * <p>Only JPEG, PNG, WEBP, and GIF files up to {@value MAX_FILE_SIZE} MB are accepted.
  * The S3 bucket is created automatically on first use if it does not already exist.
  */
 @Service
@@ -34,10 +36,11 @@ public class ImageService {
     private static final Set<String> ALLOWED_TYPES = Set.of(
             "image/jpeg",
             "image/png",
-            "image/webp"
+            "image/webp",
+            "image/gif"
     );
 
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     private final S3Client s3Client;
     private final ImageRepository imageRepository;
@@ -101,6 +104,12 @@ public class ImageService {
                 saved.getOriginalFilename(), saved.getUploadedAt());
     }
 
+    /**
+     * Returns all images uploaded by the given teacher, newest first.
+     *
+     * @param teacherId the UUID of the teacher whose images to retrieve
+     * @return list of {@link TeacherImageResponse} with public URLs and metadata
+     */
     public List<TeacherImageResponse> getTeacherImages(UUID teacherId) {
         return imageRepository.findByUploadedByUserIdOrderByUploadedAtDesc(teacherId).stream()
                 .map(img -> new TeacherImageResponse(img.getId(), buildPublicUrl(img.getObjectKey()),
@@ -124,7 +133,7 @@ public class ImageService {
         }
 
         if (!ALLOWED_TYPES.contains(file.getContentType())) {
-            throw new RuntimeException("Only JPEG, PNG, and WEBP are allowed");
+            throw new RuntimeException("Only JPEG, PNG, WEBP, and GIF are allowed");
         }
 
         if (file.getSize() > MAX_FILE_SIZE) {

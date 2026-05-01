@@ -6,14 +6,16 @@ import { QuestionEditorModal } from '@/components/teacher/questionEditor/Questio
 import StationContainer from '@/components/game/station/StationContainer';
 import StationRenderer from '@/components/game/station/StationRenderer';
 import { STATION_TYPE } from '@/types/station';
-import type { StationData, SubmitAnswerResult } from '@/types/station';
-import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherQuestionOption } from '@/api/teacherApi';
+import type { StationData, StationType, SubmitAnswerResult } from '@/types/station';
+import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherQuestionOption, TeacherPasswordStrengthOption } from '@/api/teacherApi';
 import type { QuestionDraft } from '@/components/teacher/questionEditor/types';
 import { makeOptionId } from '@/components/teacher/questionEditor/types';
 import type { SubmitAnswerRequest, LevelType } from '@/api/gameApi';
-import '@/components/game/ui/game.css';
+import '@/components/game/ui_game/game.css';
 import './TeacherLevelPreviewPage.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
+/** Converts a TeacherQuestion from the API into the editor draft format. */
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     switch (q.levelType) {
         case 'CLASSIFY_ITEMS': {
@@ -33,27 +35,45 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
         }
         default: {
             const stdOptions = q.options as TeacherQuestionOption[];
-            const options = stdOptions.map(o => ({
+            if (q.levelType === 'PICTURE_QUIZ') {
+                const pqOptions = stdOptions.map(o => ({
+                    id: o.id.toString(),
+                    text: o.text ?? '',
+                    isCorrect: o.isCorrect,
+                    explanation: o.explanation ?? '',
+                    imageUrl: o.imageUrl,
+                }));
+                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options: pqOptions };
+            }
+            const mcOptions = stdOptions.map(o => ({
                 id: o.id.toString(),
                 text: o.text ?? '',
                 isCorrect: o.isCorrect,
                 explanation: o.explanation ?? '',
                 imageUrl: o.imageUrl,
+                responseImageUrl: o.responseImageUrl ?? null,
             }));
-            if (q.levelType === 'PICTURE_QUIZ') {
-                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
-            }
-            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options };
+            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options: mcOptions };
         }
     }
 }
 
-function mapToStation(q: TeacherQuestion): StationData {
+/** Maps stop names (Norwegian) to their corresponding station type constants. */
+const STOP_TO_TYPE: Record<string, StationType> = {
+    "Nyhetskvartalet": STATION_TYPE.NEWS,
+    "Fotografen": STATION_TYPE.PHOTO,
+    "Passordbanken": STATION_TYPE.PASSWORD,
+    "Postkontoret": STATION_TYPE.POST,
+    "Markedsplassen": STATION_TYPE.MARKETPLACE,
+};
+
+/** Adapts a TeacherQuestion and its type into the StationData shape expected by the station renderers. */
+function mapToStation(q: TeacherQuestion, stationType: StationType): StationData {
     if (q.levelType === 'CLASSIFY_ITEMS') {
         const ciOptions = q.options as TeacherClassifyItemsOption[];
         return {
             questionId: q.id,
-            type: STATION_TYPE.NEWS,
+            type: stationType,
             levelType: q.levelType as LevelType,
             title: 'Nyhetskvartal',
             questionText: q.questionText,
@@ -65,10 +85,29 @@ function mapToStation(q: TeacherQuestion): StationData {
             })),
         };
     }
+    if (q.levelType === 'PASSWORD_STRENGTH') {
+        const pwOptions = q.options as TeacherPasswordStrengthOption[];
+        return {
+            questionId: q.id,
+            type: stationType,
+            levelType: q.levelType as LevelType,
+            title: 'Passordbanken',
+            questionText: q.questionText,
+            options: pwOptions.map(o => ({
+                id: o.id,
+                label: '',
+                minLength: o.minLength,
+                requireDigit: o.requireDigit,
+                requireUpper: o.requireUpper,
+                requireLower: o.requireLower,
+                requireSymbol: o.requireSymbol,
+            })),
+        };
+    }
     const stdOptions = q.options as TeacherQuestionOption[];
     return {
         questionId: q.id,
-        type: STATION_TYPE.NEWS,
+        type: stationType,
         levelType: q.levelType as LevelType,
         title: 'Nyhetskvartal',
         questionText: q.questionText,
@@ -80,6 +119,10 @@ function mapToStation(q: TeacherQuestion): StationData {
     };
 }
 
+/**
+ * Lets a teacher step through and preview level questions as a student would see them,
+ * with an inline edit button for non-default questions.
+ */
 export default function TeacherLevelPreviewPage() {
     const { classroomId = '', levelId: levelIdStr = '' } = useParams<{ classroomId: string; levelId: string }>();
     const levelId = parseInt(levelIdStr, 10);
@@ -96,6 +139,9 @@ export default function TeacherLevelPreviewPage() {
     const { data: questions = [], isLoading: questionsLoading, isError: questionsError } = useLevelQuestions(classroomId, levelId);
 
     const questionsListPath = `/teacher/classrooms/${classroomId}/levels/${levelId}/questions`;
+
+    useBackTo(questionsListPath)
+
 
     if (isNaN(levelId) || !classroomId) {
         return (
@@ -132,9 +178,12 @@ export default function TeacherLevelPreviewPage() {
         );
     }
 
+
     const currentQuestion = questions[questionIndex];
     const isLastQuestion = questionIndex === questions.length - 1;
-    const station = mapToStation(currentQuestion);
+    const stationType = STOP_TO_TYPE[level?.stopName ?? ''] ?? STATION_TYPE.NEWS;
+    const station = mapToStation(currentQuestion, stationType);
+
 
     const handleAnswer = (result: SubmitAnswerResult, _request: SubmitAnswerRequest) => {
         setSubmitResult(result);
@@ -147,6 +196,7 @@ export default function TeacherLevelPreviewPage() {
                 const options = draft.options.map(o => ({
                     text: o.text,
                     imageUrl: o.imageUrl,
+                    responseImageUrl: o.responseImageUrl,
                     isCorrect: o.isCorrect,
                     explanation: o.explanation,
                 }));
@@ -207,13 +257,11 @@ export default function TeacherLevelPreviewPage() {
             navigate(questionsListPath);
         }
     };
+    
 
     return (
         <div className="teacher-preview">
             <div className="teacher-preview__nav">
-                <Link to={questionsListPath} className="teacher-preview__back">
-                    ← Tilbake til spørsmålslisten
-                </Link>
                 <span className="teacher-preview__counter">
                     Spørsmål {questionIndex + 1} av {questions.length}
                 </span>

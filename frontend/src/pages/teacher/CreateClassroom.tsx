@@ -1,4 +1,4 @@
-import { Form, Link, redirect, useActionData } from 'react-router-dom';
+import { Form, redirect, useActionData } from 'react-router-dom';
 import type { ActionFunctionArgs } from 'react-router-dom';
 import { createClassroom } from '@/api/teacherApi';
 import { Button } from '@/components/ui/buttons/Button.tsx';
@@ -6,6 +6,7 @@ import './CreateClassroom.css';
 
 type ActionResult = { error: string } | null;
 
+/** React Router action that creates a new classroom and redirects to its code page on success. */
 export async function createClassroomAction({
                                               request,
                                             }: ActionFunctionArgs): Promise<Response | ActionResult> {
@@ -23,20 +24,13 @@ export async function createClassroomAction({
   }
 }
 
+/** Page for creating a new classroom with title and optional description. */
 export default function CreateClassroom() {
   const result = useActionData() as ActionResult | undefined;
 
   return (
       <div className="create-classroom">
         <header className="create-classroom__header">
-          <Link
-              to="/teacher"
-              className="create-classroom__back"
-              aria-label="Tilbake til dashboard"
-          >
-            ← Tilbake
-          </Link>
-
           <h1 className="create-classroom__title">Opprett ny klasse</h1>
         </header>
 
@@ -57,7 +51,6 @@ export default function CreateClassroom() {
                 minLength={2}
                 maxLength={80}
                 placeholder="f.eks. 6A – Nettdetektivene"
-                autoFocus
             />
           </label>
 

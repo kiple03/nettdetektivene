@@ -1,23 +1,36 @@
 import { useEffect, useState } from "react";
 import type { StationType, SubmitAnswerResult } from "@/types/station.ts";
-import FeedbackBox from "@/components/game/ui/FeedbackBox.tsx";
+import FeedbackBox from "@/components/game/ui_game/FeedbackBox";
 import { Button } from '@/components/ui/buttons/Button.tsx'
 import TutorialOverlay from "@/components/game/tutorial/TutorialOverlay.tsx";
 import { TUTORIAL_STEPS, hasSeenTutorial } from "@/components/game/tutorial/tutorialContent.ts";
 import useSound from "use-sound";
-import CorrectFx from '@/assets/sounds/IncorrectAnswer.wav';
-import IncorrectFx from '@/assets/sounds/CorrectAnswerII.mp3';
+import CorrectFx from '@/assets/sounds/CorrectAnswer.wav';
+import IncorrectFx from '@/assets/sounds/IncorrectAnswer.mp3';
+import { useAuth } from '@/hooks/useAuth'
+import ProfileIconButton from "@/components/student/ProfileIconButton";
 
+/** Props for {@link StationContainer}. */
 type Props = {
   title: string;
+  subtitle?: string;
   type: StationType;
   children: React.ReactNode;
   submitResult: SubmitAnswerResult | null;
   onNext: () => void;
+  isTearing?: boolean;
 };
 
+/**
+ * Wraps a game station with a title, tutorial overlay, answer feedback, and sound effects.
+ * Plays a correct/incorrect sound whenever `submitResult` changes.
+ */
 function StationContainer({ title, type, children, submitResult, onNext }: Props) {
-  const [tutorialOpen, setTutorialOpen] = useState(() => !hasSeenTutorial(type));
+  const { email } = useAuth();
+
+  const [tutorialOpen, setTutorialOpen] = useState(
+      () => !hasSeenTutorial(type, email)
+  );
 
   const [playCorrect] = useSound(CorrectFx);
   const [playWomp] = useSound(IncorrectFx)
@@ -27,18 +40,20 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
   }, [submitResult]);
 
   return (
-      // toLowerCase for css-styling for the specific station
-      <div className={`station-container station-${type.toLowerCase()}`}>
-        <h1 className="station-title">{title}</h1>
-
-        <button
+    <>
+      <button
           className="tutorial-help-btn"
-          style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 2 }}
+          style={{ position: "absolute", top: "1rem", right: "calc(88px + 1.75rem)", zIndex: 2 }}
           onClick={() => setTutorialOpen(true)}
           aria-label="Vis guide"
         >
           ?
-        </button>
+      </button>
+
+      <ProfileIconButton />
+      <div className={`station-container station-${type.toLowerCase()}`}>
+        {/* Top label */}
+        <h1 className="station-title">{title}</h1>
 
         {TUTORIAL_STEPS[type] && (
           <TutorialOverlay
@@ -46,6 +61,7 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
             steps={TUTORIAL_STEPS[type]}
             isOpen={tutorialOpen}
             onClose={() => setTutorialOpen(false)}
+            email={email}
           />
         )}
 
@@ -61,6 +77,8 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
               />
 
               <Button
+                  type={"button"}
+                  className={"nextBtn"}
                   variant="next"
                   onClick={onNext}
                   aria-label="Gå videre"
@@ -70,7 +88,8 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
             </div>
         )}
       </div>
+    </>
   )
 }
 
-export default StationContainer;
+export default StationContainer;            

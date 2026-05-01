@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import type { StationType } from "@/types/station";
+import { Button } from "@/components/ui/buttons/Button";
 import {
   hasSeenTutorial,
   markTutorialSeen,
@@ -8,19 +9,30 @@ import {
 } from "./tutorialContent";
 import "./TutorialOverlay.css";
 
+/** Props for TutorialOverlay. */
 type Props = {
+  /** The station type, used to track tutorial completion per station. */
   type: StationType;
   steps: TutorialStep[];
   isOpen: boolean;
   onClose: () => void;
+  /** User email used to persist tutorial-seen state. */
+  email?: string | null | undefined;
+  /** Element to restore focus to when the overlay closes. */
   returnFocusRef?: RefObject<HTMLElement | null>;
 };
 
+/**
+ * Modal overlay that walks the user through a series of tutorial steps.
+ * Traps focus, supports keyboard navigation (Tab, Shift+Tab, Escape), and
+ * marks the tutorial as seen in persistent storage on completion or dismiss.
+ */
 function TutorialOverlay({
                            type,
                            steps,
                            isOpen,
                            onClose,
+                           email,
                            returnFocusRef,
                          }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
@@ -31,8 +43,8 @@ function TutorialOverlay({
 
   const handleNext = () => {
     if (isLast) {
-      if (!hasSeenTutorial(type)) {
-        markTutorialSeen(type);
+      if (!hasSeenTutorial(type, email)) {
+        markTutorialSeen(type, email);
       }
       onClose();
       setCurrentStep(0);
@@ -42,8 +54,8 @@ function TutorialOverlay({
   };
 
   const handleClose = () => {
-    if (!hasSeenTutorial(type)) {
-      markTutorialSeen(type);
+    if (!hasSeenTutorial(type, email)) {
+      markTutorialSeen(type, email);
     }
     onClose();
     setCurrentStep(0);
@@ -121,13 +133,14 @@ function TutorialOverlay({
 
           <p className="tutorial-description">{step.description}</p>
 
-          <button
+          <Button
               className="tutorial-next-btn"
+              variant="primary"
               onClick={handleNext}
               type="button"
           >
             {isLast ? "Ferdig" : "Neste →"}
-          </button>
+          </Button>
         </div>
       </div>,
       document.body

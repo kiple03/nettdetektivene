@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.medalion.dto.AwardMedalionRequest;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.medalion.model.Medalion;
@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import lombok.RequiredArgsConstructor;
-
 
 /**
  * Service class for medalion logic.
@@ -28,6 +26,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MedalionService {
+    private static final Map<String, String> MEDAL_IMAGE_OVERRIDES = Map.of(
+        "Den sosiale møteplassen", "/assets/medalions/social-meetingplace.png"
+    );
+
     private final MedalionRepository medalionRepository;
     private final UserRepository userRepository;
 
@@ -113,12 +115,16 @@ public class MedalionService {
      * @return the mapped response DTO
      */
     private MedalionResponse toResponse(Medalion medalion){
+        String imageUrl = MEDAL_IMAGE_OVERRIDES.getOrDefault(
+            medalion.getName(),
+            "/assets/medalions/" + medalion.getName() + ".svg"
+        );
         return MedalionResponse.builder()
             .id(medalion.getId())
             .name(medalion.getName())
             .description(medalion.getDescription())
             .earnedAt(medalion.getEarned_at())
-            .imageUrl("/assets/medalions/" + medalion.getName() + ".svg")
+            .imageUrl(imageUrl)
             .build();
     }
 

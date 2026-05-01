@@ -5,10 +5,15 @@ import { getImageDisplayUrl } from '@/api/teacherApi';
 import './ImagePicker.css';
 
 interface Props {
+  /** Called with the selected image URL when the user picks an image. */
   onSelect: (url: string) => void;
   onClose: () => void;
 }
 
+/**
+ * Modal for browsing and uploading teacher images.
+ * Shows a grid of existing images and lets the teacher upload a new one.
+ */
 export function ImagePickerModal({ onSelect, onClose }: Props) {
   const { data: images = [], isLoading } = useTeacherImages();
   const uploadMutation = useUploadImage();
@@ -25,14 +30,32 @@ export function ImagePickerModal({ onSelect, onClose }: Props) {
   };
 
   return (
-    <div className="img-picker-modal__backdrop" onClick={onClose}>
-      <div className="img-picker-modal" onClick={e => e.stopPropagation()}>
-        <div className="img-picker-modal__header">
-          <h3 className="img-picker-modal__title">Velg bilde</h3>
-          <button type="button" className="img-picker-modal__close" onClick={onClose} aria-label="Lukk">
-            ×
-          </button>
-        </div>
+    <>
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+    <div
+        className="img-picker-modal__backdrop"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+        role="presentation"
+      >
+        <div
+          className="img-picker-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="img-picker-title"
+        >
+          <div className="img-picker-modal__header">
+            <h3 id="img-picker-title" className="img-picker-modal__title">Velg bilde</h3>
+            <button
+              type="button"
+              className="img-picker-modal__close"
+              onClick={onClose}
+              aria-label="Lukk"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
 
         <div className="img-picker-modal__body">
           {isLoading && <p className="img-picker-modal__loading">Laster bilder...</p>}
@@ -67,7 +90,7 @@ export function ImagePickerModal({ onSelect, onClose }: Props) {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp"
+            accept="image/jpeg,image/png,image/webp,image/gif"
             style={{ display: 'none' }}
             onChange={handleFileChange}
           />
@@ -82,5 +105,6 @@ export function ImagePickerModal({ onSelect, onClose }: Props) {
         </div>
       </div>
     </div>
+    </>
   );
 }

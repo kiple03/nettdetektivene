@@ -1,11 +1,10 @@
 package org.ntnu.backend.notes.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.ntnu.backend.notes.model.LevelNoteTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * Repository for predefined note templates attached to levels.
@@ -25,7 +24,19 @@ public interface LevelNoteTemplateRepository extends JpaRepository<LevelNoteTemp
      */
     List<LevelNoteTemplate> findAllByLevelId(int levelId);
 
+  /**
+   * Returns the first note template for the given level, if any.
+   *
+   * @param id the level id
+   * @return the template, or empty if none exists
+   */
   Optional<LevelNoteTemplate> findByLevelId(int id);
 
+  /**
+   * Returns all note templates for the given level, ordered by id ascending.
+   *
+   * @param id the level id
+   * @return ordered list of templates
+   */
   List<LevelNoteTemplate> findAllByLevelIdOrderByIdAsc(int id);
 }

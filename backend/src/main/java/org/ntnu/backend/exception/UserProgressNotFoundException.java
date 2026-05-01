@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
  */
 public class UserProgressNotFoundException extends ApiException {
 
+  /**
+   * @param userId the ID of the user whose progress row is missing
+   */
   public UserProgressNotFoundException(UUID userId) {
     super(HttpStatus.INTERNAL_SERVER_ERROR, "User progress not found for user: " + userId);
   }

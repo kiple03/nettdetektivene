@@ -10,6 +10,9 @@ interface Props {
   onChange: (v: QuestionDraft) => void;
 }
 
+/**
+ * Renders the appropriate question editor based on the question kind.
+ */
 export function QuestionEditor({ value, onChange }: Props) {
   switch (value.kind) {
     case 'MULTIPLE_CHOICE':

@@ -4,24 +4,32 @@ import type { SubmitAnswerRequest } from "@/api/gameApi.ts";
 import PhotographerStation from "@/components/game/station/stations/PhotographerStation.tsx";
 import PassordBankenStation from "@/components/game/station/stations/PassordBankenStation";
 import PostkontoretStation from "@/components/game/station/stations/PostkontoretStation.tsx";
-
 import MarkedsplassenStation from "./stations/MarkedsPlassenStation";
+import SosialeMoteplassenStation from "./stations/SosialeMoteplassenStation";
 
 
 type StationRendererProps = {
   station: StationData;
+  levelTitle?: string;
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
+    isTearing?: boolean;
 };
 
-function StationRenderer({ station, onAnswer, disabled = false }: StationRendererProps) {
+/**
+ * Renders the appropriate station component based on the station's type.
+ * Falls back to an error message for unknown station types.
+ */
+function StationRenderer({ station, levelTitle = station.title ?? "Nivå", onAnswer, disabled = false, isTearing }: StationRendererProps) {
   switch (station.type) {
     case STATION_TYPE.NEWS:
       return (
           <NyhetsKvartalStation
               station={station}
+              levelTitle={levelTitle}
               onAnswer={onAnswer}
               disabled={disabled}
+              isTearing={isTearing}
           />
       );
 
@@ -29,32 +37,48 @@ function StationRenderer({ station, onAnswer, disabled = false }: StationRendere
       return (
           <PhotographerStation
               station={station}
+              levelTitle={levelTitle}
               onAnswer={onAnswer}
               disabled={disabled}
           />
       );
+
     case STATION_TYPE.POST:
-      return <PostkontoretStation
+      return (
+          <PostkontoretStation
           station={station}
-          onAnswer={onAnswer} />;
+          onAnswer={onAnswer}
+          />
+      );
 
     case STATION_TYPE.PASSWORD:
       return (
           <PassordBankenStation
               station={station}
+              levelTitle={levelTitle}
               onAnswer={onAnswer}
               disabled={disabled}
           />
       );
 
     case STATION_TYPE.MARKETPLACE:
-        return (
+      return (
           <MarkedsplassenStation
                 station={station}
+                levelTitle={levelTitle}
                 onAnswer={onAnswer}
                 disabled={disabled}
           />
       );
+    case STATION_TYPE.SOCIAL:
+        return (
+          <SosialeMoteplassenStation 
+                station={station}
+                levelTitle={levelTitle}
+                onAnswer={onAnswer} 
+                disabled={disabled} 
+          />
+        );
 
     default:
       return <div>Ukjent stasjonstype</div>;

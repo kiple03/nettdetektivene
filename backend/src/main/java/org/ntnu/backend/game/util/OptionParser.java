@@ -2,7 +2,6 @@ package org.ntnu.backend.game.util;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.InvalidOptionFormatException;
 import org.ntnu.backend.exception.OptionValidationException;
@@ -22,7 +21,7 @@ import tools.jackson.databind.ObjectMapper;
  * Deserializes question option JSON into typed {@link Option} subclasses
  * based on the question's {@link LevelType}.
  *
- * <p>After parsing, the resulting options are validated by
+ * <p>After parsing, the resulting responseUrls are validated by
  * {@link OptionValidator} to catch malformed data early, both
  * field-level constraints and business rules are checked.
  *
@@ -40,14 +39,14 @@ public class OptionParser {
   private final OptionValidator validator;
 
   /**
-   * Parses the JSON string into a list of typed options and validates them.
+   * Parses the JSON string into a list of typed responseUrls and validates them.
    *
    * @param json the raw JSON from {@code Question.optionContent}
    * @param type the level type, determines which concrete class to deserialize into
    *
-   * @return validated list of typed options
+   * @return validated list of typed responseUrls
    * @throws InvalidOptionFormatException if the JSON cannot be parsed
-   * @throws OptionValidationException if parsed options fail validation
+   * @throws OptionValidationException if parsed responseUrls fail validation
    */
   public List<Option> parse(String json, LevelType type) {
     List<Option> options;
@@ -95,6 +94,12 @@ public class OptionParser {
     return options;
   }
 
+  /**
+   * Parses the JSON string directly into a {@link PostOfficeQuestion}.
+   *
+   * @param json raw JSON from {@code Question.optionContent}
+   * @return the deserialized post-office question
+   */
   public PostOfficeQuestion parsePostOfficeQuestion(String json) {
     return mapper.readValue(json, PostOfficeQuestion.class);
   }

@@ -24,10 +24,14 @@
 .destructive {
     background: #dc2626;
     color: white;
+    box-shadow:
+        0 4px 14px rgba(91, 42, 134, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
 }
 
 .destructive:hover {
-    background: #b91c1c;
+    background: #e43b3b;
 }
 
 .fun {
@@ -38,7 +42,7 @@
 
 .next {
     background: rgba(255, 248, 220, 0.94);
-    border: 2px dashed rgb(99, 75, 44);
+    border: 2px solid rgb(99, 75, 44);
     color: #2d1b0f;
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
@@ -58,4 +62,23 @@
     justify-content: center;
     cursor: pointer;
     transition: inherit;
+}
+
+.primary {
+    background: linear-gradient(135deg, #7c3aad 0%, #5b2a86 100%);
+    color: #ffffff;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    box-shadow:
+        0 4px 14px rgba(91, 42, 134, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
+}
+
+.primary:hover {
+    background: linear-gradient(135deg, #8b45c0 0%, #6d33a0 100%);
+    box-shadow:
+        0 6px 18px rgba(91, 42, 134, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
