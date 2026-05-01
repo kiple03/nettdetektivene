@@ -198,3 +198,19 @@
     font-weight: 700;
     border: 1.5px solid rgba(91, 42, 134, 0.2);
 }
+
+.dialogActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.dialogActions button:focus-visible {
+    outline: 5px solid #ffe97a;
+    outline-offset: 5px;
+    box-shadow:
+            0 0 0 8px rgba(255, 233, 122, 0.35),
+            0 0 28px rgba(255, 233, 122, 0.65);
+    border-radius: 10px;
+}

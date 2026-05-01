@@ -135,15 +135,15 @@ export default function PictureGrid({
             </div>
           {selectionMode === "multiple" && (
               <div className={styles.actions}>
-                <Button
-                    type="button"
-                    variant="fun"
-                    onClick={handleSubmit}
-                    disabled={disabled || isSubmitting}
-                    className={styles.submitButton}
-                >
-                  Svar
-                </Button>
+                  <Button
+                      type="button"
+                      variant="fun"
+                      onClick={handleSubmit}
+                      disabled={disabled || isSubmitting || selectedIds.length === 0}
+                      className={styles.submitButton}
+                  >
+                      Svar
+                  </Button>
               </div>
           )}
         </div>

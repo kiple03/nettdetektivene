@@ -77,6 +77,8 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
               />
 
               <Button
+                  type={"button"}
+                  className={"nextBtn"}
                   variant="next"
                   onClick={onNext}
                   aria-label="Gå videre"
