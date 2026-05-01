@@ -30,20 +30,25 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Medalion {
+    /** Unique identifier. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /** Display name of the medalion. */
     @Column(length = 100, nullable = false)
     private String name;
 
+    /** The user who earned this medalion. */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", nullable = false)
     private User user;
 
+    /** Short description of what the medalion represents. */
     @Column(length = 100, nullable = false)
     private String description;
 
+    /** Timestamp when the medalion was earned. */
     @Column
     private LocalDateTime earned_at;
 }   

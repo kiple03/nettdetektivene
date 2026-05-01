@@ -9,6 +9,7 @@ import kommerSnart from '@/assets/images/studentHomeBoard/kommer_snart.png'
 
 import type { DashboardItem } from "@/types/dashboard.ts";
 
+/** Navigation items shown on the student home dashboard board. */
 export const studentBoardItems: DashboardItem[] = [
   {
     id: 'map',

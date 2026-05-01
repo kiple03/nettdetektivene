@@ -6,6 +6,7 @@ import { AlertDialog } from "@/components/ui/alert-dialog/Alert-Dialog";
 import { Button } from "@/components/ui/buttons/Button";
 import styles from "./StopLevelsModal.module.css";
 
+/** Minimal stop data needed to render the teacher's level modal. */
 export interface TeacherStopInfo {
     title: string;
     stopId: number | null;
@@ -17,6 +18,10 @@ interface TeacherStopLevelsModalProps {
     onClose: () => void;
 }
 
+/**
+ * Modal that lists all levels for a map stop, allowing the teacher to navigate
+ * to the question editor for each level.
+ */
 export function TeacherStopLevelsModal({ stop, classroomId, onClose }: TeacherStopLevelsModalProps) {
     useHideBackButton(stop !== null);
     const navigate = useNavigate();

@@ -19,6 +19,11 @@ public class TeacherStopService {
 
     private final StopRepository stopRepository;
 
+    /**
+     * Returns all map stops ordered by display order.
+     *
+     * @return list of stops
+     */
     @Transactional(readOnly = true)
     public List<StopResponse> listStops() {
         return stopRepository.findAllByOrderByDisplayOrderAsc()

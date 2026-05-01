@@ -6,6 +6,10 @@ interface UseColoredHairSvgResult {
   isLoading: boolean;
 }
 
+/**
+ * Fetches an SVG hair item from `imageUrl` and recolors it to `targetHex`.
+ * Returns `null` while loading or when `targetHex` is undefined.
+ */
 export function useColoredHairSvg(
   imageUrl: string,
   itemName: string,

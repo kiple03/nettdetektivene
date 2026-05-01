@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 import { Eye, EyeOff, X } from 'lucide-react';
 import type { FormEvent } from 'react';
 import type { AuthFieldErrors } from '@/utils/validators';
-
 import './AuthRegisterModal.css';
 
 interface AuthRegisterModalProps {
@@ -12,7 +11,9 @@ interface AuthRegisterModalProps {
   submitLabel: string;
   onClose: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  /** Top-level form error message (e.g. server error). */
   error: string;
+  /** Per-field validation errors. */
   fieldErrors: AuthFieldErrors;
   email: string;
   password: string;
@@ -23,9 +24,14 @@ interface AuthRegisterModalProps {
   onEmailBlur: () => void;
   onPasswordBlur: () => void;
   onConfirmBlur: () => void;
+  /** Element to restore focus to when the modal closes. */
   returnFocusRef?: RefObject<HTMLElement | null>;
 }
 
+/**
+ * Accessible modal dialog for email/password registration or login.
+ * Traps focus within the dialog and restores it on close.
+ */
 function AuthRegisterModal({
                              open,
                              title,

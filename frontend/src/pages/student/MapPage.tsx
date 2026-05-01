@@ -23,6 +23,7 @@ import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
 import { StopLevelsModal } from "@/components/map/StopLevelsModal";
 import { MapLoadingOverlay } from "@/components/map/MapLoadingOverlay";
 
+/** Interactive city map where students navigate between stops/stations, with car animation along a path. */
 export default function MapPage() {
   const { data: profile } = useUserProfile();
   const { data: backendStops = [] } = useQuery({

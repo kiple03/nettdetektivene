@@ -15,6 +15,7 @@ import { MapTransitionOutgoing } from "@/components/map/MapTransitionOutgoing";
 import HomeTour from "@/components/dashboard/HomeTour";
 import { studentTourSteps } from "@/data/studentTourSteps";
 
+/** Student home dashboard showing navigation tiles, a welcome dialog on first visit, and a guided tour. */
 export default function StudentHomePage() {
     const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
     const [tourActive, setTourActive] = useState(false);
@@ -34,11 +35,13 @@ export default function StudentHomePage() {
         }
     }, [email]);
 
+    /** Closes the welcome dialog and immediately starts the guided tour. */
     const closeModalAndStartTour = () => {
         setLockedDialogOpen(false);
         setTourActive(true);
     };
 
+    /** Navigates to the map, skipping the transition animation when reduced-motion is preferred. */
     const handleMapClick = () => {
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
             navigate("/map", { state: { fromHome: true } });

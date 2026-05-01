@@ -1,11 +1,14 @@
 import { type PropsWithChildren, useEffect, useRef } from "react";
 
 type MatrixCanvasProps = PropsWithChildren<{
+  /** Font size in px for each falling character (default: 80). */
   fontSize?: number;
+  /** Hex color of the falling characters (default: "#00cc00"). */
   textColor?: string;
   className?: string;
 }>;
 
+/** Renders a Matrix-style falling-character rain animation on a canvas that fills its container. */
 export default function MatrixCanvas(props: MatrixCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);

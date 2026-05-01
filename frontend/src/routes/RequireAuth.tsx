@@ -4,10 +4,15 @@ import { useAuth } from '@/hooks/useAuth';
 import type { Role } from '@/types/user';
 
 interface Props {
+  /** Required role for the protected route. */
   role: Role;
   children: ReactNode;
 }
 
+/**
+ * Blocks rendering until auth state is settled, then redirects unauthenticated
+ * users to the appropriate login page or cross-role users to their home route.
+ */
 function RequireAuth({ role, children }: Props) {
   const { isLoggedIn, role: currentRole, authReady, isRefreshing } = useAuth();
   const location = useLocation();

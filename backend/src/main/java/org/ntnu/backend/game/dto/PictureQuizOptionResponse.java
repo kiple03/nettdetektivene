@@ -11,7 +11,10 @@ package org.ntnu.backend.game.dto;
  * only {@code id} and {@code text} (the category label) differ.
  */
 public record PictureQuizOptionResponse(
+        /** Unique identifier of the option. */
         int id,
+        /** Category label the student selects as their answer. */
         String text,
+        /** URL of the image the student must classify. */
         String imageUrl
 ) implements OptionResponse {}

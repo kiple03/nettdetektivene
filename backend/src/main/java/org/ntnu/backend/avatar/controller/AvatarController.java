@@ -61,6 +61,13 @@ public class AvatarController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Updates the authenticated user's profile (e.g. username).
+     *
+     * @param principal the authenticated user's JWT principal
+     * @param request   the profile fields to update
+     * @return a new access token reflecting the updated profile claims
+     */
     @PutMapping("/user/profile")
     public ResponseEntity<Map<String, String>> updateUserProfile(
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal,

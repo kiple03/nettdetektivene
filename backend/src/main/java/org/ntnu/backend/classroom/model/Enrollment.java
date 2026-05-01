@@ -32,22 +32,27 @@ import org.ntnu.backend.user.model.User;
 @Builder
 public class Enrollment {
 
+    /** Primary key. */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /** The enrolled student. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    /** The classroom the student is enrolled in. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "classroom_id", nullable = false)
     private Classroom classroom;
 
+    /** Timestamp set automatically when the record is created. */
     @CreationTimestamp
     @Column(name = "enrolled_at", nullable = false, updatable = false)
     private Instant enrolledAt;
 
+    /** Timestamp set when the student leaves the classroom; {@code null} if still enrolled. */
     @Column(name = "left_at")
     private Instant leftAt;
 }

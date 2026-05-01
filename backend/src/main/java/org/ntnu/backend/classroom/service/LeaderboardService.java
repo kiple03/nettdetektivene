@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
 
+/** Computes and returns leaderboard rankings for students and classrooms. */
 @Service
 @AllArgsConstructor
 public class LeaderboardService {
@@ -38,6 +39,12 @@ public class LeaderboardService {
   private final LeaderboardMapper leaderboardMapper;
   private final ClassroomTeacherRepository classroomTeacherRepository;
 
+  /**
+   * Returns students in a classroom ranked by their computed progress score.
+   *
+   * @param classroomId the classroom to rank students within
+   * @return ordered list of ranked students, highest score first
+   */
   public List<RankedStudentResponse> getRankedStudentLeaderboard(UUID classroomId) {
     List<Enrollment> enrollments = enrollmentRepository.findAllByClassroomIdAndLeftAtIsNull(classroomId);
     Map<UUID, Integer> scores = computeScores(enrollments);
@@ -53,6 +60,12 @@ public class LeaderboardService {
     return leaderboardMapper.toRankedStudentList(sorted);
   }
 
+  /**
+   * Returns aggregate scores for all classrooms owned by a teacher, sorted by average score.
+   *
+   * @param teacherId the teacher whose classrooms are fetched
+   * @return list of classroom leaderboard entries
+   */
   public List<LeaderboardClassroomResponse> getTeacherClassroomScores(UUID teacherId) {
     List<UUID> classroomIds = classroomTeacherRepository.findClassroomsByTeacherId(teacherId)
         .stream().map(Classroom::getId).toList();
@@ -63,6 +76,12 @@ public class LeaderboardService {
     return buildSortedLeaderboard(byClassroom);
   }
 
+  /**
+   * Returns a paginated global leaderboard of all classrooms ranked by average student score.
+   *
+   * @param pageable pagination parameters
+   * @return page of ranked classroom responses
+   */
   public Page<RankedClassroomResponse> getGlobalLeaderboard(Pageable pageable) {
     List<RankedClassroomResponse> allClassroomsRanked = buildGlobalLeaderboard();
     int start = (int) pageable.getOffset();
@@ -81,6 +100,12 @@ public class LeaderboardService {
     return leaderboardMapper.toRankedList(sorted);
   }
 
+  /**
+   * Computes a progress score for each enrolled user based on completed stops and levels.
+   *
+   * @param enrollments active enrollments to score
+   * @return map of user ID to computed score
+   */
   public Map<UUID, Integer> computeScores(List<Enrollment> enrollments) {
     Map<Integer, Long> levelsPerStop = stopRepository.findAllWithLevelCounts().stream()
         .collect(Collectors.toMap(StopLevelCount::getDisplayOrder, StopLevelCount::getLevelCount));

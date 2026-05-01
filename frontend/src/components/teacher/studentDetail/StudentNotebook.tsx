@@ -14,6 +14,7 @@ interface Props {
     notes: NotesData;
 }
 
+/** Displays a student's notebook entries grouped by category, shown to teachers in the student detail view. */
 export function StudentNotebook({ notes }: Props) {
     const activeCategories = CATEGORIES.filter(
         (cat) => notes.reflections[cat.id].length > 0,

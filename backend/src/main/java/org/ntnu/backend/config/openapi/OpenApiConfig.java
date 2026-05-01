@@ -31,6 +31,12 @@ public class OpenApiConfig {
 
   private static final String BEARER_AUTH = "bearerAuth";
 
+  /**
+   * Builds the top-level OpenAPI object with API metadata, JWT security scheme, and the
+   * {@link ErrorResponse} schema registered for use in global error responses.
+   *
+   * @return configured {@link OpenAPI} instance
+   */
   @Bean
   public OpenAPI apiInfo() {
     OpenAPI api = new OpenAPI()
@@ -62,6 +68,8 @@ public class OpenApiConfig {
   /**
    * Adds a default 401 response to every operation. Individual endpoints can
    * still declare their own 401 with a more specific description if needed.
+   *
+   * @return an {@link OperationCustomizer} that injects standard error responses
    */
   @Bean
   public OperationCustomizer globalResponseCustomizer() {

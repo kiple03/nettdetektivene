@@ -1,3 +1,4 @@
+/** React Query key factory for all teacher-scoped queries. */
 export const teacherKeys = {
     classrooms: ['teacher', 'classrooms'] as const,
     classroom: (id: string) => ['teacher', 'classrooms', id] as const,

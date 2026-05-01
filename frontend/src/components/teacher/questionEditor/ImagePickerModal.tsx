@@ -5,10 +5,15 @@ import { getImageDisplayUrl } from '@/api/teacherApi';
 import './ImagePicker.css';
 
 interface Props {
+  /** Called with the selected image URL when the user picks an image. */
   onSelect: (url: string) => void;
   onClose: () => void;
 }
 
+/**
+ * Modal for browsing and uploading teacher images.
+ * Shows a grid of existing images and lets the teacher upload a new one.
+ */
 export function ImagePickerModal({ onSelect, onClose }: Props) {
   const { data: images = [], isLoading } = useTeacherImages();
   const uploadMutation = useUploadImage();

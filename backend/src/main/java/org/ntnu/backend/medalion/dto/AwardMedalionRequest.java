@@ -10,12 +10,15 @@ import java.util.UUID;
  */
 @Data
 public class AwardMedalionRequest {
+    /** ID of the user receiving the medalion. */
     @NotNull
     private UUID userId;
 
+    /** Unique name identifying the medalion type. */
     @NotBlank
     private String name;
 
+    /** Human-readable description shown to the user. */
     @NotBlank
     private String description;
 }     

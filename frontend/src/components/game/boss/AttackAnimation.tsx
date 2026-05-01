@@ -42,6 +42,10 @@ interface Props {
     onSpriteChange: (sprite: string) => void;
 }
 
+/**
+ * Plays the boss attack animation for the given attack type, then calls {@link Props.onComplete}.
+ * Drives sprite swaps via {@link Props.onSpriteChange} and portals overlays into `document.body`.
+ */
 export function AttackAnimation({ attackType, onComplete, onSpriteChange }: Props) {
     const completed = useRef(false);
     const [showNewspaper, setShowNewspaper] = useState(false);

@@ -107,6 +107,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     } catch (JwtException ignored) {}
   }
 
+  /**
+   * Skips JWT processing for CORS preflight requests.
+   *
+   * @param request the incoming HTTP request
+   * @return {@code true} if the request method is OPTIONS
+   */
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
     return "OPTIONS".equalsIgnoreCase(request.getMethod());
