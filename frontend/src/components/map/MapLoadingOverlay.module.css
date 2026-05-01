@@ -15,6 +15,7 @@
 
 .logo {
   height: 38vh;
+  max-width: 85vw;
   width: auto;
   animation: fadeInOut 0.8s forwards;
 }
