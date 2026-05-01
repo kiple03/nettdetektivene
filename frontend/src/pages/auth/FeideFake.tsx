@@ -13,6 +13,10 @@ interface LocationState {
   portalRole?: Role;
 }
 
+/**
+ * Fake Feide login page used in development instead of the real Feide IdP.
+ * Reads `portalRole` from router state to enforce portal-specific access control.
+ */
 function FeideFake() {
   const navigate = useNavigate();
   const location = useLocation();

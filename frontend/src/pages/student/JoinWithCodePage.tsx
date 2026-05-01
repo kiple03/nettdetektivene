@@ -8,6 +8,7 @@ import detectiveImage from '@/assets/images/joinWithCode/detective.png';
 import classroomBackground from '@/assets/images/joinWithCode/bgClassroomCode.png';
 import { useQueryClient } from '@tanstack/react-query';
 
+/** Page where a student enters a 6-character classroom join code. */
 export default function JoinWithCodePage() {
     const navigate = useNavigate();
     const { joinClassroom, reset, isPending, error } = useJoinClassroom();
