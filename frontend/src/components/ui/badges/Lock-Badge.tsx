@@ -1,5 +1,6 @@
 import styles from "./lock-badge.module.css";
 
+/** Displays a lock icon overlay to indicate a locked item. */
 function LockBadge() {
     return (
         <div className={styles.lockBadge} aria-hidden="true">

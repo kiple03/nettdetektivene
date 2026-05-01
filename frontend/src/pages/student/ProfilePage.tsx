@@ -1,11 +1,14 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import BackButton from "@/components/ui/buttons/BackButton";
 import mapStyles from "@/pages/student/MapPage.module.css";
 import styles from "@/pages/student/ProfilePage.module.css";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyClassroom } from "@/hooks/student/useMyClassroom";
+import { leaveClassroom } from "@/api/classroomApi";
+import { AlertDialog } from "@/components/ui/alert-dialog/Alert-Dialog";
 import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 import { getGameStops, getLevelsForStop } from "@/api/gameApi";
@@ -18,6 +21,7 @@ import markedsplassen from "@/assets/stops/markedIcon.png";
 import moteplassen from "@/assets/stops/sosialIcon.png";
 import datasenteret from "@/assets/stops/dataIcon.png";
 
+/** Maps stop names to their icon image assets. */
 const STOP_ICONS: Record<string, string> = {
   "Nyhetskvartalet": nyhetskvartalet,
   "Fotografen": fotografen,
@@ -28,12 +32,23 @@ const STOP_ICONS: Record<string, string> = {
   "Datasenteret": datasenteret,
 };
 
+/** Student profile page showing avatar, classroom membership, and current game progress. */
 function ProfilePage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
   const { data: profile } = useUserProfile();
   const { email } = useAuth();
   const { data: classroom, isLoading: classroomLoading, isError: classroomError } = useMyClassroom();
   const { data: gameStops = [] } = useQuery({ queryKey: studentKeys.gameStops, queryFn: getGameStops });
+
+  const leaveMutation = useMutation({
+    mutationFn: leaveClassroom,
+    onSuccess: () => {
+      setShowLeaveConfirm(false);
+      queryClient.invalidateQueries({ queryKey: studentKeys.myClassroom });
+    },
+  });
 
   const unlockedStops = gameStops.filter(s => !s.locked);
   const currentStop = unlockedStops.length > 0 ? unlockedStops[unlockedStops.length - 1] : null;
@@ -57,7 +72,7 @@ function ProfilePage() {
 
       <BackButton
         className={mapStyles.backBtn}
-        style={{ position: "fixed", top: "6%", left: "1.5%", zIndex: 10 }}
+        style={{ position: "fixed", top: "1rem", left: "1rem", zIndex: 50 }}
         ariaLabel="Gå tilbake"
       />
 
@@ -87,7 +102,38 @@ function ProfilePage() {
                   ? `Du er i klasserom: ${classroom.title}`
                   : "Ikke i et klasserom"}
           </p>
+          {classroom && (
+            <button
+              className={styles.leaveBtn}
+              onClick={() => setShowLeaveConfirm(true)}
+            >
+              Forlat klasserom
+            </button>
+          )}
         </div>
+
+        <AlertDialog open={showLeaveConfirm} onOpenChange={setShowLeaveConfirm}>
+          <div className={styles.confirmModal}>
+            <p className={styles.confirmText}>
+              Er du sikker på at du vil forlate klasserommet?
+            </p>
+            <div className={styles.confirmActions}>
+              <button
+                className={styles.cancelBtn}
+                onClick={() => setShowLeaveConfirm(false)}
+              >
+                Avbryt
+              </button>
+              <button
+                className={styles.confirmLeaveBtn}
+                disabled={leaveMutation.isPending}
+                onClick={() => leaveMutation.mutate()}
+              >
+                {leaveMutation.isPending ? "…" : "Forlat"}
+              </button>
+            </div>
+          </div>
+        </AlertDialog>
 
         {currentStop ? (
           <div className={styles.progressSection}>

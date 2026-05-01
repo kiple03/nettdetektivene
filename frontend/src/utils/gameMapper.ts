@@ -7,6 +7,7 @@ import {
   type SubmitAnswerResult,
 } from "@/types/station.ts";
 
+/** Maps a backend level type to the corresponding frontend station type. Defaults to NEWS. */
 function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationType {
   switch (levelType) {
     case "MULTIPLE_CHOICE":
@@ -23,6 +24,7 @@ function mapLevelToStationType(levelType: GameQuestion["levelType"]): StationTyp
   }
 }
 
+/** Maps a raw API question option to the station option shape used by components. */
 export function mapOptionToStation(option: QuestionOption): StationOption {
   return {
     id: option.id,
@@ -38,6 +40,10 @@ export function mapOptionToStation(option: QuestionOption): StationOption {
   };
 }
 
+/**
+ * Converts a backend GameQuestion to the StationData shape consumed by station components.
+ * @param type - Override the derived station type; omit to infer from `question.levelType`.
+ */
 export function mapQuestionToStationData(question: GameQuestion, type?: StationType): StationData {
   return {
     questionId: question.id,
@@ -50,6 +56,7 @@ export function mapQuestionToStationData(question: GameQuestion, type?: StationT
   }
 }
 
+/** Extracts only the fields needed by UI from the raw submit-answer API response. */
 export function mapSubmitResponseToSubmitAnswer(
     response: SubmitAnswerResponse,
 ): SubmitAnswerResult {

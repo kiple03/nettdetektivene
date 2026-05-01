@@ -95,6 +95,12 @@ public class OptionParser {
     return options;
   }
 
+  /**
+   * Parses the JSON string directly into a {@link PostOfficeQuestion}.
+   *
+   * @param json raw JSON from {@code Question.optionContent}
+   * @return the deserialized post-office question
+   */
   public PostOfficeQuestion parsePostOfficeQuestion(String json) {
     return mapper.readValue(json, PostOfficeQuestion.class);
   }

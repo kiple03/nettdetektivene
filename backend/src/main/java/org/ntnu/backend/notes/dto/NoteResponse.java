@@ -3,9 +3,13 @@ package org.ntnu.backend.notes.dto;
 import java.time.Instant;
 
 /**
- * Request body for creating or updating a personal note.
+ * Response payload for a single note.
  *
- * @param content the note content written by the user
+ * @param id        unique note identifier
+ * @param category  note category (e.g. "CLUE", "PERSONAL")
+ * @param content   text written by the student
+ * @param createdAt when the note was first saved
+ * @param updatedAt when the note was last modified
  */
 public record NoteResponse(
         String id,

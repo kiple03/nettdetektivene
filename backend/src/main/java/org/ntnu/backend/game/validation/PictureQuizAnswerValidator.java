@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
 
+    /** @return {@link LevelType#PICTURE_QUIZ} */
     @Override
     public LevelType supportedType() {
         return LevelType.PICTURE_QUIZ;

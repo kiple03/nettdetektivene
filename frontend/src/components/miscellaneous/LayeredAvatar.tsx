@@ -1,6 +1,7 @@
 import type { EquippedItem } from '@/hooks/useUserProfile';
 import { useColoredHairSvg } from '@/hooks/useColoredHairSvg';
 
+/** Maps skin tone keys to their CSS color values for base, dark shadow, and light shadow. */
 export const SKIN_TONES: Record<string, {base: string, shadowDark: string, shadowLight: string}> = {
   'tone_light': { base: "#f8c09b", shadowDark: "#da7e61", shadowLight: "#eba482" },
   'tone_medium': { base: "#d2996d", shadowDark: "#b36b41", shadowLight: "#c38659" },
@@ -10,6 +11,7 @@ export const SKIN_TONES: Record<string, {base: string, shadowDark: string, shado
 
 const DEFAULT_TONE = SKIN_TONES['tone_dark'];
 
+/** Props for {@link LayeredAvatar}. Skin tone overrides take precedence over the equipped skin_tone item. */
 interface LayeredAvatarProps{
     items: EquippedItem[];
     size?: number | string;
@@ -17,6 +19,7 @@ interface LayeredAvatarProps{
     skinToneBase?: string;
     skinToneShadowDark?: string;
     skinToneShadowLight?: string;
+    /** Hex color string used to recolor hair SVGs. */
     hairColor?: string;
 }
 
@@ -27,6 +30,10 @@ interface HairSvgLayerProps {
     maskStyle: React.CSSProperties;
 }
 
+/**
+ * Renders a single hair layer by fetching the SVG, recoloring it to `hairColorHex`,
+ * and applying an optional CSS mask (e.g. to hide hair under a hat).
+ */
 function HairSvgLayer({ item, zIndex, hairColorHex, maskStyle }: HairSvgLayerProps) {
     const { coloredSvg } = useColoredHairSvg(item.imageUrl, item.name, hairColorHex);
 
@@ -52,6 +59,7 @@ function HairSvgLayer({ item, zIndex, hairColorHex, maskStyle }: HairSvgLayerPro
     );
 }
 
+/** Inline SVG base body that reads skin tone via CSS custom properties (`--skin-base`, `--skin-shadow-dark`, `--skin-shadow-light`). */
 function BaseAvatarSVG(props: React.SVGProps<SVGSVGElement>){
     return(
          <svg {...props} width="100%" height="100%" viewBox="0 0 1000 1000" version="1.1">
@@ -100,6 +108,10 @@ function BaseAvatarSVG(props: React.SVGProps<SVGSVGElement>){
     );
 }
 
+/**
+ * Composites a full avatar by stacking a base body SVG and equipped item images in z-order.
+ * Hair items are recolored when `hairColor` is provided and masked when a hat is equipped.
+ */
 export function LayeredAvatar({
     items,
     size = 64,

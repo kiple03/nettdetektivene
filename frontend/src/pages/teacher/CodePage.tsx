@@ -3,12 +3,15 @@ import { useMemo } from "react";
 import { useClassroom } from "@/hooks/teacher/useTeacherQueries";
 import styles from "./CodePage.module.css";
 import detectiveImage from "@/assets/images/joinWithCode/detective.png";
+import { useBackTo } from "@/hooks/teacher/useBackTo";
 
+/** Displays the classroom join code for students to enter, split into two groups of three characters. */
 export default function CodePage() {
     const { id: classroomId = '' } = useParams<{ id: string }>();
     const { data: classroom } = useClassroom(classroomId);
     const navigate = useNavigate();
 
+    /** Normalises joinCode to exactly 6 uppercase alphanumeric characters, padding missing slots with empty strings. */
     const codeChars = useMemo(() => {
         const raw = (classroom?.joinCode ?? "")
             .replace(/[^a-zA-Z0-9]/g, "")
@@ -18,6 +21,8 @@ export default function CodePage() {
     }, [classroom?.joinCode]);
 
     const classroomTitle = classroom?.title ?? "klasserommet";
+
+    useBackTo(`/teacher/classrooms/${classroomId}`, "Tilbake til klasserommet");
 
     return (
         <div className={styles.page}>

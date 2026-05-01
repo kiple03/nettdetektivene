@@ -9,7 +9,9 @@ import { StudentDetailLevels } from '@/components/teacher/studentDetail/StudentD
 import { StudentNotebook } from '@/components/teacher/studentDetail/StudentNotebook';
 import './StudentDetail.css';
 import { ALL_MEDALS, getMedalImageUrl } from '@/data/allMedals';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
+/** Teacher page showing a single student's profile, progress, medals, and notebook. */
 export default function StudentDetail() {
     const { id: classroomId = '', studentId = '' } = useParams<{ id: string; studentId: string }>();
     const queryClient = useQueryClient();
@@ -25,17 +27,22 @@ export default function StudentDetail() {
     const [editValue, setEditValue] = useState('');
     const [usernameError, setUsernameError] = useState<string | null>(null);
 
+    useBackTo(`/teacher/classrooms/${classroomId}`, "Tilbake til klasserom");
+
+    /** Enters username edit mode, pre-filling the current username. */
     function startEdit() {
         setEditValue(studentDetail?.username ?? '');
         setUsernameError(null);
         setEditing(true);
     }
 
+    /** Exits edit mode without saving. */
     function cancelEdit() {
         setEditing(false);
         setUsernameError(null);
     }
 
+    /** Validates and submits the new username, then invalidates the student detail query. */
     async function saveUsername() {
         const trimmed = editValue.trim();
         if (trimmed.length < 3) {

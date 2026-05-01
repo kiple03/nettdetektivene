@@ -7,20 +7,27 @@ import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.CommandLineRunner;
+
 /**
- * Config class. It seeds the database with starter items for
- * avatars.
+ * Seeds the database with the default set of avatar items on application startup.
+ * Items are only inserted if they do not already exist (idempotent by name).
  */
 @Component
 public class AvatarDataSeeder implements CommandLineRunner{
     private final AvatarItemRepository itemRepository;
 
+    /**
+     * @param itemRepository repository used to check existing items and persist new ones
+     */
     public AvatarDataSeeder(AvatarItemRepository itemRepository){
         this.itemRepository = itemRepository;
     }
 
     /**
-     * Method that runs automatically with spring boot upon startup.
+     * Inserts any missing avatar items into the database.
+     *
+     * @param args ignored command-line arguments
+     * @throws Exception if persistence fails
      */
     @Override
     public void run(String... args) throws Exception{

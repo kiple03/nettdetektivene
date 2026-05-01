@@ -17,7 +17,7 @@
 .help-button {
   position: fixed;
   top: 24px;
-  left: 24px;
+  right: 24px;
   width: 64px;
   height: 64px;
   border-radius: 50%;
@@ -46,9 +46,10 @@
 }
 
 .logout-wrapper {
-  position: absolute;
-  bottom: 24px;
-  left: 24px;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 50;
 }
 
 @media (max-width: 768px) {
@@ -130,9 +131,9 @@
   /* Logout always visible, above cork board content */
   .logout-wrapper {
     position: fixed;
-    bottom: 24px;
-    left: 24px;
-    z-index: 100;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
   }
 }
 

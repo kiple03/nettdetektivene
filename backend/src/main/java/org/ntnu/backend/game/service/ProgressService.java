@@ -214,6 +214,12 @@ public class ProgressService {
     }
   }
 
+  /**
+   * Returns a progress summary for each student in the given collection.
+   *
+   * @param userIds student user IDs to look up
+   * @return map from user ID to their progress summary; users with no progress row are omitted
+   */
   public Map<UUID, ProgressSummaryResponse> getProgressForStudents(Collection<UUID> userIds) {
     List<StopLevelCount> stopLevelCounts = stopRepository.findAllWithLevelCounts();
     int totalLevelsInGame = stopLevelCounts.stream()
@@ -227,6 +233,12 @@ public class ProgressService {
         ));
   }
 
+  /**
+   * Returns whether the boss fight is unlocked for the given student (reached stop 7).
+   *
+   * @param userId the student's user ID
+   * @throws UserProgressNotFoundException if the student has no progress row
+   */
   public boolean boosFightUnlocked(UUID userId) {
     return getProgressOrThrow(userId).getCurrentStop().getDisplayOrder() == 7;
   }

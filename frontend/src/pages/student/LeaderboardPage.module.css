@@ -20,9 +20,10 @@
 }
 
 .backBtn {
-  position: absolute;
-  top: 6%;
-  left: 1.5%;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 50;
 }
 
 .note {

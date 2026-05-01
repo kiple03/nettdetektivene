@@ -8,10 +8,12 @@ import detectiveImage from '@/assets/images/joinWithCode/detective.png';
 import classroomBackground from '@/assets/images/joinWithCode/bgClassroomCode.png';
 import { useQueryClient } from '@tanstack/react-query';
 
+/** Page where a student enters a 6-character classroom join code. */
 export default function JoinWithCodePage() {
     const navigate = useNavigate();
     const { joinClassroom, reset, isPending, error } = useJoinClassroom();
     const [code, setCode] = useState('');
+    const [focused, setFocused] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const queryClient = useQueryClient(); //for award system
 
@@ -24,6 +26,13 @@ export default function JoinWithCodePage() {
         return `${padded.slice(0, 3)}-${padded.slice(3, 6)}`;
     }, [rawCode]);
 
+    // Display index of the next slot to be typed — the caret replaces the placeholder there.
+    // null when the input is full. +1 for rawCode.length >= 3 skips the dash at display index 3.
+    const activeDisplayIndex: number | null =
+        rawCode.length === 6 ? null :
+        rawCode.length < 3  ? rawCode.length :
+                               rawCode.length + 1;
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const cleaned = e.target.value
             .replace(/[^a-zA-Z0-9]/g, '')
@@ -31,6 +40,7 @@ export default function JoinWithCodePage() {
             .slice(0, 6);
         reset();
         setCode(cleaned);
+
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -102,6 +112,8 @@ export default function JoinWithCodePage() {
                                 value={rawCode}
                                 onChange={handleChange}
                                 onKeyDown={handleKeyDown}
+                                onFocus={() => setFocused(true)}
+                                onBlur={() => setFocused(false)}
                                 aria-label="Skriv inn kode"
                             />
 
@@ -112,10 +124,15 @@ export default function JoinWithCodePage() {
                                         (index > 3 && Boolean(rawCode[index - 1]));
 
                                     const isDash = char === '-';
+                                    const isActive = focused && index === activeDisplayIndex;
+
+                                    if (isActive) {
+                                        return <span key={index} className={styles.caret} />;
+                                    }
 
                                     return (
                                         <span
-                                            key={`${char}-${index}`}
+                                            key={index}
                                             className={[
                                                 styles.codeChar,
                                                 isDash ? styles.codeDash : '',

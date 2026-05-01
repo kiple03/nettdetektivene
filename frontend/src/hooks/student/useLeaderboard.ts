@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchLeaderboard } from '@/api/leaderboardApi';
 
+/** A single ranked classroom entry returned by the leaderboard API. */
 export interface LeaderboardEntry {
   rank: number;
   classroom: {
@@ -11,6 +12,7 @@ export interface LeaderboardEntry {
   };
 }
 
+/** Paginated leaderboard response from Spring Boot (page numbers are 0-indexed). */
 export interface LeaderboardPage {
   content: LeaderboardEntry[];
   totalElements: number;
@@ -19,6 +21,10 @@ export interface LeaderboardPage {
   size: number;
 }
 
+/**
+ * Fetches the global classroom leaderboard for the given page.
+ * @param page 0-indexed page number (default 0)
+ */
 export function useGlobalLeaderboard(page: number = 0) {
   return useQuery<LeaderboardPage>({
     queryKey: ['leaderboard', page],

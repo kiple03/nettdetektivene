@@ -5,17 +5,21 @@ import { useMedalions } from "@/hooks/useMedalions";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 import { ALL_MEDALS, getMedalImageUrl } from "@/data/allMedals";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
+/** Displays all medals with earned/locked state and highlights newly acquired ones. */
 function MedalionPage() {
     const { data: medalions, isLoading } = useMedalions();
+    const { email } = useAuth();
 
     const earnedNames = new Set(medalions?.map((m) => m.name) ?? []);
 
     const [newMedalionNames, setNewMedalionNames] = useState<Set<string>>(new Set());
+    /** Compares earned medals against localStorage to find ones the user hasn't seen yet. */
     useEffect(() => {
         if(!medalions || isLoading) return;
 
-        const storageKey = "seenMedalNames";
+        const storageKey = `seenMedalNames_${email ?? "anonymous"}`;
         const seen: string[] = JSON.parse(localStorage.getItem(storageKey) ?? "[]");
         const seenSet = new Set(seen);
 
@@ -34,7 +38,7 @@ function MedalionPage() {
 
             <BackButton
                 className={mapStyles.backBtn}
-                style={{ position: "fixed", top: "6%", left: "1.5%", zIndex: 10 }}
+                style={{ position: "fixed", top: "1rem", left: "1rem", zIndex: 50 }}
                 ariaLabel="Gå tilbake"
             />
 

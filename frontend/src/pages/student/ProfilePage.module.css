@@ -205,6 +205,32 @@
   flex-shrink: 0;
 }
 
+.leaveBtn {
+  margin-top: 4px;
+  padding: 5px 16px;
+  font-size: clamp(0.72rem, 2vw, 0.82rem);
+  font-weight: 700;
+  background: transparent;
+  color: #8b1a1a;
+  border: 1.5px solid #8b1a1a;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: 'Georgia', serif;
+  transition: background 0.15s, color 0.15s;
+}
+
+.leaveBtn:hover {
+  background: #8b1a1a;
+  color: #f5e6be;
+}
+
+.leaveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .editBtn {
   padding: clamp(8px, 1.5vh, 12px) 40px;
   font-size: clamp(0.85rem, 2.5vw, 1rem);
@@ -238,6 +264,72 @@
 /* Short viewport (e.g. iPhone SE landscape, small phones in portrait):
    scale down the avatar ring and reclaim the freed layout space via
    negative margin so the dossier still fits without a scrollbar. */
+.confirmModal {
+  background: rgba(245, 230, 190, 0.97);
+  border: 3px solid #8b6914;
+  border-radius: 4px;
+  padding: 28px 32px;
+  text-align: center;
+  font-family: 'Georgia', serif;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.7);
+}
+
+.confirmText {
+  margin: 0 0 20px;
+  font-size: 1rem;
+  color: #3b2a10;
+  font-style: italic;
+}
+
+.confirmActions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.cancelBtn {
+  padding: 8px 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: transparent;
+  color: #3b2a10;
+  border: 2px solid #8b6914;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: 'Georgia', serif;
+  transition: background 0.15s;
+}
+
+.cancelBtn:hover {
+  background: rgba(139, 105, 20, 0.15);
+}
+
+.confirmLeaveBtn {
+  padding: 8px 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: #8b1a1a;
+  color: #f5e6be;
+  border: 2px solid #6a1313;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: 'Georgia', serif;
+  transition: background 0.15s;
+}
+
+.confirmLeaveBtn:hover {
+  background: #6a1313;
+}
+
+.confirmLeaveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-height: 720px) {
   .avatarRing {
     --ring-scale: 0.78;

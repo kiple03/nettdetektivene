@@ -9,6 +9,7 @@ interface Props {
   onChange: (v: TextQuizQuestionDraft) => void;
 }
 
+/** Editor for text-based quiz questions with multiple text answer options. */
 export function TextQuizEditor({ value, onChange }: Props) {
   const setQuestion = (questionText: string) => onChange({ ...value, questionText });
 

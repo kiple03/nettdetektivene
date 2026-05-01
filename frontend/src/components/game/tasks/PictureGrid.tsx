@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/buttons/Button";
 import styles from "./PictureGrid.module.css";
 import type {OptionImageResponse} from "@/types/station.ts";
 
+/** An image/text option card in the picture grid. */
 type PictureOption = {
     id: number;
     imageUrl?: string | null;
@@ -10,18 +11,27 @@ type PictureOption = {
     altText?: string;
 };
 
+/** Props for {@link PictureGrid}. */
 type PictureGridProps = {
+    /** Used to reset selection when the question changes. */
     questionId: number;
     options: PictureOption[];
+    /** Called with the selected option IDs when the player submits. */
     onSubmit: (selectedIds: number[]) => Promise<void> | void;
     disabled?: boolean;
+    /** IDs to highlight as correct after submission. */
     correctIds?: number[];
+    /** IDs to highlight as wrong after submission. */
     wrongIds?: number[];
     selectionMode?: "single" | "multiple";
     gridClassName?: string;
     responseImages?: OptionImageResponse[];
 };
 
+/**
+ * Renders a grid of picture/text option cards for quiz questions.
+ * In `single` mode, selecting a card submits immediately; in `multiple` mode a submit button is shown.
+ */
 export default function PictureGrid({
                                       questionId,
                                       options,

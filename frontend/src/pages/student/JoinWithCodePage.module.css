@@ -467,13 +467,9 @@
 
 .logoutBtn {
     position: fixed;
-    top: 6%;
-    left: 1.5%;
-    z-index: 10;
-    width: auto;
-    height: 2.5rem;
-    font-size: 0.85rem;
-    padding: 8px 14px;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
 }
 
 @media (max-width: 760px) {

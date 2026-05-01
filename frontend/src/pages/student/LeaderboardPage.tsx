@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from "@/pages/student/LeaderboardPage.module.css";
+import BackButton from '@/components/ui/buttons/BackButton';
 import { useGlobalLeaderboard } from '@/hooks/student/useLeaderboard';
 import LeaderboardTable from '@/components/leaderboard/LeaderboardTable';
 import LeaderboardPagination from '@/components/leaderboard/LeaderboardPagination';
@@ -10,6 +11,7 @@ import { getClassroomId } from '@/stores/authStore';
 
 const PAGE_SIZE = 10;
 
+/** Paginated global leaderboard showing classroom rankings. */
 export default function LeaderboardPage() {
     const [currentPage, setCurrentPage] = useState(0); // 0-indexed for Spring Boot
     const { data, isLoading } = useGlobalLeaderboard(currentPage);
@@ -21,6 +23,7 @@ export default function LeaderboardPage() {
     
     return (
         <div className={styles.page} style={{ backgroundImage: `url(${detectiveRoom})` }}>
+            <BackButton className={styles.backBtn} ariaLabel="Gå tilbake" />
             <div className={styles.board} style={{ backgroundImage: `url(${corkBoard})` }}>
                 <div className={styles.note}>
                     <div className={styles.tape} />

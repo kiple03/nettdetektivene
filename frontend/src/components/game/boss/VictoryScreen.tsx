@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import ConfettiComp from "@/components/miscellaneous/ConfettiComp";
 import heartImg from "@/assets/images/boss/heart.png";
 import styles from "./VictoryScreen.module.css";
+import gogglesImg from "/assets/boss-goggles.png";
 
 interface Props {
   timeSeconds: number;
@@ -10,12 +11,17 @@ interface Props {
   backTo?: string;
 }
 
+/** Formats a duration in seconds as `m:ss`. */
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+/**
+ * Displays the boss-battle victory summary with elapsed time, remaining hearts, and a link back to the map.
+ * @param backTo - Route to navigate to on exit; defaults to `/map`.
+ */
 export function VictoryScreen({ timeSeconds, playerHp, maxHp, backTo }: Props) {
   return (
     <div className={styles.screen}>
@@ -37,6 +43,10 @@ export function VictoryScreen({ timeSeconds, playerHp, maxHp, backTo }: Props) {
               className={i < playerHp ? styles.heartFull : styles.heartLost}
             />
           ))}
+        </div>
+        <div className={styles.unlockBanner}>
+          <img src={gogglesImg} alt="VR-briller" className={styles.unlockImg} />
+          <p className={styles.unlockText}>Du låste opp VR-brillene som avatargjenstand!</p>
         </div>
         <Link to={backTo ?? "/map"} className={styles.btn}>
           Tilbake til kartet

@@ -16,6 +16,7 @@ import detectiveRoom from '../../assets/detective_room_interior.png';
 import './StudentLoginPage.css';
 import { useQueryClient } from '@tanstack/react-query';
 
+/** Student-facing login/registration page with Feide and email options. */
 function StudentLoginPage() {
   const navigate = useNavigate();
   const [showRegister, setShowRegister] = useState(false);
@@ -26,6 +27,7 @@ function StudentLoginPage() {
   const [regFieldErrors, setRegFieldErrors] = useState<AuthFieldErrors>({});
   const [regError, setRegError] = useState('');
 
+  /** Validates registration fields and returns the error map. */
   const validateFields = () => {
     const nextErrors: AuthFieldErrors = {
       email: validateEmail(regEmail),
@@ -42,6 +44,7 @@ function StudentLoginPage() {
   };
 
   const queryClient = useQueryClient(); //for award system
+  /** Submits the registration form, stores the access token, and redirects to avatar setup. */
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError('');
@@ -58,7 +61,7 @@ function StudentLoginPage() {
 
       queryClient.clear();
 
-      navigate('/avatar');
+      navigate('/avatar', { state: { fromAuth: true } });
     } catch (err) {
       const axiosErr = err as AxiosError<ApiErrorBody>;
       if (axiosErr.response?.status === 409) {

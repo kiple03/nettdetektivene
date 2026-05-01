@@ -1,6 +1,7 @@
 import { forwardRef, type TextareaHTMLAttributes } from "react";
 import styles from "./text-area.module.css";
 
+/** Props for the TextArea component, extending native textarea attributes. */
 type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
     label?: string;
     helperText?: string;
@@ -13,6 +14,7 @@ function cn(...classes: Array<string | undefined | false | null>) {
     return classes.filter(Boolean).join(" ");
 }
 
+/** Textarea with optional label and helper text, forwarding refs to the underlying element. */
 const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     (
         {

@@ -13,7 +13,9 @@ import { makeOptionId } from '@/components/teacher/questionEditor/types';
 import type { SubmitAnswerRequest, LevelType } from '@/api/gameApi';
 import '@/components/game/ui_game/game.css';
 import './TeacherLevelPreviewPage.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
+/** Converts a TeacherQuestion from the API into the editor draft format. */
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     switch (q.levelType) {
         case 'CLASSIFY_ITEMS': {
@@ -48,6 +50,7 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     }
 }
 
+/** Maps stop names (Norwegian) to their corresponding station type constants. */
 const STOP_TO_TYPE: Record<string, StationType> = {
     "Nyhetskvartalet": STATION_TYPE.NEWS,
     "Fotografen": STATION_TYPE.PHOTO,
@@ -56,6 +59,7 @@ const STOP_TO_TYPE: Record<string, StationType> = {
     "Markedsplassen": STATION_TYPE.MARKETPLACE,
 };
 
+/** Adapts a TeacherQuestion and its type into the StationData shape expected by the station renderers. */
 function mapToStation(q: TeacherQuestion, stationType: StationType): StationData {
     if (q.levelType === 'CLASSIFY_ITEMS') {
         const ciOptions = q.options as TeacherClassifyItemsOption[];
@@ -107,6 +111,10 @@ function mapToStation(q: TeacherQuestion, stationType: StationType): StationData
     };
 }
 
+/**
+ * Lets a teacher step through and preview level questions as a student would see them,
+ * with an inline edit button for non-default questions.
+ */
 export default function TeacherLevelPreviewPage() {
     const { classroomId = '', levelId: levelIdStr = '' } = useParams<{ classroomId: string; levelId: string }>();
     const levelId = parseInt(levelIdStr, 10);
@@ -123,6 +131,9 @@ export default function TeacherLevelPreviewPage() {
     const { data: questions = [], isLoading: questionsLoading, isError: questionsError } = useLevelQuestions(classroomId, levelId);
 
     const questionsListPath = `/teacher/classrooms/${classroomId}/levels/${levelId}/questions`;
+
+    useBackTo(questionsListPath)
+
 
     if (isNaN(levelId) || !classroomId) {
         return (
@@ -159,10 +170,12 @@ export default function TeacherLevelPreviewPage() {
         );
     }
 
+
     const currentQuestion = questions[questionIndex];
     const isLastQuestion = questionIndex === questions.length - 1;
     const stationType = STOP_TO_TYPE[level?.stopName ?? ''] ?? STATION_TYPE.NEWS;
     const station = mapToStation(currentQuestion, stationType);
+
 
     const handleAnswer = (result: SubmitAnswerResult, _request: SubmitAnswerRequest) => {
         setSubmitResult(result);
@@ -235,13 +248,11 @@ export default function TeacherLevelPreviewPage() {
             navigate(questionsListPath);
         }
     };
+    
 
     return (
         <div className="teacher-preview">
             <div className="teacher-preview__nav">
-                <Link to={questionsListPath} className="teacher-preview__back">
-                    ← Tilbake til spørsmålslisten
-                </Link>
                 <span className="teacher-preview__counter">
                     Spørsmål {questionIndex + 1} av {questions.length}
                 </span>

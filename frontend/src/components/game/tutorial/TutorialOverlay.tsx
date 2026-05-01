@@ -8,15 +8,24 @@ import {
 } from "./tutorialContent";
 import "./TutorialOverlay.css";
 
+/** Props for TutorialOverlay. */
 type Props = {
+  /** The station type, used to track tutorial completion per station. */
   type: StationType;
   steps: TutorialStep[];
   isOpen: boolean;
   onClose: () => void;
+  /** User email used to persist tutorial-seen state. */
   email?: string | null | undefined;
+  /** Element to restore focus to when the overlay closes. */
   returnFocusRef?: RefObject<HTMLElement | null>;
 };
 
+/**
+ * Modal overlay that walks the user through a series of tutorial steps.
+ * Traps focus, supports keyboard navigation (Tab, Shift+Tab, Escape), and
+ * marks the tutorial as seen in persistent storage on completion or dismiss.
+ */
 function TutorialOverlay({
                            type,
                            steps,

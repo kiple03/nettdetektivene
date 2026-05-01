@@ -7,6 +7,10 @@ type Props = {
     classroomId: string;
 };
 
+/**
+ * Panel for managing classroom-specific censored words.
+ * Renders a note card on the corkboard and opens a modal for adding/removing words.
+ */
 export function CensorWordPanel({ classroomId }: Props) {
     const { data: words = [] } = useCensorWords(classroomId);
     const addMutation = useAddCensorWord(classroomId);
@@ -16,6 +20,7 @@ export function CensorWordPanel({ classroomId }: Props) {
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState('');
 
+    /** Submits the new censor word and clears the input on success. */
     function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
         const trimmed = input.trim();
@@ -23,6 +28,7 @@ export function CensorWordPanel({ classroomId }: Props) {
         addMutation.mutate(trimmed, { onSuccess: () => setInput('') });
     }
 
+    /** Closes the modal and resets input and mutation state. */
     function handleClose() {
         setOpen(false);
         setInput('');

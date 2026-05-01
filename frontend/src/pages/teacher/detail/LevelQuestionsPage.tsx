@@ -14,6 +14,7 @@ import { emptyDraftForType, makeOptionId } from '@/components/teacher/questionEd
 import type { TeacherQuestion, TeacherClassifyItemsOption, TeacherPasswordStrengthOption, TeacherTextQuizOption } from '@/api/teacherApi';
 import { getImageDisplayUrl } from '@/api/teacherApi';
 import './LevelQuestionsPage.css';
+import { useBackTo } from '@/hooks/teacher/useBackTo';
 
 const LEVEL_TYPE_LABELS: Record<string, string> = {
     MULTIPLE_CHOICE: 'Flervalg',
@@ -29,6 +30,7 @@ const LEVEL_TYPE_LABELS: Record<string, string> = {
 
 const SUPPORTED_TYPES = new Set(['MULTIPLE_CHOICE', 'PICTURE_QUIZ', 'CLASSIFY_ITEMS', 'PASSWORD_STRENGTH', 'TEXT_QUIZ']);
 
+/** Converts a saved TeacherQuestion into the draft format used by the question editor. */
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     switch (q.levelType) {
         case 'CLASSIFY_ITEMS': {
@@ -85,6 +87,7 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     }
 }
 
+/** Renders the options list for a question card, with type-specific formatting. */
 function renderQuestionOptions(q: TeacherQuestion) {
     if (q.levelType === 'CLASSIFY_ITEMS') {
         const ciOptions = q.options as TeacherClassifyItemsOption[];
@@ -137,6 +140,7 @@ function renderQuestionOptions(q: TeacherQuestion) {
     );
 }
 
+/** Page for teachers to view and manage questions for a specific game level. */
 export default function LevelQuestionsPage() {
     const { classroomId = '', levelId: levelIdStr = '' } = useParams<{ classroomId: string; levelId: string }>();
     const levelId = parseInt(levelIdStr, 10);
@@ -168,6 +172,8 @@ export default function LevelQuestionsPage() {
     const modalMode: 'create' | 'edit' = editingQuestion ? 'edit' : 'create';
     const modalSaving = createMutation.isPending || updateMutation.isPending;
     const modalError = editingQuestion ? updateError : createError;
+
+    useBackTo(backUrl);
 
     const handleCloseModal = () => {
         setCreateOpen(false);
@@ -369,9 +375,6 @@ export default function LevelQuestionsPage() {
 
     return (
         <div className="level-questions">
-            <Link to={backUrl} className="level-questions__back">
-                ← Tilbake
-            </Link>
 
             <div className="level-questions__header">
                 {level && (

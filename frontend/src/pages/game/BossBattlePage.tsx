@@ -20,7 +20,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useParams } from "react-router-dom";
 import QuitButton from "@/components/ui/buttons/QuitButton";
 
-type Phase = "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
+type Phase = "black-in" | "intro" | "intro-fading" | "battle" | "attacking" | "modal" | "victory" | "victory-screen" | "defeat" | "defeat-screen";
 
 const MAX_HP = 5;
 
@@ -34,6 +34,7 @@ function bossPageMusicRef(el: HTMLDivElement | null) {
     }
 }
 
+/** Full-screen boss battle arena managing phase transitions, HP, and result persistence. */
 export default function BossBattlePage() {
     const { data: profile } = useUserProfile();
     const { role } = useAuth();
@@ -45,7 +46,7 @@ export default function BossBattlePage() {
     const username = isTeacher ? 'Lærer' : (profile?.username ?? 'Spiller');
     const backTo = isTeacher ? `/teacher/classrooms/${classroomId}/map` : '/map';
 
-    const [phase, setPhase] = useState<Phase>("intro");
+    const [phase, setPhase] = useState<Phase>("black-in");
     const [playerHp, setPlayerHp] = useState(MAX_HP);
     const [bossHp, setBossHp] = useState(MAX_HP);
     const [bossHurt, setBossHurt] = useState(false);
@@ -114,12 +115,12 @@ export default function BossBattlePage() {
         setFinalSeconds(0);
         startTimeRef.current = null;
         setIntroPlayerRevealed(false);
-        setPhase("intro");
+        setPhase("black-in");
     };
 
     const isIntroPhase = phase === "intro" || phase === "intro-fading";
     const showBoss = isIntroPhase || phase === "battle" || phase === "attacking" || phase === "victory";
-    const showPlayer = (!isIntroPhase || introPlayerRevealed) && (phase !== "victory" && phase !== "victory-screen" && phase !== "defeat" && phase !== "defeat-screen");
+    const showPlayer = phase !== "black-in" && (!isIntroPhase || introPlayerRevealed) && (phase !== "victory" && phase !== "victory-screen" && phase !== "defeat" && phase !== "defeat-screen");
     const showBattle = phase === "battle" || phase === "attacking";
     const bossSprite = bossHurt ? sharkHurt : currentSprite;
 
@@ -129,7 +130,7 @@ export default function BossBattlePage() {
             <div className={styles.arenaBg} style={{ backgroundImage: `url(${arenaBg})` }} />
             {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
             {showBoss && (
-                <div className={styles.bossCharArea}>
+                <div className={`${styles.bossCharArea} ${phase === "intro" ? styles.bossIntroReveal : ""}`}>
                     <BossCharacter sprite={bossSprite} isHurt={bossHurt} isVictory={phase === "victory"} />
                     {showBattle && (
                         <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
@@ -161,6 +162,14 @@ export default function BossBattlePage() {
                     onReplayVictory={replayVictory}
                 />
             </div>
+
+            {/* BLACK SCREEN — flickers from opaque to transparent before intro starts */}
+            {phase === "black-in" && (
+                <div
+                    className={styles.blackScreenIn}
+                    onAnimationEnd={() => setPhase("intro")}
+                />
+            )}
 
             {/* INTRO — dark overlay + dialog; characters sit above it (z-index: 60) */}
             {phase === "intro" && (

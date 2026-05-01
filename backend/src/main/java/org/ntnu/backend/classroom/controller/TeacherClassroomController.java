@@ -1,9 +1,8 @@
 package org.ntnu.backend.classroom.controller;
 
-import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
-import lombok.AllArgsConstructor;
+
 import org.ntnu.backend.classroom.dto.AddCensorWordRequest;
 import org.ntnu.backend.classroom.dto.CensorWordResponse;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
@@ -11,8 +10,6 @@ import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CoTeacherResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.InviteCoTeacherRequest;
-import org.ntnu.backend.classroom.dto.MysterySubmissionResponse;
-import org.ntnu.backend.classroom.dto.ReviewMysteryRequest;
 import org.ntnu.backend.classroom.dto.StudentDetailResponse;
 import org.ntnu.backend.classroom.dto.StudentProgressResponse;
 import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
@@ -35,6 +32,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+
+/**
+ * REST controller exposing classroom-management endpoints for teachers.
+ * All endpoints require the {@code TEACHER} role.
+ * Base path: {@code /teacher/classrooms}.
+ */
 @RestController
 @RequestMapping("/teacher/classrooms")
 @AllArgsConstructor
@@ -43,6 +48,12 @@ public class TeacherClassroomController {
     private final TeacherClassroomService teacherClassroomService;
     private final CensorWordService censorWordService;
 
+    /**
+     * Returns a summary list of all classrooms owned or co-taught by the authenticated teacher.
+     *
+     * @param principal the authenticated teacher
+     * @return list of classroom summaries
+     */
     @GetMapping
     @PreAuthorize("hasRole('TEACHER')")
     public List<ClassroomSummaryResponse> listClassrooms(
@@ -50,6 +61,14 @@ public class TeacherClassroomController {
         return teacherClassroomService.listClassrooms(principal.getUserId());
     }
 
+    /**
+     * Returns full details of a specific classroom.
+     *
+     * @param id        classroom UUID
+     * @param principal the authenticated teacher; must have access to this classroom
+     * @return classroom details
+     * @throws org.springframework.web.server.ResponseStatusException 403 if the teacher does not have access
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('TEACHER')")
     public ClassroomResponse getClassroom(
@@ -58,6 +77,13 @@ public class TeacherClassroomController {
         return teacherClassroomService.getClassroom(id, principal);
     }
 
+    /**
+     * Permanently deletes a classroom and all associated data.
+     *
+     * @param id        classroom UUID
+     * @param principal the authenticated teacher; must be the owner
+     * @throws org.springframework.web.server.ResponseStatusException 403 if the teacher is not the owner
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
@@ -67,6 +93,14 @@ public class TeacherClassroomController {
         teacherClassroomService.deleteClassroom(id, principal);
     }
 
+    /**
+     * Applies a partial update to classroom metadata (e.g. name, description).
+     *
+     * @param id        classroom UUID
+     * @param request   fields to update
+     * @param principal the authenticated teacher; must have access to this classroom
+     * @return updated classroom details
+     */
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('TEACHER')")
     public ClassroomResponse updateClassroom(
@@ -76,6 +110,13 @@ public class TeacherClassroomController {
         return teacherClassroomService.updateClassroom(id, request, principal);
     }
 
+    /**
+     * Lists all enrolled students together with their progress in the given classroom.
+     *
+     * @param id        classroom UUID
+     * @param principal the authenticated teacher
+     * @return list of student progress records
+     */
     @GetMapping("/{id}/students")
     @PreAuthorize("hasRole('TEACHER')")
     public List<StudentProgressResponse> listStudents(
@@ -84,6 +125,15 @@ public class TeacherClassroomController {
         return teacherClassroomService.listStudents(id, principal);
     }
 
+    /**
+     * Returns detailed information about a single student within a classroom,
+     * including level-by-level progress.
+     *
+     * @param id        classroom UUID
+     * @param studentId student UUID
+     * @param principal the authenticated teacher
+     * @return student detail with progress breakdown
+     */
     @GetMapping("/{id}/students/{studentId}")
     @PreAuthorize("hasRole('TEACHER')")
     public StudentDetailResponse getStudentDetail(
@@ -93,6 +143,13 @@ public class TeacherClassroomController {
         return teacherClassroomService.getStudentDetail(id, studentId, principal);
     }
 
+    /**
+     * Removes a student from the classroom.
+     *
+     * @param id        classroom UUID
+     * @param studentId student UUID
+     * @param principal the authenticated teacher; must have access to this classroom
+     */
     @DeleteMapping("/{id}/students/{studentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
@@ -103,6 +160,14 @@ public class TeacherClassroomController {
         teacherClassroomService.removeStudent(id, studentId, principal);
     }
 
+    /**
+     * Returns the detective notebook entries written by a student across all levels.
+     *
+     * @param id        classroom UUID
+     * @param studentId student UUID
+     * @param principal the authenticated teacher
+     * @return notebook overview grouped by level
+     */
     @GetMapping("/{id}/students/{studentId}/notebook")
     @PreAuthorize("hasRole('TEACHER')")
     public NotesOverviewResponse getStudentNotebook(
@@ -112,6 +177,14 @@ public class TeacherClassroomController {
         return teacherClassroomService.getStudentNotebook(id, studentId, principal);
     }
 
+    /**
+     * Returns all medalions (achievement badges) earned by a student in this classroom.
+     *
+     * @param id        classroom UUID
+     * @param studentId student UUID
+     * @param principal the authenticated teacher
+     * @return list of earned medalions
+     */
     @GetMapping("/{id}/students/{studentId}/medalions")
     @PreAuthorize("hasRole('TEACHER')")
     public List<MedalionResponse> getStudentMedalions(
@@ -121,6 +194,14 @@ public class TeacherClassroomController {
         return teacherClassroomService.getStudentMedalions(id, studentId, principal);
     }
 
+    /**
+     * Changes the display username of a student within this classroom.
+     *
+     * @param id        classroom UUID
+     * @param studentId student UUID
+     * @param request   new username
+     * @param principal the authenticated teacher
+     */
     @PatchMapping("/{id}/students/{studentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
@@ -132,24 +213,14 @@ public class TeacherClassroomController {
         teacherClassroomService.updateStudentUsername(id, studentId, request, principal);
     }
 
-    @GetMapping("/{id}/mystery")
-    @PreAuthorize("hasRole('TEACHER')")
-    public List<MysterySubmissionResponse> listMysterySubmissions(
-            @PathVariable UUID id,
-            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-        return teacherClassroomService.listMysterySubmissions(id, principal);
-    }
 
-    @PatchMapping("/{id}/mystery/{submissionId}")
-    @PreAuthorize("hasRole('TEACHER')")
-    public MysterySubmissionResponse reviewMysterySubmission(
-            @PathVariable UUID id,
-            @PathVariable UUID submissionId,
-            @RequestBody ReviewMysteryRequest request,
-            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-        return teacherClassroomService.reviewMysterySubmission(id, submissionId, request, principal);
-    }
-
+    /**
+     * Creates a new classroom owned by the authenticated teacher.
+     *
+     * @param request   classroom creation parameters
+     * @param principal the authenticated teacher
+     * @return the newly created classroom
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('TEACHER')")
@@ -166,6 +237,14 @@ public class TeacherClassroomController {
 //        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
 //        return teacherClassroomService.getNotifications(principal.getUserId());
 //    }
+
+    /**
+     * Lists all teachers (owner + co-teachers) associated with the classroom.
+     *
+     * @param id        classroom UUID
+     * @param principal the authenticated teacher
+     * @return list of co-teacher records
+     */
     @GetMapping("/{id}/teachers")
     @PreAuthorize("hasRole('TEACHER')")
     public List<CoTeacherResponse> listCoTeachers(
@@ -174,6 +253,15 @@ public class TeacherClassroomController {
         return teacherClassroomService.listCoTeachers(id, principal);
     }
 
+    /**
+     * Invites another teacher to co-teach this classroom by email.
+     *
+     * @param id        classroom UUID
+     * @param request   email of the teacher to invite
+     * @param principal the authenticated teacher; must be the owner
+     * @return the newly created co-teacher record
+     * @throws org.springframework.web.server.ResponseStatusException 403 if the caller is not the owner
+     */
     @PostMapping("/{id}/teachers")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('TEACHER')")
@@ -184,6 +272,13 @@ public class TeacherClassroomController {
         return teacherClassroomService.inviteCoTeacher(id, request, principal);
     }
 
+    /**
+     * Removes a co-teacher from the classroom.
+     *
+     * @param id        classroom UUID
+     * @param userId    UUID of the co-teacher to remove
+     * @param principal the authenticated teacher; must be the owner
+     */
     @DeleteMapping("/{id}/teachers/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
@@ -194,6 +289,13 @@ public class TeacherClassroomController {
         teacherClassroomService.removeCoTeacher(id, userId, principal);
     }
 
+    /**
+     * Returns all profanity/censor words configured for this classroom's mystery submissions.
+     *
+     * @param id        classroom UUID
+     * @param principal the authenticated teacher
+     * @return list of censor-word entries
+     */
     @GetMapping("/{id}/censor-words")
     @PreAuthorize("hasRole('TEACHER')")
     public List<CensorWordResponse> listCensorWords(
@@ -202,6 +304,14 @@ public class TeacherClassroomController {
         return censorWordService.listWords(id, principal);
     }
 
+    /**
+     * Adds a new word to the classroom's profanity filter.
+     *
+     * @param id        classroom UUID
+     * @param request   the word to block
+     * @param principal the authenticated teacher
+     * @return the created censor-word entry
+     */
     @PostMapping("/{id}/censor-words")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('TEACHER')")
@@ -212,6 +322,13 @@ public class TeacherClassroomController {
         return censorWordService.addWord(id, request, principal);
     }
 
+    /**
+     * Removes a word from the classroom's profanity filter.
+     *
+     * @param id        classroom UUID
+     * @param wordId    UUID of the censor-word entry to remove
+     * @param principal the authenticated teacher
+     */
     @DeleteMapping("/{id}/censor-words/{wordId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")

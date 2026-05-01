@@ -46,6 +46,7 @@ const STOP_TO_TYPE: Record<string, StationType> = {
     "Den sosiale møteplassen": STATION_TYPE.SOCIAL,
 };
 
+/** Page for playing through a level's questions, submitting answers, and showing pass/fail results. */
 export default function GamePage() {
     const { levelId } = useParams<{ levelId: string }>();
     const navigate = useNavigate();
@@ -323,7 +324,7 @@ export default function GamePage() {
                     <AlertDialogDescription>
                         {levelPassed
                             ? newMedalion
-                                ? `Du fullførte stoppen og fikk medaljongen "${newMedalion.name}"! Alle tips for dette stoppet finner du i notisboken. Du kan også skrive inn dine egne tips i notisboken for å huske dem senere!`
+                                ? `Du fullførte stoppet og fikk medaljongen "${newMedalion.name}"! Alle tips for dette stoppet finner du i notisboken. Du kan også skrive inn dine egne tips i notisboken for å huske dem senere!`
                                 : "Du fullførte nivået! Tips for dette nivået er lagret i notatboken."
                             : "Du svarte feil på minst ett spørsmål. Tips for dette nivået finner du i notatboken!"}
                     </AlertDialogDescription>

@@ -6,10 +6,12 @@ import { ClassroomDetailTeacherCard } from './ClassroomDetailTeacherCard';
 import { CensorWordPanel } from './CensorWordPanel';
 import { ClassroomQuestionsCard } from './ClassroomQuestionsCard';
 
+/** Props for {@link ClassroomDetailBoard}. */
 type ClassroomDetailBoardProps = {
     classroomId: string;
     joinCode: string;
     description: string | null;
+    /** Whether the join code was just copied (drives the copy-icon feedback). */
     didCopyCode: boolean;
     onCopyJoinCode: () => void;
     teachers: CoTeacher[];
@@ -17,6 +19,7 @@ type ClassroomDetailBoardProps = {
     inviteEmail: string;
     inviting: boolean;
     inviteError: string | null;
+    /** Whether the current user is the classroom owner (controls invite/leave visibility). */
     isOwner: boolean;
     leaving: boolean;
     leaveError: string | null;
@@ -24,12 +27,15 @@ type ClassroomDetailBoardProps = {
     onInviteTeacher: (event: React.FormEvent) => void;
     onLeaveClassroom: () => void;
     students: StudentSummary[];
+    /** ID of the student whose username is currently being edited, or null. */
     editingStudentId: string | null;
     editUsernameValue: string;
     savingUsername: boolean;
     usernameError: string | null;
+    /** ID of the student pending removal confirmation, or null. */
     confirmRemoveId: string | null;
     removingId: string | null;
+    /** Returns the leaderboard rank for a given user ID. */
     getLeaderboardRank: (userId: string) => number;
     onEditUsernameChange: (value: string) => void;
     onStartEditUsername: (student: StudentSummary) => void;
@@ -39,6 +45,7 @@ type ClassroomDetailBoardProps = {
     onConfirmRemoveChange: (studentId: string | null) => void;
 };
 
+/** Full classroom detail corkboard: join-code panel, censor words, mystery submissions, teachers, and students. */
 export function ClassroomDetailBoard({
     classroomId,
     joinCode,
@@ -114,17 +121,6 @@ export function ClassroomDetailBoard({
                     </div>
 
                     <CensorWordPanel classroomId={classroomId} />
-
-                    <div className="classroom-detail__note">
-                        <div className="classroom-detail__note-tape" />
-                        <h2 className="classroom-detail__section-title">Mystery-innleveringer</h2>
-                        <Link
-                            to={`/teacher/classrooms/${classroomId}/mystery-submissions`}
-                            className="classroom-detail__mystery-link"
-                        >
-                            Se alle innleveringer →
-                        </Link>
-                    </div>
 
                     <ClassroomDetailTeacherCard
                         teachers={teachers}

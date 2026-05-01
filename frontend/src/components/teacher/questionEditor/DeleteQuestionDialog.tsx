@@ -1,11 +1,13 @@
 type DeleteQuestionDialogProps = {
     open: boolean;
+    /** True while the delete request is in flight — disables buttons. */
     deleting: boolean;
     error: string | null;
     onCancel: () => void;
     onConfirm: () => void;
 };
 
+/** Confirmation modal for permanently deleting a question. */
 export function DeleteQuestionDialog({
     open,
     deleting,

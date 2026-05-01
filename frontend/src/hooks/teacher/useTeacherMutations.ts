@@ -7,9 +7,6 @@ import {
     updateStudentUsername,
     inviteCoTeacher,
     removeCoTeacher,
-    approveMysterySubmission,
-    rejectMysterySubmission,
-    featureMysterySubmission,
     addCensorWord,
     deleteCensorWord,
     createQuestion,
@@ -18,9 +15,10 @@ import {
     uploadImage,
 } from '@/api/teacherApi';
 import { teacherKeys } from './queryKeys';
-import type { ClassroomDetail, CoTeacher, MysterySubmissionResponse, StudentSummary } from '@/types/classroom';
+import type { ClassroomDetail, CoTeacher, StudentSummary } from '@/types/classroom';
 import type { CensorWord, TeacherQuestion, CreateQuestionPayload, UpdateQuestionPayload, TeacherImage } from '@/api/teacherApi';
 
+/** Updates classroom title and description, refreshing the classroom cache. */
 export function useUpdateClassroom(classroomId: string) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -33,6 +31,7 @@ export function useUpdateClassroom(classroomId: string) {
     });
 }
 
+/** Deletes a classroom and removes it from all related caches. */
 export function useDeleteClassroom(classroomId: string) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -44,6 +43,7 @@ export function useDeleteClassroom(classroomId: string) {
     });
 }
 
+/** Removes a student from the classroom, updating the local students cache optimistically. */
 export function useRemoveStudent(classroomId: string) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -57,6 +57,7 @@ export function useRemoveStudent(classroomId: string) {
     });
 }
 
+/** Updates a student's display username in a classroom, patching the local students cache. */
 export function useUpdateStudentUsername(classroomId: string) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -72,6 +73,7 @@ export function useUpdateStudentUsername(classroomId: string) {
     });
 }
 
+/** Sends a co-teacher invite by email and appends the new co-teacher to the local cache. */
 export function useInviteCoTeacher(classroomId: string) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -85,6 +87,7 @@ export function useInviteCoTeacher(classroomId: string) {
     });
 }
 
+/** Removes a co-teacher from the classroom, filtering them out of the local cache. */
 export function useRemoveCoTeacher(classroomId: string) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -98,46 +101,7 @@ export function useRemoveCoTeacher(classroomId: string) {
     });
 }
 
-export function useApproveMysterySubmission(classroomId: string) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (submissionId: string) => approveMysterySubmission(classroomId, submissionId),
-        onSuccess: (updated: MysterySubmissionResponse) => {
-            queryClient.setQueryData<MysterySubmissionResponse[]>(
-                teacherKeys.mysterySubmissions(classroomId),
-                (prev) => prev?.map((s) => (s.id === updated.id ? updated : s)) ?? [],
-            );
-        },
-    });
-}
-
-export function useRejectMysterySubmission(classroomId: string) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (submissionId: string) => rejectMysterySubmission(classroomId, submissionId),
-        onSuccess: (updated: MysterySubmissionResponse) => {
-            queryClient.setQueryData<MysterySubmissionResponse[]>(
-                teacherKeys.mysterySubmissions(classroomId),
-                (prev) => prev?.map((s) => (s.id === updated.id ? updated : s)) ?? [],
-            );
-        },
-    });
-}
-
-export function useFeatureMysterySubmission(classroomId: string) {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ submissionId, featured }: { submissionId: string; featured: boolean }) =>
-            featureMysterySubmission(classroomId, submissionId, featured),
-        onSuccess: (updated: MysterySubmissionResponse) => {
-            queryClient.setQueryData<MysterySubmissionResponse[]>(
-                teacherKeys.mysterySubmissions(classroomId),
-                (prev) => prev?.map((s) => (s.id === updated.id ? updated : s)) ?? [],
-            );
-        },
-    });
-}
-
+/** Allows the current co-teacher to leave a classroom, invalidating related caches. */
 export function useLeaveClassroom(classroomId: string) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -149,6 +113,7 @@ export function useLeaveClassroom(classroomId: string) {
     });
 }
 
+/** Maps a co-teacher invite API error to a Norwegian user-facing message. */
 export function useInviteCoTeacherError(error: unknown): string | null {
     if (!error) return null;
     if (axios.isAxiosError(error)) {
@@ -159,6 +124,7 @@ export function useInviteCoTeacherError(error: unknown): string | null {
     return 'Noe gikk galt. Prøv igjen.';
 }
 
+/** Maps a leave-classroom API error to a Norwegian user-facing message. */
 export function useLeaveClassroomError(error: unknown): string | null {
     if (!error) return null;
     if (axios.isAxiosError(error)) {
@@ -167,6 +133,7 @@ export function useLeaveClassroomError(error: unknown): string | null {
     return 'Noe gikk galt. Prøv igjen.';
 }
 
+/** Adds a censor word to the classroom and appends it to the local censor words cache. */
 export function useAddCensorWord(classroomId: string) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -180,6 +147,7 @@ export function useAddCensorWord(classroomId: string) {
     });
 }
 
+/** Deletes a censor word by ID and removes it from the local cache. */
 export function useDeleteCensorWord(classroomId: string) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -193,6 +161,7 @@ export function useDeleteCensorWord(classroomId: string) {
     });
 }
 
+/** Maps a censor word API error to a Norwegian user-facing message. */
 export function useCensorWordError(error: unknown): string | null {
     if (!error) return null;
     if (axios.isAxiosError(error)) {
@@ -202,6 +171,7 @@ export function useCensorWordError(error: unknown): string | null {
     return 'Noe gikk galt. Prøv igjen.';
 }
 
+/** Creates a new question for a level and appends it to the local questions cache. */
 export function useCreateQuestion(classroomId: string, levelId: number) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -215,6 +185,7 @@ export function useCreateQuestion(classroomId: string, levelId: number) {
     });
 }
 
+/** Updates an existing question and replaces its entry in the local questions cache. */
 export function useUpdateQuestion(classroomId: string, levelId: number) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -229,6 +200,7 @@ export function useUpdateQuestion(classroomId: string, levelId: number) {
     });
 }
 
+/** Deletes a question from a level and removes it from the local questions cache. */
 export function useDeleteQuestion(classroomId: string, levelId: number) {
     const queryClient = useQueryClient();
     return useMutation({
@@ -242,6 +214,7 @@ export function useDeleteQuestion(classroomId: string, levelId: number) {
     });
 }
 
+/** Uploads an image file and prepends it to the local teacher images cache. */
 export function useUploadImage() {
     const queryClient = useQueryClient();
     return useMutation({
@@ -255,6 +228,7 @@ export function useUploadImage() {
     });
 }
 
+/** Maps a question mutation API error to a Norwegian user-facing message. */
 export function useQuestionMutationError(error: unknown): string | null {
     if (!error) return null;
     if (axios.isAxiosError(error)) {

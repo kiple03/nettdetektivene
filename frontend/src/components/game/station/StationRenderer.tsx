@@ -16,6 +16,10 @@ type StationRendererProps = {
     isTearing?: boolean;
 };
 
+/**
+ * Renders the appropriate station component based on the station's type.
+ * Falls back to an error message for unknown station types.
+ */
 function StationRenderer({ station, levelTitle = station.title ?? "Nivå", onAnswer, disabled = false, isTearing }: StationRendererProps) {
   switch (station.type) {
     case STATION_TYPE.NEWS:
@@ -38,10 +42,14 @@ function StationRenderer({ station, levelTitle = station.title ?? "Nivå", onAns
               disabled={disabled}
           />
       );
+
     case STATION_TYPE.POST:
-      return <PostkontoretStation
+      return (
+          <PostkontoretStation
           station={station}
-          onAnswer={onAnswer} />;
+          onAnswer={onAnswer}
+          />
+      );
 
     case STATION_TYPE.PASSWORD:
       return (

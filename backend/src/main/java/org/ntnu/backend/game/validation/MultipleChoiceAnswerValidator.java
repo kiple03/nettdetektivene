@@ -9,9 +9,11 @@ import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
+/** Validates answers submitted for multiple-choice questions (single correct option). */
 @Component
 public class MultipleChoiceAnswerValidator implements SubmittedAnswerValidator {
 
+  /** @return {@link LevelType#MULTIPLE_CHOICE} */
   @Override
   public LevelType supportedType() {
     return LevelType.MULTIPLE_CHOICE;

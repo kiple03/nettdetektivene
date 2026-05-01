@@ -60,6 +60,7 @@ public class Question {
     @Column(columnDefinition = "JSON", nullable = false)
     private String optionContent;
 
+    /** The level this question belongs to. */
     @ManyToOne(optional = false)
     @JoinColumn(name = "level_id")
     private Level level;
@@ -72,6 +73,7 @@ public class Question {
     @Column(name = "classroom_id", columnDefinition = "BINARY(16)")
     private UUID classroomId;
 
+    /** Enforces the {@code isDefault == (classroomId == null)} invariant on persist/update. */
     @PrePersist
     @PreUpdate
     void validateInvariant() {

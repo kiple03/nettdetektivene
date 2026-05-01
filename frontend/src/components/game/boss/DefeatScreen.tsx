@@ -4,6 +4,7 @@ interface Props {
     onRetry: () => void;
 }
 
+/** Shown when the player loses the boss battle, with a retry button. */
 export function DefeatScreen({ onRetry }: Props) {
     return (
         <div className={styles.screen}>
