@@ -1,5 +1,8 @@
 package org.ntnu.backend.classroom.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +19,7 @@ import org.ntnu.backend.classroom.dto.UpdateClassroomRequest;
 import org.ntnu.backend.classroom.dto.UpdateStudentUsernameRequest;
 import org.ntnu.backend.classroom.service.CensorWordService;
 import org.ntnu.backend.classroom.service.TeacherClassroomService;
+import org.ntnu.backend.config.openapi.ApiErrorResponse;
 import org.ntnu.backend.medalion.dto.MedalionResponse;
 import org.ntnu.backend.notes.dto.NotesOverviewResponse;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -43,6 +47,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("/teacher/classrooms")
 @AllArgsConstructor
+@Tag(name = "Teacher Classrooms", description = "Classroom management for teachers")
 public class TeacherClassroomController {
 
     private final TeacherClassroomService teacherClassroomService;
@@ -56,6 +61,7 @@ public class TeacherClassroomController {
      */
     @GetMapping
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "List the classrooms of a teacher")
     public List<ClassroomSummaryResponse> listClassrooms(
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherClassroomService.listClassrooms(principal.getUserId());
@@ -67,10 +73,12 @@ public class TeacherClassroomController {
      * @param id        classroom UUID
      * @param principal the authenticated teacher; must have access to this classroom
      * @return classroom details
-     * @throws org.springframework.web.server.ResponseStatusException 403 if the teacher does not have access
+     * @throws org.springframework.web.server.ResponseStatusException 404 if the teacher does not have access
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Get all details of a classroom")
+    @ApiErrorResponse(responseCode = "404", description = "Classroom for teacher not found")
     public ClassroomResponse getClassroom(
             @PathVariable UUID id,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -87,6 +95,9 @@ public class TeacherClassroomController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Deletes a classroom and all related data")
+    @ApiResponse(responseCode = "204", description = "Successfully deleted classroom")
+    @ApiErrorResponse(responseCode = "403", description = "If teacher is not owner of classroom")
     public void deleteClassroom(
             @PathVariable UUID id,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -103,6 +114,8 @@ public class TeacherClassroomController {
      */
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Updates a classroom")
+    @ApiErrorResponse(responseCode = "403", description = "Teacher do not have access to classroom")
     public ClassroomResponse updateClassroom(
             @PathVariable UUID id,
             @Valid @RequestBody UpdateClassroomRequest request,
@@ -119,6 +132,7 @@ public class TeacherClassroomController {
      */
     @GetMapping("/{id}/students")
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Lists all students in a classroom")
     public List<StudentProgressResponse> listStudents(
             @PathVariable UUID id,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -136,6 +150,15 @@ public class TeacherClassroomController {
      */
     @GetMapping("/{id}/students/{studentId}")
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(
+        summary = "Get details of a user",
+        description = "Get detailed information about a specific user in a classroom"
+    )
+    @ApiErrorResponse(
+        responseCode = "403",
+        description = "Teacher does not have access to classroom"
+    )
+    @ApiErrorResponse(responseCode = "404", description = "Student not found")
     public StudentDetailResponse getStudentDetail(
             @PathVariable UUID id,
             @PathVariable UUID studentId,
@@ -153,6 +176,13 @@ public class TeacherClassroomController {
     @DeleteMapping("/{id}/students/{studentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Removes a student from a classroom")
+    @ApiResponse(responseCode = "204", description = "Successfully removed student from classroom")
+    @ApiErrorResponse(
+        responseCode = "403",
+        description = "Teacher does not have access to classroom"
+    )
+    @ApiErrorResponse(responseCode = "404", description = "Student is not enrolled in classroom")
     public void removeStudent(
             @PathVariable UUID id,
             @PathVariable UUID studentId,
@@ -170,6 +200,15 @@ public class TeacherClassroomController {
      */
     @GetMapping("/{id}/students/{studentId}/notebook")
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(
+        summary = "Get a students notebook",
+        description = "notebook entries written by a student across all levels"
+    )
+    @ApiErrorResponse(
+        responseCode = "403",
+        description = "Teacher does not have access to classroom"
+    )
+    @ApiErrorResponse(responseCode = "404", description = "No active enrollment for student")
     public NotesOverviewResponse getStudentNotebook(
             @PathVariable UUID id,
             @PathVariable UUID studentId,
@@ -188,6 +227,13 @@ public class TeacherClassroomController {
     @DeleteMapping("/{id}/students/{studentId}/notebook/{noteId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Deletes a note from a student")
+    @ApiResponse(responseCode = "204", description = "Successfully deleted a note from student")
+    @ApiErrorResponse(
+        responseCode = "403",
+        description = "Teacher does not have access to classroom"
+    )
+    @ApiErrorResponse(responseCode = "404", description = "Note for student not found")
     public void deleteStudentNote(
             @PathVariable UUID id,
             @PathVariable UUID studentId,
@@ -197,15 +243,20 @@ public class TeacherClassroomController {
     }
 
     /**
-     * Returns all medalions (achievement badges) earned by a student in this classroom.
+     * Returns all medallions (achievement badges) earned by a student in this classroom.
      *
      * @param id        classroom UUID
      * @param studentId student UUID
      * @param principal the authenticated teacher
-     * @return list of earned medalions
+     * @return list of earned medallions
      */
     @GetMapping("/{id}/students/{studentId}/medalions")
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Gets the medallions of a student")
+    @ApiErrorResponse(
+        responseCode = "403",
+        description = "Teacher does not have access to classroom"
+    )
     public List<MedalionResponse> getStudentMedalions(
             @PathVariable UUID id,
             @PathVariable UUID studentId,
@@ -224,6 +275,12 @@ public class TeacherClassroomController {
     @PatchMapping("/{id}/students/{studentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(
+        summary = "Override a student's display name",
+        description = "Used to correct inappropriate usernames"
+    )
+    @ApiResponse(responseCode = "204", description = "Successfully renamed student")
+    @ApiErrorResponse(responseCode = "400", description = "Cannot include profanity")
     public void updateStudentUsername(
             @PathVariable UUID id,
             @PathVariable UUID studentId,
@@ -243,19 +300,15 @@ public class TeacherClassroomController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('TEACHER')")
+    @ApiResponse(responseCode = "201", description = "Successfully created classroom")
+    @Operation(
+        summary = "Create a new classroom",
+        description = "Creates a new classroom, and generates a unique join code on creation")
     public ClassroomResponse createClassroom(
             @Valid @RequestBody CreateClassroomRequest request,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return teacherClassroomService.createClassroom(request, principal.getUserId());
     }
-
-    // TODO: rework implementation
-//    @GetMapping("/notifications")
-//    @PreAuthorize("hasRole('TEACHER')")
-//    public List<NotificationResponse> getNotifications(
-//        @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
-//        return teacherClassroomService.getNotifications(principal.getUserId());
-//    }
 
     /**
      * Lists all teachers (owner + co-teachers) associated with the classroom.
@@ -266,6 +319,11 @@ public class TeacherClassroomController {
      */
     @GetMapping("/{id}/teachers")
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "List all teachers in a classroom")
+    @ApiErrorResponse(
+        responseCode = "403",
+        description = "Teacher does not have access to classroom"
+    )
     public List<CoTeacherResponse> listCoTeachers(
             @PathVariable UUID id,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -284,6 +342,13 @@ public class TeacherClassroomController {
     @PostMapping("/{id}/teachers")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Invite a co-teacher by email")
+    @ApiErrorResponse(
+        responseCode = "403",
+        description = "Teacher does not have access to classroom"
+    )
+    @ApiErrorResponse(responseCode = "404", description = "If the teacher or classroom not found")
+    @ApiErrorResponse(responseCode = "409", description = "Teacher is already in classroom")
     public CoTeacherResponse inviteCoTeacher(
             @PathVariable UUID id,
             @Valid @RequestBody InviteCoTeacherRequest request,
@@ -301,6 +366,10 @@ public class TeacherClassroomController {
     @DeleteMapping("/{id}/teachers/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Remove a co teacher from the classroom")
+    @ApiResponse(responseCode = "204", description = "Co teacher removed")
+    @ApiErrorResponse(responseCode = "403", description = "Only owner of classroom can remove others")
+    @ApiErrorResponse(responseCode = "409", description = "Cannot remove last teacher")
     public void removeCoTeacher(
             @PathVariable UUID id,
             @PathVariable UUID userId,
@@ -317,6 +386,11 @@ public class TeacherClassroomController {
      */
     @GetMapping("/{id}/censor-words")
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "List all censored words configured for classroom")
+    @ApiErrorResponse(
+        responseCode = "403",
+        description = "Teacher does not have access to classroom"
+    )
     public List<CensorWordResponse> listCensorWords(
             @PathVariable UUID id,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -334,6 +408,12 @@ public class TeacherClassroomController {
     @PostMapping("/{id}/censor-words")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Add a new word to be censored")
+    @ApiResponse(responseCode = "201", description = "Successfully added word")
+    @ApiErrorResponse(
+        responseCode = "403",
+        description = "Teacher does not have access to classroom"
+    )
     public CensorWordResponse addCensorWord(
             @PathVariable UUID id,
             @Valid @RequestBody AddCensorWordRequest request,
@@ -351,6 +431,9 @@ public class TeacherClassroomController {
     @DeleteMapping("/{id}/censor-words/{wordId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('TEACHER')")
+    @Operation(summary = "Deletes a word from the classrooms profanity filter")
+    @ApiResponse(responseCode = "204", description = "Successfully deleted word from filter")
+    @ApiErrorResponse(responseCode = "404", description = "Word not found")
     public void deleteCensorWord(
             @PathVariable UUID id,
             @PathVariable UUID wordId,
