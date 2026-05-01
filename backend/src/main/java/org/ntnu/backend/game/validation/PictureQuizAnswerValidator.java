@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * Validates student submissions for {@link LevelType#PICTURE_QUIZ} questions.
  *
  * <p>Expects a {@link MultiSelectAnswer} where {@code selectedIds} contains
- * the IDs of all options the student selected. A submission is considered
+ * the IDs of all responseUrls the student selected. A submission is considered
  * correct only if:
  *
  * <ul>
@@ -39,11 +39,11 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
     /**
      * Validates a submitted answer for a picture quiz question.
      *
-     * @param options the question's parsed options including correct flags
+     * @param options the question's parsed responseUrls including correct flags
      * @param submission must be a {@link MultiSelectAnswer}
      * @return a {@link ValidationResult} indicating whether the selected option IDs
      *         exactly match the correct option IDs, along with an explanation from
-     *         one of the correct options
+     *         one of the correct responseUrls
      * @throws IllegalArgumentException if submission is not a {@link MultiSelectAnswer}
      *                                  or if any selected option ID does not exist
      */
@@ -107,7 +107,8 @@ public class PictureQuizAnswerValidator implements SubmittedAnswerValidator {
             isCorrect,
             explanation,
             correctOptionIds.stream().map(String::valueOf).toList(),
-            wrongSelectedOptionIds.stream().map(String::valueOf).toList()
+            wrongSelectedOptionIds.stream().map(String::valueOf).toList(),
+            List.of()
         );
     }
 }

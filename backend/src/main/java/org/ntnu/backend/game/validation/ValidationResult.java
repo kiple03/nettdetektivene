@@ -1,6 +1,7 @@
 package org.ntnu.backend.game.validation;
 
 import java.util.List;
+import org.ntnu.backend.game.dto.OptionImageResponse;
 
 /**
  * Result of validating a student's submitted answer.
@@ -13,9 +14,10 @@ public record ValidationResult(
         boolean correct,
         String feedback,
         List<String> correctOptionIds,
-        List<String> wrongSelectedOptionIds
+        List<String> wrongSelectedOptionIds,
+        List<OptionImageResponse> responseUrls
 ) {
   public static ValidationResult of(boolean correct, String feedback) {
-    return new ValidationResult(correct, feedback, List.of(), List.of());
+    return new ValidationResult(correct, feedback, List.of(), List.of(), List.of());
   }
 }

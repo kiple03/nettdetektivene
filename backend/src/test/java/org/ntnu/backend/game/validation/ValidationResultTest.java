@@ -24,7 +24,8 @@ class ValidationResultTest {
                 false,
                 "Wrong feedback",
                 List.of("1", "2"),
-                List.of("3")
+                List.of("3"),
+            List.of()
         );
 
         assertThat(result.correct()).isFalse();

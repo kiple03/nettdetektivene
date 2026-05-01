@@ -14,7 +14,7 @@ import org.ntnu.backend.game.util.OptionParser;
 
 /**
  * A question within a {@link Level}. The question text is displayed to the
- * student, and the options are stored as a JSON blob in {@code optionContent}.
+ * student, and the responseUrls are stored as a JSON blob in {@code optionContent}.
  *
  * <p>The JSON shape of {@code optionContent} depends on the parent level's
  * {@link LevelType}. Deserialization into typed {@link Option} subclasses is handled by
@@ -51,7 +51,7 @@ public class Question {
     private String questionText;
 
     /**
-     * JSON blob storing the options for this question. The shape varies
+     * JSON blob storing the responseUrls for this question. The shape varies
      * by {@link LevelType} and is parsed at runtime by {@link OptionParser}.
      * Contains answer data (correct flags, explanations) that must not
      * be sent to the client, the mapper {@link GameMapper} handles this via the sealed

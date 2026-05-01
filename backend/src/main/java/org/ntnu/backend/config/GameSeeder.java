@@ -184,7 +184,7 @@ public class GameSeeder implements CommandLineRunner {
     ensureQuestion(level1,
         "Hvilken NRK-artikkel er ekte?",
         List.of(
-            new MultipleChoiceOption(1, "Norge mangler en plan for matberedskap - løsningen er 5000 nye 'Jon Almaas-er'", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-1.png", true, "Den andre artikelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid."),
+            new MultipleChoiceOption(1, "Norge mangler en plan for matberedskap - løsningen er 5000 nye 'Jon Almaas-er'", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-1.png", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWa1IUsl_yFkCY98XoTNyJmJZ8pVVHT0k1Aw&s", true, "Den andre artikelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid."),
             new MultipleChoiceOption(2, "Jon Almaas er den aller beste", "http://s3-egsm5ptz727wk9ikygsuit6i.65.21.148.53.sslip.io/nettdetektivene-bilder/News1-2.png", false, "Denne artikkelen innholder skrivefeil, journalist uten etternavn og merkelig dato og tid.")
         )
     );
@@ -788,8 +788,8 @@ public class GameSeeder implements CommandLineRunner {
     try {
       return new ObjectMapper().writeValueAsString(options);
     } catch (JacksonException e) {
-      log.error("Error while writing options json", e);
-      throw new IllegalStateException("Failed to serialize options", e);
+      log.error("Error while writing responseUrls json", e);
+      throw new IllegalStateException("Failed to serialize responseUrls", e);
     }
   }
 

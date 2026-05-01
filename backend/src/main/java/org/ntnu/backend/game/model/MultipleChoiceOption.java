@@ -40,9 +40,20 @@ public final class MultipleChoiceOption implements Option {
 
     private String imageUrl;
 
+    private String responseImageUrl;
+
     @JsonProperty("isCorrect")
     private boolean isCorrect;
 
     @NotBlank
     private String explanation;
+
+    public MultipleChoiceOption(Integer id, String text, String imageUrl, boolean isCorrect,
+        String explanation) {
+        this.id = id;
+        this.text = text;
+        this.imageUrl = imageUrl;
+        this.isCorrect = isCorrect;
+        this.explanation = explanation;
+    }
 }

@@ -6,7 +6,7 @@ import org.ntnu.backend.game.model.enums.LevelType;
 
 /**
  * Question as seen by a teacher: includes isDefault/classroomId and full option data.
- * options type depends on levelType (polymorphic via TeacherOptionResponse).
+ * responseUrls type depends on levelType (polymorphic via TeacherOptionResponse).
  */
 public record TeacherQuestionResponse(
     int id,

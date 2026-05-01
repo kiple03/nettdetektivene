@@ -10,7 +10,7 @@ import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
  *
  * <p>Mirrors {@link MultipleChoiceOption} but belongs to the PICTURE_QUIZ level type.
  * Each question has exactly one image (carried by {@code imageUrl}) and exactly one
- * correct category option. The three options on a question share the same image —
+ * correct category option. The three responseUrls on a question share the same image —
  * they differ only by their {@code id}, {@code text} (the category label shown to
  * the student), and {@code isCorrect}.
  *

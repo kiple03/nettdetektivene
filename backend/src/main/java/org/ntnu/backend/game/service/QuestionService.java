@@ -21,8 +21,6 @@ import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidator;
 import org.ntnu.backend.game.validation.ValidationResult;
 import org.ntnu.backend.user.model.enums.RoleEnum;
-import org.ntnu.backend.user.service.UserService;
-import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.stereotype.Service;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
 
@@ -30,9 +28,9 @@ import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
  * Handles the question read and answer submission flow.
  *
  * <p>For reads, delegates to {@link GameMapper} which parses the JSON
- * options via {@link OptionParser} and strips answer data from the response.
+ * responseUrls via {@link OptionParser} and strips answer data from the response.
  *
- * <p>For submissions, parses the stored options, looks up the correct
+ * <p>For submissions, parses the stored responseUrls, looks up the correct
  * {@link SubmittedAnswerValidator} via the {@link SubmittedAnswerValidatorRegistry} for
  * the question's level type, and returns feedback to the student.
  *
@@ -57,7 +55,7 @@ public class QuestionService {
    * their corresponding response DTOs.
    *
    * @param id the question ID
-   * @return the question with valid options for the client
+   * @return the question with valid responseUrls for the client
    * @throws QuestionNotFoundException if no question exists with this ID
    */
   public QuestionResponse getQuestionById(int id, UUID userId, RoleEnum role) {
@@ -78,7 +76,7 @@ public class QuestionService {
    * <p>The flow:
    * <ol>
    *   <li>Find the question</li>
-   *   <li>Parse options from JSON via {@link OptionParser}</li>
+   *   <li>Parse responseUrls from JSON via {@link OptionParser}</li>
    *   <li>Look up the validator for this level type</li>
    *   <li>Compare submission against correct answer</li>
    *   <li>Return result with feedback</li>
@@ -109,9 +107,9 @@ public class QuestionService {
     return new SubmitAnswerResponse(
             result.correct(),
             result.feedback(),
-            // TODO: send to fronted for validation
             result.correctOptionIds().stream().map(String::valueOf).toList(),
-            result.wrongSelectedOptionIds().stream().map(String::valueOf).toList()
+            result.wrongSelectedOptionIds().stream().map(String::valueOf).toList(),
+        result.responseUrls()
     );
   }
 
