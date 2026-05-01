@@ -9,6 +9,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
 import { Button } from "@/components/ui/buttons/Button.tsx";
+import styles from './ProfileIconButton.module.css';
 
 export default function ProfileIconButton() {
     const navigate = useNavigate();
@@ -41,19 +42,7 @@ export default function ProfileIconButton() {
                 onClick={handleClick}
                 type="button"
                 aria-label="Gå til profil"
-                style={{
-                    position: "fixed",
-                    top: "1rem",
-                    right: "1rem",
-                    zIndex: 100,
-                    background: "none",
-                    border: "4px solid #6b3a1f",
-                    padding: 0,
-                    cursor: "pointer",
-                    borderRadius: "50%",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.5), 0 0 0 2px rgba(107,58,31,0.4)",
-                    transform: "translateY(-1px)",
-                }}
+                  className={styles.profileBtn}
             >
                 <LayeredAvatar
                     items={userProfile?.equippedItems ?? []}

@@ -8,6 +8,7 @@ import useSound from "use-sound";
 import CorrectFx from '@/assets/sounds/CorrectAnswer.wav';
 import IncorrectFx from '@/assets/sounds/IncorrectAnswer.mp3';
 import { useAuth } from '@/hooks/useAuth'
+import ProfileIconButton from "@/components/student/ProfileIconButton";
 
 type Props = {
   title: string;
@@ -34,19 +35,21 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
   }, [submitResult]);
 
   return (
-      // toLowerCase for css-styling for the specific station
-      <div className={`station-container station-${type.toLowerCase()}`}>
-        {/* Top label */}
-        <h1 className="station-title">{title}</h1>
-
-        <button
+    <>
+      <button
           className="tutorial-help-btn"
           style={{ position: "absolute", top: "1rem", right: "calc(88px + 1.75rem)", zIndex: 2 }}
           onClick={() => setTutorialOpen(true)}
           aria-label="Vis guide"
         >
           ?
-        </button>
+      </button>
+
+      <ProfileIconButton />
+      // toLowerCase for css-styling for the specific station
+      <div className={`station-container station-${type.toLowerCase()}`}>
+        {/* Top label */}
+        <h1 className="station-title">{title}</h1>
 
         {TUTORIAL_STEPS[type] && (
           <TutorialOverlay
@@ -79,6 +82,7 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
             </div>
         )}
       </div>
+    </>
   )
 }
 
