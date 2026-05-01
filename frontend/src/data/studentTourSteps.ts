@@ -33,9 +33,4 @@ export const studentTourSteps: TourStep[] = [
     title: 'Viktige notater',
     body: 'Viktige notater du bør huske underveis.',
   },
-  {
-    tourOrder: 6,
-    title: 'Ukens mysterium',
-    body: 'Ukens mysterium: et nytt oppdrag hver uke.',
-  },
 ];
