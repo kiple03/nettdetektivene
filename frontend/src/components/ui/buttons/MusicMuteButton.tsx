@@ -1,6 +1,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { playMusic, stopMusic, getMuted, setMuted as setMutedManager, subscribeMute, getCurrentTrack } from "@/audio/musicManager";
+import styles from "./MusicMuteButton.module.css";
 
 /**
  * Floating mute/unmute button for background music, visible only to logged-in students.
@@ -33,18 +34,7 @@ export default function BackgroundMusic() {
 
     return (
         <button onClick={handleToggle}
-                style={{
-                    position: 'fixed',
-                    bottom: '1rem',
-                    right: '1rem',
-                    zIndex: 9999,
-                    fontSize: '2rem',
-                    padding: '0.5rem 0.75rem',
-                    lineHeight: 1,
-                    background: 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
-                }}
+                className={styles.button}
                 aria-label={muted ? 'Slå på musikk' : 'Slå av musikk'}>
             {muted ? '🔇' : '🔊'}
         </button>
