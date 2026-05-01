@@ -74,8 +74,6 @@ class UserServiceTest {
         .build();
   }
 
-  // ===== REGISTER =====
-
   @Test
   void register_success() {
     CreateUserRequest request = new CreateUserRequest();
@@ -111,8 +109,6 @@ class UserServiceTest {
         .isInstanceOf(UserAlreadyExistsException.class)
         .hasMessageContaining("email");
   }
-
-  // ===== LOGIN =====
 
   @Test
   void login_success() {
@@ -160,8 +156,6 @@ class UserServiceTest {
     assertThatThrownBy(() -> userService.login(request))
         .isInstanceOf(BadCredentialsException.class);
   }
-
-  // ===== REFRESH =====
 
   @Test
   void refresh_success() {
@@ -213,15 +207,11 @@ class UserServiceTest {
     verify(refreshTokenRepository).delete(expired);
   }
 
-  // ===== LOGOUT =====
-
   @Test
   void logout_deletesToken() {
     userService.logout("some-token");
     verify(refreshTokenRepository).deleteByToken("some-token");
   }
-
-  // ===== REGISTER EDGE CASES =====
 
   @Test
   void register_emailTaken_throws409() {
@@ -234,8 +224,6 @@ class UserServiceTest {
         .isInstanceOf(UserAlreadyExistsException.class)
         .hasMessageContaining("email");
   }
-
-  // ===== LOGIN EDGE CASES =====
 
   @Test
   void login_correctEmailWrongPassword_doesNotLeakEmailExists() {
@@ -257,7 +245,7 @@ class UserServiceTest {
     LoginRequest request = new LoginRequest();
     request.setEmail("test@test.no");
     request.setPassword("password123");
-    request.setPortalRole(RoleEnum.STUDENT); // testUser is TEACHER
+    request.setPortalRole(RoleEnum.STUDENT);
 
     when(userRepository.findByEmail("test@test.no")).thenReturn(Optional.of(testUser));
     when(passwordEncoder.matches("password123", "encodedPassword")).thenReturn(true);
@@ -266,8 +254,6 @@ class UserServiceTest {
         .isInstanceOf(ResponseStatusException.class)
         .hasMessageContaining("portal");
   }
-
-  // ===== REFRESH EDGE CASES =====
 
   @Test
   void refresh_tokenExpiredJustNow_throws() {

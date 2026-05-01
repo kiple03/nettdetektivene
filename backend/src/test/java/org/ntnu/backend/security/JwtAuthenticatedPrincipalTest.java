@@ -25,8 +25,6 @@ class JwtAuthenticatedPrincipalTest {
         );
     }
 
-    // ---- from() ----
-
     @Test
     void from_returnsCorrectPrincipalWhenAuthIsValid() {
         JwtAuthenticatedPrincipal p = principal(RoleEnum.TEACHER, null);
@@ -57,8 +55,6 @@ class JwtAuthenticatedPrincipalTest {
                         .isEqualTo(HttpStatus.UNAUTHORIZED));
     }
 
-    // ---- requireClassroomId() ----
-
     @Test
     void requireClassroomId_returnsIdWhenPresent() {
         UUID classroomId = UUID.randomUUID();
@@ -76,8 +72,6 @@ class JwtAuthenticatedPrincipalTest {
                 .satisfies(ex -> assertThat(((ResponseStatusException) ex).getStatusCode())
                         .isEqualTo(HttpStatus.FORBIDDEN));
     }
-
-    // ---- isTeacher() / isStudent() ----
 
     @Test
     void isTeacher_returnsTrueForTeacherRole() {
@@ -98,8 +92,6 @@ class JwtAuthenticatedPrincipalTest {
     void isStudent_returnsFalseForTeacherRole() {
         assertThat(principal(RoleEnum.TEACHER, null).isStudent()).isFalse();
     }
-
-    // ---- getters ----
 
     @Test
     void getters_returnCorrectValues() {

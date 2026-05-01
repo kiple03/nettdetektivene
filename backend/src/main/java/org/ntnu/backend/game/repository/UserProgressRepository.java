@@ -20,12 +20,4 @@ public interface UserProgressRepository extends JpaRepository<UserProgress, UUID
    */
   @Query("SELECT p FROM UserProgress p JOIN FETCH p.currentStop WHERE p.user.id IN :userIds")
   List<UserProgress> findByUserIdIn(Collection<UUID> userIds);
-
-  /**
-   * Returns the number of levels per stop as {@code [stopId, count]} pairs.
-   *
-   * @return raw object array rows: {@code [Long stopId, Long levelCount]}
-   */
-  @Query("SELECT l.stop.id, COUNT(l) FROM Level l GROUP BY l.stop.id")
-  List<Object[]> countLevelsByStop();
 }

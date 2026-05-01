@@ -295,7 +295,6 @@ class GlobalExceptionHandlerTest {
 
     @SuppressWarnings("unused")
     private void dummyValidationMethod(String value) {
-        // Used only to create a MethodParameter for MethodArgumentNotValidException.
     }
 
     private static class DummyRequest {

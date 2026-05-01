@@ -1,9 +1,9 @@
 package org.ntnu.backend.medalion.dto;
-                                                                                         
+
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;                                         
-import lombok.Data;                                                                                                           
+import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
+import lombok.Data;
                     
 /**
  * Request data transfer object for awarding a medalion to a user.

@@ -1,9 +1,9 @@
 package org.ntnu.backend.game.validation;
 
 import java.util.List;
-import org.ntnu.backend.game.dto.OptionImageResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
-import org.ntnu.backend.game.dto.subtypes.SingleChoiceAnswer;
+import org.ntnu.backend.game.dto.optionresponse.OptionImageResponse;
+import org.ntnu.backend.game.dto.subtype.SingleChoiceAnswer;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -56,7 +56,7 @@ public class MultipleChoiceAnswerValidator implements SubmittedAnswerValidator {
         .findFirst()
         .map(mc -> new ValidationResult(
             mc.isCorrect(),
-            mc.getExplanation(),  // always return explanation, not null
+            mc.getExplanation(),
             correctOptionIds.stream().map(String::valueOf).toList(),
             mc.isCorrect() ? List.of() : List.of(String.valueOf(mc.getId())),
             responseImages

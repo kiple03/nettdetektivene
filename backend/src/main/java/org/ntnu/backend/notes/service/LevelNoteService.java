@@ -1,5 +1,6 @@
 package org.ntnu.backend.notes.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.notes.model.LevelNoteTemplate;
@@ -9,8 +10,6 @@ import org.ntnu.backend.notes.repository.StudentLevelNoteRepository;
 import org.ntnu.backend.user.model.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Grants preset notes to a student when they complete a level.

@@ -1,7 +1,6 @@
 package org.ntnu.backend.classroom.mapper;
 
 import java.util.UUID;
-
 import org.ntnu.backend.classroom.dto.NotificationResponse;
 import org.ntnu.backend.classroom.model.Notification;
 import org.ntnu.backend.classroom.model.enums.NotificationType;

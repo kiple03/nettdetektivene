@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.ntnu.backend.config.openapi.ApiErrorResponse;
 
 /**
  * Container for multiple {@link ApiErrorResponse} annotations on a single method.

@@ -5,9 +5,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.boot.CommandLineRunner;
 
 /**
  * Seeds the database with the default set of avatar items on application startup.

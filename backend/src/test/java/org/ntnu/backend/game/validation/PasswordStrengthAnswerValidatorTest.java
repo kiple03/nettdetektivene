@@ -10,8 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
-import org.ntnu.backend.game.dto.subtypes.PasswordStrengthAnswer;
-import org.ntnu.backend.game.model.Option;
+import org.ntnu.backend.game.dto.subtype.PasswordStrengthAnswer;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.enums.LevelType;
 

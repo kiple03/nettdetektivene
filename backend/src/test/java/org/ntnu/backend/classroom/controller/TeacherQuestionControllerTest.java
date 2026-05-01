@@ -20,13 +20,13 @@ import org.ntnu.backend.classroom.service.TeacherQuestionService;
 import org.ntnu.backend.config.SecurityConfig;
 import org.ntnu.backend.exception.LevelNotFoundException;
 import org.ntnu.backend.exception.QuestionNotFoundException;
-import org.ntnu.backend.game.dto.TeacherClassifyItemsOptionResponse;
-import org.ntnu.backend.game.dto.TeacherMultipleChoiceOptionResponse;
-import org.ntnu.backend.game.dto.TeacherOptionResponse;
-import org.ntnu.backend.game.dto.TeacherPasswordStrengthOptionResponse;
-import org.ntnu.backend.game.dto.TeacherPictureQuizOptionResponse;
-import org.ntnu.backend.game.dto.TeacherQuestionResponse;
-import org.ntnu.backend.game.dto.TeacherTextQuizOptionResponse;
+import org.ntnu.backend.game.dto.teacher.TeacherClassifyItemsOptionResponse;
+import org.ntnu.backend.game.dto.teacher.TeacherMultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.teacher.TeacherOptionResponse;
+import org.ntnu.backend.game.dto.teacher.TeacherPasswordStrengthOptionResponse;
+import org.ntnu.backend.game.dto.teacher.TeacherPictureQuizOptionResponse;
+import org.ntnu.backend.game.dto.teacher.TeacherQuestionResponse;
+import org.ntnu.backend.game.dto.teacher.TeacherTextQuizOptionResponse;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.security.JwtAuthenticationEntryPoint;
@@ -295,8 +295,6 @@ class TeacherQuestionControllerTest {
             .andExpect(status().isForbidden());
     }
 
-    // PUT /{questionId} tests
-
     @Test
     void updateQuestion_returnsOk() throws Exception {
         UUID teacherId = UUID.randomUUID();
@@ -450,8 +448,6 @@ class TeacherQuestionControllerTest {
                 .content(body))
             .andExpect(status().isNotFound());
     }
-
-    // PICTURE_QUIZ create/update tests
 
     @Test
     void createPictureQuizQuestion_returnsCreated() throws Exception {

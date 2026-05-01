@@ -1,12 +1,10 @@
 package org.ntnu.backend.classroom.dto;
 
 import java.util.List;
-
-import org.ntnu.backend.avatar.dto.EquippedItemDto;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.ntnu.backend.avatar.dto.EquippedItemDto;
 
 /**
  * Response DTO summarising a student's progress within a classroom,

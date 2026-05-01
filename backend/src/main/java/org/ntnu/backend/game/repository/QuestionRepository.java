@@ -38,7 +38,4 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
    */
   @Query("SELECT q FROM Question q WHERE q.level.id = :levelId AND (q.classroomId IS NULL OR q.classroomId = :classroomId)")
   List<Question> findByLevelIdForClassroom(@Param("levelId") int levelId, @Param("classroomId") UUID classroomId);
-
-  /** Only teacher-added questions for a specific classroom and level. */
-  List<Question> findByLevelIdAndClassroomId(int levelId, UUID classroomId);
 }

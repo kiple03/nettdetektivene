@@ -80,14 +80,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       UUID classroomId = classroomIdStr != null ? UUID.fromString(classroomIdStr) : null;
 
 
-      // JWT claim stores the bare role name (e.g. "TEACHER"); Spring Security
-      // expects the "ROLE_" prefix on GrantedAuthority, so we add it here.
       String roleClaim = claims.get("role", String.class);
       RoleEnum role;
       try {
         role = RoleEnum.valueOf(roleClaim);
       } catch (IllegalArgumentException | NullPointerException e) {
-        return; // malformed role claim, auth is rejected
+        return;
       }
 
       List<SimpleGrantedAuthority> authorities =

@@ -1,5 +1,7 @@
 package org.ntnu.backend.classroom.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.StopResponse;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/teacher/stops")
 @PreAuthorize("hasRole('TEACHER')")
 @RequiredArgsConstructor
+@Tag(name="Teacher stops", description = "Custom endpoint for stops the teacher uses")
 public class TeacherStopController {
 
     private final TeacherStopService teacherStopService;
@@ -28,6 +31,7 @@ public class TeacherStopController {
      * @return list of {@link StopResponse} representing every stop
      */
     @GetMapping
+    @Operation(summary = "List all available stops in the game")
     public List<StopResponse> listStops() {
         return teacherStopService.listStops();
     }

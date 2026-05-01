@@ -1,10 +1,5 @@
 package org.ntnu.backend.game.model;
 
-import java.time.Instant;
-import java.util.UUID;
-
-import org.ntnu.backend.user.model.User;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,8 +9,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.Instant;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
+import org.ntnu.backend.user.model.User;
 
 /** Tracks a student's position and completion state within the game. */
 @Entity

@@ -16,8 +16,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ntnu.backend.game.dto.LevelResponse;
-import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
-import org.ntnu.backend.game.dto.OptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.MultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.OptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
@@ -72,8 +72,6 @@ class GameControllerTest {
   void tearDown() {
     SecurityContextHolder.clearContext();
   }
-
-  // ===== GET /game/stops =====
 
   @Test
   void getStops_returnsListOfStops() throws Exception {

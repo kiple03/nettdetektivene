@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface StopRepository extends JpaRepository<Stop, Integer> {
 
-  // TODO: use instead of findALl
   /** Returns all stops sorted by {@code displayOrder} ascending. */
   List<Stop> findAllByOrderByDisplayOrderAsc();
 

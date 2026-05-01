@@ -1,11 +1,15 @@
 package org.ntnu.backend.game.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.ntnu.backend.game.dto.BossBattleResultResponse;
-import org.ntnu.backend.game.dto.BossBattleSaveRequest;
+import org.ntnu.backend.config.openapi.ApiErrorResponse;
+import org.ntnu.backend.game.dto.bossbattle.BossBattleResultResponse;
+import org.ntnu.backend.game.dto.bossbattle.BossBattleSaveRequest;
 import org.ntnu.backend.game.service.BossBattleService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/game/boss")
+@Tag(name = "Boss Battle", description = "Record and retrieve boss battle outcomes")
 public class BossBattleController {
 
     private final BossBattleService bossBattleService;
@@ -33,6 +38,12 @@ public class BossBattleController {
      * @return 201 Created on success
      */
     @PostMapping("/result")
+    @Operation(
+        summary = "Save boss battle result",
+        description = "Persists the outcome of a boss battle for the authenticated student's current classroom."
+    )
+    @ApiResponse(responseCode = "201", description = "Result saved successfully")
+    @ApiErrorResponse(responseCode = "400", description = "Invalid request body")
     public ResponseEntity<Void> saveResult(
         @Valid @RequestBody BossBattleSaveRequest request,
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal
@@ -48,6 +59,11 @@ public class BossBattleController {
      * @return 200 with the latest result, or 404 if none exists
      */
     @GetMapping("/result")
+    @Operation(
+        summary = "Get latest boss battle result",
+        description = "Retrieves the most recent boss battle result for the authenticated student in their current classroom."
+    )
+    @ApiErrorResponse(responseCode = "404", description = "No boss battle result found")
     public ResponseEntity<BossBattleResultResponse> getLatestResult(
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal
     ) {

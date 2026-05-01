@@ -3,7 +3,6 @@ package org.ntnu.backend.classroom.repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,13 +39,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
    */
   Optional<Enrollment> findByUserIdAndLeftAtIsNull(UUID userId);
 
-  /**
-   * Counts active students in a classroom.
-   *
-   * @param classroomId the classroom's ID
-   * @return number of currently enrolled students
-   */
-  long countByClassroomIdAndLeftAtIsNull(UUID classroomId);
 
   /**
    * Lists all active enrollments in a classroom.

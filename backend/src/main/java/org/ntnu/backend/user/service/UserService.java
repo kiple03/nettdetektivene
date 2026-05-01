@@ -84,7 +84,6 @@ public class UserService {
       progressService.initProgressForStudent(user);
     }
 
-    //avatar starter for new users
     userAvatarService.starterItems(user);
     
     medalionService.awardInternalUsage(user.getId(), "Rekruttert detektiv", "Lagde bruker");    
@@ -139,8 +138,6 @@ public class UserService {
       throw new BadCredentialsException("Invalid credentials");
     }
 
-    // Reject cross-portal logins: a STUDENT must not authenticate on the teacher
-    // portal and vice-versa. Use a generic 403 so the error leaks no extra info.
     if (user.getRole() != request.getPortalRole()) {
       throw new ResponseStatusException(
           HttpStatus.FORBIDDEN,

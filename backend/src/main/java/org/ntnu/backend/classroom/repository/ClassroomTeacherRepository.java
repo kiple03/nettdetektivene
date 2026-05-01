@@ -51,30 +51,6 @@ public interface ClassroomTeacherRepository extends JpaRepository<ClassroomTeach
   boolean isOwnerOfClassroom(@Param("classroomId") UUID classroomId, @Param("userId") UUID userId);
 
   /**
-   * Returns classrooms where the teacher is a co-teacher (not owner), with classroom data loaded.
-   *
-   * @param teacherId the teacher's user ID
-   */
-  @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.classroom WHERE ct.id.userId = :teacherId AND ct.isOwner = false")
-  List<ClassroomTeacher> findNonOwnerEntriesByUserId(@Param("teacherId") UUID teacherId);
-
-  /**
-   * Returns the owner entry for a classroom with the user eagerly loaded.
-   *
-   * @param classroomId target classroom
-   */
-  @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.user WHERE ct.id.classroomId = :classroomId AND ct.isOwner = true")
-  Optional<ClassroomTeacher> findOwnerWithUserByClassroomId(@Param("classroomId") UUID classroomId);
-
-  /**
-   * Batch-fetches teacher entries across multiple classrooms with users eagerly loaded.
-   *
-   * @param classroomIds collection of classroom IDs to query
-   */
-  @Query("SELECT ct FROM ClassroomTeacher ct JOIN FETCH ct.user WHERE ct.id.classroomId IN :classroomIds")
-  List<ClassroomTeacher> findWithUsersByClassroomIdIn(@Param("classroomIds") Collection<UUID> classroomIds);
-
-  /**
    * Returns all classrooms that a given teacher belongs to (as either owner or co-teacher).
    *
    * @param teacherId the teacher's user ID

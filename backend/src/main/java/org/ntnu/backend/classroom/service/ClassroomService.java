@@ -3,7 +3,7 @@ package org.ntnu.backend.classroom.service;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.CreateClassroomRequest;
 import org.ntnu.backend.classroom.dto.JoinClassroomRequest;
@@ -28,8 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import lombok.AllArgsConstructor;
 
 /**
  * Service class for classroom logic. 
@@ -107,8 +105,6 @@ public class ClassroomService {
         classroomCensorWordRepository.deleteByClassroomId(id);
         classroomRepository.deleteById(id);
     }
-
-    // ── Student operations ────────────────────────────────────────────────────
 
     /**
      * Enrolls a student into a classroom using a valid join code.

@@ -58,8 +58,6 @@ class JwtServiceTest {
     studentPrincipal = new UserPrincipal(student);
   }
 
-  // ===== TOKEN GENERATION =====
-
   @Test
   void generateToken_containsExpectedClaims() {
     String token = jwtService.generateToken(teacherPrincipal, null);
@@ -86,8 +84,6 @@ class JwtServiceTest {
 
     assertThat(claims.get("role", String.class)).isEqualTo("STUDENT");
   }
-
-  // ===== PARSING & VALIDATION =====
 
   @Test
   void generateToken_withClassroomId_containsClaim() {

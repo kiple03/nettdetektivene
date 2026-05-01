@@ -1,19 +1,17 @@
 package org.ntnu.backend.config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.ntnu.backend.game.model.ClassifyItemsOption;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.MultipleChoiceOption;
-import org.ntnu.backend.game.model.PostOfficeOption;
-import org.ntnu.backend.game.model.PostOfficeQuestion;
-import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PasswordStrengthOption;
+import org.ntnu.backend.game.model.PictureQuizOption;
+import org.ntnu.backend.game.model.PostOfficeOption;
+import org.ntnu.backend.game.model.PostOfficeQuestion;
 import org.ntnu.backend.game.model.Question;
 import org.ntnu.backend.game.model.Stop;
 import org.ntnu.backend.game.model.enums.LevelType;
@@ -91,7 +89,6 @@ public class GameSeeder implements CommandLineRunner {
         .forEach(name -> {
           List<Stop> duplicates = stopRepository.findAllByNameOrderByIdAsc(name);
           if (duplicates.size() <= 1) return;
-          // keep duplicates.get(0), delete the rest
           for (Stop dup : duplicates.subList(1, duplicates.size())) {
             log.info("GameSeeder: deleting duplicate stop '{}' id={}", name, dup.getId());
             deleteStop(dup);
@@ -152,7 +149,6 @@ public class GameSeeder implements CommandLineRunner {
 
   /** Deletes a level along with its note templates and questions. Templates are removed first due to a NOT NULL FK constraint. */
   private void deleteLevel(Level level) {
-    // Templates must go before the level itself (FK on level_id is NOT NULL).
     levelNoteTemplateRepository.deleteAll(levelNoteTemplateRepository
         .findAllByLevelIdOrderByIdAsc(level.getId()));
 
@@ -1144,8 +1140,8 @@ public class GameSeeder implements CommandLineRunner {
                 "Vanlig for nettbutikker",
                 "Seriøse butikker har alltid kontaktinfo. Du kan ringe dem hvis noe går galt."),
             new ClassifyItemsOption("payment", "Du kan bare betale med gavekort",
-                List.of("Vanlig betalingsmåte", "Rart! Du kan ikke klage etterpå", "Helt greit"),
-                "Rart! Du kan ikke klage etterpå",
+                List.of("Vanlig betalingsmåte", "Rart! Dette er uvanlig", "Helt greit"),
+                "Rart! Dette er uvanlig",
                 "Trygge nettbutikker lar deg betale med Vipps eller kort. Med gavekort får du aldri pengene tilbake hvis noe er galt.")
         )
     );

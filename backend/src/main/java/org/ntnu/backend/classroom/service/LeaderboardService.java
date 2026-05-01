@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import lombok.AllArgsConstructor;
 import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardClassroomResponse;
 import org.ntnu.backend.classroom.dto.leaderboard.LeaderboardStudentResponse;
 import org.ntnu.backend.classroom.dto.leaderboard.RankedClassroomResponse;
@@ -25,8 +25,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import lombok.AllArgsConstructor;
 
 /** Computes and returns leaderboard rankings for students and classrooms. */
 @Service

@@ -7,8 +7,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.ntnu.backend.classroom.dto.AddCensorWordRequest;
-import org.ntnu.backend.classroom.dto.CensorWordResponse;
+import org.ntnu.backend.classroom.dto.censor.AddCensorWordRequest;
+import org.ntnu.backend.classroom.dto.censor.CensorWordResponse;
 import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.ClassroomCensorWord;
 import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;

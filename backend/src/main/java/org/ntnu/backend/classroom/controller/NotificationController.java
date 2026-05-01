@@ -1,8 +1,11 @@
 package org.ntnu.backend.classroom.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.UUID;
-
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.NotificationResponse;
 import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
@@ -18,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * REST controller for teacher notification management.
  * All endpoints require the {@code TEACHER} role.
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/teacher/notifications")
 @PreAuthorize("hasRole('TEACHER')")
 @RequiredArgsConstructor
+@Tag(name = "Notifications", description = "Notification inbox for teachers")
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -40,6 +42,12 @@ public class NotificationController {
      * @return list of notification responses
      */
     @GetMapping
+    @Operation(
+        summary = "Get notifications",
+        description = "Returns all notifications for the teacher. "
+            + "Filter by classroomId to scope to a single classroom"
+    )
+    @ApiResponse(responseCode = "200", description = "List of notifications")
     public List<NotificationResponse> getNotifications(
             @RequestParam(required = false) UUID classroomId,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -58,6 +66,9 @@ public class NotificationController {
      * @throws org.springframework.web.server.ResponseStatusException if the notification is not found or not owned by the teacher
      */
     @PatchMapping("/{id}/read")
+    @Operation(summary = "Mark a notification as read")
+    @ApiResponse(responseCode = "200", description = "Notification marked as read")
+    @ApiResponse(responseCode = "404", description = "Notification not found")
     public NotificationResponse markAsRead(
             @PathVariable UUID id,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
@@ -73,6 +84,9 @@ public class NotificationController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete a notification")
+    @ApiResponse(responseCode = "204", description = "Notification deleted")
+    @ApiResponse(responseCode = "404", description = "Notification not found")
     public void deleteNotification(
             @PathVariable UUID id,
             @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {

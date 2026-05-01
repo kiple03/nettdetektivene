@@ -2,7 +2,6 @@ package org.ntnu.backend.game.util;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.exception.InvalidOptionFormatException;
 import org.ntnu.backend.exception.OptionValidationException;

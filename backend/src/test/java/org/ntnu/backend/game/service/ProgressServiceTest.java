@@ -371,10 +371,6 @@ class ProgressServiceTest {
 
     private StopLevelCount stopLevelCount(int stopId, int displayOrder, long levelCount) {
         return new StopLevelCount() {
-            @Override
-            public int getStopId() {
-                return stopId;
-            }
 
             @Override
             public int getDisplayOrder() {

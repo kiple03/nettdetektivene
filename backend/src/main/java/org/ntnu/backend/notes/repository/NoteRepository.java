@@ -2,7 +2,6 @@ package org.ntnu.backend.notes.repository;
 
 import java.util.List;
 import java.util.UUID;
-
 import org.ntnu.backend.notes.model.Note;
 import org.ntnu.backend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,5 +31,5 @@ public interface NoteRepository extends JpaRepository<Note, UUID> {
      * @param id the id of the note to delete
      * @param user the owner of the note
      */
-    void deleteByIdAndUser(UUID id, User user); // so users can't delete each other's notes
+    void deleteByIdAndUser(UUID id, User user);
 }

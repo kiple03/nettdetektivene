@@ -1,7 +1,6 @@
 package org.ntnu.backend.classroom.mapper;
 
 import java.util.List;
-
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;

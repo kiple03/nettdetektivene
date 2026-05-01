@@ -5,18 +5,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.avatar.dto.EquippedItemDto;
 import org.ntnu.backend.avatar.dto.UpdateUserProfileRequest;
 import org.ntnu.backend.avatar.dto.UserProfileResponse;
-import org.ntnu.backend.security.JwtService;
-import org.ntnu.backend.security.UserPrincipal;
 import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.model.UserInventoryItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.ntnu.backend.avatar.repository.UserInventoryItemRepository;
 import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
+import org.ntnu.backend.security.JwtService;
+import org.ntnu.backend.security.UserPrincipal;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
 import org.ntnu.backend.user.service.ProfanityFilterService;
@@ -24,8 +24,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * Service class for the logic of avatars. It actively talks to the database using the 
@@ -81,16 +79,13 @@ public class UserAvatarService {
      */
     @Transactional
     public void updateEquippedItems(UUID userId, List<UUID> itemIdsToEquip){
-        // Get all items in users inventory
         List<UserInventoryItem> inventory = inventoryRepository.findByUserId(userId);
 
         for(UserInventoryItem item : inventory){
             UUID id = item.getAvatarItem().getId();
-            // If item ID found in users list, equip it!
             boolean shouldBeEquipped = itemIdsToEquip != null && itemIdsToEquip.contains(id);
             item.setEquipped(shouldBeEquipped);
         }
-        // save updated inventory to database
         inventoryRepository.saveAll(inventory);
     }
 
