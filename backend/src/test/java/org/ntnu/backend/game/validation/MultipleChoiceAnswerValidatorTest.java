@@ -64,7 +64,7 @@ class MultipleChoiceAnswerValidatorTest {
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).isEqualTo("This was wrong");
         assertThat(result.correctOptionIds()).containsExactly("1");
-        assertThat(result.wrongSelectedOptionIds()).isEmpty();
+        assertThat(result.wrongSelectedOptionIds()).containsExactly("2");
     }
 
     @Test

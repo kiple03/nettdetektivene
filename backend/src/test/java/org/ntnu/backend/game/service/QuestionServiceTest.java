@@ -53,12 +53,12 @@ class QuestionServiceTest {
   private Question testQuestion;
 
   private static final String VALID_OPTIONS_JSON = """
-        [
-          {"id": 1, "text": "Wrong answer", "imageUrl": "/images/1", "isCorrect": false, "explanation": "This is wrong"},
-          {"id": 2, "text": "Right answer", "imageUrl": "/images/2", "isCorrect": true, "explanation": "This is correct"},
-          {"id": 3, "text": "Also wrong", "imageUrl": "/images/3", "isCorrect": false, "explanation": "This is also wrong"}
-        ]
-        """;
+    [
+      {"id": 1, "text": "Wrong answer", "imageUrl": "/images/1", "responseImageUrl": "/images/response/1", "isCorrect": false, "explanation": "This is wrong"},
+      {"id": 2, "text": "Right answer", "imageUrl": "/images/2", "responseImageUrl": "/images/response/2", "isCorrect": true, "explanation": "This is correct"},
+      {"id": 3, "text": "Also wrong", "imageUrl": "/images/3", "responseImageUrl": "/images/response/3", "isCorrect": false, "explanation": "This is also wrong"}
+    ]
+    """;
   private static final UUID TEST_USER_ID = UUID.randomUUID();
   private static final RoleEnum TEST_STUDENT = RoleEnum.STUDENT;
   private static final RoleEnum TEST_TEACHER = RoleEnum.TEACHER;
