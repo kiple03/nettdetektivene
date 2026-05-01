@@ -15,6 +15,7 @@ import '@/components/game/ui_game/game.css';
 import './TeacherLevelPreviewPage.css';
 import { useBackTo } from '@/hooks/teacher/useBackTo';
 
+/** Converts a TeacherQuestion from the API into the editor draft format. */
 function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     switch (q.levelType) {
         case 'CLASSIFY_ITEMS': {
@@ -49,6 +50,7 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
     }
 }
 
+/** Maps stop names (Norwegian) to their corresponding station type constants. */
 const STOP_TO_TYPE: Record<string, StationType> = {
     "Nyhetskvartalet": STATION_TYPE.NEWS,
     "Fotografen": STATION_TYPE.PHOTO,
@@ -57,6 +59,7 @@ const STOP_TO_TYPE: Record<string, StationType> = {
     "Markedsplassen": STATION_TYPE.MARKETPLACE,
 };
 
+/** Adapts a TeacherQuestion and its type into the StationData shape expected by the station renderers. */
 function mapToStation(q: TeacherQuestion, stationType: StationType): StationData {
     if (q.levelType === 'CLASSIFY_ITEMS') {
         const ciOptions = q.options as TeacherClassifyItemsOption[];
@@ -108,6 +111,10 @@ function mapToStation(q: TeacherQuestion, stationType: StationType): StationData
     };
 }
 
+/**
+ * Lets a teacher step through and preview level questions as a student would see them,
+ * with an inline edit button for non-default questions.
+ */
 export default function TeacherLevelPreviewPage() {
     const { classroomId = '', levelId: levelIdStr = '' } = useParams<{ classroomId: string; levelId: string }>();
     const levelId = parseInt(levelIdStr, 10);

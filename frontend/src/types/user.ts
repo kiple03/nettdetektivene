@@ -13,20 +13,24 @@ export interface RegisterRequest {
   role: Role;
 }
 
+/** Returned by the backend on successful authentication. */
 export interface AuthResponse {
   accessToken: string;
 }
 
+/** Shape of the error body returned by API validation errors. */
 export interface ApiErrorBody {
   field?: string;
   message?: string;
 }
 
+/** An avatar item the user currently has equipped. */
 export interface EquippedItem {
   id: string;
   name: string;
   category: string;
   imageUrl: string;
+  /** True when the item is locked and cannot be unequipped. */
   locked?: boolean;
 }
 
