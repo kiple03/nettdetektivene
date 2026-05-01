@@ -349,6 +349,11 @@ export async function deleteCensorWord(classroomId: string, wordId: string): Pro
   await apiClient.delete(`/teacher/classrooms/${classroomId}/censor-words/${wordId}`);
 }
 
+/** Deletes a student's note from their notebook (teacher action). */
+export async function deleteStudentNote(classroomId: string, studentId: string, noteId: string): Promise<void> {
+  await apiClient.delete(`/teacher/classrooms/${classroomId}/students/${studentId}/notebook/${noteId}`);
+}
+
 /** Returns all questions for a level, including classroom-specific overrides. */
 export async function listLevelQuestions(classroomId: string, levelId: number): Promise<TeacherQuestion[]> {
   const res = await apiClient.get<TeacherQuestion[]>(`/teacher/classrooms/${classroomId}/levels/${levelId}/questions`);
