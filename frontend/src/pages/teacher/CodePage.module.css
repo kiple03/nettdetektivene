@@ -57,7 +57,7 @@
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: 8px;
-    color: rgba(255, 255, 255, 0.45);
+    color: rgba(255, 255, 255, 0.85);
     font-family: sans-serif;
     font-size: 11px;
     font-weight: 800;
@@ -71,6 +71,11 @@
 .backLink:hover {
     background: rgba(255, 255, 255, 0.16);
     color: rgba(255, 255, 255, 0.85);
+}
+
+.backLink:focus-visible {
+    outline: 2px solid rgba(229, 242, 217, 0.9);
+    outline-offset: 2px;
 }
 
 /* ── Dashboard button (below board) ─────────────────────────── */
@@ -94,6 +99,11 @@
 .dashboardLink:hover {
     background: rgba(251, 191, 36, 0.32);
     color: #fbbf24;
+}
+
+.dashboardLink:focus-visible {
+    outline: 2px solid rgba(251, 191, 36, 0.9);
+    outline-offset: 2px;
 }
 
 /* ── Centered wrapper ────────────────────────────────────────── */

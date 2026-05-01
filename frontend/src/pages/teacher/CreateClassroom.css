@@ -47,6 +47,11 @@
   background: rgba(255, 255, 255, 0.06);
 }
 
+.create-classroom__back:focus-visible {
+  outline: 2px solid rgba(229, 242, 217, 0.9);
+  outline-offset: 2px;
+}
+
 .create-classroom__title {
   font-size: 36px;
   font-weight: 700;
@@ -86,7 +91,7 @@
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
-  color: rgba(229, 242, 217, 0.35);
+  color: rgba(229, 242, 217, 0.65);
 }
 
 .create-classroom__input,
@@ -114,9 +119,9 @@
 
 .create-classroom__input:focus,
 .create-classroom__textarea:focus {
-  border-color: rgba(229, 242, 217, 0.45);
+  border-color: rgba(229, 242, 217, 0.7);
   background: rgba(255, 255, 255, 0.11);
-  box-shadow: 0 0 0 3px rgba(229, 242, 217, 0.07);
+  box-shadow: 0 0 0 3px rgba(229, 242, 217, 0.55);
 }
 
 .create-classroom__submit {
@@ -148,6 +153,11 @@
 
 .create-classroom__submit:active {
   transform: translateY(0);
+}
+
+.create-classroom__submit:focus-visible {
+  outline: 2px solid rgba(229, 242, 217, 0.9);
+  outline-offset: 2px;
 }
 
 .create-classroom__submit:disabled {

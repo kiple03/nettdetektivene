@@ -21,7 +21,7 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(229, 242, 217, 0.5);
+    color: rgba(229, 242, 217, 0.85);
     text-decoration: none;
     padding: 6px 12px 6px 8px;
     border-radius: 8px;
@@ -32,6 +32,11 @@
 .level-questions__back:hover {
     color: rgba(229, 242, 217, 0.9);
     background: rgba(255, 255, 255, 0.06);
+}
+
+.level-questions__back:focus-visible {
+    outline: 2px solid rgba(229, 242, 217, 0.9);
+    outline-offset: 2px;
 }
 
 /* HEADER */
@@ -72,7 +77,7 @@
     font-family: sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: rgba(229, 242, 217, 0.55);
+    color: rgba(229, 242, 217, 0.85);
 }
 
 /* CORKBOARD */
@@ -148,6 +153,11 @@
     cursor: not-allowed;
 }
 
+.level-questions__preview-btn:focus-visible {
+    outline: 2px solid #2c1a06;
+    outline-offset: 2px;
+}
+
 .level-questions__add-btn {
     font-family: sans-serif;
     font-size: 13px;
@@ -169,6 +179,11 @@
 .level-questions__add-btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+}
+
+.level-questions__add-btn:focus-visible {
+    outline: 2px solid #2c1a06;
+    outline-offset: 2px;
 }
 
 .level-questions__empty {
@@ -325,6 +340,12 @@
 
 .level-questions__delete-btn:hover {
     background: rgba(180, 40, 40, 0.16);
+}
+
+.level-questions__edit-btn:focus-visible,
+.level-questions__delete-btn:focus-visible {
+    outline: 2px solid #2c1a06;
+    outline-offset: 2px;
 }
 
 /* DELETE CONFIRMATION MODAL */
