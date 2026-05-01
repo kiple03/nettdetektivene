@@ -72,6 +72,15 @@ function TeacherLoginPage() {
     }
   };
 
+  const handleCloseRegister = () => {
+    setShowRegister(false);
+    setRegEmail('');
+    setRegPassword('');
+    setRegConfirm('');
+    setRegError('');
+    setRegFieldErrors({});
+  };
+
   return (
     <div className="teacher-login" style={{ backgroundImage: `url(${chalkboardBg})` }}>
       <Link to="/" className="student-link">
@@ -106,7 +115,6 @@ function TeacherLoginPage() {
           title="Opprett lærerkonto"
           subtitle="Registrer deg for å administrere klasserom og elever."
           submitLabel="Opprett lærerkonto"
-          onClose={() => setShowRegister(false)}
           onSubmit={handleRegister}
           error={regError}
           fieldErrors={regFieldErrors}
@@ -144,6 +152,7 @@ function TeacherLoginPage() {
           onConfirmBlur={() => {
             setRegFieldErrors((current) => ({ ...current, confirm: validatePasswordConfirm(regPassword, regConfirm) }));
           }}
+          onClose={handleCloseRegister}
         />
     </div>
   );

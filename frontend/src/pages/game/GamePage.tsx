@@ -275,6 +275,17 @@ export default function GamePage() {
 
     return (
         <div ref={cheatRootRef}>
+              {!dialogOpen && (
+                <QuitButton
+                stopId={stopId}
+                style={{
+                    position: "absolute",
+                    top: "1rem",
+                    left: "1rem",
+                    zIndex: 50,
+                }}
+                />
+            )}
             <StationContainer
                 key={currentQuestion.id}
                 title={level.stopName}
@@ -290,18 +301,6 @@ export default function GamePage() {
                     isTearing={isTearing}
                 />
             </StationContainer>
-
-            {!dialogOpen && (
-                <QuitButton
-                    stopId={stopId}
-                    style={{
-                        position: "absolute",
-                        top: "1rem",
-                        left: "1rem",
-                        zIndex: 50,
-                    }}
-                />
-            )}
 
             <NotesButton onClick={() => setNotesOpen(true)} />
             {notesOpen && <NotebookOverlay onClose={() => setNotesOpen(false)} initialTab={STATION_TO_TAB[stationType]} />}

@@ -10,6 +10,7 @@ import corkBoard from '@/assets/images/studentHomeBoard/cork_board.png';
 import detectiveRoom from '@/assets/detective_room_interior.png';
 import { Trophy } from 'lucide-react';
 import { getClassroomId } from '@/stores/authStore';
+import ProfileIconButton from '@/components/student/ProfileIconButton';
 
 const PAGE_SIZE = 10;
 
@@ -29,6 +30,8 @@ export default function LeaderboardPage() {
     return (
         <div className={styles.page} style={{ backgroundImage: `url(${detectiveRoom})` }}>
             <BackButton className={styles.backBtn} ariaLabel="Gå tilbake" />
+            <ProfileIconButton />
+            
             <div className={styles.board} style={{ backgroundImage: `url(${corkBoard})` }}>
                 <div className={styles.note}>
                     <div className={styles.tape} />

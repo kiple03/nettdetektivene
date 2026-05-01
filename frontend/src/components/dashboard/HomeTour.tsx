@@ -75,6 +75,8 @@ function HomeTour({ steps, onExit }: HomeTourProps) {
   })();
 
   return (
+    <>
+    {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
     <div
       ref={overlayRef}
       className={styles.overlay}
@@ -99,11 +101,12 @@ function HomeTour({ steps, onExit }: HomeTourProps) {
       {rect && (
         <div className={styles.tooltip} style={tooltipStyle}>
           <button
+            type="button"
             className={styles.btnClose}
             onClick={onExit}
             aria-label="Avslutt omvisning"
           >
-            ×
+            <span aria-hidden="true">×</span>
           </button>
           <span className={styles.stepCounter}>{index + 1} / {steps.length}</span>
           <h2 className={styles.title}>{step.title}</h2>
@@ -113,12 +116,14 @@ function HomeTour({ steps, onExit }: HomeTourProps) {
               className={styles.btnSecondary}
               onClick={handlePrev}
               disabled={isFirst}
+              type="button"
             >
               Forrige
             </button>
             <button
               className={styles.btnPrimary}
               onClick={handleNext}
+              type="button"
             >
               {isLast ? 'Ferdig' : 'Neste'}
             </button>
@@ -126,6 +131,7 @@ function HomeTour({ steps, onExit }: HomeTourProps) {
         </div>
       )}
     </div>
+    </>
   );
 }
 

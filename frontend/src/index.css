@@ -116,6 +116,16 @@ a {
   text-decoration: none;
 }
 
-html {
-  font-size: clamp(87.5%, 0.5vw + 0.75rem, 112.5%);
+.btn-unstyled {
+  all: unset;
+  display: block;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-unstyled-inline {
+  all: unset;
+  display: inline;
+  cursor: pointer;
 }

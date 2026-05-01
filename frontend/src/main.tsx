@@ -23,10 +23,10 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={queryClient}>
       <AuthSessionRefresher />
       <MedalionWatcher />
-      <BackgroundMusic />
       <Suspense fallback={<div style={{ minHeight: '100vh', background: '#121f0f' }} />}>
         <RouterProvider router={router} />
       </Suspense>
+      <BackgroundMusic />
     </QueryClientProvider>
   </StrictMode>,
 )
