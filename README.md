@@ -53,15 +53,15 @@ Nettdetektivene is a gamified web application that teaches children (3rd–7th g
 | ------------ | ------------------------------------------ | ------- |
 | **Frontend** | React                                      | 19.x    |
 |              | TypeScript                                 | 5.x     |
-|              | Node.js                                    | 18+     |
-| **Backend**  | Java                                       | 21+     |
-|              | Spring Boot                                | 3.x     |
+|              | Node.js                                    | 24+     |
+| **Backend**  | Java                                       | 25      |
+|              | Spring Boot                                | 4.x     |
 |              | Spring Security                            | 6.x     |
 |              | JPA / Hibernate                            | Latest  |
 | **Database** | MySQL                                      | 8.x     |
 | **Storage**  | AWS S3 (image uploads)                     | —       |
 | **Auth**     | JWT access token + HttpOnly refresh cookie | —       |
-| **Build**    | Maven                                      | 3.8+    |
+| **Build**    | Maven                                      | 3.9+    |
 | **CI**       | GitHub Actions                             | —       |
 | **API Docs** | Swagger / OpenAPI                          | 3.0     |
 | **Testing**  | JUnit 5 (backend), Vitest (frontend)       | Latest  |
@@ -70,12 +70,10 @@ Nettdetektivene is a gamified web application that teaches children (3rd–7th g
 
 ## Prerequisites
 
-- **Java 25+** and **Maven 4.0+**
-- **Node.js 18+** and **npm**
+- **Java 25** and **Maven 3.9+**
+- **Node.js 24+** and **npm**
 - **MySQL 8+** running locally or via Docker
 - **Git**
-
-> TODO: update the table and the prerequisites if they are wrong
 
 ---
 
