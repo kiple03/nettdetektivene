@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Ban } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { LayeredAvatar } from '@/components/miscellaneous/LayeredAvatar';
 import type { StudentSummary } from '@/types/classroom.ts';
@@ -153,9 +153,10 @@ export function ClassroomDetailStudentCard({
                                             <button
                                                 className="classroom-detail__icon-btn classroom-detail__icon-btn--danger"
                                                 aria-label="Fjern elev fra klasserom"
+                                                title="Fjern bruker"
                                                 onClick={() => onConfirmRemoveChange(userId)}
                                             >
-                                                <Trash2 size={18} strokeWidth={2.2} aria-hidden="true" />
+                                                <Ban size={18} strokeWidth={2.2} aria-hidden="true" />
                                             </button>
                                         </>
                                     ) : null}
