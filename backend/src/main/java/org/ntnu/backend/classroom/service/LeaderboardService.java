@@ -1,5 +1,6 @@
 package org.ntnu.backend.classroom.service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import org.ntnu.backend.classroom.model.Classroom;
 import org.ntnu.backend.classroom.model.Enrollment;
 import org.ntnu.backend.classroom.repository.ClassroomTeacherRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
+import org.ntnu.backend.exception.ApiException;
 import org.ntnu.backend.game.model.UserProgress;
 import org.ntnu.backend.game.repository.StopLevelCount;
 import org.ntnu.backend.game.repository.StopRepository;
@@ -24,6 +26,7 @@ import org.ntnu.backend.game.repository.UserProgressRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
@@ -66,7 +69,11 @@ public class LeaderboardService {
    * @param teacherId the teacher whose classrooms are fetched
    * @return list of classroom leaderboard entries
    */
-  public List<LeaderboardClassroomResponse> getTeacherClassroomScores(UUID teacherId) {
+  public List<LeaderboardClassroomResponse> getTeacherClassroomScores(UUID teacherId, UUID principalUserId) {
+    if (!principalUserId.equals(teacherId)) {
+      throw new ApiException(HttpStatus.FORBIDDEN, "You cannot access another teachers classroom") {
+      };
+    }
     List<UUID> classroomIds = classroomTeacherRepository.findClassroomsByTeacherId(teacherId)
         .stream().map(Classroom::getId).toList();
 
