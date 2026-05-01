@@ -8,7 +8,6 @@ import {
     getStudentNotebook,
     getCoTeachers,
     getStops,
-    getNotifications,
     getClassroomLeaderboard,
     getCensorWords,
     listLevelQuestions,
@@ -77,13 +76,6 @@ export function useStops() {
     return useQuery({
         queryKey: teacherKeys.stops,
         queryFn: getStops,
-    });
-}
-
-export function useNotifications() {
-    return useQuery({
-        queryKey: teacherKeys.notifications,
-        queryFn: getNotifications,
     });
 }
 
