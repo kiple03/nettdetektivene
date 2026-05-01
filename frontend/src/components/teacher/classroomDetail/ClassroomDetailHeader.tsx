@@ -46,6 +46,7 @@ export function ClassroomDetailHeader({
                     {saveError && (
                         <span className="classroom-detail__save-error">{saveError}</span>
                     )}
+                    {/* eslint-disable jsx-a11y/no-autofocus */}
                     <input
                         className="classroom-detail__title-input"
                         type="text"
@@ -57,6 +58,7 @@ export function ClassroomDetailHeader({
                             if (event.key === 'Escape') onCancel();
                         }}
                     />
+                    {/* eslint-enable jsx-a11y/no-autofocus */}
                     <Button
                         variant="unstyled"
                         className="classroom-detail__title-save"

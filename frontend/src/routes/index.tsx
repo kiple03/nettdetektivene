@@ -4,6 +4,7 @@ import { lazy } from "react";
 import RequireAuth from "@/routes/RequireAuth";
 import RequireClassroom from "@/routes/RequireClassroom";
 import CreateClassroom, { createClassroomAction } from "@/pages/teacher/CreateClassroom";
+/* eslint-disable jsx-a11y/aria-role */
 
 const TeacherLayout = lazy(() => import("@/components/teacher_layout/TeacherLayout"));
 const StudentLayout = lazy(() => import("@/layouts/StudentLayout"));

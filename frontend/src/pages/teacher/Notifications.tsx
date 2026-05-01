@@ -155,64 +155,65 @@ export default function Notifications() {
                     const noteTint = notification.read ? '#f8f0dc' : NOTE_TINTS[notification.type];
 
                     return (
-                        <li
-                          key={notification.id}
-                          className={`notifs__item${notification.read ? ' notifs__item--read' : ' notifs__item--unread'}`}
-                          style={{ background: noteTint }}
-                        >
-                          <button
-                              type="button"
-                              className="notifs__main-button"
-                              onClick={() => handleNotificationClick(notification)}
-                          >
-                            <div
-                                className="notifs__pin"
-                                aria-hidden="true"
-                                style={{ background: `radial-gradient(circle at 38% 32%, color-mix(in srgb, ${pinColor} 60%, white), ${pinColor} 55%, color-mix(in srgb, ${pinColor} 70%, black) 100%)` }}
-                            />
-                            <span className="notifs__icon" aria-hidden="true">
-      {TYPE_ICONS[notification.type]}
-    </span>
-                            <div className="notifs__body">
-                              <div className="notifs__meta">
-                                <span className="notifs__type">{TYPE_LABELS[notification.type]}</span>
-                                {classroom && <span className="notifs__classroom">{classroom.title}</span>}
-                                <time className="notifs__date" dateTime={notification.createdAt}>
-                                  {new Date(notification.createdAt).toLocaleTimeString('nb-NO', {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                  })}
-                                </time>
-                              </div>
-                              <p className="notifs__message">{notification.message}</p>
-                            </div>
-                          </button>
-
-                          <div className="notifs__actions">
-                            {!notification.read && (
-                                <button
-                                    type="button"
-                                    className="notifs__action-btn"
-                                    aria-label="Merk som lest"
-                                    onClick={() => {
-                                      if (!markAsReadMutation.isPending) {
-                                        markAsReadMutation.mutate(notification.id);
-                                      }
-                                    }}
-                                >
-                                  <Check size={16} />
-                                </button>
-                            )}
-                            <button
-                                type="button"
-                                className="notifs__action-btn notifs__action-btn--delete"
-                                aria-label="Slett varsel"
-                                onClick={() => handleDelete(notification.id)}
-                            >
-                              <Trash2 size={16} />
-                            </button>
+                      <li key={notification.id}>
+                      <button
+                        type="button"
+                        className={`notifs__item btn-unstyled ${notification.read ? 'notifs__item--read' : 'notifs__item--unread'}`}
+                        style={{ background: noteTint }}
+                        onClick={() => handleNotificationClick(notification)}
+                      >
+                        <div
+                          className="notifs__pin"
+                          aria-hidden="true"
+                          style={{ background: `radial-gradient(circle at 38% 32%, color-mix(in srgb, ${pinColor} 60%, white), ${pinColor} 55%, color-mix(in srgb, ${pinColor} 70%, black) 100%)` }}
+                        />
+                        <span className="notifs__icon" aria-hidden="true">
+                          {TYPE_ICONS[notification.type]}
+                        </span>
+                        <div className="notifs__body">
+                          <div className="notifs__meta">
+                            <span className="notifs__type">{TYPE_LABELS[notification.type]}</span>
+                            {classroom && <span className="notifs__classroom">{classroom.title}</span>}
+                            <time className="notifs__date" dateTime={notification.createdAt}>
+                              {new Date(notification.createdAt).toLocaleTimeString('nb-NO', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </time>
                           </div>
-                        </li>
+                          <p className="notifs__message">{notification.message}</p>
+                        </div>
+
+                        <div className="notifs__actions">
+                          {!notification.read && (
+                            <button
+                              type="button"
+                              className="notifs__action-btn"
+                              aria-label="Merk som lest"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!markAsReadMutation.isPending) {
+                                  markAsReadMutation.mutate(notification.id);
+                                }
+                              }}
+                            >
+                              <Check size={16} aria-hidden="true" />
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className="notifs__action-btn notifs__action-btn--delete"
+                            aria-label="Slett varsel"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(notification.id);
+                            }}
+                          >
+                            <Trash2 size={16} aria-hidden="true" />
+                          </button>
+                        </div>
+                      </button>
+                    </li>
                     );
                   })}
                 </ul>

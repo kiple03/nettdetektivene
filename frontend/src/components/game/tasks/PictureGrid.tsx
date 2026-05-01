@@ -94,9 +94,6 @@ export default function PictureGrid({
     const gridSizeClass =
         options.length <= 2 ? styles.gridTwoOptions : styles.gridFourOptions;
 
-  console.log("responseImages", responseImages);
-  console.log("options", options);
-
     return (
         <div className={styles.wrapper}>
             <div className={`${styles.grid} ${gridSizeClass} ${gridClassName}`}>
