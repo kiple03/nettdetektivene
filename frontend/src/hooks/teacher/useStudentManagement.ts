@@ -3,6 +3,10 @@ import { useStops, useStudentProgress } from './useTeacherQueries';
 import { useRemoveStudent, useUpdateStudentUsername } from './useTeacherMutations';
 import type { StudentSummary } from '@/types/classroom';
 
+/**
+ * Manages student list display, username editing, and student removal for a classroom.
+ * @param classroomId - The classroom to manage students for.
+ */
 export function useStudentManagement(classroomId: string) {
     const studentsQuery = useStudentProgress(classroomId);
     const stopsQuery = useStops();
@@ -31,10 +35,12 @@ export function useStudentManagement(classroomId: string) {
         [studentList],
     );
 
+    /** Returns the 1-based rank of a student, defaulting to last place if not found. */
     function getLeaderboardRank(userId: string) {
         return leaderboard.find((e) => e.userId === userId)?.rank ?? studentList.length;
     }
 
+    /** Opens the username edit form pre-filled with the student's current username. */
     function startEditUsername(student: Pick<StudentSummary, 'userId' | 'username'>) {
         setEditingStudentId(student.userId);
         setEditUsernameValue(student.username);
@@ -46,6 +52,7 @@ export function useStudentManagement(classroomId: string) {
         setUsernameError(null);
     }
 
+    /** Validates and persists the edited username; sets `usernameError` on failure. */
     async function saveUsername(student: Pick<StudentSummary, 'userId'>) {
         const trimmed = editUsernameValue.trim();
         if (trimmed.length < 3) {

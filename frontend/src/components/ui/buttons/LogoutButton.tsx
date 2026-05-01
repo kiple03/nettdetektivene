@@ -10,6 +10,10 @@ import {
 import { Button } from '@/components/ui/buttons/Button.tsx';
 import styles from './LogoutButton.module.css';
 
+/**
+ * Button that logs the user out and redirects to the home page.
+ * @param className - Optional extra CSS class.
+ */
 function LogoutButton({ className }: { className?: string }) {
     const { logout } = useAuth();
     const navigate = useNavigate();

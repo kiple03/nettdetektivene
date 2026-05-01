@@ -1,9 +1,12 @@
+/** A single step in the student onboarding tour. */
 export type TourStep = {
+  /** Display order of this step. */
   tourOrder: number;
   title: string;
   body: string;
 };
 
+/** Ordered tour steps shown to students on first visit. */
 export const studentTourSteps: TourStep[] = [
   {
     tourOrder: 1,
