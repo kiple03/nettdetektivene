@@ -46,6 +46,7 @@ const STOP_TO_TYPE: Record<string, StationType> = {
     "Den sosiale møteplassen": STATION_TYPE.SOCIAL,
 };
 
+/** Page for playing through a level's questions, submitting answers, and showing pass/fail results. */
 export default function GamePage() {
     const { levelId } = useParams<{ levelId: string }>();
     const navigate = useNavigate();

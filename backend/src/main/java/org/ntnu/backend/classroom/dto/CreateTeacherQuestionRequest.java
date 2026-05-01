@@ -3,6 +3,10 @@ package org.ntnu.backend.classroom.dto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+/**
+ * Polymorphic request interface for creating a teacher question.
+ * Deserialized based on the {@code levelType} field, which maps to a concrete subtype.
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "levelType", visible = true)
 @JsonSubTypes({
     @JsonSubTypes.Type(value = CreateMultipleChoiceQuestionRequest.class, name = "MULTIPLE_CHOICE"),
@@ -12,5 +16,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = CreateTextQuizQuestionRequest.class, name = "TEXT_QUIZ"),
 })
 public interface CreateTeacherQuestionRequest {
+    /** @return the question prompt shown to students */
     String questionText();
 }

@@ -7,6 +7,11 @@ import org.ntnu.backend.game.dto.subtypes.PasswordStrengthAnswer;
 import org.ntnu.backend.game.dto.subtypes.PerItemAnswer;
 import org.ntnu.backend.game.dto.subtypes.SingleChoiceAnswer;
 
+/**
+ * Polymorphic base DTO for submitting an answer to a quiz question.
+ * Deserialized via the {@code shape} discriminator field into one of the
+ * concrete subtypes: {@code SINGLE}, {@code MULTI}, {@code PER_ITEM}, or {@code PASSWORD}.
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "shape")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = SingleChoiceAnswer.class, name = "SINGLE"),

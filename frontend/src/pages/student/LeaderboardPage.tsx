@@ -11,6 +11,7 @@ import { getClassroomId } from '@/stores/authStore';
 
 const PAGE_SIZE = 10;
 
+/** Paginated global leaderboard showing classroom rankings. */
 export default function LeaderboardPage() {
     const [currentPage, setCurrentPage] = useState(0); // 0-indexed for Spring Boot
     const { data, isLoading } = useGlobalLeaderboard(currentPage);

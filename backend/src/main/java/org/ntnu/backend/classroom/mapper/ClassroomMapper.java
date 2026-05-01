@@ -15,16 +15,16 @@ import org.ntnu.backend.game.dto.progress.ProgressSummaryResponse;
 import org.springframework.stereotype.Component;
 
 /**
- * Mapper Component. It translates data between database models and DTO's.
+ * Translates between {@link Classroom}/{@link Enrollment} entities and their DTO representations.
  */
 @Component
 public class ClassroomMapper {
 
   /**
-   * Mapper method that takes raw ClassRoom object and converts them to 
-   * ClassroomResponse JSON objects for frontend.
-   * @param c classroom
-   * @return friendly classroom object for frontend
+   * Maps a {@link Classroom} entity to a {@link ClassroomResponse} DTO.
+   *
+   * @param c the classroom entity
+   * @return DTO suitable for API responses
    */
   public ClassroomResponse toResponse(Classroom c) {
     return ClassroomResponse.builder()
@@ -36,10 +36,11 @@ public class ClassroomMapper {
   }
 
   /**
-   * Mapper method that converts JSON payload into Classroom for database 
-   * @param request JSON payload
-   * @param joinCode code 
-   * @return friendly classroom object for database
+   * Creates a new {@link Classroom} entity from a creation request.
+   *
+   * @param request the incoming creation payload
+   * @param joinCode the generated join code to assign to the classroom
+   * @return a new, unpersisted {@link Classroom} entity
    */
   public Classroom toEntity(CreateClassroomRequest request, String joinCode) {
     return Classroom.builder()
@@ -50,9 +51,11 @@ public class ClassroomMapper {
   }
 
   /**
-   * Mapper method that updates database using classroom objects in database
-   * @param classroom instance
-   * @param request request
+   * Applies non-null fields from an update request onto an existing {@link Classroom} entity in place.
+   * Blank strings are normalised to {@code null} for the description field.
+   *
+   * @param classroom the entity to mutate
+   * @param request   the update payload; fields that are {@code null} are left unchanged
    */
   public void applyUpdates(Classroom classroom, UpdateClassroomRequest request) {
     if (request.getTitle() != null && !request.getTitle().isBlank()) {
@@ -65,13 +68,14 @@ public class ClassroomMapper {
   }
 
   /**
-   * Builds a classroom summary with computed progress statistics for the teacher dashboard.
+   * Builds a {@link ClassroomSummaryResponse} with computed progress statistics for the teacher dashboard.
    *
-   * @param classroom the classroom being summarized
-   * @param studentCount number of active enrollments
-   * @param totalLevelsInGame total levels across all stops (denominator for the percent)
-   * @param completedCount sum of totalLevelsCompleted across all active students
-   * @return the summary DTO with computed progress percentage
+   * @param classroom       the classroom being summarised
+   * @param studentCount    number of active enrollments
+   * @param totalStops      total number of stops in the game (denominator for progress percent)
+   * @param avgStopPosition average stop position reached across all active students
+   * @param avgScore        average score across all active students
+   * @return summary DTO with a computed {@code progressPercent}
    */
   public ClassroomSummaryResponse toSummary(
       Classroom classroom,
@@ -97,10 +101,16 @@ public class ClassroomMapper {
   }
 
   /**
-   * Maps an active enrollment plus the student's progress into a dashboard list row.
+   * Maps an active enrollment plus aggregated stats into a {@link StudentProgressResponse} for
+   * the classroom student-list view.
    *
-   * @param enrollment the active enrollment
-   * @param progress the student's progress summary, or {@code null} if missing
+   * @param enrollment    the active enrollment (carries user details)
+   * @param progress      the student's progress summary, or {@code null} if none exists yet
+   * @param score         the student's total score
+   * @param medalsEarned  number of medals the student has earned
+   * @param totalStops    total stops in the game (used for progress display)
+   * @param equippedItems the avatar items currently equipped by the student
+   * @return a {@link StudentProgressResponse} for the teacher dashboard row
    */
   public StudentProgressResponse toStudentProgress(
     Enrollment enrollment,
@@ -125,10 +135,12 @@ public class ClassroomMapper {
   }
 
   /**
-   * Maps an active enrollment plus the student's progress into the detailed view.
+   * Maps an enrollment and progress snapshot into a {@link StudentDetailResponse} for the
+   * per-student detail page.
    *
-   * @param enrollment the active enrollment
-   * @param progress the student's progress summary, or {@code null} if missing
+   * @param enrollment the active enrollment (carries user and enrolment date)
+   * @param progress   the student's progress summary, or {@code null} if the student has not started
+   * @return a {@link StudentDetailResponse}; progress-related fields are omitted when {@code progress} is {@code null}
    */
   public StudentDetailResponse toStudentDetail(
       Enrollment enrollment, ProgressSummaryResponse progress) {

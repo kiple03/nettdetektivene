@@ -37,6 +37,13 @@ public class JwtService {
   @Value("${jwt.access-expiration-ms}")
   private long expiration;
 
+  /**
+   * Parses and verifies the token signature, then returns its claims payload.
+   *
+   * @param token signed JWT string
+   * @return the verified claims
+   * @throws io.jsonwebtoken.JwtException if the token is invalid or expired
+   */
   private Claims getClaims(String token) {
     return Jwts.parser()
         .verifyWith(getSigningKey())
@@ -78,11 +85,19 @@ public class JwtService {
         .compact();
   }
 
+  /**
+   * Public entry point for token validation; delegates to {@link #getClaims}.
+   *
+   * @param token signed JWT string
+   * @return the verified claims
+   * @throws io.jsonwebtoken.JwtException if the token is invalid or expired
+   */
   public Claims parseAndValidate(String token) {
     return getClaims(token);
   }
 
 
+  /** Decodes the Base64 secret from config and returns a HMAC-SHA signing key. */
   private SecretKey getSigningKey() {
     return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
   }

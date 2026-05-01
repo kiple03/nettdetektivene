@@ -1,6 +1,7 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { isLoggedIn as tokenIsValid, isSessionEnded, setToken } from '@/stores/authStore';
 
+/** Pre-configured Axios instance with base URL, JSON headers, and cookie credentials. */
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api',
   headers: { 'Content-Type': 'application/json' },
@@ -23,15 +24,21 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+/** Axios request config extended with a retry flag to prevent infinite refresh loops. */
 type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
 let refreshInFlight: Promise<string | null> | null = null;
 let _isRefreshing = false;
 
+/** Returns true while a token refresh HTTP call is in progress. */
 export function isRefreshInFlight(): boolean {
   return _isRefreshing;
 }
 
+/**
+ * Calls the refresh endpoint and updates the stored token.
+ * @returns The new access token, or `null` if the refresh failed.
+ */
 async function performRefresh(): Promise<string | null> {
   _isRefreshing = true;
   window.dispatchEvent(new Event('auth-refreshing'));

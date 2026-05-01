@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 import styles from './MedalionToast.module.css';
 
+/** Props for the MedalionToast component. */
 type MedalionToastProp = {
     name: string,
     description: string,
     imageUrl: string,
+    /** Milliseconds before the toast begins its exit animation. Defaults to 7000. */
     duration?: number,
+    /** Called after the exit animation completes. */
     onDone?: () => void;
 };
 
+/**
+ * Displays a temporary toast notification when a medalion (achievement) is unlocked.
+ * Auto-dismisses after `duration` ms and calls `onDone` when the exit animation ends.
+ */
 function MedalionToast({name, description, imageUrl, duration=7000, onDone}: MedalionToastProp){
     const [leaving, setLeaving] = useState(false);
 

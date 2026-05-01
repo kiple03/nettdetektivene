@@ -30,7 +30,10 @@ import org.ntnu.backend.exception.ErrorResponse;
 @Target(ElementType.METHOD)
 @Repeatable(ApiErrorResponses.class)
 public @interface ApiErrorResponse {
+  /** HTTP status code string, e.g. {@code "404"}. */
   String responseCode();
+
+  /** Human-readable description shown in the Swagger UI for this error case. */
   String description();
 }
 

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import type { ClassroomSummary } from '@/types/classroom.ts';
 import { ClassroomSummaryCard } from './ClassroomSummaryCard';
 
+/** Props for {@link MyClassroomsBoard}. */
 type MyClassroomsBoardProps = {
     summaries: ClassroomSummary[];
     view: 'grid' | 'list';
@@ -14,6 +15,7 @@ type MyClassroomsBoardProps = {
 
 const CARD_ACCENT_COLORS = ['#7b5a3a', '#3f6f8a', '#b5623b', '#8a7335', '#6a4f3b', '#4b7a5b'];
 
+/** Corkboard displaying the teacher's classrooms with grid/list toggle and a "create new" shortcut. */
 export function MyClassroomsBoard({
     summaries,
     view,

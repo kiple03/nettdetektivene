@@ -6,12 +6,14 @@ import detectiveRoom from "@/assets/detective_room_interior.png";
 import { ALL_MEDALS, getMedalImageUrl } from "@/data/allMedals";
 import { useEffect, useState } from "react";
 
+/** Displays all medals with earned/locked state and highlights newly acquired ones. */
 function MedalionPage() {
     const { data: medalions, isLoading } = useMedalions();
 
     const earnedNames = new Set(medalions?.map((m) => m.name) ?? []);
 
     const [newMedalionNames, setNewMedalionNames] = useState<Set<string>>(new Set());
+    /** Compares earned medals against localStorage to find ones the user hasn't seen yet. */
     useEffect(() => {
         if(!medalions || isLoading) return;
 

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+/** REST controller for teacher image upload and retrieval. */
 @RestController
 public class ImageController {
 
@@ -24,6 +25,14 @@ public class ImageController {
         this.imageService = imageService;
     }
 
+    /**
+     * Uploads an image file for the authenticated teacher.
+     *
+     * @param file the multipart image file to upload
+     * @param principal the authenticated teacher
+     * @return the uploaded image metadata
+     * @throws IOException if the file cannot be read
+     */
     @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<TeacherImageResponse> uploadImage(
@@ -32,6 +41,12 @@ public class ImageController {
         return ResponseEntity.ok(imageService.uploadImage(file, principal.getUserId()));
     }
 
+    /**
+     * Returns all images uploaded by the authenticated teacher.
+     *
+     * @param principal the authenticated teacher
+     * @return list of image metadata belonging to the teacher
+     */
     @GetMapping("/teacher/images")
     @PreAuthorize("hasRole('TEACHER')")
     public List<TeacherImageResponse> listMyImages(

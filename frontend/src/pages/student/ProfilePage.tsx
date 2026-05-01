@@ -21,6 +21,7 @@ import markedsplassen from "@/assets/stops/markedIcon.png";
 import moteplassen from "@/assets/stops/sosialIcon.png";
 import datasenteret from "@/assets/stops/dataIcon.png";
 
+/** Maps stop names to their icon image assets. */
 const STOP_ICONS: Record<string, string> = {
   "Nyhetskvartalet": nyhetskvartalet,
   "Fotografen": fotografen,
@@ -31,6 +32,7 @@ const STOP_ICONS: Record<string, string> = {
   "Datasenteret": datasenteret,
 };
 
+/** Student profile page showing avatar, classroom membership, and current game progress. */
 function ProfilePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();

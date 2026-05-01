@@ -14,7 +14,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Model class for a individual avatar item. It stores its unlocked condition and category it belongs to.
+ * A wearable cosmetic item that can be equipped on a student's avatar.
+ * Items are grouped by category (e.g. hair, shirt) and may require a specific
+ * unlock condition before a student can equip them.
  */
 @Entity
 @Table(name = "avatar_item")
@@ -32,12 +34,15 @@ public class AvatarItem {
     @Column(length = 100, nullable = false)
     private String name;
 
+    /** Grouping slot this item occupies on the avatar (e.g. "hair", "shirt", "accessory"). */
     @Column(length = 50, nullable = false)
     private String category;
 
+    /** Human-readable description of what a student must achieve to unlock this item. Null means freely available. */
     @Column(name = "unlock_condition", length = 255)
     private String unlockCondition;
 
+    /** Filename of the SVG/PNG asset used to render this item on the avatar. */
     @Column(name = "image_file", length = 100)
     private String imageFile;
 }

@@ -8,14 +8,19 @@ import type {StationData, SubmitAnswerResult} from "@/types/station.ts";
 import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 import PictureGrid from "@/components/game/tasks/PictureGrid.tsx";
 
+/** Props for the NyhetsKvartalStation component. */
 type NyhetsKvartalStationProps = {
   station: StationData,
   levelTitle: string,
+  /** Called with the answer result and original request after submission. */
   onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void,
   disabled?: boolean,
   isTearing?: boolean
 };
 
+/**
+ * Station component for the "Nyhetskvartalet" level — renders a picture-grid single-choice quiz.
+ */
 function NyhetsKvartalStation({
                                 station,
                                 levelTitle,

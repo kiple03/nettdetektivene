@@ -13,6 +13,7 @@ interface Props {
   onSave: (draft: QuestionDraft) => void;
 }
 
+/** Modal dialog for creating or editing a question draft, with validation before save. */
 export function QuestionEditorModal({ mode, initialValue, saving, error, onClose, onSave }: Props) {
   const [draft, setDraft] = useState<QuestionDraft>(initialValue ?? emptyMultipleChoiceDraft());
   const [validationErrors, setValidationErrors] = useState<string[]>([]);

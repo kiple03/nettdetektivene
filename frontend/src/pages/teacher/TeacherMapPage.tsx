@@ -10,6 +10,7 @@ import { MapLoadingOverlay } from '@/components/map/MapLoadingOverlay';
 import styles from './TeacherMapPage.module.css';
 import { useBackTo } from '@/hooks/teacher/useBackTo';
 
+/** Map view for teachers showing all stops in a classroom, with level/question details on stop click. */
 export default function TeacherMapPage() {
     const location = useLocation();
     const { classroomId = '' } = useParams<{ classroomId: string }>();
@@ -35,6 +36,7 @@ export default function TeacherMapPage() {
             ? { title: stopById[urlStopId]?.name ?? `Stopp ${urlStopId}`, stopId: urlStopId }
             : null);
 
+    /** Navigates to boss battle for Datasenteret, or opens the stop-levels modal for other stops. */
     const handleStopClick = (stop: StopData) => {
         if(stop.title === 'Datasenteret'){
             navigate(`/teacher/classrooms/${classroomId}/boss`);
@@ -50,6 +52,7 @@ export default function TeacherMapPage() {
         }
     };
 
+    /** Clears the selected stop from both local state and URL params. */
     const handleClose = () => {
         setComingSoonStop(null);
         setSearchParams({}, { replace: true });

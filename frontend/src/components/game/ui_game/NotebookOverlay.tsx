@@ -44,10 +44,12 @@ const TABS: TabConfig[] = [
     { id: "egne", label: "Mine tanker", icon: "✏️", color: "#607D8B", placeholder: "Skriv hva du har oppdaget eller lurt på..." },
 ];
 
+/** Returns the tab configuration for a given tab ID. */
 function getTabConfig(tabId: TabId): TabConfig {
     return TABS.find((tab) => tab.id === tabId)!;
 }
 
+/** Formats an ISO date string to a human-readable Norwegian locale string, or returns empty string if invalid. */
 function formatDate(iso: string | null | undefined): string {
     if (!iso) return "";
     const d = new Date(iso);
@@ -58,10 +60,12 @@ function formatDate(iso: string | null | undefined): string {
     }).format(d);
 }
 
+/** Returns the possessive form of a name, handling names ending in s/x/z. */
 function getPossessive(name: string): string {
     return /[sxzSXZ]$/.test(name) ? `${name}'` : `${name}`;
 }
 
+/** Renders a row of spiral coil decorations for the notebook binding. */
 const Spirals = ({ count = 16 }: { count?: number }) => (
     <div className={styles.spiralStrip}>
         {Array.from({ length: count }).map((_, i) => (
@@ -75,6 +79,12 @@ type Props = {
     initialTab?: TabId;
 };
 
+/**
+ * Full-screen overlay showing the student's notebook with tabbed note categories.
+ * Loads, displays, and allows saving/deleting personal reflection notes per category.
+ * @param onClose - called when the user dismisses the overlay
+ * @param initialTab - which tab to show on open
+ */
 export default function NotebookOverlay({ onClose, initialTab = "nyheter" }: Props) {
     const { data: userProfile } = useUserProfile();
     const username = userProfile?.username;
