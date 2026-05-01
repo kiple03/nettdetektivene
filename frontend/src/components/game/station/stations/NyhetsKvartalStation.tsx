@@ -38,9 +38,8 @@ function NyhetsKvartalStation({
     };
     try {
       const response = await submitSingleChoiceAnswer(station.questionId, request);
-      console.log("raw response", response);
       const mappedResult = mapSubmitResponseToSubmitAnswer(response);
-      console.log("mapped result", mappedResult);setSubmitResult(mappedResult);
+      setSubmitResult(mappedResult);
       onAnswer(mappedResult, request);
     } catch (error: any) {
       console.error("Feil ved innsending", error);

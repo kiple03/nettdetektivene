@@ -18,7 +18,7 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
     {
       title: "Nyhetskvartal 📰",
       description:
-        "Her møter du falske nyheter! Du skal lese to artikler som er nesten lik og velge den du tror er ekte.",
+        "Her møter du falske nyheter! Du skal lese to artikler som er nesten lik og velge den d tror er ekte.",
     },
     {
       title: "Slik svarer du",
