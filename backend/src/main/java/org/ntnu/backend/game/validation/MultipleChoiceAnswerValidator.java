@@ -56,7 +56,7 @@ public class MultipleChoiceAnswerValidator implements SubmittedAnswerValidator {
         .findFirst()
         .map(mc -> new ValidationResult(
             mc.isCorrect(),
-            mc.getExplanation(),  // always return explanation, not null
+            mc.getExplanation(),
             correctOptionIds.stream().map(String::valueOf).toList(),
             mc.isCorrect() ? List.of() : List.of(String.valueOf(mc.getId())),
             responseImages

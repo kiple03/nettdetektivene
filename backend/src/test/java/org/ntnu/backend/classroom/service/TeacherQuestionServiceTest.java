@@ -56,8 +56,6 @@ class TeacherQuestionServiceTest {
     principal = mock(JwtAuthenticatedPrincipal.class);
   }
 
-  // ─── helpers ───
-
   private Level makeLevel(int id, LevelType type) {
     Level level = new Level();
     level.setId(id);
@@ -85,8 +83,6 @@ class TeacherQuestionServiceTest {
       return q;
     });
   }
-
-  // ─── request builders ───
 
   private CreateMultipleChoiceQuestionRequest mcCreateReq() {
     return new CreateMultipleChoiceQuestionRequest("MC question?", List.of(
@@ -158,8 +154,6 @@ class TeacherQuestionServiceTest {
     ));
   }
 
-  // ─── option model builders (for parser mock returns) ───
-
   private List<Option> mcOptions() {
     return List.of(
         new MultipleChoiceOption(1, "Right", null, null, true, "Correct!"),
@@ -194,10 +188,6 @@ class TeacherQuestionServiceTest {
         new MultipleChoiceOption(2, "Wrong answer", null, null, false, "Nope")
     );
   }
-
-  // ═══════════════════════════════════════════════════════════════
-  //  listQuestionsForTeacher
-  // ═══════════════════════════════════════════════════════════════
 
   @Nested
   class ListQuestions {
@@ -245,9 +235,6 @@ class TeacherQuestionServiceTest {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  //  createQuestion — all five types
-  // ═══════════════════════════════════════════════════════════════
 
   @Nested
   class CreateQuestion {
@@ -373,7 +360,6 @@ class TeacherQuestionServiceTest {
       assertThat(resp.options()).hasSize(2);
       assertThat(resp.options().getFirst()).isInstanceOf(TeacherTextQuizOptionResponse.class);
 
-      // TextQuiz builds MultipleChoiceOption with null imageUrl
       ArgumentCaptor<List<Option>> captor = ArgumentCaptor.forClass(List.class);
       verify(optionValidator).validate(captor.capture(), eq(LevelType.TEXT_QUIZ));
       List<Option> built = captor.getValue();
@@ -499,10 +485,6 @@ class TeacherQuestionServiceTest {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  //  updateQuestion — all five types + guard clauses
-  // ═══════════════════════════════════════════════════════════════
-
   @Nested
   class UpdateQuestion {
 
@@ -569,7 +551,6 @@ class TeacherQuestionServiceTest {
       assertThat(resp.options()).hasSize(1);
       assertThat(resp.options().getFirst()).isInstanceOf(TeacherPasswordStrengthOptionResponse.class);
 
-      // verify the overloaded buildPsOptions(UpdatePasswordStrengthQuestionRequest) was used
       ArgumentCaptor<List<Option>> captor = ArgumentCaptor.forClass(List.class);
       verify(optionValidator).validate(captor.capture(), eq(LevelType.PASSWORD_STRENGTH));
       PasswordStrengthOption ps = (PasswordStrengthOption) captor.getValue().getFirst();
@@ -639,10 +620,6 @@ class TeacherQuestionServiceTest {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  //  deleteQuestion
-  // ═══════════════════════════════════════════════════════════════
-
   @Nested
   class DeleteQuestion {
 
@@ -706,9 +683,6 @@ class TeacherQuestionServiceTest {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════════
-  //  toTeacherResponse — response mapping for each type
-  // ═══════════════════════════════════════════════════════════════
 
   @Nested
   class ResponseMapping {
@@ -815,7 +789,6 @@ class TeacherQuestionServiceTest {
       Question q = makeQuestion(10, level, false, classroomId);
       when(questionRepository.findByLevelIdForClassroom(5, classroomId))
           .thenReturn(List.of(q));
-      // TextQuiz parses as MultipleChoiceOption
       when(optionParser.parse(q.getOptionContent(), LevelType.TEXT_QUIZ))
           .thenReturn(List.of(
               new MultipleChoiceOption(1, "Answer", null, null, true, "Right")

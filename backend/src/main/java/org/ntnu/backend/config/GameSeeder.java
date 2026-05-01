@@ -89,7 +89,6 @@ public class GameSeeder implements CommandLineRunner {
         .forEach(name -> {
           List<Stop> duplicates = stopRepository.findAllByNameOrderByIdAsc(name);
           if (duplicates.size() <= 1) return;
-          // keep duplicates.get(0), delete the rest
           for (Stop dup : duplicates.subList(1, duplicates.size())) {
             log.info("GameSeeder: deleting duplicate stop '{}' id={}", name, dup.getId());
             deleteStop(dup);
@@ -150,7 +149,6 @@ public class GameSeeder implements CommandLineRunner {
 
   /** Deletes a level along with its note templates and questions. Templates are removed first due to a NOT NULL FK constraint. */
   private void deleteLevel(Level level) {
-    // Templates must go before the level itself (FK on level_id is NOT NULL).
     levelNoteTemplateRepository.deleteAll(levelNoteTemplateRepository
         .findAllByLevelIdOrderByIdAsc(level.getId()));
 

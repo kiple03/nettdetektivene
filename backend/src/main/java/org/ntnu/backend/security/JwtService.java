@@ -68,8 +68,6 @@ public class JwtService {
   public String generateToken(UserPrincipal principal, UUID classroomId) {
     Map<String, Object> claims = new HashMap<>();
     claims.put("userId", principal.getUser().getId().toString());
-    // Store bare role name (e.g. "TEACHER") so the JWT is decoupled from Spring's
-    // "ROLE_" authority prefix convention. JwtAuthFilter re-adds the prefix.
     claims.put("role", principal.getUser().getRole().name());
 
     if (classroomId != null) {

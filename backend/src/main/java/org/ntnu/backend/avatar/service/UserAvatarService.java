@@ -79,16 +79,13 @@ public class UserAvatarService {
      */
     @Transactional
     public void updateEquippedItems(UUID userId, List<UUID> itemIdsToEquip){
-        // Get all items in users inventory
         List<UserInventoryItem> inventory = inventoryRepository.findByUserId(userId);
 
         for(UserInventoryItem item : inventory){
             UUID id = item.getAvatarItem().getId();
-            // If item ID found in users list, equip it!
             boolean shouldBeEquipped = itemIdsToEquip != null && itemIdsToEquip.contains(id);
             item.setEquipped(shouldBeEquipped);
         }
-        // save updated inventory to database
         inventoryRepository.saveAll(inventory);
     }
 

@@ -53,10 +53,6 @@ public class OpenApiConfig {
                 .description("JWT bearer token from /auth/login")))
         .security(List.of(new SecurityRequirement().addList(BEARER_AUTH)));
 
-      // Explicitly register the ErrorResponse schema so global error responses
-      // can reference it via $ref. Normally springdoc only picks up schemas
-      // from controller method signatures, and ErrorResponse is returned from
-      // exception handlers only.
       ModelConverters.getInstance()
           .readAllAsResolvedSchema(ErrorResponse.class)
           .referencedSchemas

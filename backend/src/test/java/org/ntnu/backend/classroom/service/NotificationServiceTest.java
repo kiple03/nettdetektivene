@@ -68,8 +68,6 @@ class NotificationServiceTest {
         );
     }
 
-    // ===== createNotification =====
-
     @Test
     void createNotification_savesAndReturnsResponse() {
         Notification saved = buildNotification(notificationId, false);
@@ -92,8 +90,6 @@ class NotificationServiceTest {
 
         verify(notificationRepository).save(any(Notification.class));
     }
-
-    // ===== getNotificationsForTeacher =====
 
     @Test
     void getNotificationsForTeacher_returnsAllForTeacher() {
@@ -132,8 +128,6 @@ class NotificationServiceTest {
                 .findByTeacherIdAndClassroomIdOrderByCreatedAtDesc(teacherId, classroomId);
     }
 
-    // ===== markAsRead =====
-
     @Test
     void markAsRead_setsReadAndReturnsResponse() {
         Notification notification = buildNotification(notificationId, false);
@@ -160,8 +154,6 @@ class NotificationServiceTest {
                 .hasMessageContaining("404 NOT_FOUND");
     }
 
-    // ===== deleteNotification =====
-
     @Test
     void deleteNotification_deletesWhenOwner() {
         Notification notification = buildNotification(notificationId, false);
@@ -186,8 +178,6 @@ class NotificationServiceTest {
         verify(notificationRepository, never()).delete(any());
     }
 
-    // ===== countUnreadForTeacher =====
-
     @Test
     void countUnreadForTeacher_returnsCount() {
         when(notificationRepository.countByTeacherIdAndReadFalse(teacherId)).thenReturn(3L);
@@ -197,8 +187,6 @@ class NotificationServiceTest {
         assertThat(result).isEqualTo(3L);
         verify(notificationRepository).countByTeacherIdAndReadFalse(teacherId);
     }
-
-    // ===== notifyAreaCompleted =====
 
     @Test
     void notifyAreaCompleted_createsNotificationForEachTeacher() {
@@ -247,8 +235,6 @@ class NotificationServiceTest {
         verify(classroomTeacherRepository, never()).findWithUsersByClassroomId(any());
     }
 
-    // ===== notifyGameCompleted =====
-
     @Test
     void notifyGameCompleted_createsNotificationForEachTeacher() {
         User student = buildUser(studentId, "studentUser");
@@ -292,8 +278,6 @@ class NotificationServiceTest {
         verify(notificationRepository, never()).save(any());
         verify(classroomTeacherRepository, never()).findWithUsersByClassroomId(any());
     }
-
-    // ===== notifyInappropriateUsername =====
 
     @Test
     void notifyInappropriateUsername_createsNotificationForEachTeacher() {
@@ -344,8 +328,6 @@ class NotificationServiceTest {
         verify(classroomTeacherRepository, never()).findWithUsersByClassroomId(any());
     }
 
-    // ===== notifyInappropriateNote =====
-
     @Test
     void notifyInappropriateNote_createsNotificationForEachTeacher() {
         User student = buildUser(studentId, "studentUser");
@@ -394,8 +376,6 @@ class NotificationServiceTest {
         verify(notificationRepository, never()).save(any());
         verify(classroomTeacherRepository, never()).findWithUsersByClassroomId(any());
     }
-
-    // ===== createStuckStudentNotifications =====
 
     @Test
     void createStuckStudentNotifications_createsNotificationForStuckStudent() {
@@ -760,8 +740,6 @@ class NotificationServiceTest {
 
         verify(notificationRepository, never()).save(any());
     }
-
-    // ===== helpers =====
 
     private Notification buildNotification(UUID id, boolean read) {
         return Notification.builder()

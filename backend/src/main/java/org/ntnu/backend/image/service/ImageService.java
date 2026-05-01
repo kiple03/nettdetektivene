@@ -40,7 +40,7 @@ public class ImageService {
             "image/gif"
     );
 
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     private final S3Client s3Client;
     private final ImageRepository imageRepository;

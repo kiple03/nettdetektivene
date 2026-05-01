@@ -51,8 +51,6 @@ class LevelNoteServiceTest {
         testLevel.setTitle("Level 1");
     }
 
-    // ===== GRANT LEVEL NOTES =====
-
     @Test
     void grantLevelNotes_savesNotesForTemplatesNotAlreadyGranted() {
         LevelNoteTemplate template = LevelNoteTemplate.builder()

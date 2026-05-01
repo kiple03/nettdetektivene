@@ -73,8 +73,6 @@ class GameControllerTest {
     SecurityContextHolder.clearContext();
   }
 
-  // ===== GET /game/stops =====
-
   @Test
   void getStops_returnsListOfStops() throws Exception {
     when(gameService.getStopsForUser(any(), any())).thenReturn(List.of(

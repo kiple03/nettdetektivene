@@ -31,8 +31,6 @@ class JwtAuthFilterTest {
         SecurityContextHolder.clearContext();
     }
 
-    // ---- valid token ----
-
     @Test
     void doFilterInternal_setsAuthenticationForValidToken() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -108,8 +106,6 @@ class JwtAuthFilterTest {
         assertThat(auth.getPrincipal().getClassroomId()).isNull();
     }
 
-    // ---- missing / malformed header ----
-
     @Test
     void doFilterInternal_doesNotAuthenticateWhenNoAuthorizationHeader() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -137,8 +133,6 @@ class JwtAuthFilterTest {
         verify(jwtService, never()).parseAndValidate(anyString());
     }
 
-    // ---- invalid / expired token ----
-
     @Test
     void doFilterInternal_skipsAuthWhenJwtExceptionThrown() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -151,7 +145,7 @@ class JwtAuthFilterTest {
         jwtAuthFilter.doFilterInternal(request, response, chain);
 
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
-        verify(chain).doFilter(request, response); // chain still proceeds
+        verify(chain).doFilter(request, response);
     }
 
     @Test
@@ -186,15 +180,12 @@ class JwtAuthFilterTest {
         assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
     }
 
-    // ---- already authenticated ----
-
     @Test
     void doFilterInternal_doesNotOverwriteExistingAuthentication() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         FilterChain chain = mock(FilterChain.class);
 
-        // Pre-set authentication in context
         JwtAuthenticatedPrincipal existing = new JwtAuthenticatedPrincipal(
                 "existing@test.no", UUID.randomUUID(),
                 org.ntnu.backend.user.model.enums.RoleEnum.TEACHER,
@@ -216,8 +207,6 @@ class JwtAuthFilterTest {
         assertThat(auth.getPrincipal().getEmail()).isEqualTo("existing@test.no");
     }
 
-    // ---- shouldNotFilter ----
-
     @Test
     void shouldNotFilter_returnsTrueForOptionsMethod() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("OPTIONS", "/api/test");
@@ -238,8 +227,6 @@ class JwtAuthFilterTest {
 
         assertThat(jwtAuthFilter.shouldNotFilter(request)).isFalse();
     }
-
-    // ---- helpers ----
 
     private Claims mockClaims(String subject, UUID userId, String role, String classroomId) {
         Claims claims = mock(Claims.class);

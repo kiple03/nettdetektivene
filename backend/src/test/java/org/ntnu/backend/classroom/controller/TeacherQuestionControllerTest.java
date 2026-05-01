@@ -295,8 +295,6 @@ class TeacherQuestionControllerTest {
             .andExpect(status().isForbidden());
     }
 
-    // PUT /{questionId} tests
-
     @Test
     void updateQuestion_returnsOk() throws Exception {
         UUID teacherId = UUID.randomUUID();
@@ -450,8 +448,6 @@ class TeacherQuestionControllerTest {
                 .content(body))
             .andExpect(status().isNotFound());
     }
-
-    // PICTURE_QUIZ create/update tests
 
     @Test
     void createPictureQuizQuestion_returnsCreated() throws Exception {

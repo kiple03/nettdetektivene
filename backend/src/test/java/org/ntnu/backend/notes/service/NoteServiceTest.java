@@ -100,8 +100,6 @@ class NoteServiceTest {
         );
     }
 
-    // ===== GET MY NOTES =====
-
     @Test
     void getMyNotes_success() {
         Note ownNote = Note.builder()
@@ -150,8 +148,6 @@ class NoteServiceTest {
                 .hasMessageContaining("404 NOT_FOUND")
                 .hasMessageContaining("User not found");
     }
-
-    // ===== CREATE NOTE =====
 
     @Test
     void createNote_success() {
@@ -214,7 +210,6 @@ class NoteServiceTest {
                 .hasMessageContaining("User not found");
     }
 
-    // ===== DELETE NOTE =====
 
     @Test
     void deleteMyNote_success() {
@@ -239,7 +234,6 @@ class NoteServiceTest {
                 .hasMessageContaining("User not found");
     }
 
-    // ===== AUTH EDGE CASES =====
 
     @Test
     void getMyNotes_missingAuthentication_throws401() {

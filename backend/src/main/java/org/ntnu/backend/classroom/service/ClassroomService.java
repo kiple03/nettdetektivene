@@ -106,8 +106,6 @@ public class ClassroomService {
         classroomRepository.deleteById(id);
     }
 
-    // ── Student operations ────────────────────────────────────────────────────
-
     /**
      * Enrolls a student into a classroom using a valid join code.
      * Verifies that the student exists, the code is valid, and the student is not already in a classroom.
