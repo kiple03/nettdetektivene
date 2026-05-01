@@ -115,7 +115,3 @@ a {
   color: inherit;
   text-decoration: none;
 }
-
-html {
-  font-size: clamp(87.5%, 0.5vw + 0.75rem, 112.5%);
-}

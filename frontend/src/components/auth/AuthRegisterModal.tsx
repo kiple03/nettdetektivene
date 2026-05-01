@@ -87,8 +87,17 @@ function AuthRegisterModal({
 
   if (!open) return null;
 
+  
+
   return (
-      <div className="register-overlay" onClick={onClose}>
+    <>        
+    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div
+        className="register-overlay"
+        onClick={(e) => {
+            if (e.target === e.currentTarget) onClose();
+        }}
+        >
         <div
             ref={modalRef}
             className="register-modal"
@@ -96,21 +105,18 @@ function AuthRegisterModal({
             aria-modal="true"
             aria-labelledby="register-modal-title"
             aria-describedby="register-modal-description"
-            onClick={(event) => event.stopPropagation()}
         >
-          <button
-              className="register-modal__close"
-              onClick={onClose}
-              type="button"
-              aria-label="Lukk registreringsvindu"
-          >
-            <X size={20} aria-hidden="true" />
-          </button>
-
-          <h2 id="register-modal-title" className="register-modal__title">
-            {title}
-          </h2>
-
+            <button
+            className="register-modal__close"
+            onClick={onClose}
+            type="button"
+            aria-label="Lukk registreringsvindu"
+        >
+          <X size={20} aria-hidden="true" />
+        </button>
+        <h2 id="register-modal-title" className="register-modal__title">
+          {title}
+        </h2>
           <p id="register-modal-description" className="register-modal__subtitle">
             {subtitle}
           </p>
@@ -204,6 +210,7 @@ function AuthRegisterModal({
           </form>
         </div>
       </div>
+    </>
   );
 }
 
