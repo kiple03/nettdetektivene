@@ -45,7 +45,7 @@ function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onC
   if (overlay) {
     return (
       <button
-        className={`board-item-wrapper board-item-${size}`}
+          className={`board-item-wrapper board-item-wrapper--${id} board-item-${size}`}
         style={{top, left, background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}
         onClick={() => setTooltipOpen((prev) => !prev)}
       >
@@ -57,7 +57,7 @@ function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onC
   if (onClick) {
     return (
       <button
-        className={`board-item-wrapper board-item-${size}`}
+          className={`board-item-wrapper board-item-wrapper--${id} board-item-${size}`}
         style={{top, left, background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}
         onClick={onClick}
         {...(tourOrder !== undefined ? { 'data-tour-order': tourOrder } : {})}
@@ -69,7 +69,7 @@ function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onC
 
   return (
     <Link to={to}
-          className={`board-item-wrapper board-item-${size}`}
+          className={`board-item-wrapper board-item-wrapper--${id} board-item-${size}`}
           style={{top, left}}
           {...(tourOrder !== undefined ? { 'data-tour-order': tourOrder } : {})}
     >
