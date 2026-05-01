@@ -73,7 +73,7 @@
 }
 
 .gridFourOptionsMarketplace .imageFrame {
-    max-height: 200px;
+    max-height: 260px;
 }
 
 .card {
@@ -123,7 +123,7 @@
 }
 
 .card:hover .image{
-    transform: scale(2.5);
+    transform: scale(2.0);
     z-index: 9;
     box-shadow: none;
     pointer-events: none;
@@ -187,8 +187,7 @@
 .imageFrame {
     width: 100%;
     height: auto;
-    max-height: 220px;
-
+    max-height: 300px;
     border-radius: 6px;
     overflow: visible;
     display: flex;
@@ -201,7 +200,7 @@
     width: auto;
     height: auto;
     max-width: 100%;
-    max-height: 220px;
+    max-height: 300px;
     object-fit: contain;
     object-position: center;
     border-radius: 6px;

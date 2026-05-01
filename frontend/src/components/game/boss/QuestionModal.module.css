@@ -57,13 +57,13 @@
 
 /* counter-reset must live on the animated element (not ::before) because --countdown has inherits:false */
 .timerNum {
-    position: absolute;
+    position: static;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.4rem;
+    font-size: 1rem;
     font-weight: bold;
     font-variant-numeric: tabular-nums;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
@@ -78,8 +78,8 @@
 
 .timerBar {
     width: 100%;
-    height: 48px;
-    border-radius: 24px;
+    height: 10px;
+    border-radius: 5px;
     background: #4caf50;
     animation: depleteBar 30s linear forwards;
 }
@@ -215,7 +215,7 @@
     zoom: 0.8;
     color: black;
 }                                                                                                  
-                                                                                                    
+
 .stationWrap :global(.station-container) {
     min-height: 0;                
     background: transparent;                                                                       
