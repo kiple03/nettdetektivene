@@ -9,11 +9,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/** Repository for {@link Question} entities. */
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
+  /**
+   * Returns all questions for a level, ordered by id ascending.
+   *
+   * @param levelId the level id
+   */
   List<Question> findByLevelIdOrderByIdAsc(int levelId);
 
+  /**
+   * Looks up a question by level and exact question text.
+   *
+   * @param levelId      the level id
+   * @param questionText the exact question text
+   * @return the matching question, if any
+   */
   Optional<Question> findByLevelIdAndQuestionText(int levelId, String questionText);
 
   /** Default (seeded) questions for a level — classroom_id IS NULL. */

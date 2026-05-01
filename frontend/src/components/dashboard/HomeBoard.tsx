@@ -16,6 +16,7 @@ type HomeBoardProps = {
   items: BoardItemData[];
 };
 
+/** Renders the detective-room background with a cork board of navigation items and a logout button. */
 function HomeBoard({ items }: HomeBoardProps) {
   return(
       <div className="home-board" style={{backgroundImage: `url(${detectiveRoom})`}}>

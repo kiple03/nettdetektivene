@@ -1,11 +1,14 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import styles from "./card.module.css";
 
+/** Props for the Card component. */
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
     children: ReactNode;
+    /** Controls visual styling; "unstyled" removes default card styles. */
     variant?: "default" | "unstyled";
 }
 
+/** Styled container card with optional variant override. */
 export function Card({
                          children,
                          className = "",

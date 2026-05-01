@@ -7,12 +7,14 @@ import type { PostkontoretTask } from "@/types/email.ts";
 import {useState} from "react";
 import type { SubmitResult } from "@/types/station.ts";
 
+/** Props for {@link PostOfficeStation}. */
 type PostOfficeStationProps = {
   station: StationData;
   onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
   disabled?: boolean;
 };
 
+/** Station component that renders an email phishing task and submits selected suspicious item IDs. */
 function PostOfficeStation({ station, onAnswer, disabled = false }: PostOfficeStationProps) {
   const task: PostkontoretTask = {
     email: station.email!,

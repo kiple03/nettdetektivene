@@ -5,23 +5,31 @@ const SESSION_ENDED_KEY = 'auth-session-ended';
 
 const KNOWN_ROLES: Role[] = ['STUDENT', 'TEACHER'];
 
+/** Reads the stored JWT from localStorage. */
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
+/**
+ * Persists the JWT and clears any session-ended flag.
+ * @param token - The JWT access token returned by the server.
+ */
 export function setToken(token: string): void {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.removeItem(SESSION_ENDED_KEY);
 }
 
+/** Removes the stored JWT from localStorage. */
 export function clearToken(): void {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+/** Flags that the session was explicitly ended (e.g. via logout or forced expiry). */
 export function markSessionEnded(): void {
   localStorage.setItem(SESSION_ENDED_KEY, 'true');
 }
 
+/** Returns true if the session was explicitly ended since the last login. */
 export function isSessionEnded(): boolean {
   return localStorage.getItem(SESSION_ENDED_KEY) === 'true';
 }
@@ -35,6 +43,10 @@ interface JwtPayload {
   exp?: number;
 }
 
+/**
+ * Decodes a JWT without verifying the signature.
+ * @param token - Defaults to the currently stored token. Returns null if missing or malformed.
+ */
 export function decodeToken(token: string | null = getToken()): JwtPayload | null {
   if (!token) return null;
   const parts = token.split('.');
@@ -68,11 +80,13 @@ export function isLoggedIn(): boolean {
   return payload.exp === undefined || payload.exp * 1000 >= Date.now();
 }
 
+/** Returns the role encoded in the current JWT, or null if not logged in. */
 export function getRole(): Role | null {
   const role = decodeToken()?.role;
   return role ? (role as Role) : null;
 }
 
+/** Returns the classroomId claim from the current JWT, or null if absent. */
 export function getClassroomId(): string | null {
   return decodeToken()?.classroomId ?? null;
 }
@@ -82,10 +96,12 @@ export function getClassroomId(): string | null {
 // Starts false only when: an access token exists but has expired (needs a refresh probe).
 let _authReady: boolean = !getToken() || isLoggedIn() || isSessionEnded();
 
+/** Returns true once the startup session-restore attempt has settled. */
 export function isAuthReady(): boolean {
   return _authReady;
 }
 
+/** Marks auth as ready and dispatches an `auth-changed` event so listeners can re-render. */
 export function setAuthReady(): void {
   _authReady = true;
   window.dispatchEvent(new Event('auth-changed'));

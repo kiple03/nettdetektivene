@@ -3,6 +3,17 @@ package org.ntnu.backend.game.dto;
 import org.ntnu.backend.game.model.enums.LevelType;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+/**
+ * Response DTO representing a single level within a game stop.
+ *
+ * @param id       unique identifier of the level
+ * @param title    display title of the level
+ * @param description brief explanation of the level's content or goal
+ * @param stopName name of the stop this level belongs to
+ * @param levelType structural type that determines how the level is rendered/played
+ * @param order    position of the level within its stop (ascending)
+ * @param locked   whether the user is currently allowed to play this level
+ */
 @Schema(description = "Data Transfer Object for level in a stop")
 public record LevelResponse(
 

@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * REST controller for classroom. It's responsible for fetching a classroom and joining one via a code.
+ * REST controller for student-facing classroom operations: retrieving classroom details,
+ * checking current enrollment, and joining a classroom via a join code.
+ *
+ * <p>Base path: {@code /classrooms}</p>
  */
 @RestController
 @RequestMapping("/classrooms")
@@ -30,9 +33,11 @@ public class ClassroomController {
     // ── Shared endpoints (teacher + student) ─────────────────────────────────
 
     /**
-     * Controller endpoint GET-request that gets a specific classroom. Any role can use this.
-     * @param id the id of the classroom
-     * @return a classroom response.
+     * Retrieves a classroom by its UUID. Accessible to both teachers and students.
+     *
+     * @param id the UUID of the classroom to retrieve
+     * @return the classroom details
+     * @throws org.ntnu.backend.exception.ApiException with 404 if no classroom with that ID exists
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
@@ -45,6 +50,9 @@ public class ClassroomController {
     /**
      * Returns the classroom the authenticated student is currently enrolled in.
      * Returns 204 No Content if the student is not enrolled in any classroom.
+     *
+     * @param principal the authenticated student principal
+     * @return 200 with the classroom, or 204 if not enrolled
      */
     @GetMapping("/my")
     @PreAuthorize("hasRole('STUDENT')")
@@ -58,10 +66,13 @@ public class ClassroomController {
     // ── Student join endpoint ─────────────────────────────────────────────────
 
     /**
-     * Controller endpoint POST-request that checkes if a code is valid for a classroom.
-     * @param request JSON payload  
-     * @param principal authenticated user.
-     * @return classroom response 
+     * Enrolls the authenticated student in a classroom identified by the provided join code.
+     *
+     * @param request   JSON body containing the join code
+     * @param principal the authenticated student principal
+     * @return a response containing the classroom info the student has joined
+     * @throws org.ntnu.backend.exception.ApiException with 404 if the join code is invalid,
+     *         or 409 if the student is already enrolled
      */
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)

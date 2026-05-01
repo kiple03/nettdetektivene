@@ -6,13 +6,19 @@ import TaskHeader from "../../ui_game/TaskHeader";
 import PasswordInput from "../../tasks/PasswordInput";
 import DetectiveBook from "@/components/game/ui_game/DetectiveBook";
 
+/** Props for {@link PassordBankenStation}. */
 type Props = {
     station: StationData;
     levelTitle: string;
+    /** Called when the student submits an answer. */
     onAnswer: (result: SubmitAnswerResult, request: SubmitAnswerRequest) => void;
     disabled?: boolean;
 };
 
+/**
+ * Station component for "Passordbanken" — renders either a password-strength task
+ * or a single-choice picture grid depending on `station.levelType`.
+ */
 function PassordBankenStation({ station, levelTitle, onAnswer, disabled = false }: Props) {
     const handlePasswordSubmit = async (password: string) => {
         const request: SubmitPasswordStrengthAnswerRequest = {

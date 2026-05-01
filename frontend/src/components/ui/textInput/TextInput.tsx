@@ -1,11 +1,15 @@
 import type { InputHTMLAttributes } from "react";
 import styles from "./text-input.module.css";
 
+/** Props for TextInput; extends all native input attributes. */
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
+    /** Visible label text; also used to derive the input's id when none is provided. */
     label: string;
+    /** Optional hint shown below the input. */
     helperText?: string;
 }
 
+/** Labelled text input with an optional helper message. */
 export function TextInput({
                               label,
                               helperText,

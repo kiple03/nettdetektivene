@@ -6,6 +6,7 @@ import { useNotifications } from '@/hooks/teacher/useNotifications';
 import { TeacherLayoutContext } from './TeacherLayoutContext';
 import './TeacherLayout.css';
 
+/** Shared layout for all teacher pages — provides nav bar with back button, notification bell, and profile menu. */
 export default function TeacherLayout() {
     const username = decodeToken()?.username ?? null;
     const { data: notifications = [] } = useNotifications();

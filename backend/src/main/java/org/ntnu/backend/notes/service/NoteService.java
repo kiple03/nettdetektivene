@@ -162,6 +162,13 @@ public class NoteService {
         }
     }
 
+    /**
+     * Returns the notebook for a specific user, with content censored according to the classroom's word list.
+     *
+     * @param userId      the id of the student whose notes to retrieve
+     * @param classroomId the classroom whose censor list applies; may be {@code null}
+     * @return the censored notes overview
+     */
     @Transactional(readOnly = true)
     public NotesOverviewResponse getNotesForUser(UUID userId) {
         User user = userRepository.findById(userId)
@@ -171,6 +178,13 @@ public class NoteService {
         return noteMapper.toOverviewResponse(ownNotes, levelNotes);
     }
 
+    /**
+     * Applies the classroom's censor word list to all note content in the overview.
+     *
+     * @param response    the raw (uncensored) notes overview
+     * @param classroomId the classroom whose word list to apply; may be {@code null}
+     * @return a new overview with censored content
+     */
     private NotesOverviewResponse applyCensoring(NotesOverviewResponse response, UUID classroomId) {
         List<String> classroomWords = classroomId == null ? List.of() :
                 classroomCensorWordRepository.findByClassroomId(classroomId)
@@ -181,6 +195,13 @@ public class NoteService {
         );
     }
 
+    /**
+     * Censors note content across a category-keyed map of note responses.
+     *
+     * @param map            notes grouped by category
+     * @param classroomWords the words to censor
+     * @return a new map with censored note content
+     */
     private Map<String, List<NoteResponse>> censorMap(Map<String, List<NoteResponse>> map, List<String> classroomWords) {
         return map.entrySet().stream()
             .collect(Collectors.toMap(
@@ -199,6 +220,13 @@ public class NoteService {
             ));
     }
 
+    /**
+     * Grants all note templates associated with a completed level to the user, skipping any already awarded.
+     * Runs in a new transaction so failures don't roll back the surrounding level-submission transaction.
+     *
+     * @param userId the id of the student who completed the level
+     * @param level  the completed level
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveCompletionTipIfNeeded(UUID userId, Level level) {
         User user = userRepository.findById(userId)

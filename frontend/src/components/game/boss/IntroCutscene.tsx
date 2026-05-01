@@ -3,10 +3,13 @@ import styles from "./IntroCutscene.module.css";
 
 interface Props {
     username: string;
+    /** Called when the player clicks "Start kamp!" to begin the boss battle. */
     onComplete: () => void;
+    /** Called when the cutscene reaches the step where the player character is revealed. */
     onPlayerReveal: () => void;
 }
 
+/** Stepped dialogue cutscene shown before the boss battle begins. */
 export function IntroCutscene({ onComplete, onPlayerReveal }: Props) {
     const [step, setStep] = useState(1);
 

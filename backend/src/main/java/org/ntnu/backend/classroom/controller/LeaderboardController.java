@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller exposing leaderboard endpoints for classrooms and students.
+ */
 @RestController
 @AllArgsConstructor
 @RequestMapping("/leaderboard")
@@ -30,6 +33,13 @@ public class LeaderboardController {
   private final LeaderboardService leaderboardService;
   private final ClassroomAuthorizationService classroomAuthorizationService;
 
+  /**
+   * Returns a paginated global leaderboard of all classrooms ranked by score.
+   *
+   * @param page zero-based page index (default 0)
+   * @param size number of entries per page, 1–100 (default 10)
+   * @return paginated list of ranked classrooms
+   */
   @GetMapping("/classrooms")
   public Page<RankedClassroomResponse> getGlobalLeaderboard(
       @RequestParam(defaultValue = "0") @Min(0) int page,
@@ -38,6 +48,15 @@ public class LeaderboardController {
     return leaderboardService.getGlobalLeaderboard(PageRequest.of(page, size));
   }
 
+  /**
+   * Returns the ranked student leaderboard for a specific classroom.
+   * Only accessible by a teacher who has access to the given classroom.
+   *
+   * @param classroomId the classroom whose student ranking is requested
+   * @param principal   the authenticated teacher
+   * @return list of students ranked by score within the classroom
+   * @throws org.springframework.security.access.AccessDeniedException if the teacher lacks access to the classroom
+   */
   @GetMapping("/classrooms/{classroomId}")
   @PreAuthorize("hasRole('TEACHER')")
   public List<RankedStudentResponse> getClassroomLeaderboard(
@@ -48,13 +67,20 @@ public class LeaderboardController {
     return leaderboardService.getRankedStudentLeaderboard(classroomId);
   }
 
+  /**
+   * Returns leaderboard scores for all classrooms belonging to a teacher.
+   * Only accessible by teachers.
+   *
+   * @param teacherId the UUID of the teacher whose classrooms are queried
+   * @param principal the authenticated teacher
+   * @return list of classroom leaderboard entries for the given teacher
+   */
   @GetMapping("teachers/{teacherId}")
   @PreAuthorize("hasRole('TEACHER')")
   public List<LeaderboardClassroomResponse> getTeacherClassroomScores(
       @PathVariable UUID teacherId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal
   ) {
-    // verify access
     return leaderboardService.getTeacherClassroomScores(teacherId);
   }
 }

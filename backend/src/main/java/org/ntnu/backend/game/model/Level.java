@@ -29,22 +29,28 @@ import org.ntnu.backend.notes.model.LevelNoteTemplate;
 @Getter @Setter
 public class  Level {
 
+    /** Primary key. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    /** Display title shown to students. */
     @Column(nullable = false)
     private String title;
 
+    /** Optional introductory text for the level. */
     private String description;
 
+    /** 1-based position within the parent stop. */
     @Column(name = "level_order", nullable = false)
     private int order;
 
+    /** The stop this level belongs to. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "stop_id", nullable = false)
     private Stop stop;
 
+    /** Question format used in this level, controls which validator handles submissions. */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private LevelType levelType;

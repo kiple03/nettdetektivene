@@ -9,14 +9,23 @@ import org.ntnu.backend.game.model.PasswordStrengthOption;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
+/**
+ * Validates password-strength answers by checking the submitted password against
+ * the configured rules (min length, digit, upper/lower case, symbol requirements).
+ */
 @Component
 public class PasswordStrengthAnswerValidator implements SubmittedAnswerValidator{
-    
+
     @Override
     public LevelType supportedType(){
         return LevelType.PASSWORD_STRENGTH;
     }
 
+    /**
+     * @param options   single-element list containing the {@link PasswordStrengthOption} rule set
+     * @param submission must be a {@link PasswordStrengthAnswer}; throws {@link IllegalArgumentException} otherwise
+     * @return successful result if all rules pass; failure result listing missing criteria in Norwegian
+     */
     @Override
     public ValidationResult validate(List<Option> options, SubmitAnswerRequest submission){
         if(!(submission instanceof PasswordStrengthAnswer answer)){

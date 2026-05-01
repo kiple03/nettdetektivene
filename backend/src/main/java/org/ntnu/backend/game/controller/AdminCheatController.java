@@ -23,6 +23,13 @@ public class AdminCheatController {
 
   private final GameService gameService;
 
+  /**
+   * Marks a level as completed for the authenticated user, bypassing answer validation.
+   *
+   * @param levelId   the level to force-complete
+   * @param principal the authenticated user
+   * @return 204 No Content on success
+   */
   @PostMapping("/levels/{levelId}/admin-complete")
   public ResponseEntity<Void> adminCompleteLevel(
       @PathVariable int levelId,

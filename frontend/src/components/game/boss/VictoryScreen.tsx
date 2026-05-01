@@ -11,12 +11,17 @@ interface Props {
   backTo?: string;
 }
 
+/** Formats a duration in seconds as `m:ss`. */
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+/**
+ * Displays the boss-battle victory summary with elapsed time, remaining hearts, and a link back to the map.
+ * @param backTo - Route to navigate to on exit; defaults to `/map`.
+ */
 export function VictoryScreen({ timeSeconds, playerHp, maxHp, backTo }: Props) {
   return (
     <div className={styles.screen}>

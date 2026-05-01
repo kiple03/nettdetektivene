@@ -115,6 +115,17 @@ public class QuestionService {
     );
   }
 
+  /**
+   * Returns all questions for a level, filtered by classroom if the caller is a student.
+   *
+   * @param levelId     the level to fetch questions for
+   * @param userId      caller's user ID (used for access check)
+   * @param role        caller's role
+   * @param classroomId when non-null and role is STUDENT, restricts to classroom-specific questions
+   * @return questions for the level, answer data excluded
+   * @throws LevelNotFoundException if the level does not exist
+   * @throws LevelLockedException   if the level is not yet accessible to the caller
+   */
   public List<QuestionResponse> getQuestionsForLevel(int levelId, UUID userId, RoleEnum role,  UUID classroomId) {
     Level level = levelRepository.findById(levelId)
         .orElseThrow(() -> new LevelNotFoundException(levelId));

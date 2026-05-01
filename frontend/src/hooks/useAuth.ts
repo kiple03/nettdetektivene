@@ -12,15 +12,22 @@ import { isRefreshInFlight } from '@/api/client';
 import { logout as logoutApi } from '@/api/authApi';
 import type { Role } from '@/types/user';
 
+/** Shape returned by {@link useAuth}. */
 interface UseAuth {
   isLoggedIn: boolean;
   role: Role | null;
   email: string | null;
+  /** True once the initial auth state has been resolved (token loaded or refresh attempted). */
   authReady: boolean;
+  /** True while a silent token refresh is in flight. */
   isRefreshing: boolean;
   logout: () => Promise<void>;
 }
 
+/**
+ * Provides reactive auth state derived from the module-level token store.
+ * Syncs on `auth-changed` and `auth-refreshing` custom window events.
+ */
 export function useAuth(): UseAuth {
   const queryClient = useQueryClient();
   // Lazy initialisers: read current module-level values at mount time so we pick

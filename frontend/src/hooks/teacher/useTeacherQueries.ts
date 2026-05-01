@@ -16,6 +16,7 @@ import {
 import { getGameStops, getLevelsForStop, getGameLevelById } from '@/api/gameApi';
 import { teacherKeys } from './queryKeys';
 
+/** Fetches all classrooms the authenticated teacher owns or co-teaches. */
 export function useClassroomSummaries() {
     return useQuery({
         queryKey: teacherKeys.classrooms,
@@ -23,6 +24,7 @@ export function useClassroomSummaries() {
     });
 }
 
+/** Fetches full details for a single classroom. Disabled when `classroomId` is empty. */
 export function useClassroom(classroomId: string) {
     return useQuery({
         queryKey: teacherKeys.classroom(classroomId),
@@ -31,6 +33,7 @@ export function useClassroom(classroomId: string) {
     });
 }
 
+/** Polls student progress for a classroom every 30 seconds. */
 export function useStudentProgress(classroomId: string) {
     return useQuery({
         queryKey: teacherKeys.students(classroomId),
@@ -40,6 +43,7 @@ export function useStudentProgress(classroomId: string) {
     });
 }
 
+/** Fetches detailed info for a specific student within a classroom. */
 export function useStudentDetail(classroomId: string, studentId: string) {
     return useQuery({
         queryKey: teacherKeys.studentDetail(classroomId, studentId),
@@ -48,6 +52,7 @@ export function useStudentDetail(classroomId: string, studentId: string) {
     });
 }
 
+/** Fetches the medallions earned by a student in a classroom. */
 export function useStudentMedalions(classroomId: string, studentId: string) {
     return useQuery({
         queryKey: teacherKeys.studentMedalions(classroomId, studentId),
@@ -56,6 +61,7 @@ export function useStudentMedalions(classroomId: string, studentId: string) {
     });
 }
 
+/** Fetches the detective notebook entries for a student. */
 export function useStudentNotebook(classroomId: string, studentId: string) {
     return useQuery({
         queryKey: teacherKeys.studentNotebook(classroomId, studentId),
@@ -64,6 +70,7 @@ export function useStudentNotebook(classroomId: string, studentId: string) {
     });
 }
 
+/** Fetches the list of co-teachers for a classroom. */
 export function useCoTeachers(classroomId: string) {
     return useQuery({
         queryKey: teacherKeys.coTeachers(classroomId),
@@ -72,6 +79,7 @@ export function useCoTeachers(classroomId: string) {
     });
 }
 
+/** Fetches all stops visible to the teacher. */
 export function useStops() {
     return useQuery({
         queryKey: teacherKeys.stops,
@@ -79,6 +87,7 @@ export function useStops() {
     });
 }
 
+/** Fetches the leaderboard rankings for a classroom. */
 export function useClassroomLeaderboard(classroomId: string) {
   return useQuery({
     queryKey: teacherKeys.leaderboard(classroomId),
@@ -87,6 +96,7 @@ export function useClassroomLeaderboard(classroomId: string) {
   });
 }
 
+/** Fetches the list of banned words configured for a classroom. */
 export function useCensorWords(classroomId: string) {
     return useQuery({
         queryKey: teacherKeys.censorWords(classroomId),
@@ -95,6 +105,7 @@ export function useCensorWords(classroomId: string) {
     });
 }
 
+/** Fetches questions for a specific level within a classroom context. */
 export function useLevelQuestions(classroomId: string, levelId: number) {
   return useQuery({
     queryKey: teacherKeys.levelQuestions(classroomId, levelId),
@@ -103,6 +114,7 @@ export function useLevelQuestions(classroomId: string, levelId: number) {
   });
 }
 
+/** Fetches all game stops from the student-facing game API. */
 export function useGameStops() {
   return useQuery({
     queryKey: ['game', 'stops'],
@@ -110,6 +122,7 @@ export function useGameStops() {
   });
 }
 
+/** Fetches levels for a stop; disabled when `stopId` is null or zero. */
 export function useGameLevelsForStop(stopId: number | null) {
   return useQuery({
     queryKey: ['game', 'stops', stopId, 'levels'],
@@ -118,6 +131,7 @@ export function useGameLevelsForStop(stopId: number | null) {
   });
 }
 
+/** Fetches a single game level by ID; disabled when `levelId` is zero. */
 export function useGameLevel(levelId: number) {
   return useQuery({
     queryKey: ['game', 'levels', levelId],
@@ -126,6 +140,7 @@ export function useGameLevel(levelId: number) {
   });
 }
 
+/** Fetches images uploaded by the authenticated teacher. */
 export function useTeacherImages() {
   return useQuery({
     queryKey: teacherKeys.images,

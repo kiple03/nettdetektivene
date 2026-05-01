@@ -8,6 +8,7 @@ export interface MedalionResponse{
     imageUrl: string
 }
 
+/** Fetches all medalions earned by the current user. */
 export const fetchMedalions = async (): Promise<MedalionResponse[]> => {
     const res = await apiClient.get<MedalionResponse[]>('/user/medalions');
     return res.data;
