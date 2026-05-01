@@ -61,7 +61,9 @@ public class AvatarDataSeeder implements CommandLineRunner{
             AvatarItem.builder().name("face_girl_2").category("face").imageFile("face_girl_2.png").build(),
             AvatarItem.builder().name("face_girl_3").category("face").imageFile("girl_face_3.png").build(),
             AvatarItem.builder().name("VR_goggles").category("head").imageFile("boss-goggles.png").unlockCondition("BOSS_DEFEAT").build(),
-            AvatarItem.builder().name("burning_hand").category("accessories").imageFile("burning-hand.gif").build()
+            AvatarItem.builder().name("burning_hand").category("accessories").imageFile("burning-hand.gif").build(),
+            AvatarItem.builder().name("armor").category("body").imageFile("armor.gif").build(),
+            AvatarItem.builder().name("stars").category("head").imageFile("stars.gif").build()
         );
 
         List<AvatarItem> toSave = allItems.stream()
