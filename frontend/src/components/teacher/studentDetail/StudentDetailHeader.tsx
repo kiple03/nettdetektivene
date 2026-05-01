@@ -8,6 +8,8 @@ type StudentDetailHeaderProps = {
     completedCount: number;
     avatarItems: EquippedItem[];
     hairColor?: string;
+    score?: number;
+    medalsEarned?: number;
     /** Whether the username is currently being edited inline. */
     editing: boolean;
     editValue: string;
@@ -22,6 +24,7 @@ type StudentDetailHeaderProps = {
 /** Header section of the student detail view showing avatar, username (with inline edit), and key info. */
 export function StudentDetailHeader({
     username, email, enrolledAt, completedCount, avatarItems, hairColor,
+    score, medalsEarned,
     editing, editValue, onEditValueChange, onStartEdit, onCancelEdit, onSaveUsername,
     savingUsername, usernameError,
 }: StudentDetailHeaderProps) {
@@ -35,7 +38,6 @@ export function StudentDetailHeader({
             <div className="student-detail__avatar-ring">
                 <LayeredAvatar items={avatarItems} size={132} hairColor={hairColor} />
             </div>
-
 
             {editing ? (
                 <div className="student-detail__username-edit">
@@ -81,6 +83,18 @@ export function StudentDetailHeader({
                 )}
                 <dt>Nivåer fullført</dt>
                 <dd>{completedCount}</dd>
+                {score !== undefined && (
+                    <>
+                        <dt>Poeng</dt>
+                        <dd>{score.toLocaleString('nb-NO')}</dd>
+                    </>
+                )}
+                {medalsEarned !== undefined && (
+                    <>
+                        <dt>Medaljer</dt>
+                        <dd>{medalsEarned} opptjent</dd>
+                    </>
+                )}
             </dl>
         </header>
     );

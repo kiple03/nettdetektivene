@@ -461,3 +461,183 @@
     padding: 0.5rem 0.375rem 0.5rem 0;
   }
 }
+
+/* ── Progress card (sdp-*) ────────────────────────────────────── */
+.student-detail__progress-card {
+  margin-bottom: 1.25rem;
+}
+
+/* Current stop location card */
+.sdp-location {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(44, 26, 6, 0.05);
+  border: 1px solid rgba(44, 26, 6, 0.12);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.sdp-location__icon {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.22));
+}
+
+.sdp-location__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.sdp-location__label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #9a7040;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.sdp-location__name {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #2c1a06;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.sdp-location__level {
+  font-size: 0.75rem;
+  color: #7a5c30;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Game completed banner */
+.sdp-completed {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: rgba(92, 128, 75, 0.1);
+  border: 1px solid rgba(92, 128, 75, 0.22);
+  border-radius: 8px;
+  padding: 0.875rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.sdp-completed__icon {
+  font-size: 1.375rem;
+  flex-shrink: 0;
+}
+
+.sdp-completed__text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2f4a28;
+  margin: 0;
+}
+
+/* Levels subsection */
+.sdp-levels {
+  margin-bottom: 1.25rem;
+}
+
+.sdp-levels__title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #7a5c30;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.75rem;
+}
+
+.sdp-level-badge {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #5a3218;
+}
+
+/* Stop progress track — rendered last */
+.sdp-track {
+  margin-top: 0.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+}
+
+.sdp-track__label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+
+.sdp-track__label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #9a7040;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.sdp-track__pct {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: #4a2e10;
+}
+
+.sdp-track__bar {
+  position: relative;
+  height: 10px;
+  background: rgba(44, 26, 6, 0.1);
+  border-radius: 99px;
+  overflow: visible;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.sdp-track__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a2e10 0%, #7a4a1e 50%, #a0622a 100%);
+  border-radius: 99px;
+  transition: width 0.5s ease;
+  min-width: 6px;
+  box-shadow: 0 1px 4px rgba(74, 46, 16, 0.45);
+}
+
+.sdp-track__stops {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.sdp-stop {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #d9c49a;
+  border: 2px solid rgba(44, 26, 6, 0.25);
+  transform: translate(-50%, -50%);
+  top: 50%;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.sdp-stop--done {
+  background: #7a4a1e;
+  border-color: #4a2e10;
+}
+
+.sdp-stop--current {
+  width: 15px;
+  height: 15px;
+  background: #a0622a;
+  border: 3px solid #4a2e10;
+  box-shadow: 0 0 0 3px rgba(160, 98, 42, 0.3);
+  z-index: 2;
+}
