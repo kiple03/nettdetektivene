@@ -108,7 +108,7 @@
 }
 
 .board-item-img--dimmed {
-  filter: grayscale(100%) brightness(0.75);
+  filter: grayscale(100%) brightness(0.55) contrast(0.9);
 }
 
 .board-item-overlay {
@@ -119,6 +119,11 @@
   transform: translate(-50%, -50%) rotate(-16deg);
   pointer-events: none;
   z-index: 5;
+
+  background: rgba(232, 189, 140, 0.69);
+  border-radius: 55px;
+  padding: 0rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
 }
 
 .board-item-tooltip {

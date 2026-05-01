@@ -60,19 +60,8 @@
 .tutorial-next-btn {
   margin-top: 0.5rem;
   align-self: center;
-  background: var(--accent);
-  color: var(--white);
-  border: none;
-  border-radius: 2rem;
   padding: 0.6rem 1.75rem;
-  font-size: 1rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.tutorial-next-btn:hover {
-  opacity: 0.85;
 }
 
 /* ? button inside .station-container */

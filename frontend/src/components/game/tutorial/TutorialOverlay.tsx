@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import type { StationType } from "@/types/station";
+import { Button } from "@/components/ui/buttons/Button";
 import {
   hasSeenTutorial,
   markTutorialSeen,
@@ -132,13 +133,14 @@ function TutorialOverlay({
 
           <p className="tutorial-description">{step.description}</p>
 
-          <button
+          <Button
               className="tutorial-next-btn"
+              variant="primary"
               onClick={handleNext}
               type="button"
           >
             {isLast ? "Ferdig" : "Neste →"}
-          </button>
+          </Button>
         </div>
       </div>,
       document.body
