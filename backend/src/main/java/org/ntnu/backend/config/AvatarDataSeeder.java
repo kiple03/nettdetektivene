@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.CommandLineRunner;
 
@@ -13,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
  * Items are only inserted if they do not already exist (idempotent by name).
  */
 @Component
+@Order(1)
 public class AvatarDataSeeder implements CommandLineRunner{
     private final AvatarItemRepository itemRepository;
 
