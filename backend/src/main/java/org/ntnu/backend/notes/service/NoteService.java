@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.model.ClassroomCensorWord;
 import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.game.model.Level;
-import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.ntnu.backend.notes.dto.NoteResponse;
 import org.ntnu.backend.notes.dto.NotesOverviewResponse;
 import org.ntnu.backend.notes.dto.UpsertNoteRequest;
@@ -27,12 +25,15 @@ import org.ntnu.backend.notes.repository.StudentLevelNoteRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Manages the authenticated student's notebook.
@@ -251,5 +252,14 @@ public class NoteService {
 
             studentLevelNoteRepository.save(levelNote);
         }
+    }
+
+    /**
+     * Deletes a note by ID (used by teachers to delete student notes).
+     *
+     * @param noteId the id of the note to delete
+     */
+    public void deleteNote(UUID noteId) {
+        noteRepository.deleteById(noteId);
     }
 }

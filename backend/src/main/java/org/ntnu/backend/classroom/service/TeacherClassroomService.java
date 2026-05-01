@@ -430,4 +430,22 @@ public class TeacherClassroomService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return classroomMapper.toResponse(classroom);
     }
+
+    /**
+     * Allows a teacher to delete a student's note from their notebook.
+     *
+     * @param classroomId the classroom the student belongs to
+     * @param studentId the student who owns the note
+     * @param noteId the note to delete
+     * @param principal the authenticated teacher context
+     * @throws ResponseStatusException 403 if teacher doesn't have access, 404 if note/student not found
+     */
+    @Transactional
+    public void deleteStudentNote(UUID classroomId, UUID studentId, UUID noteId, JwtAuthenticatedPrincipal principal) {
+        classroomAuthorizationService.verifyAccess(principal, classroomId);
+        enrollmentRepository
+            .findByClassroomIdAndUserIdAndLeftAtIsNull(classroomId, studentId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found in classroom"));
+        noteService.deleteNote(noteId);
+    }
 }
