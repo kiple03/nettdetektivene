@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, ShieldAlert } from 'lucide-react';
+import './CensorWordPanel.css';
 import { useCensorWords } from '@/hooks/teacher/useTeacherQueries';
 import { useAddCensorWord, useDeleteCensorWord, useCensorWordError } from '@/hooks/teacher/useTeacherMutations';
 
