@@ -256,7 +256,7 @@ export default function GamePage() {
     };
 
     const handleBackToMap = () => {
-        navigate(stopId ? `/map?levelId=${stopId}` : "/map");
+        navigate("/map", { state: { fromHome: true } });
     };
 
     const sortedLevels = [...stopLevels].sort((a, b) => a.id - b.id);

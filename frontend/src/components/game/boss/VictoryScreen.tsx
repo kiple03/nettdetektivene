@@ -48,7 +48,7 @@ export function VictoryScreen({ timeSeconds, playerHp, maxHp, backTo }: Props) {
           <img src={gogglesImg} alt="VR-briller" className={styles.unlockImg} />
           <p className={styles.unlockText}>Du låste opp VR-brillene som avatargjenstand!</p>
         </div>
-        <Link to={backTo ?? "/map"} className={styles.btn}>
+        <Link to={backTo ?? "/map"} state={{ fromHome: true }} className={styles.btn}>
           Tilbake til kartet
         </Link>
       </div>
