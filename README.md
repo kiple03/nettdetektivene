@@ -125,22 +125,33 @@ idatt2106_2026_11/
 │   └── src/main/java/org/ntnu/backend/
 │       ├── user/          # Auth, registration, login
 │       ├── classroom/     # Enrollments, classroom management
-│       ├── game/          # Levels, level completions
-│       ├── mystery/       # Mystery submissions and teacher review
+│       ├── game/          # Levels, level completions, boss battles
+│       ├── level/         # Level and stop definitions
 │       ├── image/         # S3 image upload and retrieval
 │       ├── avatar/        # User avatar items and starter packs
+│       ├── medalion/      # Achievement medals
+│       ├── notes/         # Detective notebook entries
 │       ├── security/      # JWT, refresh tokens, UserPrincipal
+│       ├── config/        # Spring configuration beans
 │       ├── exception/     # Global exception handling
 │       └── filehandling/  # JSON content serialization utilities
 ├── frontend/
 │   └── src/
 │       ├── pages/         # Student and teacher portal pages
 │       ├── components/    # Reusable UI components
-│       └── api/           # API client functions
+│       ├── api/           # API client functions
+│       ├── hooks/         # Custom React hooks
+│       ├── stores/        # Global state (Zustand)
+│       ├── routes/        # Route definitions and guards
+│       ├── layouts/       # Shared page layout wrappers
+│       ├── types/         # TypeScript type definitions
+│       ├── utils/         # Helper utilities
+│       ├── data/          # Static data / content files
+│       ├── assets/        # Images and static assets
+│       ├── audio/         # Sound files
+│       └── test/          # Frontend test helpers and fixtures
 └── docs/                  # Documentation and diagrams
 ```
-
-> TODO: Update this tree if new top-level packages or modules are added
 
 ---
 
