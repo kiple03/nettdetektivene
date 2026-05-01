@@ -44,7 +44,7 @@ export const studentBoardItems: DashboardItem[] = [
   },
   {
     id: 'notebook',
-    label: 'Viktige notater!',
+    label: 'Notatbok',
     to: '/notes',
     top: '75%',
     left: '75%',
