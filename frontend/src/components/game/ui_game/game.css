@@ -439,8 +439,18 @@
 }
 
 .clickable:hover {
-  background: #ede9fe;
+  background: rgba(237, 233, 254, 0.5);
   outline: 3px solid #8b5cf6;
+}
+.clickable:hover {
+  background: rgba(237, 233, 254, 0.5); /* was solid #ede9fe, now more transparent */
+  outline: 3px solid #8b5cf6;
+}
+
+.clickable:focus-visible {
+  background: rgba(237, 233, 254, 0.5);
+  outline: 3px solid #8b5cf6;
+  outline-offset: 2px;
 }
 
 .selected {

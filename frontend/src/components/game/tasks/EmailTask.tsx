@@ -52,13 +52,14 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false, r
 
           <div className="gmail-message">
             <div className="gmail-message-header">
-              <div className={`gmail-subject clickable ${
-                  getHighlightClass(("subject"))
-              }`}
-                   onClick={() => toggleSelect("subject")}
-              >
-                {email.subject}
-              </div>
+            <button
+              type="button"
+              className={`gmail-subject btn-unstyled clickable ${getHighlightClass("subject")}`}
+              onClick={() => toggleSelect("subject")}
+              aria-pressed={selected.includes("subject")}
+            >
+              {email.subject}
+            </button>
               <div className="gmail-timestamp">{formattedDate}</div>
             </div>
 
@@ -67,42 +68,40 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false, r
               <div className="gmail-from-info">
                 <div className="gmail-from-line">
                   <span className="gmail-from-name">{email.senderName}</span>
-                  <span
-                      className={`gmail-from-email clickable ${
-                        getHighlightClass("senderEmail")
-                      }`}
-                      onClick={() => toggleSelect("senderEmail")}
+                  <button
+                    type="button"
+                    className={`gmail-from-email btn-unstyled-inline clickable ${getHighlightClass("senderEmail")}`}
+                    onClick={() => toggleSelect("senderEmail")}
+                    aria-pressed={selected.includes("senderEmail")}
                   >
                     &lt;{email.senderEmail}&gt;
-                  </span>
+                  </button>
                 </div>
                 <div className="gmail-to-line">til meg</div>
               </div>
             </div>
 
-            <div
-                className={`gmail-body clickable ${
-                    getHighlightClass("body")
-                }`}
-                onClick={() => toggleSelect("body")}
+            <button
+              type="button"
+              className={`gmail-body btn-unstyled clickable ${getHighlightClass("body")}`}
+              onClick={() => toggleSelect("body")}
+              aria-pressed={selected.includes("body")}
             >
-              {email.body.map((p, idx) => (
-                  <p key={idx}>{p}</p>
-              ))}
-            </div>
+              {email.body.map((p, idx) => <p key={idx}>{p}</p>)}
+            </button>
 
             {email.images && email.images.length > 0 && (
                 <div className="gmail-images">
                   {email.images.map((img) => (
-                      <img
-                          key={img.id}
-                          src={img.url}
-                          alt={img.alt || ""}
-                          className={`gmail-image clickable ${
-                              getHighlightClass(img.id)
-                          }`}
-                          onClick={() => toggleSelect(img.id)}
-                      />
+                      <button
+                        key={img.id}
+                        type="button"
+                        className={`gmail-image-btn btn-unstyled clickable ${getHighlightClass(img.id)}`}
+                        onClick={() => toggleSelect(img.id)}
+                        aria-pressed={selected.includes(img.id)}
+                      >
+                        <img src={img.url} alt={img.alt || ""} className="gmail-image" />
+                      </button>
                   ))}
                 </div>
             )}
@@ -126,24 +125,23 @@ export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false, r
             )}
 
             {email.signature && (
-                <div
-                    className={`gmail-signature clickable ${
-                        getHighlightClass("signature")
-                    }`}
-                    onClick={() => toggleSelect("signature")}
+                <button
+                  type="button"
+                  className={`gmail-signature btn-unstyled clickable ${getHighlightClass("signature")}`}
+                  onClick={() => toggleSelect("signature")}
+                  aria-pressed={selected.includes("signature")}
                 >
-                  {email.signature.split("\n").map((line, idx) => (
-                      <div key={idx}>{line}</div>
-                  ))}
-                </div>
+                  {email.signature.split("\n").map((line, idx) => <div key={idx}>{line}</div>)}
+                </button>
             )}
           </div>
         </div>
         <div className="gmail-result">
           <button
-              className={styles.submitButton}
-              onClick={handleSubmit}
-              disabled={disabled || selected.length === 0}
+            type="button"
+            className={styles.submitButton}
+            onClick={handleSubmit}
+            disabled={disabled || selected.length === 0}
           >
             Send inn svar
           </button>
