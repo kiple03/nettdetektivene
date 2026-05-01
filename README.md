@@ -77,15 +77,20 @@ Nettdetektivene is a gamified web application that teaches children (3rd–7th g
 
 ## Running for Development
 
-### .evn file
+### Database setup
 The .env file can be found [here](https://git.ntnu.no/team-11/idatt2106_2026_11/wiki/Env-File), and must
 be placed in the root directory before running the program. 
+Note: must be connected to NTNUs internett, or use vpn
 
 ### Backend (Spring Boot)
 
 ```bash
 cd backend
 mvn spring-boot:run
+```
+or run the jar file
+```bash
+java -jar nettdetektivene.jar
 ```
 
 The API starts at `http://localhost:8080`.
