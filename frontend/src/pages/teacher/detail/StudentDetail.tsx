@@ -125,7 +125,13 @@ export default function StudentDetail() {
                         </div>
                     </div>
 
-                    {notebook && <StudentNotebook notes={notebook} />}
+                    {notebook && (
+                        <StudentNotebook 
+                            notes={notebook} 
+                            classroomId={classroomId}
+                            studentId={studentId}
+                        />
+                    )}
                 </div>
             </div>
         </div>

@@ -178,6 +178,25 @@ public class TeacherClassroomController {
     }
 
     /**
+     * Deletes a student's note from their notebook (teacher action).
+     *
+     * @param id        classroom UUID
+     * @param studentId student UUID
+     * @param noteId    note UUID to delete
+     * @param principal the authenticated teacher
+     */
+    @DeleteMapping("/{id}/students/{studentId}/notebook/{noteId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('TEACHER')")
+    public void deleteStudentNote(
+            @PathVariable UUID id,
+            @PathVariable UUID studentId,
+            @PathVariable UUID noteId,
+            @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
+        teacherClassroomService.deleteStudentNote(id, studentId, noteId, principal);
+    }
+
+    /**
      * Returns all medalions (achievement badges) earned by a student in this classroom.
      *
      * @param id        classroom UUID
