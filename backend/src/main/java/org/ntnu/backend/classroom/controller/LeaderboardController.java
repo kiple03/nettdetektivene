@@ -98,6 +98,6 @@ public class LeaderboardController {
       @PathVariable UUID teacherId,
       @AuthenticationPrincipal JwtAuthenticatedPrincipal principal
   ) {
-    return leaderboardService.getTeacherClassroomScores(teacherId, principal.getUserId());
+    return leaderboardService.getTeacherClassroomScores(teacherId);
   }
 }

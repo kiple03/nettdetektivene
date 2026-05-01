@@ -69,11 +69,7 @@ public class LeaderboardService {
    * @param teacherId the teacher whose classrooms are fetched
    * @return list of classroom leaderboard entries
    */
-  public List<LeaderboardClassroomResponse> getTeacherClassroomScores(UUID teacherId, UUID principalUserId) {
-    if (!principalUserId.equals(teacherId)) {
-      throw new ApiException(HttpStatus.FORBIDDEN, "You cannot access another teachers classroom") {
-      };
-    }
+  public List<LeaderboardClassroomResponse> getTeacherClassroomScores(UUID teacherId) {
     List<UUID> classroomIds = classroomTeacherRepository.findClassroomsByTeacherId(teacherId)
         .stream().map(Classroom::getId).toList();
 

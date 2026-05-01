@@ -1,5 +1,8 @@
 package org.ntnu.backend.notes.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.notes.dto.NoteResponse;
@@ -22,6 +25,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/notes")
 @RequiredArgsConstructor
+@Tag(name = "Notes", description = "Student notebook - personal notes and level summaries")
 public class NoteController {
 
     private final NoteService noteService;
@@ -34,6 +38,7 @@ public class NoteController {
      */
     @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get the authenticated user's full notebook")
     public NotesOverviewResponse getMyNotes(Authentication authentication) {
         return noteService.getMyNotes(authentication);
     }
@@ -48,6 +53,10 @@ public class NoteController {
      * @return the created note
      */
     @PostMapping("/me/{category}")
+    @Operation(
+        summary = "Create a personal note in a category",
+        description = "Category corresponds to a stop name, e.g. 'NYHETSKVARTALET'"
+    )
     public NoteResponse createNote(Authentication auth, @PathVariable String category, @Valid @RequestBody UpsertNoteRequest request) {
         return noteService.createNote(auth, category, request);
     }
@@ -60,6 +69,9 @@ public class NoteController {
      */
     @DeleteMapping("/me/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete a personal note owned by the authenticated user")
+    @ApiResponse(responseCode = "204", description = "Note deleted")
+    @ApiResponse(responseCode = "404", description = "Note not found")
     public void deleteMyNote(Authentication auth, @PathVariable UUID id) {
         noteService.deleteMyNote(auth, id);
     }
