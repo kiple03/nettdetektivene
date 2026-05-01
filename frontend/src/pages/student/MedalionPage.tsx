@@ -5,10 +5,12 @@ import { useMedalions } from "@/hooks/useMedalions";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 import { ALL_MEDALS, getMedalImageUrl } from "@/data/allMedals";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 /** Displays all medals with earned/locked state and highlights newly acquired ones. */
 function MedalionPage() {
     const { data: medalions, isLoading } = useMedalions();
+    const { email } = useAuth();
 
     const earnedNames = new Set(medalions?.map((m) => m.name) ?? []);
 
@@ -17,7 +19,7 @@ function MedalionPage() {
     useEffect(() => {
         if(!medalions || isLoading) return;
 
-        const storageKey = "seenMedalNames";
+        const storageKey = `seenMedalNames_${email ?? "anonymous"}`;
         const seen: string[] = JSON.parse(localStorage.getItem(storageKey) ?? "[]");
         const seenSet = new Set(seen);
 

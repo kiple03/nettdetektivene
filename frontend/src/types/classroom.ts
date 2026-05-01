@@ -61,17 +61,6 @@ export interface StudentDetail {
   gameCompleted: boolean | null;
 }
 
-/** Real-time classroom notification from the backend. */
-export interface NotificationResponse {
-  type: 'stop_completed' | 'student_stuck' | 'inappropriate_name' | 'co_teacher_added';
-  message: string;
-  classroomId: string;
-  studentUsername: string;
-  timestamp: string;
-  /** Tracked client-side in localStorage — not persisted on the server. */
-  read: boolean;
-}
-
 /** Lightweight stop info used in map and modal displays. */
 export interface StopSummary {
   id: string;
