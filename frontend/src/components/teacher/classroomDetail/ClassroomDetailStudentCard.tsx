@@ -87,9 +87,9 @@ export function ClassroomDetailStudentCard({
                                                     if (event.key === 'Escape') onCancelEditUsername();
                                                 }}
                                                 maxLength={30}
-                                                autoFocus
                                             />
                                             <button
+                                                type={"button"}
                                                 className="classroom-detail__action-btn classroom-detail__action-btn--save"
                                                 onClick={() => onSaveUsername(student)}
                                                 disabled={savingUsername}
@@ -144,6 +144,7 @@ export function ClassroomDetailStudentCard({
                                     ) : !isEditing ? (
                                         <>
                                             <button
+                                                type={"button"}
                                                 className="classroom-detail__icon-btn"
                                                 aria-label="Rediger brukernavn"
                                                 onClick={() => onStartEditUsername(student)}

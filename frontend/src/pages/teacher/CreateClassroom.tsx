@@ -51,7 +51,6 @@ export default function CreateClassroom() {
                 minLength={2}
                 maxLength={80}
                 placeholder="f.eks. 6A – Nettdetektivene"
-                autoFocus
             />
           </label>
 

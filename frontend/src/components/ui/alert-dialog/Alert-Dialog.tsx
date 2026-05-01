@@ -73,23 +73,32 @@ export function AlertDialog({
 
         window.addEventListener("keydown", handleKeyDown);
 
+        const returnFocusElement = returnFocusRef?.current;
+
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
-            returnFocusRef?.current?.focus();
+            returnFocusElement?.focus();
         };
     }, [open, onOpenChange, returnFocusRef]);
 
     if (!open) return null;
 
     return (
-        <div className={styles.overlay} onClick={() => onOpenChange(false)}>
+        <div
+            className={styles.overlay}
+            onClick={(event) => {
+                if (event.target === event.currentTarget) {
+                    onOpenChange(false);
+                }
+            }}
+            role="presentation"
+        >
             <div
                 ref={dialogRef}
                 className={styles.contentWrapper}
                 style={contentWrapperStyle}
                 role="dialog"
                 aria-modal="true"
-                onClick={(event) => event.stopPropagation()}
             >
                 {children}
             </div>

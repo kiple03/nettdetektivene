@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createBrowserRouter } from "react-router-dom";
 import { lazy } from "react";
 import RequireAuth from "@/routes/RequireAuth";
@@ -47,15 +48,15 @@ export const router = createBrowserRouter([
     // Student routes — require STUDENT role
     {
         path: '/home',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><StudentHomePage /></RequireClassroom></RequireAuth>,
+        element: <RequireAuth requiredRole="STUDENT"><RequireClassroom><StudentHomePage /></RequireClassroom></RequireAuth>,
     },
     {
         path: '/join-with-code',
-        element: <RequireAuth role="STUDENT"><JoinWithCodePage /></RequireAuth>,
+        element: <RequireAuth requiredRole="STUDENT"><JoinWithCodePage /></RequireAuth>,
     },
     // Student routes with profile icon
     {
-        element: <RequireAuth role="STUDENT"><RequireClassroom><StudentLayout /></RequireClassroom></RequireAuth>,
+        element: <RequireAuth requiredRole="STUDENT"><RequireClassroom><StudentLayout /></RequireClassroom></RequireAuth>,
         children: [
             { path: '/map', element: <MapPage /> },
             { path: '/leaderboard', element: <LeaderboardPage /> },
@@ -68,16 +69,16 @@ export const router = createBrowserRouter([
     // Student routes without profile icon
     {
         path: '/profile',
-        element: <RequireAuth role="STUDENT"><RequireClassroom><ProfilePage/></RequireClassroom></RequireAuth>
+        element: <RequireAuth requiredRole="STUDENT"><RequireClassroom><ProfilePage/></RequireClassroom></RequireAuth>
     },
     {
         path: "/avatar",
-        element: <RequireAuth role="STUDENT"><AvatarDevPage /></RequireAuth>
+        element: <RequireAuth requiredRole="STUDENT"><AvatarDevPage /></RequireAuth>
     },
 
     // Teacher routes — require TEACHER role
     {
-        element: <RequireAuth role="TEACHER"><TeacherLayout /></RequireAuth>,
+        element: <RequireAuth requiredRole="TEACHER"><TeacherLayout /></RequireAuth>,
         children: [
             {
                 path: '/teacher',
@@ -126,7 +127,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/teacher/classrooms/:classroomId/boss',
-                element: <RequireAuth role="TEACHER"><BossBattlePage /></RequireAuth> 
+                element: <RequireAuth requiredRole="TEACHER"><BossBattlePage /></RequireAuth> 
             },
         ],
     },

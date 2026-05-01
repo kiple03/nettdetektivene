@@ -61,7 +61,7 @@ export function TeacherStopLevelsModal({ stop, classroomId, onClose }: TeacherSt
                     )}
 
                     {hasLevels && (
-                        <ul className={styles.levelList} role="list">
+                        <ul className={styles.levelList}>
                             {levels.map((level, index) => (
                                 <li key={level.id}>
                                     <button

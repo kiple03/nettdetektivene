@@ -52,7 +52,6 @@ export function ClassroomDetailHeader({
                         value={editTitle}
                         onChange={(event) => onTitleChange(event.target.value)}
                         maxLength={80}
-                        autoFocus
                         onKeyDown={(event) => {
                             if (event.key === 'Enter') onSave();
                             if (event.key === 'Escape') onCancel();
@@ -80,6 +79,7 @@ export function ClassroomDetailHeader({
                     <h1 className="classroom-detail__title">Klasse {title}</h1>
                     <div className="classroom-detail__title-actions">
                         <button
+                            type={"button"}
                             className="classroom-detail__pencil"
                             aria-label="Rediger klassenavn"
                             onClick={onStartEdit}
@@ -88,6 +88,7 @@ export function ClassroomDetailHeader({
                         </button>
                         <div className="classroom-detail__title-divider" />
                         <button
+                            type={"button"}
                             className="classroom-detail__trash"
                             aria-label="Slett klasse"
                             onClick={onDelete}

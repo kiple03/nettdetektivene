@@ -50,8 +50,9 @@ export function ClassifyItemsEditor({ value, onChange }: Props) {
   return (
     <div className="mc-editor">
       <div className="mc-editor__field">
-        <label className="mc-editor__label">Spørsmålstekst</label>
+        <label className="mc-editor__label" htmlFor="classify-question-text">Spørsmålstekst</label>
         <textarea
+          id="classify-question-text"
           className="mc-editor__textarea"
           value={value.questionText}
           onChange={e => setQuestion(e.target.value)}

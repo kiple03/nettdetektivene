@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { AxiosError } from 'axios';
-import { LayeredAvatar, SKIN_TONES } from '@/components/miscellaneous/LayeredAvatar';
+import { LayeredAvatar } from '@/components/miscellaneous/LayeredAvatar';
+import { SKIN_TONES } from '@/components/miscellaneous/avatarConstants';
 import {
   useSaveAvatarOutfit,
   useUserInventory,
@@ -313,8 +314,12 @@ function ChangingRoom({initialItems, inventory}: {initialItems: EquippedItem[], 
             </div>
 
             <div className={styles.nameField}>
-              <label className={styles.nameLabel}>Detektiv navn</label>
+              <label
+                  className={styles.nameLabel}
+                  htmlFor="detective-name"
+              >Detektiv navn</label>
               <input
+                id="detective-name"
                 type="text"
                 value={username}
                 onChange={(e) => {

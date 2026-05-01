@@ -30,10 +30,28 @@ export function ImagePickerModal({ onSelect, onClose }: Props) {
   };
 
   return (
-    <div className="img-picker-modal__backdrop" onClick={onClose}>
-      <div className="img-picker-modal" onClick={e => e.stopPropagation()}>
+    <div
+        className="img-picker-modal__backdrop"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
+        role="presentation"
+    >
+      <div
+          className="img-picker-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="image-picker-title"
+      >
         <div className="img-picker-modal__header">
-          <h3 className="img-picker-modal__title">Velg bilde</h3>
+          <h3
+              id="image-picker-title"
+              className="img-picker-modal__title"
+          >
+            Velg bilde
+          </h3>
           <button type="button" className="img-picker-modal__close" onClick={onClose} aria-label="Lukk">
             ×
           </button>

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 interface Props {
     onComplete: () => void;
@@ -12,9 +12,11 @@ export function DefeatCutscene({ onComplete }: Props) {
     // 3. onComplete
 
     const called = useRef(false);
-    if (!called.current) {
-        called.current = true;
-        setTimeout(onComplete, 0);
-    }
+    useEffect(() => {
+        if (!called.current) {
+            called.current = true;
+            setTimeout(onComplete, 0);
+        }
+    }, [onComplete]);
     return null;
 }

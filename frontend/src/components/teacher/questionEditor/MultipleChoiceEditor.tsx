@@ -36,8 +36,11 @@ export function MultipleChoiceEditor({ value, onChange }: Props) {
   return (
     <div className="mc-editor">
       <div className="mc-editor__field">
-        <label className="mc-editor__label">Spørsmålstekst</label>
+        <label className="mc-editor__label" htmlFor="multiple-choice-question-text">
+            Spørsmålstekst
+        </label>
         <textarea
+          id="multiple-choice-question-text"
           className="mc-editor__textarea"
           value={value.questionText}
           onChange={e => setQuestion(e.target.value)}

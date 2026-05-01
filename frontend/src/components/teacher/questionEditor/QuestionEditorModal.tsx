@@ -29,10 +29,22 @@ export function QuestionEditorModal({ mode, initialValue, saving, error, onClose
   };
 
   return (
-    <div className="q-modal__backdrop" onClick={() => !saving && onClose()}>
-      <div className="q-modal" onClick={e => e.stopPropagation()}>
+    <div
+        className="q-modal__backdrop"
+        onClick={(e) => {
+          if (e.target === e.currentTarget && !saving) {
+            onClose();
+          }
+        }}
+        role="presentation"
+    >
+      <div className="q-modal"
+           role="dialog"
+           aria-modal="true"
+           aria-labelledby="question-editor-modal-title"
+      >
         <div className="q-modal__header">
-          <h2 className="q-modal__title">
+          <h2 id="question-editor-modal-title" className="q-modal__title">
             {mode === 'create' ? 'Nytt spørsmål' : 'Rediger spørsmål'}
           </h2>
           <button type="button" className="q-modal__close" onClick={onClose} disabled={saving} aria-label="Lukk">

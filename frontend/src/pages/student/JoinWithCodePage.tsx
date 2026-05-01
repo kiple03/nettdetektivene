@@ -143,9 +143,11 @@ export default function JoinWithCodePage() {
                             Skriv inn kode:
                         </label>
 
-                        <div
+                        <button
+                            type="button"
                             className={styles.codeInputWrapper}
                             onClick={() => inputRef.current?.focus()}
+                            aria-label="Fokuser kodefelt"
                         >
                             <img
                                 src={detectiveImage}
@@ -203,7 +205,7 @@ export default function JoinWithCodePage() {
                                 aria-hidden="true"
                                 className={`${styles.innerDetective} ${styles.rightDetective}`}
                             />
-                        </div>
+                        </button>
 
                         {error && <p className={styles.error}>{error}</p>}
 

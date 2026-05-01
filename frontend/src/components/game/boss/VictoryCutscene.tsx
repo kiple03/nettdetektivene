@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 interface Props {
     onComplete: () => void;
@@ -7,9 +7,11 @@ interface Props {
 /** Invisible component that fires `onComplete` after a 5-second victory delay. */
 export function VictoryCutscene({ onComplete }: Props) {
     const called = useRef(false);
-    if (!called.current) {
-        called.current = true;
-        setTimeout(onComplete, 5000);
-    }
+    useEffect(() => {
+        if (!called.current) {
+            called.current = true;
+            setTimeout(onComplete, 5000);
+        }
+    }, [onComplete]);
     return null;
 }

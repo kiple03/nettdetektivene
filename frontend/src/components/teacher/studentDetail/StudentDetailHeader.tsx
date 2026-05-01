@@ -46,7 +46,6 @@ export function StudentDetailHeader({
                         value={editValue}
                         onChange={(e) => onEditValueChange(e.target.value)}
                         onKeyDown={(e) => { if (e.key === 'Enter') onSaveUsername(); if (e.key === 'Escape') onCancelEdit(); }}
-                        autoFocus
                         maxLength={30}
                     />
                     <div className="student-detail__username-actions">

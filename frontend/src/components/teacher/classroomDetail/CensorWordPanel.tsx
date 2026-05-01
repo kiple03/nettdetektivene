@@ -62,12 +62,15 @@ export function CensorWordPanel({ classroomId }: Props) {
             {open && (
                 <div
                     className="censor-modal__backdrop"
-                    onClick={handleClose}
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            handleClose();
+                        }
+                    }}
                     role="presentation"
                 >
                     <div
                         className="censor-modal"
-                        onClick={(e) => e.stopPropagation()}
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="censor-modal-title"
@@ -117,12 +120,12 @@ export function CensorWordPanel({ classroomId }: Props) {
                             <div className="censor-modal__input-row">
                                 <input
                                     type="text"
+                                    aria-label="Nytt sensurert ord"
                                     placeholder="Nytt ord"
                                     value={input}
                                     maxLength={50}
                                     onChange={(e) => setInput(e.target.value)}
                                     className="classroom-detail__invite-input"
-                                    autoFocus
                                 />
                                 <button
                                     type="submit"

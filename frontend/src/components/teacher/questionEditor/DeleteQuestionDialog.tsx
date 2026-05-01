@@ -18,15 +18,41 @@ export function DeleteQuestionDialog({
     if (!open) return null;
 
     return (
-        <div className="level-questions__modal-backdrop" onClick={() => !deleting && onCancel()}>
-            <div className="level-questions__modal" onClick={(e) => e.stopPropagation()}>
-                <h2 className="level-questions__modal-title">Slett spørsmål?</h2>
-                <p className="level-questions__modal-body">
+        <div
+            className="level-questions__modal-backdrop"
+            onClick={(e) => {
+                if (e.target === e.currentTarget && !deleting) {
+                    onCancel();
+                }
+            }}
+            role="presentation"
+        >
+            <div
+                className="level-questions__modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="delete-question-dialog-title"
+                aria-describedby="delete-question-dialog-description"
+            >
+                <h2
+                    id="delete-question-dialog-title"
+                    className="level-questions__modal-title"
+                >
+                    Slett spørsmål?
+                </h2>
+
+                <p
+                    id="delete-question-dialog-description"
+                    className="level-questions__modal-body"
+                >
                     Spørsmålet vil bli slettet permanent. Handlingen kan ikke angres.
                 </p>
+
                 {error && <p className="level-questions__modal-error">{error}</p>}
+
                 <div className="level-questions__modal-actions">
                     <button
+                        type="button"
                         className="level-questions__modal-cancel"
                         onClick={onCancel}
                         disabled={deleting}
@@ -34,6 +60,7 @@ export function DeleteQuestionDialog({
                         Avbryt
                     </button>
                     <button
+                        type="button"
                         className="level-questions__modal-confirm"
                         onClick={onConfirm}
                         disabled={deleting}

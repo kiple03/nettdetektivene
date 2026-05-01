@@ -2,14 +2,7 @@ import type { EquippedItem } from '@/hooks/useUserProfile';
 import { useColoredHairSvg } from '@/hooks/useColoredHairSvg';
 
 /** Maps skin tone keys to their CSS color values for base, dark shadow, and light shadow. */
-export const SKIN_TONES: Record<string, {base: string, shadowDark: string, shadowLight: string}> = {
-  'tone_light': { base: "#f8c09b", shadowDark: "#da7e61", shadowLight: "#eba482" },
-  'tone_medium': { base: "#d2996d", shadowDark: "#b36b41", shadowLight: "#c38659" },
-  'tone_dark':   { base: "#59381c", shadowDark: "#543010", shadowLight: "#3a1d06" },
-  'tone_wacky':  { base: "#78b159", shadowDark: "#528537", shadowLight: "#679d4a" },
-};
-
-const DEFAULT_TONE = SKIN_TONES['tone_dark'];
+import { DEFAULT_TONE, HATS_WITH_HAIR_MASK, SKIN_TONES } from "@/components/miscellaneous/avatarConstants";
 
 /** Props for {@link LayeredAvatar}. Skin tone overrides take precedence over the equipped skin_tone item. */
 interface LayeredAvatarProps{
@@ -133,7 +126,6 @@ export function LayeredAvatar({
         });
 
     const equippedHat = sortedItems.find(i => i.category === 'head');
-    const HATS_WITH_HAIR_MASK = new Set(['detective_hat', 'police_hat', 'sheriff_hat', 'VR_goggles']);
 
     const wrapperStyles: React.CSSProperties = {
         position: 'relative',
