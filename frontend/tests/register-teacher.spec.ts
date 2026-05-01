@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('teacher can register a new account', async ({ page }) => {
-  const email = `test-${Date.now()}@gmail.com`;
+  const email = `test-${crypto.randomUUID()}@gmail.com`;
 
   await page.goto('/');
   await page.getByRole('link', { name: 'Er du lærer?' }).click();

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('student can register a new account', async ({ page }) => {
-  const email = `test-${Date.now()}@gmail.com`;
+  const email = `test-${crypto.randomUUID()}@gmail.com`;
 
   await page.goto('/');
   await page.getByRole('button', { name: 'Registrer ny bruker' }).click();
