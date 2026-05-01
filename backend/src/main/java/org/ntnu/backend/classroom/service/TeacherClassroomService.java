@@ -206,7 +206,7 @@ public class TeacherClassroomService {
                 totalStops,
                 equippedItemsByStudent.getOrDefault(e.getUser().getId(), List.of())
             ))
-            .sorted(Comparator.<StudentProgressResponse, Integer>comparing(StudentProgressResponse::getScore)
+            .sorted(Comparator.comparing(StudentProgressResponse::getScore)
                 .reversed()
                 .thenComparing(StudentProgressResponse::getUsername, String.CASE_INSENSITIVE_ORDER))
             .toList();
