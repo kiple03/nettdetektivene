@@ -25,6 +25,7 @@ import org.ntnu.backend.notes.model.LevelNoteTemplate;
 import org.ntnu.backend.notes.model.enums.NoteCategory;
 import org.ntnu.backend.notes.repository.LevelNoteTemplateRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.core.JacksonException;
@@ -43,6 +44,7 @@ import tools.jackson.databind.ObjectMapper;
  * so each level has at most one template.
  */
 @Component
+@Order(2)
 @RequiredArgsConstructor
 @Slf4j
 public class GameSeeder implements CommandLineRunner {

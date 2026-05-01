@@ -103,15 +103,14 @@ The app starts at `http://localhost:5173`.
 
 ## Test Users
 
-Default test data is loaded automatically on startup.
+A `TestUserSeeder` runs on backend startup (idempotent) and creates:
 
-| Email                | Password      | Role    |
-| -------------------- | ------------- | ------- |
-| `teacher@test.local` | `password123` | TEACHER |
-| `student@test.local` | `password123` | STUDENT |
+| Email                | Password      | Role    | State                                              |
+| -------------------- | ------------- | ------- | -------------------------------------------------- |
+| `teacher@test.local` | `password123` | TEACHER | Owns classroom `Test Classroom` (code `TEST01`)    |
+| `student@test.local` | `password123` | STUDENT | Enrolled in `Test Classroom`; everything unlocked  |
 
-> TODO: Verify and update these credentials once seed data is finalised
-> TODO: Add more representative accounts, e.g. a teacher with multiple classrooms or a student mid-progress
+"Everything unlocked" means the test student has all avatar items unlocked, all levels completed, all medals awarded, all boss battles passed, and all level note templates filled in.
 
 ---
 
