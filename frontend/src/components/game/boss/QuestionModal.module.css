@@ -227,8 +227,7 @@
     display: none;                 
 }                                                                                                  
 
-.stationWrap :global(.station-title),
-.stationWrap :global(.task-header) {
+.stationWrap :global(.station-title) {
     position: static;
     transform: none;
     background: #0a1524;
@@ -246,15 +245,6 @@
 .stationWrap :global(.feedback-wrapper) {                                                          
     flex: none;
     margin-top: 8px;                                                                               
-}                                                                                                  
-
-.stationWrap :global(.feedback-box) {                                                              
-    background: #0a1524;         
-    color: #e6eefc;
-    width: 100%;                                                                  
-    max-width: 100%;
-    padding: 0.75rem;                                                                              
-    border-radius: 10px;                                                                           
 }
                                                                                                     
 .stationWrap :global(.feedback-box__correct) {                                                     

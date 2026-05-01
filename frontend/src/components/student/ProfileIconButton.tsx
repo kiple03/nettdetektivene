@@ -9,6 +9,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
 import { Button } from "@/components/ui/buttons/Button.tsx";
+import styles from "./ProfileIconButton.module.css";
 
 /**
  * Fixed-position avatar button that navigates to the profile page.
@@ -41,64 +42,57 @@ export default function ProfileIconButton() {
 
     return (
         <>
-            <button
-                ref={buttonRef}
-                onClick={handleClick}
-                type="button"
-                aria-label="Gå til profil"
-                style={{
-                    position: "fixed",
-                    top: "1rem",
-                    right: "1rem",
-                    zIndex: 100,
-                    background: "none",
-                    border: "4px solid #6b3a1f",
-                    padding: 0,
-                    cursor: "pointer",
-                    borderRadius: "50%",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.5), 0 0 0 2px rgba(107,58,31,0.4)",
-                    transform: "translateY(-1px)",
-                }}
-            >
-                <LayeredAvatar
-                    items={userProfile?.equippedItems ?? []}
-                    hairColor={userProfile?.hairColor}
-                    size={80}
-                    circular={true}
-                />
-            </button>
+          <button
+              ref={buttonRef}
+              onClick={handleClick}
+              type="button"
+              aria-label="Gå til profil"
+              className={styles.profileButton}
+          >
+            <LayeredAvatar
+                items={userProfile?.equippedItems ?? []}
+                hairColor={userProfile?.hairColor}
+                size={80}
+                circular={true}
+            />
+          </button>
 
-            <AlertDialog
-                open={confirmOpen}
-                onOpenChange={setConfirmOpen}
-                returnFocusRef={buttonRef}
-                contentWrapperStyle={{ maxWidth: "580px" }}
-            >
-                <AlertDialogContent>
-                    <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        Du mister fremgangen din på dette nivået.
-                    </AlertDialogDescription>
-                    <div style={{ display: "flex", gap: "1.25rem", justifyContent: "center", marginTop: "1.25rem" }}>
-                        <Button
-                            variant="destructive"
-                            type="button"
-                            onClick={handleConfirm}
-                            style={{ padding: "0.75rem 2.5rem", fontSize: "1.05rem" }}
-                        >
-                            Ja
-                        </Button>
-                        <Button
-                            variant="primary"
-                            type="button"
-                            onClick={() => setConfirmOpen(false)}
-                            style={{ padding: "0.75rem 2.5rem", fontSize: "1.05rem" }}
-                        >
-                            Nei
-                        </Button>
-                    </div>
-                </AlertDialogContent>
-            </AlertDialog>
+          <AlertDialog
+              open={confirmOpen}
+              onOpenChange={setConfirmOpen}
+              returnFocusRef={buttonRef}
+              contentWrapperStyle={{maxWidth: "580px"}}
+          >
+            <AlertDialogContent>
+              <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Du mister fremgangen din på dette nivået.
+              </AlertDialogDescription>
+              <div style={{
+                display: "flex",
+                gap: "1.25rem",
+                justifyContent: "center",
+                marginTop: "1.25rem"
+              }}>
+                <Button
+                    variant="destructive"
+                    type="button"
+                    onClick={handleConfirm}
+                    style={{padding: "0.75rem 2.5rem", fontSize: "1.05rem"}}
+                >
+                  Ja
+                </Button>
+                <Button
+                    variant="primary"
+                    type="button"
+                    onClick={() => setConfirmOpen(false)}
+                    style={{padding: "0.75rem 2.5rem", fontSize: "1.05rem"}}
+                >
+                  Nei
+                </Button>
+              </div>
+            </AlertDialogContent>
+          </AlertDialog>
         </>
     );
 }
