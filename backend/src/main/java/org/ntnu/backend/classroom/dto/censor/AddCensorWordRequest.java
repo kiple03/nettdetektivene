@@ -1,4 +1,4 @@
-package org.ntnu.backend.classroom.dto;
+package org.ntnu.backend.classroom.dto.censor;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

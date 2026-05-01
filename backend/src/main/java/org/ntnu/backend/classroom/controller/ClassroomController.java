@@ -30,8 +30,6 @@ public class ClassroomController {
         this.classroomService = classroomService;
     }
 
-    // ── Shared endpoints (teacher + student) ─────────────────────────────────
-
     /**
      * Retrieves a classroom by its UUID. Accessible to both teachers and students.
      *
@@ -44,8 +42,6 @@ public class ClassroomController {
     public ClassroomResponse getClassroom(@PathVariable UUID id) {
         return classroomService.getClassroom(id);
     }
-
-    // ── Student endpoints ─────────────────────────────────────────────────────
 
     /**
      * Returns the classroom the authenticated student is currently enrolled in.
@@ -62,8 +58,6 @@ public class ClassroomController {
         return classroom.map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.noContent().build());
     }
-
-    // ── Student join endpoint ─────────────────────────────────────────────────
 
     /**
      * Enrolls the authenticated student in a classroom identified by the provided join code.

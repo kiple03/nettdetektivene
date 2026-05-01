@@ -1,4 +1,4 @@
-package org.ntnu.backend.classroom.dto;
+package org.ntnu.backend.classroom.dto.createquestion;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

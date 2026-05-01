@@ -1,4 +1,4 @@
-package org.ntnu.backend.classroom.dto;
+package org.ntnu.backend.classroom.dto.createquestion;
 
 import jakarta.validation.constraints.NotBlank;
 

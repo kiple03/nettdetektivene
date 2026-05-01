@@ -3,8 +3,8 @@ package org.ntnu.backend.classroom.controller;
 import java.util.List;
 import java.util.UUID;
 
-import org.ntnu.backend.classroom.dto.AddCensorWordRequest;
-import org.ntnu.backend.classroom.dto.CensorWordResponse;
+import org.ntnu.backend.classroom.dto.censor.AddCensorWordRequest;
+import org.ntnu.backend.classroom.dto.censor.CensorWordResponse;
 import org.ntnu.backend.classroom.dto.ClassroomResponse;
 import org.ntnu.backend.classroom.dto.ClassroomSummaryResponse;
 import org.ntnu.backend.classroom.dto.CoTeacherResponse;

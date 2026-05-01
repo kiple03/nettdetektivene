@@ -1,4 +1,4 @@
-package org.ntnu.backend.classroom.dto;
+package org.ntnu.backend.classroom.dto.censor;
 
 import java.time.Instant;
 import java.util.UUID;
