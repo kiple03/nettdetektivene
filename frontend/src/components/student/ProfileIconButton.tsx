@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useMatch } from "react-router-dom";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
@@ -27,6 +27,17 @@ export default function ProfileIconButton() {
 
     const { data: userProfile } = useUserProfile();
 
+    const [isPortrait, setIsPortrait] = useState(
+        window.matchMedia("(orientation: portrait)").matches
+    );
+
+    useEffect(() => {
+        const mq = window.matchMedia("(orientation: portrait)");
+        const handler = (e: MediaQueryListEvent) => setIsPortrait(e.matches);
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+    }, []);
+
     const handleClick = () => {
         if (isOnLevel) {
             setConfirmOpen(true);
@@ -42,20 +53,20 @@ export default function ProfileIconButton() {
 
     return (
         <>
-          <button
-              ref={buttonRef}
-              onClick={handleClick}
-              type="button"
-              aria-label="Gå til profil"
-              className={styles.profileButton}
-          >
-            <LayeredAvatar
+            <button
+                ref={buttonRef}
+                onClick={handleClick}
+                type="button"
+                aria-label="Gå til profil"
+                className={styles.profileButton}
+            >
+              <LayeredAvatar
                 items={userProfile?.equippedItems ?? []}
                 hairColor={userProfile?.hairColor}
-                size={80}
+                size={isPortrait ? 66 : 80}
                 circular={true}
-            />
-          </button>
+                />
+            </button>
 
           <AlertDialog
               open={confirmOpen}

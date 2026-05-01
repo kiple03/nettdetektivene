@@ -81,6 +81,8 @@ export default function StudentDetail() {
                         completedCount={completedCount}
                         avatarItems={studentProfile?.equippedItems ?? []}
                         hairColor={studentProfile?.hairColor}
+                        score={studentProfile?.score}
+                        medalsEarned={studentProfile?.medalsEarned}
                         editing={editing}
                         editValue={editValue}
                         onEditValueChange={setEditValue}
@@ -91,7 +93,7 @@ export default function StudentDetail() {
                         usernameError={usernameError}
                     />
 
-                    <StudentDetailLevels studentDetail={studentDetail} />
+                    <StudentDetailLevels studentDetail={studentDetail} studentProfile={studentProfile} />
 
                     <div className="student-detail__medals">
                         <h2 className="student-detail__medals-title">Medaljer</h2>

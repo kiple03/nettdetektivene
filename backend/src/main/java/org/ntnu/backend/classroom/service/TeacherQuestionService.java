@@ -221,7 +221,7 @@ public class TeacherQuestionService {
         List<Option> options = new ArrayList<>();
         for (int i = 0; i < dtos.size(); i++) {
             CreateMultipleChoiceOptionRequest dto = dtos.get(i);
-            options.add(new MultipleChoiceOption(i + 1, dto.text(), dto.imageUrl(), dto.isCorrect(), dto.explanation()));
+            options.add(new MultipleChoiceOption(i + 1, dto.text(), dto.imageUrl(), dto.responseImageUrl(), dto.isCorrect(), dto.explanation()));
         }
         return options;
     }
@@ -301,6 +301,7 @@ public class TeacherQuestionService {
                     mc.getId(),
                     mc.getText(),
                     mc.getImageUrl(),
+                    mc.getResponseImageUrl(),
                     mc.isCorrect(),
                     mc.getExplanation()
                 );

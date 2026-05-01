@@ -77,6 +77,15 @@ function StudentLoginPage() {
     }
   };
 
+  const handleCloseRegister = () => {
+    setShowRegister(false);
+    setRegEmail('');
+    setRegPassword('');
+    setRegConfirm('');
+    setRegError('');
+    setRegFieldErrors({});
+  };
+
   return (
     <div className="student-login" style={{ backgroundImage: `url(${detectiveRoom})` }}>
       <Link to="/laerer/login" className="teacher-link">
@@ -116,7 +125,6 @@ function StudentLoginPage() {
             title="Opprett konto"
             subtitle="Registrer deg for å bli en nettdetektiv!"
             submitLabel="Opprett konto"
-            onClose={() => setShowRegister(false)}
             returnFocusRef={registerButtonRef}
             onSubmit={handleRegister}
             error={regError}
@@ -155,6 +163,7 @@ function StudentLoginPage() {
             onConfirmBlur={() => {
               setRegFieldErrors((current) => ({ ...current, confirm: validatePasswordConfirm(regPassword, regConfirm) }));
             }}
+            onClose={handleCloseRegister}
           />
     </div>
   );

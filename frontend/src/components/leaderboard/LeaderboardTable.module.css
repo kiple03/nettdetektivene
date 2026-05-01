@@ -1,6 +1,7 @@
 .tableWrapper {
     width: 100%;
     min-height: 35rem;
+    overflow-x: auto;
 }
 
 .header {
@@ -104,4 +105,30 @@
     color: #5a4a3a;
     min-width: 5rem;
     text-align: right;
+}
+
+@media (max-width: 480px) {
+    .headerRank,
+    .rank {
+        min-width: 2.5rem;
+    }
+
+    .headerScore,
+    .score {
+        min-width: 3.5rem;
+        font-size: 0.8rem;
+    }
+
+    .headerName,
+    .name {
+        font-size: 0.8rem;
+    }
+
+    .row {
+        padding: 0.5rem 0.6rem;
+    }
+
+    .header {
+        padding: 0.4rem 0.6rem;
+    }
 }

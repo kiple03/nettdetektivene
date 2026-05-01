@@ -5,6 +5,7 @@ import { AttackAnimation } from "./AttackAnimation";
 import { QuestionModal } from "./QuestionModal";
 import { ATTACK_TO_STOP_NAME, getQuestionsForStopByName } from "@/api/bossBattleApi";
 import type { GameQuestion } from "@/api/gameApi";
+import { STATION_TYPE, type StationType } from "@/types/station";
 import styles from "./AttackOrchestrator.module.css";
 
 /** Union of all possible boss attack types, each corresponding to a game stop. */
@@ -15,6 +16,15 @@ export type AttackType =
     | "PASSORDBANKEN"
     | "MARKEDSPLASSEN"
     | "DEN_SOSIALE_MOPLASSEN";
+
+const ATTACK_TO_STATION_TYPE: Record<AttackType, StationType> = {
+    NYHETSKVARTALET: STATION_TYPE.NEWS,
+    FOTOGRAFEN: STATION_TYPE.PHOTO,
+    POSTKONTORET: STATION_TYPE.POST,
+    PASSORDBANKEN: STATION_TYPE.PASSWORD,
+    MARKEDSPLASSEN: STATION_TYPE.MARKETPLACE,
+    DEN_SOSIALE_MOPLASSEN: STATION_TYPE.SOCIAL,
+};
 
 interface AttackConfig {
     type: AttackType;
@@ -177,6 +187,7 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVi
                 <QuestionModal
                     label={currentAttackLabel ?? ""}
                     question={currentQuestion}
+                    stationType={ATTACK_TO_STATION_TYPE[currentAttackType]}
                     onAnswer={handleAnswer}
                 />
             )}

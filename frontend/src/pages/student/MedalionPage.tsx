@@ -5,6 +5,7 @@ import { useMedalions } from "@/hooks/useMedalions";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 import { ALL_MEDALS, getMedalImageUrl } from "@/data/allMedals";
 import { useEffect, useState } from "react";
+import ProfileIconButton from "@/components/student/ProfileIconButton";
 import { useAuth } from "@/hooks/useAuth";
 
 /** Displays all medals with earned/locked state and highlights newly acquired ones. */
@@ -41,6 +42,8 @@ function MedalionPage() {
                 style={{ position: "fixed", top: "1rem", left: "1rem", zIndex: 50 }}
                 ariaLabel="Gå tilbake"
             />
+
+            <ProfileIconButton />
 
             <div className={styles.dossier}>
                 <div className={styles.dossierHeader}>

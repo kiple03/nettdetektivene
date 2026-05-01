@@ -18,7 +18,7 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
     {
       title: "Nyhetskvartal 📰",
       description:
-        "Her møter du falske nyheter! Du skal lese en påstand og velge om du tror den er ekte.",
+        "Her møter du falske nyheter! Du skal lese to artikler som er nesten lik og velge den du tror er ekte.",
     },
     {
       title: "Slik svarer du",
@@ -57,7 +57,7 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
     },
     {
       title: "Slik svarer du",
-      description: "I nivå 1 skal du skrive passord som passer med kravene i oppgavene. I nivå 2 og 3 finnes det ett riktig svar",
+      description: "I nivå 1 skal du skrive passord som passer med kravene i oppgavene. I nivå 2 og 3 finnes det ett riktig svar.",
     },
       LURT
   ],

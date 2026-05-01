@@ -5,7 +5,10 @@ export interface MultipleChoiceOptionDraft {
   isCorrect: boolean;
   /** Shown to the student after they submit their answer. */
   explanation: string;
+  /** Image shown to the student while answering. */
   imageUrl: string | null;
+  /** Image shown after the student submits (e.g. annotated version). Independent of imageUrl. */
+  responseImageUrl: string | null;
 }
 
 /** Draft state for a multiple-choice question. */
@@ -200,8 +203,8 @@ export function emptyMultipleChoiceDraft(): MultipleChoiceQuestionDraft {
     kind: 'MULTIPLE_CHOICE',
     questionText: '',
     options: [
-      { id: makeOptionId(), text: '', isCorrect: true, explanation: '', imageUrl: null },
-      { id: makeOptionId(), text: '', isCorrect: false, explanation: '', imageUrl: null },
+      { id: makeOptionId(), text: '', isCorrect: true, explanation: '', imageUrl: null, responseImageUrl: null },
+      { id: makeOptionId(), text: '', isCorrect: false, explanation: '', imageUrl: null, responseImageUrl: null },
     ],
   };
 }

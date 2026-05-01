@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import useSound from "use-sound";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { LayeredAvatar } from "@/components/miscellaneous/LayeredAvatar";
 import { HealthBar } from "@/components/game/boss/HealthBar";
@@ -14,6 +15,9 @@ import { playMusic, getCurrentTrack } from "@/audio/musicManager";
 import sharkBase from "@/assets/images/boss/shark-base.png";
 import sharkHurt from "@/assets/images/boss/shark-hurt.png";
 import arenaBg from "@/assets/images/boss/arena-bg.png";
+import bossDamageFx from "@/assets/sounds/bossDamage.mp3";
+import playerDamageFx from "@/assets/sounds/playerDamage.mp3";
+import bossWinMusic from "@/assets/sounds/bossWinMusic.mp3";
 import styles from "./BossBattlePage.module.css";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
@@ -55,6 +59,10 @@ export default function BossBattlePage() {
     const [introPlayerRevealed, setIntroPlayerRevealed] = useState(false);
     const startTimeRef = useRef<number | null>(null);
 
+    const [playBossDamage] = useSound(bossDamageFx);
+    const [playPlayerDamage] = useSound(playerDamageFx);
+    const [playWinMusic] = useSound(bossWinMusic);
+
     const beginFade = () => setPhase("intro-fading");
 
     const startBattle = () => {
@@ -72,12 +80,14 @@ export default function BossBattlePage() {
             const next = bossHp - 1;
             setBossHp(next);
             setBossHurt(true);
+            playBossDamage();
             setTimeout(() => setBossHurt(false), 500);
             if (next <= 0) {
                 const secs = captureTime();
                 setFinalSeconds(secs);
                 setCurrentSprite(sharkHurt);
                 playMusic('background');
+                playWinMusic();
                 if (!isTeacher) {
                     saveBossBattleResult({ won: true, timeSeconds: secs, playerHpRemaining: playerHp })
                         .catch((err) => console.error("Failed to save boss battle result", err));
@@ -89,6 +99,7 @@ export default function BossBattlePage() {
         } else {
             const next = playerHp - 1;
             setPlayerHp(next);
+            playPlayerDamage();
             if (next <= 0) {
                 const secs = captureTime();
                 setFinalSeconds(secs);
