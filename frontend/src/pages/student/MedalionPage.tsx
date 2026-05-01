@@ -5,6 +5,7 @@ import { useMedalions } from "@/hooks/useMedalions";
 import detectiveRoom from "@/assets/detective_room_interior.png";
 import { ALL_MEDALS, getMedalImageUrl } from "@/data/allMedals";
 import { useEffect, useState } from "react";
+import ProfileIconButton from "@/components/student/ProfileIconButton";
 
 function MedalionPage() {
     const { data: medalions, isLoading } = useMedalions();
@@ -38,6 +39,8 @@ function MedalionPage() {
                 ariaLabel="Gå tilbake"
             />
 
+            <ProfileIconButton />
+            
             <div className={styles.dossier}>
                 <div className={styles.dossierHeader}>
                     <span className={styles.stamp}>CASE FILE</span>

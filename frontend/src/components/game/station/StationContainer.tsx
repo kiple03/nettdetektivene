@@ -46,7 +46,6 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
       </button>
 
       <ProfileIconButton />
-      // toLowerCase for css-styling for the specific station
       <div className={`station-container station-${type.toLowerCase()}`}>
         {/* Top label */}
         <h1 className="station-title">{title}</h1>
@@ -86,4 +85,4 @@ function StationContainer({ title, type, children, submitResult, onNext }: Props
   )
 }
 
-export default StationContainer;
+export default StationContainer;            

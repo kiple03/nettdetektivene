@@ -153,7 +153,7 @@ export function StopMap({
     };
 
     return (
-        <div className={`${styles.container}${className ? ` ${className}` : ''}`} ref={containerRef}>
+        <div className={`${styles.container}${className ? ` ${className}` : ''}`} ref={containerRef} tabIndex={-1}>
             {header}
 
             <div className={styles.mapInner}>

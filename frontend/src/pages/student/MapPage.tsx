@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/buttons/Button.tsx";
 import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
 import { StopLevelsModal } from "@/components/map/StopLevelsModal";
 import { MapLoadingOverlay } from "@/components/map/MapLoadingOverlay";
+import ProfileIconButton from "@/components/student/ProfileIconButton";
 
 export default function MapPage() {
   const { data: profile } = useUserProfile();
@@ -117,6 +118,7 @@ export default function MapPage() {
 
   return (
     <>
+      <ProfileIconButton />
       {location.state?.fromHome && <MapLoadingOverlay />}
       <StopMap
         className={styles.mapContainer}
