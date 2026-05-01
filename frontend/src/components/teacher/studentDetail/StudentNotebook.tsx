@@ -1,4 +1,5 @@
 import type { NotesData, TabId } from '@/api/notesService';
+import './StudentNotebook.css';
 
 const CATEGORIES: { id: TabId; label: string; emoji: string; color: string }[] = [
     { id: 'nyheter',  label: 'Nyheter',        emoji: '📰', color: '#E57373' },

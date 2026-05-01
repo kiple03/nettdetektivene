@@ -171,7 +171,7 @@ public class UserAvatarService {
         "sheriff_star", "sheriff_suit", "stop_sign",
         "tone_light", "tone_medium", "tone_dark", "tone_wacky",
         "boy_hair", "girl_hair", "face_girl", "face_girl_2", "face_girl_3", "burning_hand",
-        "afro", "girl_bob_hair", "mohawk"
+        "afro", "girl_bob_hair", "mohawk", "armor", "stars"
     );
 
     private static final Set<String> DEFAULT_EQUIPPED = Set.of(

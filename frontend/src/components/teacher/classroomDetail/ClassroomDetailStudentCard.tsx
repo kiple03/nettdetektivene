@@ -47,7 +47,7 @@ export function ClassroomDetailStudentCard({
 }: ClassroomDetailStudentCardProps) {
     return (
         <div className="classroom-detail__note">
-            <div className="classroom-detail__note-tape" />
+            <div className="classroom-detail__note-tape note-tape" />
             <h2 className="classroom-detail__section-title">
                 Elever <span className="classroom-detail__count">({students.length})</span>
             </h2>

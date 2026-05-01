@@ -133,6 +133,7 @@ export function LayeredAvatar({
         });
 
     const equippedHat = sortedItems.find(i => i.category === 'head');
+    const HATS_WITH_HAIR_MASK = new Set(['detective_hat', 'police_hat', 'sheriff_hat', 'VR_goggles']);
 
     const wrapperStyles: React.CSSProperties = {
         position: 'relative',
@@ -160,7 +161,7 @@ export function LayeredAvatar({
 
             {/* The Equipped Items */}
             {sortedItems.map((item, index) => {
-                const maskStyle: React.CSSProperties = (item.category === 'hair' && equippedHat)
+                const maskStyle: React.CSSProperties = (item.category === 'hair' && equippedHat && HATS_WITH_HAIR_MASK.has(equippedHat.name))
                     ? {
                         maskImage: `url(/assets/${equippedHat.name}_hair_mask.svg)`,
                         WebkitMaskImage: `url(/assets/${equippedHat.name}_hair_mask.svg)`,
