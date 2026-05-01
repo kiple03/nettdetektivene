@@ -1,5 +1,8 @@
 package org.ntnu.backend.classroom.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/classrooms")
+@Tag(name = "Student Classroom", description = "Join, leave and view classrooms as a student")
 public class ClassroomController {
 
     private final ClassroomService classroomService;
@@ -39,6 +43,8 @@ public class ClassroomController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('TEACHER', 'STUDENT')")
+    @Operation(summary = "Get classroom by ID")
+    @ApiResponse(responseCode = "404", description = "Classroom not found")
     public ClassroomResponse getClassroom(@PathVariable UUID id) {
         return classroomService.getClassroom(id);
     }
@@ -52,6 +58,12 @@ public class ClassroomController {
      */
     @GetMapping("/my")
     @PreAuthorize("hasRole('STUDENT')")
+    @Operation(
+        summary = "Get current enrollment",
+        description = "Returns the classroom the student is enrolled in"
+    )
+    @ApiResponse(responseCode = "200", description = "Enrolled classroom returned")
+    @ApiResponse(responseCode = "204", description = "Student is not enrolled in any classroom")
     public ResponseEntity<ClassroomResponse> getMyClassroom(
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         Optional<ClassroomResponse> classroom = classroomService.getMyClassroom(principal.getUserId());
@@ -71,6 +83,10 @@ public class ClassroomController {
     @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('STUDENT')")
+    @Operation(summary = "Join a classroom via join code")
+    @ApiResponse(responseCode = "200", description = "Successfully joined classroom")
+    @ApiResponse(responseCode = "404", description = "Invalid join code")
+    @ApiResponse(responseCode = "409", description = "Student is already enrolled in a classroom")
     public JoinClassroomResponse joinClassroom(@Valid @RequestBody JoinClassroomRequest request,
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         return classroomService.joinClassroom(request, principal.getUserId());
@@ -83,6 +99,11 @@ public class ClassroomController {
     @DeleteMapping("/my")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('STUDENT')")
+    @Operation(
+        summary = "Leave current classroom",
+        description = "Removes the student from their classroom and returns a new access token with classroomId claim removed"
+    )
+    @ApiResponse(responseCode = "200", description = "Left classroom, new accessToken in body")
     public Map<String, String> leaveClassroom(
         @AuthenticationPrincipal JwtAuthenticatedPrincipal principal) {
         String accessToken = classroomService.leaveClassroom(principal.getUserId());
