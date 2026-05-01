@@ -35,17 +35,25 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
         }
         default: {
             const stdOptions = q.options as TeacherQuestionOption[];
-            const options = stdOptions.map(o => ({
+            if (q.levelType === 'PICTURE_QUIZ') {
+                const pqOptions = stdOptions.map(o => ({
+                    id: o.id.toString(),
+                    text: o.text ?? '',
+                    isCorrect: o.isCorrect,
+                    explanation: o.explanation ?? '',
+                    imageUrl: o.imageUrl,
+                }));
+                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options: pqOptions };
+            }
+            const mcOptions = stdOptions.map(o => ({
                 id: o.id.toString(),
                 text: o.text ?? '',
                 isCorrect: o.isCorrect,
                 explanation: o.explanation ?? '',
                 imageUrl: o.imageUrl,
+                responseImageUrl: o.responseImageUrl ?? null,
             }));
-            if (q.levelType === 'PICTURE_QUIZ') {
-                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
-            }
-            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options };
+            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options: mcOptions };
         }
     }
 }
@@ -188,6 +196,7 @@ export default function TeacherLevelPreviewPage() {
                 const options = draft.options.map(o => ({
                     text: o.text,
                     imageUrl: o.imageUrl,
+                    responseImageUrl: o.responseImageUrl,
                     isCorrect: o.isCorrect,
                     explanation: o.explanation,
                 }));

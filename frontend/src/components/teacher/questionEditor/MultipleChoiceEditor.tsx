@@ -25,7 +25,7 @@ export function MultipleChoiceEditor({ value, onChange }: Props) {
 
   const addOption = () => {
     if (value.options.length >= MAX_OPTIONS) return;
-    onChange({ ...value, options: [...value.options, { id: makeOptionId(), text: '', isCorrect: false, explanation: '', imageUrl: null }] });
+    onChange({ ...value, options: [...value.options, { id: makeOptionId(), text: '', isCorrect: false, explanation: '', imageUrl: null, responseImageUrl: null }] });
   };
 
   const removeOption = (idx: number) => {
@@ -76,10 +76,22 @@ export function MultipleChoiceEditor({ value, onChange }: Props) {
                 onChange={e => setOption(idx, { explanation: e.target.value })}
                 placeholder="Forklaring (vises til eleven etter svar)"
               />
-              <ImagePickerField
-                value={opt.imageUrl}
-                onChange={(url) => setOption(idx, { imageUrl: url })}
-              />
+              <div className="mc-editor__image-row">
+                <div className="mc-editor__image-slot">
+                  <span className="mc-editor__image-label">Bilde (før svar)</span>
+                  <ImagePickerField
+                    value={opt.imageUrl}
+                    onChange={(url) => setOption(idx, { imageUrl: url })}
+                  />
+                </div>
+                <div className="mc-editor__image-slot">
+                  <span className="mc-editor__image-label">Bilde (etter svar — med markering)</span>
+                  <ImagePickerField
+                    value={opt.responseImageUrl}
+                    onChange={(url) => setOption(idx, { responseImageUrl: url })}
+                  />
+                </div>
+              </div>
             </div>
             <button
               type="button"

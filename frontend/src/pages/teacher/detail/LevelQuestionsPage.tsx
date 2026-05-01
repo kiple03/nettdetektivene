@@ -72,17 +72,26 @@ function questionToInitialDraft(q: TeacherQuestion): QuestionDraft {
             return { kind: 'TEXT_QUIZ', questionText: q.questionText, options: tqOptions };
         }
         default: {
-            const options = (q.options as import('@/api/teacherApi').TeacherQuestionOption[]).map(o => ({
+            const rawOptions = q.options as import('@/api/teacherApi').TeacherQuestionOption[];
+            if (q.levelType === 'PICTURE_QUIZ') {
+                const pqOptions = rawOptions.map(o => ({
+                    id: o.id.toString(),
+                    text: o.text ?? '',
+                    isCorrect: o.isCorrect,
+                    explanation: o.explanation ?? '',
+                    imageUrl: o.imageUrl,
+                }));
+                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options: pqOptions };
+            }
+            const mcOptions = rawOptions.map(o => ({
                 id: o.id.toString(),
                 text: o.text ?? '',
                 isCorrect: o.isCorrect,
                 explanation: o.explanation ?? '',
                 imageUrl: o.imageUrl,
+                responseImageUrl: o.responseImageUrl ?? null,
             }));
-            if (q.levelType === 'PICTURE_QUIZ') {
-                return { kind: 'PICTURE_QUIZ', questionText: q.questionText, options };
-            }
-            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options };
+            return { kind: 'MULTIPLE_CHOICE', questionText: q.questionText, options: mcOptions };
         }
     }
 }
@@ -196,6 +205,7 @@ export default function LevelQuestionsPage() {
                 const options = draft.options.map(o => ({
                     text: o.text,
                     imageUrl: o.imageUrl,
+                    responseImageUrl: o.responseImageUrl,
                     isCorrect: o.isCorrect,
                     explanation: o.explanation,
                 }));

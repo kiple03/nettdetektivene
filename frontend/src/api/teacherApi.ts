@@ -12,6 +12,8 @@ export interface TeacherQuestionOption {
   id: number;
   text: string | null;
   imageUrl: string | null;
+  /** After-answer image (MC only — present for MULTIPLE_CHOICE, absent for PICTURE_QUIZ). */
+  responseImageUrl?: string | null;
   isCorrect: boolean;
   explanation: string | null;
 }
@@ -363,6 +365,8 @@ export async function listLevelQuestions(classroomId: string, levelId: number): 
 export interface QuestionOptionPayload {
   text: string;
   imageUrl: string | null;
+  /** After-answer image (e.g. annotated). Independent of imageUrl; either or both may be null. */
+  responseImageUrl: string | null;
   isCorrect: boolean;
   explanation: string;
 }
