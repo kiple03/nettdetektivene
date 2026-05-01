@@ -67,7 +67,7 @@ export interface SubmitAnswerResponse {
   feedback: string;
   correctOptionIds: string[];
   wrongSelectedOptionIds: string[];
-  responseUrls: OptionImageResponse[];
+  responseUrls?: OptionImageResponse[];
 }
 
 export interface QuestionAnswer {
