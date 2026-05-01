@@ -23,14 +23,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
   Optional<User> findByEmail(String email);
 
   /**
-   * Looks up a user by their username.
-   *
-   * @param username the username to search for
-   * @return an {@link Optional} containing the matching user, or empty if none found
-   */
-  Optional<User> findByUsername(String username);
-
-  /**
    * Checks whether a user with the given e-mail address already exists.
    *
    * @param email the e-mail address to check

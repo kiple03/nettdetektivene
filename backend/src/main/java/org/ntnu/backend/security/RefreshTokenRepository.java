@@ -23,11 +23,4 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshTokenModel,
    * @param token the raw token string to delete
    */
   void deleteByToken(String token);
-
-  /**
-   * Removes all refresh tokens belonging to the given user (e.g. on logout or account deletion).
-   *
-   * @param user the user whose tokens should be revoked
-   */
-  void deleteAllByUser(User user);
 }

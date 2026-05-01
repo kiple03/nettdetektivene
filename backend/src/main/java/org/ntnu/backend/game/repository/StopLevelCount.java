@@ -6,9 +6,6 @@ package org.ntnu.backend.game.repository;
  */
 public interface StopLevelCount {
 
-  /** @return the ID of the stop */
-  int getStopId();
-
   /** @return the display order of the stop within the game */
   int getDisplayOrder();
 
