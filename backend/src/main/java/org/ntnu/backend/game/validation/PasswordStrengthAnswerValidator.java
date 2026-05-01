@@ -36,7 +36,7 @@ public class PasswordStrengthAnswerValidator implements SubmittedAnswerValidator
 
         StringBuilder missing = new StringBuilder();
         if(pwd.length() < rule.getMinLength()) 
-            missing.append("Minst ").append(rule.getMinLength()).append("tegn\n");
+            missing.append("Minst ").append(rule.getMinLength()).append(" tegn\n");
         if(rule.isRequireDigit() && pwd.chars().noneMatch(Character::isDigit))
             missing.append("Minst ett tall\n");
         if(rule.isRequireUpper() && pwd.chars().noneMatch(Character::isUpperCase))

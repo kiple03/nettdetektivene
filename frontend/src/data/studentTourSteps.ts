@@ -11,26 +11,26 @@ export const studentTourSteps: TourStep[] = [
   {
     tourOrder: 1,
     title: 'Profil',
-    body: 'Din egen profil og avatar — endre utseende og se framgangen din.',
+    body: 'Din egen profil og avatar. Her kan du endre utseende og se framgangen din.',
   },
   {
     tourOrder: 2,
     title: 'Ledertavle',
-    body: 'Ledertavlen — se hvordan du ligger an mot resten av klassen.',
+    body: 'Her kan du se plasseringen til klassen din.',
   },
   {
     tourOrder: 3,
     title: 'Kart',
-    body: 'Her kommer du til kartet og kan velge oppdrag.',
+    body: 'Her kommer du til spillet og kan velge oppdrag ved å trykke på opplåste stopp.',
   },
   {
     tourOrder: 4,
     title: 'Medaljer',
-    body: 'Medaljene dine — bevis på det du har klart.',
+    body: 'Her finner du medaljene du har oppnådd, og alle medaljene du kan få tak i.',
   },
   {
     tourOrder: 5,
-    title: 'Viktige notater',
-    body: 'Viktige notater du bør huske underveis.',
+    title: 'Notater',
+    body: 'Her får du automatisk notater ved fullført nivå. I tillegg kan du skrive inn egen refleksjon.',
   },
 ];

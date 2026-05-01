@@ -92,7 +92,7 @@ class PasswordStrengthAnswerValidatorTest {
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).contains("Svakt passord");
         assertThat(result.feedback()).contains("Mangler:");
-        assertThat(result.feedback()).contains("Minst 8tegn");
+        assertThat(result.feedback()).contains("Minst 8 tegn");
         assertThat(result.correctOptionIds()).isEmpty();
         assertThat(result.wrongSelectedOptionIds()).isEmpty();
     }
@@ -196,7 +196,7 @@ class PasswordStrengthAnswerValidatorTest {
         assertThat(result.correct()).isFalse();
         assertThat(result.feedback()).contains("Svakt passord");
         assertThat(result.feedback()).contains("Mangler:");
-        assertThat(result.feedback()).contains("Minst 10tegn");
+        assertThat(result.feedback()).contains("Minst 10 tegn");
         assertThat(result.feedback()).contains("Minst ett tall");
         assertThat(result.feedback()).contains("Minst èn stor bokstav");
         assertThat(result.feedback()).contains("Minst ett symbol");
@@ -219,7 +219,7 @@ class PasswordStrengthAnswerValidatorTest {
         ValidationResult result = validator.validate(List.of(rule), answer);
 
         assertThat(result.correct()).isFalse();
-        assertThat(result.feedback()).contains("Minst 1tegn");
+        assertThat(result.feedback()).contains("Minst 1 tegn");
         assertThat(result.feedback()).contains("Minst ett tall");
         assertThat(result.feedback()).contains("Minst èn stor bokstav");
         assertThat(result.feedback()).contains("Minst èn liten bokstav");
