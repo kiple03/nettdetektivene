@@ -1140,8 +1140,8 @@ public class GameSeeder implements CommandLineRunner {
                 "Vanlig for nettbutikker",
                 "Seriøse butikker har alltid kontaktinfo. Du kan ringe dem hvis noe går galt."),
             new ClassifyItemsOption("payment", "Du kan bare betale med gavekort",
-                List.of("Vanlig betalingsmåte", "Rart! Du kan ikke klage etterpå", "Helt greit"),
-                "Rart! Du kan ikke klage etterpå",
+                List.of("Vanlig betalingsmåte", "Rart! Dette er uvanlig", "Helt greit"),
+                "Rart! Dette er uvanlig",
                 "Trygge nettbutikker lar deg betale med Vipps eller kort. Med gavekort får du aldri pengene tilbake hvis noe er galt.")
         )
     );
