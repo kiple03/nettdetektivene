@@ -5,8 +5,10 @@ import { AttackAnimation } from "./AttackAnimation";
 import { QuestionModal } from "./QuestionModal";
 import { ATTACK_TO_STOP_NAME, getQuestionsForStopByName } from "@/api/bossBattleApi";
 import type { GameQuestion } from "@/api/gameApi";
+import { STATION_TYPE, type StationType } from "@/types/station";
 import styles from "./AttackOrchestrator.module.css";
 
+/** Union of all possible boss attack types, each corresponding to a game stop. */
 export type AttackType =
     | "NYHETSKVARTALET"
     | "FOTOGRAFEN"
@@ -14,6 +16,15 @@ export type AttackType =
     | "PASSORDBANKEN"
     | "MARKEDSPLASSEN"
     | "DEN_SOSIALE_MOPLASSEN";
+
+const ATTACK_TO_STATION_TYPE: Record<AttackType, StationType> = {
+    NYHETSKVARTALET: STATION_TYPE.NEWS,
+    FOTOGRAFEN: STATION_TYPE.PHOTO,
+    POSTKONTORET: STATION_TYPE.POST,
+    PASSORDBANKEN: STATION_TYPE.PASSWORD,
+    MARKEDSPLASSEN: STATION_TYPE.MARKETPLACE,
+    DEN_SOSIALE_MOPLASSEN: STATION_TYPE.SOCIAL,
+};
 
 interface AttackConfig {
     type: AttackType;
@@ -51,6 +62,15 @@ interface Props {
     onReplayVictory?: () => void;
 }
 
+/**
+ * Orchestrates the boss battle attack flow: draws attacks from a shuffled pool,
+ * runs the animation phase, then shows a question modal and reports the result.
+ *
+ * @param phase - Current battle phase; attacks only trigger when `"battle"`.
+ * @param onAnswer - Called with `true` if the player answered correctly, `false` otherwise.
+ * @param onSpriteChange - Called with the new sprite name during attack animations.
+ * @param onReplayVictory - Optional callback to replay the victory cutscene (admin use).
+ */
 export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVictory }: Props) {
     const [innerPhase, setInnerPhase] = useState<InnerPhase>("waiting");
     const [currentAttackType, setCurrentAttackType] = useState<AttackType | null>(null);
@@ -167,6 +187,7 @@ export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVi
                 <QuestionModal
                     label={currentAttackLabel ?? ""}
                     question={currentQuestion}
+                    stationType={ATTACK_TO_STATION_TYPE[currentAttackType]}
                     onAnswer={handleAnswer}
                 />
             )}

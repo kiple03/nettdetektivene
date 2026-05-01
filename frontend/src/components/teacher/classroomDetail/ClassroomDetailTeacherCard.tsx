@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Mail } from 'lucide-react';
 import type { CoTeacher } from '@/types/classroom.ts';
 
+/** Props for {@link ClassroomDetailTeacherCard}. */
 type ClassroomDetailTeacherCardProps = {
     teachers: CoTeacher[];
     currentUserId: string;
@@ -16,6 +17,10 @@ type ClassroomDetailTeacherCardProps = {
     onLeaveClassroom: () => void;
 };
 
+/**
+ * Displays the list of teachers in a classroom, with leave and invite controls.
+ * Owners can invite new co-teachers by email.
+ */
 export function ClassroomDetailTeacherCard({
     teachers,
     currentUserId,
@@ -34,7 +39,7 @@ export function ClassroomDetailTeacherCard({
 
     return (
         <div className="classroom-detail__note">
-            <div className="classroom-detail__note-tape" />
+            <div className="classroom-detail__note-tape note-tape" />
             <h2 className="classroom-detail__section-title">
                 Lærere <span className="classroom-detail__count">({teachers.length})</span>
             </h2>

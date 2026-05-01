@@ -1,4 +1,8 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { NotesData, TabId } from '@/api/notesService';
+import { deleteStudentNote, getCensorWords } from '@/api/teacherApi';
+import { teacherKeys } from '@/hooks/teacher/queryKeys';
+import './StudentNotebook.css';
 
 const CATEGORIES: { id: TabId; label: string; emoji: string; color: string }[] = [
     { id: 'nyheter',  label: 'Nyheter',        emoji: '📰', color: '#E57373' },
@@ -12,12 +16,63 @@ const CATEGORIES: { id: TabId; label: string; emoji: string; color: string }[] =
 
 interface Props {
     notes: NotesData;
+    classroomId: string;
+    studentId: string;
+    onNoteDeleted?: () => void;
 }
 
-export function StudentNotebook({ notes }: Props) {
+/** Helper to highlight bad words in text */
+function highlightBadWords(text: string, badWords: string[]): React.ReactNode {
+    if (badWords.length === 0) return text;
+
+    // Create a case-insensitive regex pattern for all bad words
+    const escapedWords = badWords.map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const pattern = new RegExp(`(${escapedWords.join('|')})`, 'gi');
+    
+    const parts = text.split(pattern);
+    
+    return parts.map((part, index) => {
+        if (!part) return null;
+        // Check if this part matches any bad word (case-insensitive)
+        const isBadWord = badWords.some(word => word.toLowerCase() === part.toLowerCase());
+        if (isBadWord) {
+            return (
+                <span key={index} className="student-notebook__bad-word">
+                    {part}
+                </span>
+            );
+        }
+        return part;
+    });
+}
+
+/** Displays a student's notebook entries grouped by category, shown to teachers in the student detail view. */
+export function StudentNotebook({ notes, classroomId, studentId, onNoteDeleted }: Props) {
+    const queryClient = useQueryClient();
+    
+    // Fetch censor words for this classroom
+    const { data: censorWords = [] } = useQuery({
+        queryKey: teacherKeys.censorWords(classroomId),
+        queryFn: () => getCensorWords(classroomId),
+    });
+
+    // Delete note mutation
+    const deleteNoteMutation = useMutation({
+        mutationFn: (noteId: string) => deleteStudentNote(classroomId, studentId, noteId),
+        onSuccess: () => {
+            // Invalidate the student notebook query to refresh
+            queryClient.invalidateQueries({ queryKey: teacherKeys.studentNotebook(classroomId, studentId) });
+            onNoteDeleted?.();
+        },
+    });
+
     const activeCategories = CATEGORIES.filter(
         (cat) => notes.reflections[cat.id].length > 0,
     );
+
+    const handleDeleteNote = (noteId: string) => {
+        deleteNoteMutation.mutate(noteId);
+    };
 
     return (
         <div className="student-notebook">
@@ -43,7 +98,17 @@ export function StudentNotebook({ notes }: Props) {
                             <ul className="student-notebook__note-list">
                                 {notes.reflections[cat.id].map((note) => (
                                     <li key={note.id} className="student-notebook__note-item">
-                                        {note.content}
+                                        <div className="student-notebook__note-content">
+                                            {highlightBadWords(note.content, censorWords.map(w => w.word))}
+                                        </div>
+                                        <button
+                                            className="student-notebook__delete-btn"
+                                            onClick={() => handleDeleteNote(note.id)}
+                                            disabled={deleteNoteMutation.isPending}
+                                            title="Slett denne notaten"
+                                        >
+                                            ✕
+                                        </button>
                                     </li>
                                 ))}
                             </ul>

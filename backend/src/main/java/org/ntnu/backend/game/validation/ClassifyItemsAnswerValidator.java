@@ -12,6 +12,7 @@ import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
+/** Validates classify-items answers by checking each item's label against the correct one. */
 @Component
 public class ClassifyItemsAnswerValidator implements SubmittedAnswerValidator {
 
@@ -20,6 +21,15 @@ public class ClassifyItemsAnswerValidator implements SubmittedAnswerValidator {
     return LevelType.CLASSIFY_ITEMS;
   }
 
+  /**
+   * Validates that every submitted item label matches its expected correct label.
+   *
+   * @param options the correct {@link ClassifyItemsOption} entries for this question
+   * @param submission must be a {@link PerItemAnswer} with exactly one entry per option
+   * @return {@link ValidationResult} with per-wrong-item explanations joined by " | " on failure
+   * @throws IllegalArgumentException if submission type is wrong, an unknown key is submitted,
+   *     or the answer count doesn't match the option count
+   */
   @Override
   public ValidationResult validate(List<Option> options, SubmitAnswerRequest submission) {
     if (!(submission instanceof PerItemAnswer perItem)) {
@@ -53,6 +63,6 @@ public class ClassifyItemsAnswerValidator implements SubmittedAnswerValidator {
         ? "Riktig! Du klassifiserte alt rett!"
         : String.join(" | ", wrongFeedback);
 
-    return new ValidationResult(correct, feedback, List.of(), List.of());
+    return new ValidationResult(correct, feedback, List.of(), List.of(), List.of());
   }
 }

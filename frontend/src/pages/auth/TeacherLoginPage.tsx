@@ -16,6 +16,7 @@ import {
 import chalkboardBg from '@/assets/images/chalkboard-background.webp';
 import './TeacherLoginPage.css';
 
+/** Login page for teachers — offers Feide login and email registration. */
 function TeacherLoginPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();

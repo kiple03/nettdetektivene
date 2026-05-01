@@ -15,6 +15,14 @@ type PhotographerStationProps = {
   disabled?: boolean;
 };
 
+/**
+ * Picture-quiz station where the student selects one or more correct images.
+ *
+ * @param station - Question data including options with image URLs.
+ * @param levelTitle - Displayed as the detective-book title.
+ * @param onAnswer - Called after submission with the result and original request.
+ * @param disabled - Prevents interaction when true (e.g. while another answer is being processed).
+ */
 export default function PhotographerStation({ station, levelTitle, onAnswer, disabled = false,}: PhotographerStationProps) {
   const [correctIds, setCorrectIds] = useState<number[]>([]);
   const [wrongIds, setWrongIds] = useState<number[]>([]);
@@ -35,8 +43,8 @@ export default function PhotographerStation({ station, levelTitle, onAnswer, dis
     try {
       const response = await submitMultiSelectAnswer(station.questionId, request);
 
-      setCorrectIds(response.correctOptionIds ?? []);
-      setWrongIds(response.wrongSelectedOptionIds ?? []);
+      setCorrectIds(response.correctOptionIds?.map(Number) ?? []);
+      setWrongIds(response.wrongSelectedOptionIds?.map(Number) ?? []);
       setSubmitted(true);
 
       onAnswer(mapSubmitResponseToSubmitAnswer(response), request);

@@ -1,45 +1,59 @@
+/** Draft state for a single multiple-choice option while editing in the teacher UI. */
 export interface MultipleChoiceOptionDraft {
   id: string;
   text: string;
   isCorrect: boolean;
+  /** Shown to the student after they submit their answer. */
   explanation: string;
+  /** Image shown to the student while answering. */
   imageUrl: string | null;
+  /** Image shown after the student submits (e.g. annotated version). Independent of imageUrl. */
+  responseImageUrl: string | null;
 }
 
+/** Draft state for a multiple-choice question. */
 export interface MultipleChoiceQuestionDraft {
   kind: 'MULTIPLE_CHOICE';
   questionText: string;
   options: MultipleChoiceOptionDraft[];
 }
 
+/** Draft state for a single picture-quiz option while editing. */
 export interface PictureQuizOptionDraft {
   id: string;
   text: string;
   isCorrect: boolean;
+  /** Shown to the student after they submit their answer. */
   explanation: string;
   imageUrl: string | null;
 }
 
+/** Draft state for a picture-quiz question. */
 export interface PictureQuizQuestionDraft {
   kind: 'PICTURE_QUIZ';
   questionText: string;
   options: PictureQuizOptionDraft[];
 }
 
+/** Draft state for a single item in a classify-items question. */
 export interface ClassifyItemsItemDraft {
   id: string;
   text: string;
+  /** The label this item must be sorted into to be correct. */
   correctLabel: string;
   explanation: string;
 }
 
+/** Draft state for a classify-items question. */
 export interface ClassifyItemsQuestionDraft {
   kind: 'CLASSIFY_ITEMS';
   questionText: string;
+  /** The category labels students sort items into. */
   labels: string[];
   items: ClassifyItemsItemDraft[];
 }
 
+/** Draft state for a password-strength question. */
 export interface PasswordStrengthQuestionDraft {
   kind: 'PASSWORD_STRENGTH';
   questionText: string;
@@ -52,13 +66,16 @@ export interface PasswordStrengthQuestionDraft {
   failureFeedback: string;
 }
 
+/** Draft state for a single text-quiz option. */
 export interface TextQuizOptionDraft {
   id: string;
   text: string;
   isCorrect: boolean;
+  /** Shown to the student after they submit their answer. */
   explanation: string;
 }
 
+/** Draft state for a text-quiz question (exactly one correct answer). */
 export interface TextQuizQuestionDraft {
   kind: 'TEXT_QUIZ';
   questionText: string;
@@ -68,10 +85,15 @@ export interface TextQuizQuestionDraft {
 // Discriminated union — extend with additional arms as new types are added
 export type QuestionDraft = MultipleChoiceQuestionDraft | PictureQuizQuestionDraft | ClassifyItemsQuestionDraft | PasswordStrengthQuestionDraft | TextQuizQuestionDraft;
 
+/** Generates a stable unique ID for a new option draft. */
 export function makeOptionId(): string {
   return crypto.randomUUID();
 }
 
+/**
+ * Validates a question draft and returns a list of Norwegian error messages.
+ * Returns an empty array if the draft is valid.
+ */
 export function validateDraft(draft: QuestionDraft): string[] {
   switch (draft.kind) {
     case 'MULTIPLE_CHOICE':
@@ -87,6 +109,7 @@ export function validateDraft(draft: QuestionDraft): string[] {
   }
 }
 
+/** @returns Norwegian validation error messages for a multiple-choice draft. */
 export function validateMultipleChoiceDraft(draft: MultipleChoiceQuestionDraft): string[] {
   const errors: string[] = [];
   if (!draft.questionText.trim()) {
@@ -108,6 +131,7 @@ export function validateMultipleChoiceDraft(draft: MultipleChoiceQuestionDraft):
   return errors;
 }
 
+/** @returns Norwegian validation error messages for a picture-quiz draft. */
 export function validatePictureQuizDraft(draft: PictureQuizQuestionDraft): string[] {
   const errors: string[] = [];
   if (!draft.questionText.trim()) {
@@ -132,6 +156,7 @@ export function validatePictureQuizDraft(draft: PictureQuizQuestionDraft): strin
   return errors;
 }
 
+/** @returns Norwegian validation error messages for a classify-items draft. */
 export function validateClassifyItemsDraft(draft: ClassifyItemsQuestionDraft): string[] {
   const errors: string[] = [];
   if (!draft.questionText.trim()) errors.push('Spørsmålstekst er påkrevd.');
@@ -147,6 +172,7 @@ export function validateClassifyItemsDraft(draft: ClassifyItemsQuestionDraft): s
   return errors;
 }
 
+/** @returns Norwegian validation error messages for a password-strength draft. */
 export function validatePasswordStrengthDraft(draft: PasswordStrengthQuestionDraft): string[] {
   const errors: string[] = [];
   if (!draft.questionText.trim()) errors.push('Spørsmålstekst er påkrevd.');
@@ -156,6 +182,7 @@ export function validatePasswordStrengthDraft(draft: PasswordStrengthQuestionDra
   return errors;
 }
 
+/** Returns a blank {@link PasswordStrengthQuestionDraft} with sensible defaults. */
 export function emptyPasswordStrengthDraft(): PasswordStrengthQuestionDraft {
   return {
     kind: 'PASSWORD_STRENGTH',
@@ -170,17 +197,19 @@ export function emptyPasswordStrengthDraft(): PasswordStrengthQuestionDraft {
   };
 }
 
+/** Returns a blank {@link MultipleChoiceQuestionDraft} with two empty options. */
 export function emptyMultipleChoiceDraft(): MultipleChoiceQuestionDraft {
   return {
     kind: 'MULTIPLE_CHOICE',
     questionText: '',
     options: [
-      { id: makeOptionId(), text: '', isCorrect: true, explanation: '', imageUrl: null },
-      { id: makeOptionId(), text: '', isCorrect: false, explanation: '', imageUrl: null },
+      { id: makeOptionId(), text: '', isCorrect: true, explanation: '', imageUrl: null, responseImageUrl: null },
+      { id: makeOptionId(), text: '', isCorrect: false, explanation: '', imageUrl: null, responseImageUrl: null },
     ],
   };
 }
 
+/** Returns a blank {@link PictureQuizQuestionDraft} with two empty options. */
 export function emptyPictureQuizDraft(): PictureQuizQuestionDraft {
   return {
     kind: 'PICTURE_QUIZ',
@@ -192,6 +221,7 @@ export function emptyPictureQuizDraft(): PictureQuizQuestionDraft {
   };
 }
 
+/** Returns a blank {@link ClassifyItemsQuestionDraft} with two empty labels and one empty item. */
 export function emptyClassifyItemsDraft(): ClassifyItemsQuestionDraft {
   return {
     kind: 'CLASSIFY_ITEMS',
@@ -201,6 +231,7 @@ export function emptyClassifyItemsDraft(): ClassifyItemsQuestionDraft {
   };
 }
 
+/** @returns Norwegian validation error messages for a text-quiz draft. */
 export function validateTextQuizDraft(draft: TextQuizQuestionDraft): string[] {
   const errors: string[] = [];
   if (!draft.questionText.trim()) {
@@ -223,6 +254,7 @@ export function validateTextQuizDraft(draft: TextQuizQuestionDraft): string[] {
   return errors;
 }
 
+/** Returns a blank {@link TextQuizQuestionDraft} with two empty options. */
 export function emptyTextQuizDraft(): TextQuizQuestionDraft {
   return {
     kind: 'TEXT_QUIZ',
@@ -234,6 +266,7 @@ export function emptyTextQuizDraft(): TextQuizQuestionDraft {
   };
 }
 
+/** Returns an empty {@link QuestionDraft} matching the given level type string. Defaults to multiple-choice. */
 export function emptyDraftForType(levelType: string): QuestionDraft {
   switch (levelType) {
     case 'PICTURE_QUIZ':

@@ -14,6 +14,10 @@ type Props = {
     disabled?: boolean;
 };
 
+/**
+ * Station component for the "Sosiale Møteplassen" location, supporting
+ * CLASSIFY_ITEMS, PICTURE_QUIZ (multi-select), and single-choice picture tasks.
+ */
 function SosialeMoteplassenStation({ station, levelTitle, onAnswer, disabled = false }: Props) {
     const [correctIds, setCorrectIds] = useState<number[]>([]);
     const [wrongIds, setWrongIds] = useState<number[]>([]);
@@ -43,8 +47,8 @@ function SosialeMoteplassenStation({ station, levelTitle, onAnswer, disabled = f
         };
         try {
             const response = await submitMultiSelectAnswer(station.questionId, request);
-            setCorrectIds(response.correctOptionIds ?? []);
-            setWrongIds(response.wrongSelectedOptionIds ?? []);
+            setCorrectIds(response.correctOptionIds?.map(Number) ?? []);
+            setWrongIds(response.wrongSelectedOptionIds?.map(Number) ?? []);
             setSubmitted(true);
             onAnswer(mapSubmitResponseToSubmitAnswer(response), request);
         } catch (error: any) {

@@ -8,6 +8,7 @@ import { ClassroomDetailDeleteDialog } from '@/components/teacher/classroomDetai
 import './ClassroomDetail.css';
 import { useBackTo } from '@/hooks/teacher/useBackTo';
 
+/** Full detail view for a single classroom — edit metadata, manage students and co-teachers, and delete the classroom. */
 export default function ClassroomDetailPage() {
     const { id: classroomId = '' } = useParams<{ id: string }>();
 

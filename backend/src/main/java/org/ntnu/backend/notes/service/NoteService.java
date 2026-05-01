@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.model.ClassroomCensorWord;
 import org.ntnu.backend.classroom.repository.ClassroomCensorWordRepository;
 import org.ntnu.backend.classroom.repository.EnrollmentRepository;
 import org.ntnu.backend.classroom.service.NotificationService;
 import org.ntnu.backend.game.model.Level;
-import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.ntnu.backend.notes.dto.NoteResponse;
 import org.ntnu.backend.notes.dto.NotesOverviewResponse;
 import org.ntnu.backend.notes.dto.UpsertNoteRequest;
@@ -27,12 +25,15 @@ import org.ntnu.backend.notes.repository.StudentLevelNoteRepository;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.ntnu.backend.user.model.User;
 import org.ntnu.backend.user.repository.UserRepository;
+import org.ntnu.backend.user.service.ProfanityFilterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Manages the authenticated student's notebook.
@@ -162,6 +163,13 @@ public class NoteService {
         }
     }
 
+    /**
+     * Returns the notebook for a specific user, with content censored according to the classroom's word list.
+     *
+     * @param userId      the id of the student whose notes to retrieve
+     * @param classroomId the classroom whose censor list applies; may be {@code null}
+     * @return the censored notes overview
+     */
     @Transactional(readOnly = true)
     public NotesOverviewResponse getNotesForUser(UUID userId) {
         User user = userRepository.findById(userId)
@@ -171,6 +179,13 @@ public class NoteService {
         return noteMapper.toOverviewResponse(ownNotes, levelNotes);
     }
 
+    /**
+     * Applies the classroom's censor word list to all note content in the overview.
+     *
+     * @param response    the raw (uncensored) notes overview
+     * @param classroomId the classroom whose word list to apply; may be {@code null}
+     * @return a new overview with censored content
+     */
     private NotesOverviewResponse applyCensoring(NotesOverviewResponse response, UUID classroomId) {
         List<String> classroomWords = classroomId == null ? List.of() :
                 classroomCensorWordRepository.findByClassroomId(classroomId)
@@ -181,6 +196,13 @@ public class NoteService {
         );
     }
 
+    /**
+     * Censors note content across a category-keyed map of note responses.
+     *
+     * @param map            notes grouped by category
+     * @param classroomWords the words to censor
+     * @return a new map with censored note content
+     */
     private Map<String, List<NoteResponse>> censorMap(Map<String, List<NoteResponse>> map, List<String> classroomWords) {
         return map.entrySet().stream()
             .collect(Collectors.toMap(
@@ -199,6 +221,13 @@ public class NoteService {
             ));
     }
 
+    /**
+     * Grants all note templates associated with a completed level to the user, skipping any already awarded.
+     * Runs in a new transaction so failures don't roll back the surrounding level-submission transaction.
+     *
+     * @param userId the id of the student who completed the level
+     * @param level  the completed level
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void saveCompletionTipIfNeeded(UUID userId, Level level) {
         User user = userRepository.findById(userId)
@@ -223,5 +252,14 @@ public class NoteService {
 
             studentLevelNoteRepository.save(levelNote);
         }
+    }
+
+    /**
+     * Deletes a note by ID (used by teachers to delete student notes).
+     *
+     * @param noteId the id of the note to delete
+     */
+    public void deleteNote(UUID noteId) {
+        noteRepository.deleteById(noteId);
     }
 }

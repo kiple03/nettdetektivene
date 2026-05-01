@@ -6,8 +6,12 @@ import {Header as UserProfileHeader} from "@/components/dashboard/BoardProfile";
 
 type BoardItemProps = DashboardItem;
 
+/**
+ * Renders a dashboard item as either a clickable button or a navigation link,
+ * with optional image, avatar overlay, and tour ordering support.
+ */
 function BoardItem( {id, label, to, top, left, image, size, circle, overlay, onClick, tourOrder} :BoardItemProps) {
-  
+
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const inner = (
     <>

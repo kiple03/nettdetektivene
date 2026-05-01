@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/buttons/Button";
 import styles from "./StopLevelsModal.module.css";
 import { studentKeys } from "@/hooks/student/queryKeys";
 
+/** Identifies a map stop by title and optional backend ID. */
 export interface StopInfo {
     title: string;
     stopId: number | null;
@@ -16,6 +17,10 @@ interface StopLevelsModalProps {
     onClose: () => void;
 }
 
+/**
+ * Modal that lists the playable levels for a given map stop.
+ * Locked levels are shown but disabled. Shows a "coming soon" message when no levels exist.
+ */
 export function StopLevelsModal({ stop, onClose }: StopLevelsModalProps) {
     const navigate = useNavigate();
 

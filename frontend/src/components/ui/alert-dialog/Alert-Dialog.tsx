@@ -12,12 +12,14 @@ interface AlertDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     children: ReactNode;
+    /** Element to restore focus to when the dialog closes. */
     returnFocusRef?: RefObject<HTMLElement | null>;
     contentWrapperStyle?: CSSProperties;
 }
 
 interface AlertDialogContentProps {
     children: ReactNode;
+    /** When provided, displays a "N levels left" counter above the content. */
     stopsLeft?: number;
 }
 
@@ -25,6 +27,7 @@ interface AlertDialogTextProps {
     children: ReactNode;
 }
 
+/** Accessible modal dialog with focus trapping, Escape-to-close, and backdrop click dismissal. */
 export function AlertDialog({
                                 open,
                                 onOpenChange,
@@ -94,6 +97,7 @@ export function AlertDialog({
     );
 }
 
+/** Styled paper-note content panel with logo and optional stop counter. */
 export function AlertDialogContent({
                                        children,
                                        stopsLeft,
@@ -123,10 +127,12 @@ export function AlertDialogContent({
     );
 }
 
+/** Dialog heading rendered as an `<h2>`. */
 export function AlertDialogTitle({ children }: AlertDialogTextProps) {
     return <h2 className={styles.title}>{children}</h2>;
 }
 
+/** Descriptive body text for the dialog. */
 export function AlertDialogDescription({ children }: AlertDialogTextProps) {
     return <p className={styles.description}>{children}</p>;
 }

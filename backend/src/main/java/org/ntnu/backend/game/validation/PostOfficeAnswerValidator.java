@@ -11,9 +11,11 @@ import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
+/** Validates student answers for {@link LevelType#POST_OFFICE} questions. */
 @Component
 public class PostOfficeAnswerValidator implements SubmittedAnswerValidator {
 
+  /** @return {@link LevelType#POST_OFFICE} */
   @Override
   public LevelType supportedType() {
     return LevelType.POST_OFFICE;
@@ -24,13 +26,13 @@ public class PostOfficeAnswerValidator implements SubmittedAnswerValidator {
    *
    * <p>It should be an instance of {@link MultiSelectAnswer}, containing the IDs of all
    * elements the student believes are suspicious. The submission is correct only if the
-   * selected IDs exactly match the set of options marked {@code isSuspicious = true}.</p>
+   * selected IDs exactly match the set of responseUrls marked {@code isSuspicious = true}.</p>
    *
-   * @param options  the question's parsed options including suspicious flags
+   * @param options  the question's parsed responseUrls including suspicious flags
    * @param submission must be a {@link MultiSelectAnswer}
-   * @return correct/incorrect with aggregated feedback from all suspicious options
+   * @return correct/incorrect with aggregated feedback from all suspicious responseUrls
    * @throws IllegalArgumentException if submission is not a {@link MultiSelectAnswer}
-   *                                  or any selected ID does not exist among the options
+   *                                  or any selected ID does not exist among the responseUrls
    */
   @Override
   public ValidationResult validate(List<Option> options, SubmitAnswerRequest submission) {
@@ -73,7 +75,7 @@ public class PostOfficeAnswerValidator implements SubmittedAnswerValidator {
         .filter(id -> !correctIds.contains(id))
         .toList();
 
-    return new ValidationResult(isCorrect, feedback, correctIdList, wrongSelectedList);
+    return new ValidationResult(isCorrect, feedback, correctIdList, wrongSelectedList, List.of());
 
   }
 }

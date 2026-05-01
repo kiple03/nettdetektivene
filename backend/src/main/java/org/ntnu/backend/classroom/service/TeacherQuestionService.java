@@ -48,6 +48,11 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
+/**
+ * Service for teacher-facing CRUD operations on classroom questions.
+ * Handles creation, update, and deletion of teacher-added (non-default) questions
+ * across all supported level types.
+ */
 @Service
 @RequiredArgsConstructor
 public class TeacherQuestionService {
@@ -61,6 +66,15 @@ public class TeacherQuestionService {
     private final OptionValidator optionValidator;
     private final ObjectMapper objectMapper;
 
+    /**
+     * Returns all questions for a given level in a classroom, formatted for teacher view.
+     *
+     * @param classroomId the classroom UUID
+     * @param levelId     the level ID
+     * @param principal   the authenticated teacher
+     * @return list of teacher question responses
+     * @throws org.springframework.security.access.AccessDeniedException if teacher lacks access to the classroom
+     */
     public List<TeacherQuestionResponse> listQuestionsForTeacher(
             UUID classroomId, int levelId, JwtAuthenticatedPrincipal principal) {
         classroomAuthorizationService.verifyAccess(principal, classroomId);
@@ -70,6 +84,18 @@ public class TeacherQuestionService {
             .toList();
     }
 
+    /**
+     * Creates a new teacher-added question for the given level.
+     *
+     * @param classroomId the classroom UUID
+     * @param levelId     the level ID
+     * @param request     typed create request (must match the level's type)
+     * @param principal   the authenticated teacher
+     * @return the saved question response
+     * @throws LevelNotFoundException     if the level does not exist
+     * @throws IllegalArgumentException   if the level type is unsupported or the request type mismatches
+     * @throws org.springframework.security.access.AccessDeniedException if teacher lacks access
+     */
     public TeacherQuestionResponse createQuestion(
             UUID classroomId, int levelId,
             CreateTeacherQuestionRequest request,
@@ -108,6 +134,19 @@ public class TeacherQuestionService {
         return toTeacherResponse(questionRepository.save(question));
     }
 
+    /**
+     * Updates an existing teacher-added question.
+     *
+     * @param classroomId the classroom UUID
+     * @param levelId     the level ID the question belongs to
+     * @param questionId  the question ID to update
+     * @param request     typed update request matching the level's type
+     * @param principal   the authenticated teacher
+     * @return the updated question response
+     * @throws QuestionNotFoundException  if the question does not exist or does not belong to the level
+     * @throws IllegalArgumentException   if attempting to edit a default (seeded) question or mismatched type
+     * @throws org.springframework.security.access.AccessDeniedException if the question belongs to a different classroom
+     */
     public TeacherQuestionResponse updateQuestion(
             UUID classroomId, int levelId, int questionId,
             UpdateTeacherQuestionRequest request,
@@ -146,6 +185,17 @@ public class TeacherQuestionService {
         return toTeacherResponse(questionRepository.save(question));
     }
 
+    /**
+     * Deletes a teacher-added question.
+     *
+     * @param classroomId the classroom UUID
+     * @param levelId     the level ID the question belongs to
+     * @param questionId  the question ID to delete
+     * @param principal   the authenticated teacher
+     * @throws QuestionNotFoundException  if the question does not exist or does not belong to the level
+     * @throws IllegalArgumentException   if attempting to delete a default (seeded) question
+     * @throws org.springframework.security.access.AccessDeniedException if the question belongs to a different classroom
+     */
     public void deleteQuestion(
             UUID classroomId, int levelId, int questionId,
             JwtAuthenticatedPrincipal principal) {
@@ -171,7 +221,7 @@ public class TeacherQuestionService {
         List<Option> options = new ArrayList<>();
         for (int i = 0; i < dtos.size(); i++) {
             CreateMultipleChoiceOptionRequest dto = dtos.get(i);
-            options.add(new MultipleChoiceOption(i + 1, dto.text(), dto.imageUrl(), dto.isCorrect(), dto.explanation()));
+            options.add(new MultipleChoiceOption(i + 1, dto.text(), dto.imageUrl(), dto.responseImageUrl(), dto.isCorrect(), dto.explanation()));
         }
         return options;
     }
@@ -219,7 +269,7 @@ public class TeacherQuestionService {
         try {
             return objectMapper.writeValueAsString(options);
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to serialize options", e);
+            throw new IllegalStateException("Failed to serialize responseUrls", e);
         }
     }
 
@@ -251,6 +301,7 @@ public class TeacherQuestionService {
                     mc.getId(),
                     mc.getText(),
                     mc.getImageUrl(),
+                    mc.getResponseImageUrl(),
                     mc.isCorrect(),
                     mc.getExplanation()
                 );

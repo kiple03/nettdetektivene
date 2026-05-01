@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Data Transfer Object for classroom respone.
+ * Response DTO representing a classroom's full details.
  */
 @Getter
 @Builder
@@ -13,6 +13,7 @@ public class ClassroomResponse {
     private String id;
     private String title;
     private String description;
+    /** Short alphanumeric code students enter to join this classroom. */
     private String joinCode;
     private LocalDateTime createdAt;
 }

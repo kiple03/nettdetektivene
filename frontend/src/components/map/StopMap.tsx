@@ -10,8 +10,10 @@ const ANCHOR_IDS = [
 ] as const;
 
 type AnchorId = (typeof ANCHOR_IDS)[number];
+/** Absolute pixel position relative to the map container. */
 type HotspotPos = { top: string; left: string };
 
+/** Props for {@link StopMap}. */
 interface StopMapProps {
     stops: StopData[];
     onStopClick: (stop: StopData) => void;
@@ -29,6 +31,12 @@ interface StopMapProps {
     className?: string;
 }
 
+/**
+ * Scrollable SVG-based map that positions clickable stop hotspots over named
+ * anchor elements baked into the SVG. Handles both landscape (horizontal scroll)
+ * and portrait (vertical scroll) layouts and exposes the car offset-path for
+ * the animated car overlay.
+ */
 export function StopMap({
     stops,
     onStopClick,
@@ -46,6 +54,7 @@ export function StopMap({
     });
     const containerNode = useRef<HTMLDivElement | null>(null);
 
+    /** Attaches scroll and resize listeners to track which scroll-arrow buttons should be visible. */
     const containerRef = useCallback((node: HTMLDivElement | null): void | (() => void) => {
         containerNode.current = node;
         if (!node) return;
@@ -68,6 +77,11 @@ export function StopMap({
         };
     }, []);
 
+    /**
+     * Reads named anchor elements from the SVG to derive hotspot positions, and
+     * recomputes the car offset-path in CSS-pixel space accounting for viewBox
+     * scaling and the portrait-mode CSS rotate(-90deg) transform.
+     */
     const svgRef = useCallback((node: SVGSVGElement | null): void | (() => void) => {
         if (!node) return;
 
@@ -144,6 +158,7 @@ export function StopMap({
         return () => observer.disconnect();
     }, [onCarPathReady]);
 
+    /** Smoothly scrolls the map container to the edge in the given direction. */
     const scroll = (dir: "left" | "right" | "up" | "down") => {
         const node = containerNode.current;
         if (!node) return;

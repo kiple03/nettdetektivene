@@ -3,14 +3,18 @@ import { Link } from 'react-router-dom';
 import { LayeredAvatar } from '@/components/miscellaneous/LayeredAvatar';
 import type { StudentSummary } from '@/types/classroom.ts';
 
+/** Props for {@link ClassroomDetailStudentCard}. */
 type ClassroomDetailStudentCardProps = {
     classroomId: string;
     students: StudentSummary[];
+    /** ID of the student whose username is currently being edited, or null. */
     editingStudentId: string | null;
     editUsernameValue: string;
     savingUsername: boolean;
     usernameError: string | null;
+    /** ID of the student pending removal confirmation, or null. */
     confirmRemoveId: string | null;
+    /** ID of the student currently being removed (shows loading state), or null. */
     removingId: string | null;
     getLeaderboardRank: (userId: string) => number;
     onEditUsernameChange: (value: string) => void;
@@ -21,6 +25,9 @@ type ClassroomDetailStudentCardProps = {
     onConfirmRemoveChange: (studentId: string | null) => void;
 };
 
+/**
+ * Displays the list of enrolled students with inline username editing and removal controls.
+ */
 export function ClassroomDetailStudentCard({
     classroomId,
     students,
@@ -40,7 +47,7 @@ export function ClassroomDetailStudentCard({
 }: ClassroomDetailStudentCardProps) {
     return (
         <div className="classroom-detail__note">
-            <div className="classroom-detail__note-tape" />
+            <div className="classroom-detail__note-tape note-tape" />
             <h2 className="classroom-detail__section-title">
                 Elever <span className="classroom-detail__count">({students.length})</span>
             </h2>

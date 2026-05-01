@@ -10,6 +10,7 @@ import IncorrectFx from '@/assets/sounds/IncorrectAnswer.mp3';
 import { useAuth } from '@/hooks/useAuth'
 import ProfileIconButton from "@/components/student/ProfileIconButton";
 
+/** Props for {@link StationContainer}. */
 type Props = {
   title: string;
   subtitle?: string;
@@ -20,6 +21,10 @@ type Props = {
   isTearing?: boolean;
 };
 
+/**
+ * Wraps a game station with a title, tutorial overlay, answer feedback, and sound effects.
+ * Plays a correct/incorrect sound whenever `submitResult` changes.
+ */
 function StationContainer({ title, type, children, submitResult, onNext }: Props) {
   const { email } = useAuth();
 

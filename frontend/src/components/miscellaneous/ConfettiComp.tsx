@@ -2,10 +2,17 @@ import Confetti from 'react-confetti';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+/** Props for {@link ConfettiComp}. */
 type ConfettiCompProps = {
+    /** How long the confetti animation runs in milliseconds before stopping. Defaults to 5000. */
     duration?: number;
 };
 
+/**
+ * Fullscreen confetti animation rendered into `document.body` via a portal.
+ * Automatically stops after `duration` ms and is suppressed when the user has
+ * `prefers-reduced-motion` enabled.
+ */
 function ConfettiComp({ duration = 5000 }: ConfettiCompProps) {
     const [isActive, setIsActive] = useState(true);
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);

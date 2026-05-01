@@ -2,8 +2,11 @@ import { useState, useCallback, type KeyboardEvent } from 'react';
 import type { TourStep } from '@/data/studentTourSteps';
 import styles from './HomeTour.module.css';
 
+/** Props for the HomeTour guided overlay. */
 interface HomeTourProps {
+  /** Ordered list of tour steps to display. */
   steps: TourStep[];
+  /** Called when the user exits or completes the tour. */
   onExit: () => void;
 }
 
@@ -11,6 +14,10 @@ const TOOLTIP_WIDTH = 300;
 const TOOLTIP_HEIGHT_ESTIMATE = 210;
 const MARGIN = 12;
 
+/**
+ * Full-screen guided tour overlay that highlights UI elements one step at a time.
+ * Supports keyboard navigation (←/→/Escape) and positions a tooltip near the highlighted element.
+ */
 function HomeTour({ steps, onExit }: HomeTourProps) {
   const [index, setIndex] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);

@@ -30,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 
+/** Manages teacher notifications for student activity events and scheduled stuck-student checks. */
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -42,6 +43,16 @@ public class NotificationService {
     private final UserProgressRepository userProgressRepository;
     private final NotificationMapper notificationMapper;
 
+    /**
+     * Persists a new notification directed at a teacher.
+     *
+     * @param teacherId   recipient teacher ID
+     * @param classroomId classroom the event belongs to
+     * @param studentId   student who triggered the event
+     * @param type        notification category
+     * @param message     human-readable description
+     * @return the saved notification as a response DTO
+     */
     @Transactional
     public NotificationResponse createNotification(
             UUID teacherId,
@@ -54,6 +65,12 @@ public class NotificationService {
         return notificationMapper.toResponse(notification);
     }
 
+    /**
+     * Returns all notifications for a teacher, newest first.
+     *
+     * @param teacherId the teacher's ID
+     * @return list of notification response DTOs
+     */
     @Transactional(readOnly = true)
     public List<NotificationResponse> getNotificationsForTeacher(UUID teacherId) {
         return notificationRepository.findByTeacherIdOrderByCreatedAtDesc(teacherId)
@@ -62,6 +79,13 @@ public class NotificationService {
                 .toList();
     }
 
+    /**
+     * Returns notifications for a teacher filtered by classroom, newest first.
+     *
+     * @param teacherId   the teacher's ID
+     * @param classroomId classroom to filter by
+     * @return list of notification response DTOs
+     */
     @Transactional(readOnly = true)
     public List<NotificationResponse> getNotificationsForTeacher(UUID teacherId, UUID classroomId) {
         return notificationRepository.findByTeacherIdAndClassroomIdOrderByCreatedAtDesc(teacherId, classroomId)
@@ -70,6 +94,14 @@ public class NotificationService {
                 .toList();
     }
 
+    /**
+     * Marks a notification as read, verifying ownership by the given teacher.
+     *
+     * @param notificationId notification to mark
+     * @param teacherId      must own the notification
+     * @return updated notification DTO
+     * @throws ResponseStatusException 404 if not found or not owned by teacher
+     */
     @Transactional
     public NotificationResponse markAsRead(UUID notificationId, UUID teacherId) {
         Notification notification = notificationRepository.findByIdAndTeacherId(notificationId, teacherId)
@@ -78,6 +110,13 @@ public class NotificationService {
         return notificationMapper.toResponse(notification);
     }
 
+    /**
+     * Deletes a notification, verifying ownership by the given teacher.
+     *
+     * @param notificationId notification to delete
+     * @param teacherId      must own the notification
+     * @throws ResponseStatusException 404 if not found or not owned by teacher
+     */
     @Transactional
     public void deleteNotification(UUID notificationId, UUID teacherId) {
         Notification notification = notificationRepository.findByIdAndTeacherId(notificationId, teacherId)
@@ -85,11 +124,24 @@ public class NotificationService {
         notificationRepository.delete(notification);
     }
 
+    /**
+     * Returns the number of unread notifications for a teacher.
+     *
+     * @param teacherId the teacher's ID
+     * @return unread notification count
+     */
     @Transactional(readOnly = true)
     public long countUnreadForTeacher(UUID teacherId) {
         return notificationRepository.countByTeacherIdAndReadFalse(teacherId);
     }
 
+    /**
+     * Notifies all teachers of a classroom that a student completed a stop/area.
+     * Does nothing if the student is not currently enrolled.
+     *
+     * @param student       the student who completed the area
+     * @param completedStop the stop that was completed
+     */
     @Transactional
     public void notifyAreaCompleted(User student, Stop completedStop) {
         Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
@@ -107,6 +159,12 @@ public class NotificationService {
                 createNotification(teacher.getUser().getId(), classroomId, student.getId(), NotificationType.AREA_COMPLETED, message));
     }
 
+    /**
+     * Notifies all teachers of a classroom that a student finished the entire game.
+     * Does nothing if the student is not currently enrolled.
+     *
+     * @param student the student who completed the game
+     */
     @Transactional
     public void notifyGameCompleted(User student) {
         Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
@@ -123,6 +181,13 @@ public class NotificationService {
                 createNotification(teacher.getUser().getId(), classroomId, student.getId(), NotificationType.GAME_COMPLETED, message));
     }
 
+    /**
+     * Alerts all classroom teachers that a student attempted to use an inappropriate username.
+     * Runs in a new transaction so the alert is persisted even if the outer transaction rolls back.
+     *
+     * @param student           the student who made the attempt
+     * @param attemptedUsername the rejected username
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyInappropriateUsername(User student, String attemptedUsername) {
         Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
@@ -138,6 +203,12 @@ public class NotificationService {
                         NotificationType.INAPPROPRIATE_USERNAME, message));
     }
 
+    /**
+     * Alerts all classroom teachers that a student saved a note with inappropriate content.
+     * Runs in a new transaction so the alert is persisted even if the outer transaction rolls back.
+     *
+     * @param student the student who wrote the note
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void notifyInappropriateNote(User student) {
         Optional<Enrollment> enrollmentOpt = enrollmentRepository.findByUserAndLeftAtIsNull(student);
@@ -153,6 +224,12 @@ public class NotificationService {
                         NotificationType.INAPPROPRIATE_NOTE, message));
     }
 
+    /**
+     * Scheduled daily at 06:00. For each actively enrolled student who has had no progress
+     * for {@value #STUCK_DAYS_THRESHOLD} days, creates a {@code STUDENT_STUCK} notification
+     * for each of their classroom teachers — but only if no unread notification of that type
+     * already exists for that teacher/classroom/student combination.
+     */
     @Scheduled(cron = "0 0 6 * * *")
     @Transactional
     public void createStuckStudentNotifications() {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, ShieldAlert } from 'lucide-react';
+import './CensorWordPanel.css';
 import { useCensorWords } from '@/hooks/teacher/useTeacherQueries';
 import { useAddCensorWord, useDeleteCensorWord, useCensorWordError } from '@/hooks/teacher/useTeacherMutations';
 
@@ -7,6 +8,10 @@ type Props = {
     classroomId: string;
 };
 
+/**
+ * Panel for managing classroom-specific censored words.
+ * Renders a note card on the corkboard and opens a modal for adding/removing words.
+ */
 export function CensorWordPanel({ classroomId }: Props) {
     const { data: words = [] } = useCensorWords(classroomId);
     const addMutation = useAddCensorWord(classroomId);
@@ -16,6 +21,7 @@ export function CensorWordPanel({ classroomId }: Props) {
     const [open, setOpen] = useState(false);
     const [input, setInput] = useState('');
 
+    /** Submits the new censor word and clears the input on success. */
     function handleSubmit(event: React.FormEvent) {
         event.preventDefault();
         const trimmed = input.trim();
@@ -23,6 +29,7 @@ export function CensorWordPanel({ classroomId }: Props) {
         addMutation.mutate(trimmed, { onSuccess: () => setInput('') });
     }
 
+    /** Closes the modal and resets input and mutation state. */
     function handleClose() {
         setOpen(false);
         setInput('');
@@ -33,7 +40,7 @@ export function CensorWordPanel({ classroomId }: Props) {
         <>
             {/* Note card on the corkboard */}
             <div className="classroom-detail__note">
-                <div className="classroom-detail__note-tape" />
+                <div className="classroom-detail__note-tape note-tape" />
                 <h2 className="classroom-detail__section-title">Sensurerte ord</h2>
                 <p className="classroom-detail__censor-desc">
                     Legg til ekstra ord for denne klassen. Disse filtreres i tillegg til den felles ordlisten.

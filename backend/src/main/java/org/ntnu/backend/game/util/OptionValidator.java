@@ -42,10 +42,10 @@ public class OptionValidator {
   private final Validator validator;
 
   /**
-   * Validates all options in the list — field constraints first,
+   * Validates all responseUrls in the list — field constraints first,
    * then type-specific business rules.
    *
-   * @param options the parsed options to validate
+   * @param options the parsed responseUrls to validate
    * @param type the level type, determines which business rules apply
    * @throws OptionValidationException if any field constraint or business rule fails
    */
@@ -69,6 +69,13 @@ public class OptionValidator {
     }
   }
 
+  /**
+   * Checks that every item is a {@link ClassifyItemsOption}, keys are unique,
+   * and each item's {@code correctLabel} is present in its {@code labels} list.
+   *
+   * @param options the parsed classify-items options
+   * @throws OptionValidationException if any integrity rule is violated
+   */
   private void validateClassifyItems(List<Option> options) {
     if (options.isEmpty()) {
       throw new OptionValidationException("Classify items must have at least one item");
@@ -77,7 +84,7 @@ public class OptionValidator {
     Set<String> keys = new HashSet<>();
     for (Option o : options) {
       if (!(o instanceof ClassifyItemsOption item)) {
-        throw new OptionValidationException("CLASSIFY_ITEMS options must be ClassifyItemsOption");
+        throw new OptionValidationException("CLASSIFY_ITEMS responseUrls must be ClassifyItemsOption");
       }
       if (!keys.add(item.getKey())) {
         throw new OptionValidationException("Duplicate key: " + item.getKey());
@@ -92,7 +99,7 @@ public class OptionValidator {
   /**
    * Checks that exactly one option is marked as correct.
    *
-   * @param options the parsed multiple choice options
+   * @param options the parsed multiple choice responseUrls
    * @throws OptionValidationException if zero or more than one option is correct
    */
   private void validateMultipleChoice(List<Option> options) {
@@ -110,7 +117,7 @@ public class OptionValidator {
    * Checks that at least one option is marked as suspicious, and that
    * every ID listed in correctSuspicious matches an actual option ID.
    *
-   * @param options the parsed post office options
+   * @param options the parsed post office responseUrls
    * @throws OptionValidationException if no option is suspicious
    */
   private void validatePostOffice(List<Option> options) {
@@ -126,11 +133,11 @@ public class OptionValidator {
   /**
    * Checks that at least one option is marked as correct.
    *
-   * <p>For {@link LevelType#PICTURE_QUIZ}, one or more options may be correct.
+   * <p>For {@link LevelType#PICTURE_QUIZ}, one or more responseUrls may be correct.
    * This validator therefore ensures that the option list contains at least one
    * correct answer, but does not require exactly one.
    *
-   * @param options the parsed picture quiz options
+   * @param options the parsed picture quiz responseUrls
    * @throws OptionValidationException if no option is marked as correct
    */
   private void validatePictureQuiz(List<Option> options) {
@@ -144,6 +151,12 @@ public class OptionValidator {
     }
   }
 
+  /**
+   * Checks that the list contains exactly one {@link PasswordStrengthOption}.
+   *
+   * @param options the parsed password-strength options
+   * @throws OptionValidationException if the list size is not 1 or the option is the wrong type
+   */
   private void validatePasswordStrength(List<Option> options){
     if(options.size() != 1 || !(options.get(0) instanceof PasswordStrengthOption)){
       throw new OptionValidationException("PASSWORD_STRENGTH must have exactly one PasswordStrengthOption type");

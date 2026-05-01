@@ -3,6 +3,7 @@ import bossSoundtrackSrc from '@/assets/sounds/bossBattle.mp3';
 
 const MUTE_KEY = 'musicMuted';
 
+/** Available music tracks. */
 export type TrackName = 'background' | 'boss';
 
 interface TrackConfig {
@@ -44,6 +45,10 @@ function tryPlay(audio: HTMLAudioElement, name: TrackName): void {
     });
 }
 
+/**
+ * Starts playing the given track. Stops and resets the current track first if different.
+ * Defers playback to the next user click if autoplay is blocked.
+ */
 export function playMusic(name: TrackName): void {
     if (currentTrack === name) {
         const audio = getOrCreateAudio(name);
@@ -64,6 +69,7 @@ export function playMusic(name: TrackName): void {
     tryPlay(audio, name);
 }
 
+/** Stops and resets the currently playing track. */
 export function stopMusic(): void {
     if (currentTrack) {
         const audio = audioByTrack[currentTrack];
@@ -75,10 +81,15 @@ export function stopMusic(): void {
     }
 }
 
+/** Returns the currently active track name, or `null` if nothing is playing. */
 export function getCurrentTrack(): TrackName | null {
     return currentTrack;
 }
 
+/**
+ * Mutes or unmutes all tracks and persists the preference to localStorage.
+ * Notifies all mute subscribers.
+ */
 export function setMuted(value: boolean): void {
     muted = value;
     localStorage.setItem(MUTE_KEY, String(value));
@@ -88,10 +99,15 @@ export function setMuted(value: boolean): void {
     muteSubscribers.forEach(cb => cb(value));
 }
 
+/** Returns the current mute state. */
 export function getMuted(): boolean {
     return muted;
 }
 
+/**
+ * Subscribes to mute state changes.
+ * @returns Unsubscribe function.
+ */
 export function subscribeMute(cb: (muted: boolean) => void): () => void {
     muteSubscribers.add(cb);
     return () => { muteSubscribers.delete(cb); };

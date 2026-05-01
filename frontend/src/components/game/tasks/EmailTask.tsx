@@ -6,11 +6,17 @@ import type { SubmitResult } from "@/types/station.ts";
 
 interface Props {
   task: PostkontoretTask;
+  /** Called with the IDs of all parts the student flagged as suspicious. */
   onSubmit: (selectedIds: string[]) => void;
   disabled?: boolean;
+  /** Highlight feedback after submission; correct/wrong parts are coloured accordingly. */
   result?: SubmitResult;
 }
 
+/**
+ * Renders a fake Gmail-style email where students click suspicious parts
+ * (subject, sender, body, links, images, signature) before submitting.
+ */
 export const EmailTask: React.FC<Props> = ({ task, onSubmit, disabled = false, result }) => {
   const { email } = task;
   const [selected, setSelected] = useState<string[]>([]);

@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import styles from "@/pages/student/LeaderboardPage.module.css";
 import BackButton from '@/components/ui/buttons/BackButton';
+import { useHideBackButton } from '@/components/teacher_layout/TeacherLayoutContext';
 import { useGlobalLeaderboard } from '@/hooks/student/useLeaderboard';
 import LeaderboardTable from '@/components/leaderboard/LeaderboardTable';
 import LeaderboardPagination from '@/components/leaderboard/LeaderboardPagination';
@@ -12,10 +14,14 @@ import ProfileIconButton from '@/components/student/ProfileIconButton';
 
 const PAGE_SIZE = 10;
 
+/** Paginated global leaderboard showing classroom rankings. */
 export default function LeaderboardPage() {
     const [currentPage, setCurrentPage] = useState(0); // 0-indexed for Spring Boot
     const { data, isLoading } = useGlobalLeaderboard(currentPage);
     const myClassroomId = getClassroomId();
+    const { pathname } = useLocation();
+    const inTeacherLayout = pathname.startsWith('/teacher');
+    useHideBackButton(inTeacherLayout);
 
     const entries = data?.content ?? [];
     const totalPages = data?.totalPages ?? 0;

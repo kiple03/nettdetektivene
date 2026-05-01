@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.game.dto.ClassifyItemsOptionResponse;
 import org.ntnu.backend.game.dto.LevelResponse;
 import org.ntnu.backend.game.dto.MultipleChoiceOptionResponse;
+import org.ntnu.backend.game.dto.OptionImageResponse;
 import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
 import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
@@ -34,10 +35,11 @@ public class GameMapper {
   private final OptionParser optionParser;
 
   /**
-   * Maps a Stop entity to its overview response, including per-student state.
+   * Maps a Stop entity to its overview response, including per-student lock state.
    *
-   * @param stop the stop entity
-   * @param locked whether this stop is currently locked for the student
+   * @param stop   the stop entity
+   * @param locked whether this stop is locked for the student
+   * @return the stop response DTO
    */
   public StopResponse toStopOverviewResponse(Stop stop, boolean locked) {
     return new StopResponse(
@@ -49,6 +51,10 @@ public class GameMapper {
 
   /**
    * Maps a Level entity to its response, including per-student lock state.
+   *
+   * @param level  the level entity
+   * @param locked whether this level is locked for the student
+   * @return the level response DTO
    */
   public LevelResponse toLevelResponse(Level level, boolean locked) {
     return new LevelResponse(
@@ -63,8 +69,10 @@ public class GameMapper {
   }
 
   /**
-   * Maps a Question entity to its response. The {@code optionContent} is stripped
-   * of all answer-carrying fields before being included.
+   * Maps a Question to its student-facing response; answer fields are stripped from options.
+   *
+   * @param question the question entity
+   * @return the question response DTO with sanitised options
    */
   public QuestionResponse toQuestionResponse(Question question) {
     LevelType type = question.getLevel().getLevelType();

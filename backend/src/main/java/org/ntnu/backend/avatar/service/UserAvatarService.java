@@ -171,7 +171,7 @@ public class UserAvatarService {
         "sheriff_star", "sheriff_suit", "stop_sign",
         "tone_light", "tone_medium", "tone_dark", "tone_wacky",
         "boy_hair", "girl_hair", "face_girl", "face_girl_2", "face_girl_3", "burning_hand",
-        "afro", "girl_bob_hair", "mohawk"
+        "afro", "girl_bob_hair", "mohawk", "armor", "stars"
     );
 
     private static final Set<String> DEFAULT_EQUIPPED = Set.of(
@@ -206,6 +206,17 @@ public class UserAvatarService {
         inventoryRepository.saveAll(toAdd);
     }
 
+    /**
+     * Updates the user's display name and hair colour, then issues a fresh JWT.
+     * The new username is checked against the global profanity list and any classroom-specific
+     * censor words. If it fails the check, a notification is sent and the request is rejected.
+     *
+     * @param userId      the ID of the user to update
+     * @param classroomId the classroom whose censor-word list should be applied, or {@code null} to skip classroom-specific filtering
+     * @param request     the requested new username and optional hair colour
+     * @return a new JWT access token reflecting the updated profile
+     * @throws org.springframework.web.server.ResponseStatusException 400 if the username contains profanity or censor words
+     */
     @Transactional
     public String updateUserProfile(UUID userId, UUID classroomId, UpdateUserProfileRequest request) {
         User user = userRepository.findById(userId)

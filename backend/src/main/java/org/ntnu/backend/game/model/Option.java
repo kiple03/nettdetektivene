@@ -1,8 +1,8 @@
 package org.ntnu.backend.game.model;
 
 /**
- * Sealed interface for options.
- * The root of the tagged union for options. Include all options that are permitted.
+ * Sealed interface for responseUrls.
+ * The root of the tagged union for responseUrls. Include all responseUrls that are permitted.
  */
 public sealed interface Option
         permits MultipleChoiceOption, PictureQuizOption, PostOfficeOption, PasswordStrengthOption, ClassifyItemsOption {

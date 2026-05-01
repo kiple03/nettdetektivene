@@ -9,8 +9,13 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
 import { Button } from "@/components/ui/buttons/Button.tsx";
-import styles from './ProfileIconButton.module.css';
+import styles from "./ProfileIconButton.module.css";
 
+/**
+ * Fixed-position avatar button that navigates to the profile page.
+ * When the user is in an active game or boss level, shows a confirmation dialog
+ * warning that level progress will be lost before navigating.
+ */
 export default function ProfileIconButton() {
     const navigate = useNavigate();
     const isOnGame = useMatch("/game/:levelId");
@@ -53,9 +58,9 @@ export default function ProfileIconButton() {
                 onClick={handleClick}
                 type="button"
                 aria-label="Gå til profil"
-                  className={styles.profileBtn}
+                className={styles.profileButton}
             >
-                    <LayeredAvatar
+              <LayeredAvatar
                 items={userProfile?.equippedItems ?? []}
                 hairColor={userProfile?.hairColor}
                 size={isPortrait ? 66 : 80}
@@ -63,37 +68,42 @@ export default function ProfileIconButton() {
                 />
             </button>
 
-            <AlertDialog
-                open={confirmOpen}
-                onOpenChange={setConfirmOpen}
-                returnFocusRef={buttonRef}
-                contentWrapperStyle={{ maxWidth: "580px" }}
-            >
-                <AlertDialogContent>
-                    <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        Du mister fremgangen din på dette nivået.
-                    </AlertDialogDescription>
-                    <div style={{ display: "flex", gap: "1.25rem", justifyContent: "center", marginTop: "1.25rem" }}>
-                        <Button
-                            variant="destructive"
-                            type="button"
-                            onClick={handleConfirm}
-                            style={{ padding: "0.75rem 2.5rem", fontSize: "1.05rem" }}
-                        >
-                            Ja
-                        </Button>
-                        <Button
-                            variant="primary"
-                            type="button"
-                            onClick={() => setConfirmOpen(false)}
-                            style={{ padding: "0.75rem 2.5rem", fontSize: "1.05rem" }}
-                        >
-                            Nei
-                        </Button>
-                    </div>
-                </AlertDialogContent>
-            </AlertDialog>
+          <AlertDialog
+              open={confirmOpen}
+              onOpenChange={setConfirmOpen}
+              returnFocusRef={buttonRef}
+              contentWrapperStyle={{maxWidth: "580px"}}
+          >
+            <AlertDialogContent>
+              <AlertDialogTitle>Er du sikker?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Du mister fremgangen din på dette nivået.
+              </AlertDialogDescription>
+              <div style={{
+                display: "flex",
+                gap: "1.25rem",
+                justifyContent: "center",
+                marginTop: "1.25rem"
+              }}>
+                <Button
+                    variant="destructive"
+                    type="button"
+                    onClick={handleConfirm}
+                    style={{padding: "0.75rem 2.5rem", fontSize: "1.05rem"}}
+                >
+                  Ja
+                </Button>
+                <Button
+                    variant="primary"
+                    type="button"
+                    onClick={() => setConfirmOpen(false)}
+                    style={{padding: "0.75rem 2.5rem", fontSize: "1.05rem"}}
+                >
+                  Nei
+                </Button>
+              </div>
+            </AlertDialogContent>
+          </AlertDialog>
         </>
     );
 }

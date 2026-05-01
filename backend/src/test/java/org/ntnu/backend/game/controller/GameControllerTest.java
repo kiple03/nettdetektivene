@@ -186,7 +186,8 @@ class GameControllerTest {
                     true,
                     "Correct!",
                     List.of("2"),
-                    List.of()
+                    List.of(),
+                List.of()
             ));
 
     mockMvc.perform(post("/game/questions/1/submit")
@@ -207,7 +208,8 @@ class GameControllerTest {
                     false,
                     "Wrong!",
                     List.of("2"),
-                    List.of("1")
+                    List.of("1"),
+                List.of()
             ));
 
     mockMvc.perform(post("/game/questions/1/submit")

@@ -5,11 +5,14 @@ import styles from "./ClassifyItems.module.css";
 import styles1 from "./PictureGrid.module.css";
 
 type Props = {
+    /** Items to classify, each with a key, display label, and list of category labels. */
     options: StationOption[];
+    /** Called with a map of item key → selected category label when the user submits. */
     onSubmit: (answers: Record<string, string>) => Promise<void>;
     disabled?: boolean;
 };
 
+/** Drag-free classify-items task: user picks a category label for each item, then submits. */
 export default function ClassifyItems({ options, onSubmit, disabled = false }: Props) {
     const [selections, setSelections] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);

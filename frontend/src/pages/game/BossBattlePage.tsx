@@ -34,6 +34,7 @@ function bossPageMusicRef(el: HTMLDivElement | null) {
     }
 }
 
+/** Full-screen boss battle arena managing phase transitions, HP, and result persistence. */
 export default function BossBattlePage() {
     const { data: profile } = useUserProfile();
     const { role } = useAuth();
@@ -129,7 +130,7 @@ export default function BossBattlePage() {
             <div className={styles.arenaBg} style={{ backgroundImage: `url(${arenaBg})` }} />
             {/* Characters + HP bars — boss appears at intro step 1, player at step 3 */}
             {showBoss && (
-                <div className={`${styles.bossCharArea} ${phase === "intro" ? styles.bossIntroReveal : ""}`}>
+                <div className={styles.bossCharArea} style={isIntroPhase ? {pointerEvents: 'none'} : undefined}>
                     <BossCharacter sprite={bossSprite} isHurt={bossHurt} isVictory={phase === "victory"} />
                     {showBattle && (
                         <HealthBar label="hacker_kAI__( ͡° ͜ʖ ͡°)" hp={bossHp} maxHp={MAX_HP} side="boss" />
@@ -137,7 +138,7 @@ export default function BossBattlePage() {
                 </div>
             )}
             {showPlayer && (
-                <div className={styles.playerCharArea}>
+                <div className={styles.playerCharArea} style={isIntroPhase ? {pointerEvents: 'none'} : undefined}>
                     <LayeredAvatar items={equippedItems} hairColor={profile?.hairColor} size={120} circular={false} />
                     {showBattle && (
                         <HealthBar label={username} hp={playerHp} maxHp={MAX_HP} side="player" />

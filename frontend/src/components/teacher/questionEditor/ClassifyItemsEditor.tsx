@@ -2,11 +2,18 @@ import './MultipleChoiceEditor.css';
 import { makeOptionId } from './types';
 import type { ClassifyItemsItemDraft, ClassifyItemsQuestionDraft } from './types';
 
+/** Props for {@link ClassifyItemsEditor}. */
 interface Props {
+  /** Current draft state of the classify-items question. */
   value: ClassifyItemsQuestionDraft;
+  /** Called with the updated draft whenever the user makes a change. */
   onChange: (v: ClassifyItemsQuestionDraft) => void;
 }
 
+/**
+ * Editor for a classify-items question: lets the teacher define categories
+ * (labels) and items, then assign each item to the correct category.
+ */
 export function ClassifyItemsEditor({ value, onChange }: Props) {
   const setQuestion = (questionText: string) => onChange({ ...value, questionText });
 

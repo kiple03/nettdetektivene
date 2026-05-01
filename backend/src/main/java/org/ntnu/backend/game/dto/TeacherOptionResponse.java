@@ -3,6 +3,11 @@ package org.ntnu.backend.game.dto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+/**
+ * Marker interface for teacher-facing question option response DTOs.
+ * Polymorphic JSON serialization is handled via the {@code type} field,
+ * mapping to the concrete subtypes for each supported question kind.
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = TeacherMultipleChoiceOptionResponse.class, name = "MULTIPLE_CHOICE"),

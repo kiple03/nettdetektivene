@@ -12,7 +12,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClassroomRepository extends JpaRepository<Classroom, UUID> {
 
+  /**
+   * Checks whether a classroom with the given join code exists.
+   *
+   * @param joinCode the unique join code to check
+   * @return {@code true} if a classroom with that join code exists
+   */
   boolean existsByJoinCode(String joinCode);
 
+  /**
+   * Retrieves a classroom by its join code.
+   *
+   * @param joinCode the unique join code
+   * @return an {@link Optional} containing the matching classroom, or empty if not found
+   */
   Optional<Classroom> findByJoinCode(String joinCode);
 }

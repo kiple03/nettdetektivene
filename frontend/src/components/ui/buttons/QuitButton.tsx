@@ -9,13 +9,20 @@ import {
 import { Button } from "@/components/ui/buttons/Button.tsx";
 import styles from "./QuitButton.module.css";
 
+/** Props for {@link QuitButton}. */
 interface QuitButtonProps {
+    /** Stop/level ID used to build the fallback navigation URL (`/map?levelId=<stopId>`). */
     stopId?: number | null;
+    /** Override the navigation target shown after the user confirms quitting. */
     to?: string;
     className?: string;
     style?: CSSProperties;
 }
 
+/**
+ * Button that prompts the user to confirm before navigating away from the current level.
+ * Navigates to `to` if provided, otherwise to the map filtered by `stopId`.
+ */
 function QuitButton({ stopId, to, className = "", style }: QuitButtonProps) {
     const navigate = useNavigate();
     const [confirmOpen, setConfirmOpen] = useState(false);

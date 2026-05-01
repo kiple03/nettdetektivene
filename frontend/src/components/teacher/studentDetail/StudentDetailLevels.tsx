@@ -5,13 +5,14 @@ type StudentDetailLevelsProps = {
     studentDetail: StudentDetailType;
 };
 
+/** Displays a student's completed levels or current progress if no levels are done yet. */
 export function StudentDetailLevels({ studentDetail }: StudentDetailLevelsProps) {
     const { levelCompletions, currentStopName, currentLevelOrder, gameCompleted } = studentDetail;
 
     if (levelCompletions.length === 0) {
         return (
             <Card variant="unstyled" className="student-detail__note">
-                <div className="student-detail__note-tape" />
+                <div className="student-detail__note-tape note-tape note-tape--cw" />
                 <h2 className="student-detail__section-title">Fremdrift</h2>
                 <p className="student-detail__empty">
                     {gameCompleted
