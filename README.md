@@ -178,7 +178,16 @@ Interactive documentation is available via Swagger UI at
 > TODO: Document how to run frontend tests once they are written:
      cd frontend && npm run test
 
-> TODO: Add a section on end-to-end tests (e.g. Playwright or Cypress) if added to the project 
+### End-to-End Tests (Playwright)
+
+Requires the backend to be running on `http://localhost:8080`.
+
+```bash
+cd frontend
+npm run test:e2e
+```
+
+Playwright auto-starts the frontend dev server. Results and failure screenshots/videos are saved to `playwright-report/`.
 
 ---
 
