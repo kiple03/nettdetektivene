@@ -1,15 +1,22 @@
 import type {ReactNode} from "react";
 import styles from "./DetectiveBook.module.css";
 
+/** Props for the DetectiveBook layout component. */
 type DetectiveBookProps = {
   title: string,
   subtitle?: string,
+  /** Optional tips content rendered in the tips area. */
   tipsSlot?: ReactNode,
   children: ReactNode,
   className?: string,
+  /** When true, applies a tear-out animation to the header paper. */
   isTearing?: boolean
 };
 
+/**
+ * Themed book-shaped container used across game task screens.
+ * Renders a title, optional subtitle, optional tips slot, and main content area.
+ */
 export default function DetectiveBook({
                                         title,
                                         subtitle,
