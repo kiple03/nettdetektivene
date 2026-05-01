@@ -21,6 +21,7 @@ export function ClassroomSummaryCard({ summary, accentColor, didCopy, onOpen, on
             style={{ '--card-accent': accentColor } as CSSProperties}
             role="link"
             tabIndex={0}
+            aria-label={summary.title}
             onClick={() => onOpen(summary.id)}
             onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === ' ') {
@@ -65,6 +66,11 @@ export function ClassroomSummaryCard({ summary, accentColor, didCopy, onOpen, on
 
                 <div className="classroom-card__progress-track">
                     <div
+                        role="progressbar"
+                        aria-valuenow={summary.progressPercent}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label="Fremgang"
                         className="classroom-card__progress-fill"
                         style={{ width: `${summary.progressPercent}%` }}
                     />
@@ -93,6 +99,22 @@ export function ClassroomSummaryCard({ summary, accentColor, didCopy, onOpen, on
                         <Copy size={16} strokeWidth={2.4} />
                     )}
                 </button>
+                <span
+                    aria-live="polite"
+                    style={{
+                        position: 'absolute',
+                        width: '1px',
+                        height: '1px',
+                        padding: 0,
+                        margin: '-1px',
+                        overflow: 'hidden',
+                        clip: 'rect(0,0,0,0)',
+                        whiteSpace: 'nowrap',
+                        border: 0,
+                    }}
+                >
+                    {didCopy ? `Kode for ${summary.title} er kopiert` : ''}
+                </span>
             </div>
         </div>
     );

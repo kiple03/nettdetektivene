@@ -288,6 +288,11 @@
   border-color: rgba(187, 30, 20, 0.35);
 }
 
+.notifs__action-btn:focus-visible {
+  outline: 2px solid #2c1a06;
+  outline-offset: 2px;
+}
+
 .notifs__empty {
   margin: 0.5rem 0 0;
   color: #4f3618;

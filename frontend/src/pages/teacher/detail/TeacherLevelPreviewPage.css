@@ -37,6 +37,11 @@
     color: #fff;
 }
 
+.teacher-preview__back:focus-visible {
+    outline: 2px solid rgba(229, 242, 217, 0.9);
+    outline-offset: 2px;
+}
+
 .teacher-preview__counter {
     font-family: sans-serif;
     font-size: 11px;
@@ -80,6 +85,11 @@
 
 .teacher-preview__edit-btn:hover {
     background: rgba(0, 0, 0, 0.75);
+}
+
+.teacher-preview__edit-btn:focus-visible {
+    outline: 2px solid rgba(229, 242, 217, 0.9);
+    outline-offset: 2px;
 }
 
 .teacher-preview__locked-badge {
