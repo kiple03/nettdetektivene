@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+/** Handles saving and retrieving boss battle results, including awarding medals and unlocking avatar items on victory. */
 @Service
 @RequiredArgsConstructor
 public class BossBattleService {
@@ -30,6 +31,12 @@ public class BossBattleService {
     private final ProgressService progressService;
     private final UserAvatarService userAvatarService;
 
+    /**
+     * Persists the outcome of a boss battle and, on victory, awards a Platinum medallion and unlocks the BOSS_DEFEAT avatar item.
+     *
+     * @throws BossLockedException if the user has not yet unlocked the boss fight
+     * @throws ResponseStatusException 403 if the user is not enrolled in the given classroom
+     */
     @Transactional
     public void saveResult(UUID userId, UUID classroomId, BossBattleSaveRequest request) {
         if (!progressService.boosFightUnlocked(userId)) {
@@ -52,6 +59,11 @@ public class BossBattleService {
         }
     }
 
+    /**
+     * Returns the most recent boss battle result for the user in the given classroom, if any.
+     *
+     * @return an {@link Optional} containing the latest result, or empty if none exists
+     */
     public Optional<BossBattleResultResponse> getLatestResult(UUID userId, UUID classroomId) {
         Enrollment enrollment = resolveEnrollment(userId, classroomId);
         return bossBattleResultRepository

@@ -11,9 +11,11 @@ import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.springframework.stereotype.Component;
 
+/** Validates student answers for {@link LevelType#POST_OFFICE} questions. */
 @Component
 public class PostOfficeAnswerValidator implements SubmittedAnswerValidator {
 
+  /** @return {@link LevelType#POST_OFFICE} */
   @Override
   public LevelType supportedType() {
     return LevelType.POST_OFFICE;
