@@ -30,7 +30,7 @@ export default function LeaderboardPage() {
     return (
         <div className={styles.page} style={{ backgroundImage: `url(${detectiveRoom})` }}>
             <BackButton className={styles.backBtn} ariaLabel="Gå tilbake" />
-            <ProfileIconButton />
+            {!inTeacherLayout && <ProfileIconButton />}
             
             <div className={styles.board} style={{ backgroundImage: `url(${corkBoard})` }}>
                 <div className={styles.note}>
