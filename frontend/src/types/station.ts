@@ -44,9 +44,17 @@ export type StationData = {
   email?: EmailContent; // only for POST_OFFICE
 };
 
+export type OptionImageResponse = {
+  optionId: number;
+  responseImageUrl: string;
+};
+
 export type SubmitAnswerResult = {
   correct: boolean;
   feedback: string;
+  correctOptionIds?: string[];
+  wrongSelectedOptionIds?: string[];
+  responseImages?: OptionImageResponse[];
 };
 
 export type SubmitResult = {

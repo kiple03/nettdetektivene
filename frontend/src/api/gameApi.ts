@@ -1,5 +1,6 @@
 import client from "./client"
 import type { EmailContent } from "@/types/email";
+import type {OptionImageResponse} from "@/types/station.ts";
 
 export type LevelType = "MULTIPLE_CHOICE" | "PICTURE_QUIZ"| "PASSWORD_STRENGTH" | "CLASSIFY_ITEMS" | "POST_OFFICE"// legge til flere oppgavetyper senere
 
@@ -64,8 +65,9 @@ export interface SubmitMultiSelectAnswerRequest {
 export interface SubmitAnswerResponse {
   correct: boolean;
   feedback: string;
-  correctOptionIds: number[];
-  wrongSelectedOptionIds: number[];
+  correctOptionIds: string[];
+  wrongSelectedOptionIds: string[];
+  responseUrls: OptionImageResponse[];
 }
 
 export interface QuestionAnswer {

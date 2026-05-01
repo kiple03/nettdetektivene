@@ -1,6 +1,6 @@
 package org.ntnu.backend.game.dto;
 
 public record OptionImageResponse(
-    int id,
+    int optionId,
     String responseImageUrl
 ) implements OptionResponse {}
