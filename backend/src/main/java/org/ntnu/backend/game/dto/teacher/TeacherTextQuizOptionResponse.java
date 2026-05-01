@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto;
+package org.ntnu.backend.game.dto.teacher;
 
 /**
  * TEXT_QUIZ option data exposed to teachers (no imageUrl; exactly one correct).

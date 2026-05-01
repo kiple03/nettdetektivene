@@ -1,6 +1,7 @@
 package org.ntnu.backend.game.dto;
 
 import java.util.List;
+import org.ntnu.backend.game.dto.optionresponse.OptionResponse;
 import org.ntnu.backend.game.model.PostOfficeQuestion;
 import org.ntnu.backend.game.model.enums.LevelType;
 

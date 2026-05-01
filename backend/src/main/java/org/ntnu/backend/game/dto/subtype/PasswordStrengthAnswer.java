@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto.subtypes;
+package org.ntnu.backend.game.dto.subtype;
 
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
 

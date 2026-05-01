@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto;
+package org.ntnu.backend.game.dto.optionresponse;
 
 /**
  * API response DTO for a single PICTURE_QUIZ option.

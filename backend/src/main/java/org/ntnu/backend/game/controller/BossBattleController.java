@@ -1,8 +1,8 @@
 package org.ntnu.backend.game.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.ntnu.backend.game.dto.BossBattleResultResponse;
-import org.ntnu.backend.game.dto.BossBattleSaveRequest;
+import org.ntnu.backend.game.dto.bossbattle.BossBattleResultResponse;
+import org.ntnu.backend.game.dto.bossbattle.BossBattleSaveRequest;
 import org.ntnu.backend.game.service.BossBattleService;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import jakarta.validation.Valid;

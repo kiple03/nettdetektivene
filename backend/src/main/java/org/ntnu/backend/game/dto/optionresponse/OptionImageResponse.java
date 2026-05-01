@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto;
+package org.ntnu.backend.game.dto.optionresponse;
 
 public record OptionImageResponse(
     int optionId,

@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto;
+package org.ntnu.backend.game.dto.teacher;
 
 /**
  * Response DTO carrying the PASSWORD_STRENGTH game-option configuration for a teacher.

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.classroom.dto.CreateTeacherQuestionRequest;
 import org.ntnu.backend.classroom.dto.UpdateTeacherQuestionRequest;
 import org.ntnu.backend.classroom.service.TeacherQuestionService;
-import org.ntnu.backend.game.dto.TeacherQuestionResponse;
+import org.ntnu.backend.game.dto.teacher.TeacherQuestionResponse;
 import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;

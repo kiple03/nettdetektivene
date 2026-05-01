@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import jakarta.validation.Validation;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,7 +19,7 @@ import org.mockito.quality.Strictness;
 import org.ntnu.backend.exception.QuestionNotFoundException;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerResponse;
-import org.ntnu.backend.game.dto.subtypes.SingleChoiceAnswer;
+import org.ntnu.backend.game.dto.subtype.SingleChoiceAnswer;
 import org.ntnu.backend.game.mapper.GameMapper;
 import org.ntnu.backend.game.model.Level;
 import org.ntnu.backend.game.model.Question;
@@ -33,9 +32,6 @@ import org.ntnu.backend.game.util.OptionValidator;
 import org.ntnu.backend.game.validation.MultipleChoiceAnswerValidator;
 import org.ntnu.backend.game.validation.SubmittedAnswerValidatorRegistry;
 import org.ntnu.backend.user.model.enums.RoleEnum;
-import org.ntnu.backend.security.JwtAuthenticatedPrincipal;
-import org.ntnu.backend.user.model.enums.RoleEnum;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.util.ReflectionTestUtils;
 import tools.jackson.databind.ObjectMapper;
 

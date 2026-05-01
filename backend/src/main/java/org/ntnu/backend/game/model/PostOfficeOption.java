@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ntnu.backend.game.dto.PostOfficeOptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.PostOfficeOptionResponse;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.util.OptionParser;
 import org.ntnu.backend.game.util.OptionValidator;

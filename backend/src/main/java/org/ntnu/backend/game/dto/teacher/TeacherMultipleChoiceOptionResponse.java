@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto;
+package org.ntnu.backend.game.dto.teacher;
 
 /**
  * Full MC option data exposed to teachers, including answer fields hidden from students.

@@ -3,13 +3,12 @@ package org.ntnu.backend.game.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.ntnu.backend.config.openapi.ApiErrorResponse;
 import org.ntnu.backend.game.dto.LevelResponse;
-import org.ntnu.backend.game.dto.OptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.OptionResponse;
 import org.ntnu.backend.game.dto.QuestionResponse;
 import org.ntnu.backend.game.dto.StopResponse;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;

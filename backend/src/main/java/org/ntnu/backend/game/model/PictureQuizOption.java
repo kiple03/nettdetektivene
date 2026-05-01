@@ -2,8 +2,7 @@ package org.ntnu.backend.game.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.PictureQuizOptionResponse;
 
 /**
  * Internal model for a PICTURE_QUIZ option.

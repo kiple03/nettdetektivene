@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto.subtypes;
+package org.ntnu.backend.game.dto.subtype;
 
 import lombok.Getter;
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;

@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto;
+package org.ntnu.backend.game.dto.teacher;
 
 /**
  * Full PICTURE_QUIZ option data returned to teachers.

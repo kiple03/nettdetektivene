@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto;
+package org.ntnu.backend.game.dto.optionresponse;
 
 /**
  * Response DTO representing a single option in a multiple-choice question.

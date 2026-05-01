@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ntnu.backend.game.dto.SubmitAnswerRequest;
-import org.ntnu.backend.game.dto.subtypes.MultiSelectAnswer;
+import org.ntnu.backend.game.dto.subtype.MultiSelectAnswer;
 import org.ntnu.backend.game.model.Option;
 import org.ntnu.backend.game.model.PictureQuizOption;
 import org.ntnu.backend.game.model.enums.LevelType;

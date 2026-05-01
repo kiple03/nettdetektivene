@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.ntnu.backend.game.dto.OptionResponse;
+import org.ntnu.backend.game.dto.optionresponse.OptionResponse;
 import org.ntnu.backend.game.mapper.GameMapper;
 import org.ntnu.backend.game.model.enums.LevelType;
 import org.ntnu.backend.game.util.OptionParser;

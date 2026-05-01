@@ -1,4 +1,4 @@
-package org.ntnu.backend.game.dto;
+package org.ntnu.backend.game.dto.optionresponse;
 
 /**
  * Option response for post-office (drag-and-drop sorting) game questions,
