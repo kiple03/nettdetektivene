@@ -10,6 +10,13 @@ export default defineConfig({
     setupFiles: ['src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['tests/**', 'node_modules/**'],
+    coverage: {
+      provider: 'v8',
+      exclude: [
+          '**/*.css',
+          '**/*.module.css'
+      ]
+    }
   },
   resolve: {
     alias: {

@@ -2,14 +2,18 @@ import { Check, Copy } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import type { ClassroomSummary } from '@/types/classroom.ts';
 
+/** Props for {@link ClassroomSummaryCard}. */
 type ClassroomSummaryCardProps = {
     summary: ClassroomSummary;
+    /** CSS color value applied as the card's accent. */
     accentColor: string;
+    /** Whether the join code was just copied to the clipboard. */
     didCopy: boolean;
     onOpen: (classroomId: string) => void;
     onCopy: (joinCode: string, classroomId: string) => void;
 };
 
+/** Card displaying a classroom summary with stats, progress, and a join-code copy button. */
 export function ClassroomSummaryCard({ summary, accentColor, didCopy, onOpen, onCopy }: ClassroomSummaryCardProps) {
     return (
         <div

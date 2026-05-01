@@ -47,6 +47,12 @@ public class JwtAuthenticatedPrincipal {
     return principal;
   }
 
+  /**
+   * Returns the classroom ID, or throws 403 if this principal has no classroom assigned.
+   *
+   * @return the non-null classroom ID
+   * @throws org.springframework.web.server.ResponseStatusException 403 if {@code classroomId} is null
+   */
   public UUID requireClassroomId() {
     if (classroomId == null) {
       throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No classroom assigned");
@@ -54,10 +60,12 @@ public class JwtAuthenticatedPrincipal {
     return classroomId;
     }
 
+  /** @return {@code true} if the authenticated user holds the TEACHER role */
   public boolean isTeacher() {
     return role == RoleEnum.TEACHER;
   }
 
+  /** @return {@code true} if the authenticated user holds the STUDENT role */
   public boolean isStudent() {
     return role == RoleEnum.STUDENT;
   }

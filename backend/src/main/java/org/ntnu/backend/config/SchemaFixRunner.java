@@ -19,10 +19,20 @@ public class SchemaFixRunner implements ApplicationRunner {
 
   private final JdbcTemplate jdbc;
 
+  /**
+   * @param dataSource the application data source used to build the JDBC template
+   */
   public SchemaFixRunner(DataSource dataSource) {
     this.jdbc = new JdbcTemplate(dataSource);
   }
 
+  /**
+   * Applies DDL fixes that Hibernate's {@code ddl-auto=update} cannot perform:
+   * relaxes the NOT NULL constraint on {@code app_user.username}, enforces NOT NULL on
+   * {@code notification.type}, and drops any stale unique indexes on {@code app_user.username}.
+   *
+   * @param args application arguments (unused)
+   */
   @Override
   public void run(ApplicationArguments args) {
     jdbc.execute("ALTER TABLE app_user MODIFY username VARCHAR(255) NULL");

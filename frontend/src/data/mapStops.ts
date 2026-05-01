@@ -6,13 +6,16 @@ import nyhetskvartalet from "@/assets/images/map/nyhetskvartalet.svg";
 import passordbanken from "@/assets/images/map/passordbanken.svg";
 import postkontoret from "@/assets/images/map/postkontoret.svg";
 
+/** Static data for a single map stop. */
 export interface StopData {
     id: number;
     title: string;
     icon: string;
-    pathOffset: string; // used only for car animation; teacher map ignores this
+    /** SVG path offset for car animation; ignored by the teacher map. */
+    pathOffset: string;
 }
 
+/** Ordered list of all map stops, matching game progression order. */
 export const MAP_STOPS: StopData[] = [
     { id: 1, title: "Nyhetskvartalet",        icon: nyhetskvartalet, pathOffset: "23.5%" },
     { id: 2, title: "Fotografen",             icon: fotografen,      pathOffset: "31.3%" },

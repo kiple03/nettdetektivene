@@ -5,6 +5,7 @@ type Props = {
     onClick: () => void;
 };
 
+/** Button that opens the student's notebook overlay. */
 export default function NotesButton({ onClick }: Props) {
     return (
         <button

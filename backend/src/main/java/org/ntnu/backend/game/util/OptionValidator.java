@@ -69,6 +69,13 @@ public class OptionValidator {
     }
   }
 
+  /**
+   * Checks that every item is a {@link ClassifyItemsOption}, keys are unique,
+   * and each item's {@code correctLabel} is present in its {@code labels} list.
+   *
+   * @param options the parsed classify-items options
+   * @throws OptionValidationException if any integrity rule is violated
+   */
   private void validateClassifyItems(List<Option> options) {
     if (options.isEmpty()) {
       throw new OptionValidationException("Classify items must have at least one item");
@@ -144,6 +151,12 @@ public class OptionValidator {
     }
   }
 
+  /**
+   * Checks that the list contains exactly one {@link PasswordStrengthOption}.
+   *
+   * @param options the parsed password-strength options
+   * @throws OptionValidationException if the list size is not 1 or the option is the wrong type
+   */
   private void validatePasswordStrength(List<Option> options){
     if(options.size() != 1 || !(options.get(0) instanceof PasswordStrengthOption)){
       throw new OptionValidationException("PASSWORD_STRENGTH must have exactly one PasswordStrengthOption type");

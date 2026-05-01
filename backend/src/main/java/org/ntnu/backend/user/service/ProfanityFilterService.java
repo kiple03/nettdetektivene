@@ -10,11 +10,16 @@ import java.util.regex.Pattern;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+/**
+ * Detects and censors profanity using a word list loaded from {@code profanity-list.txt}
+ * on the classpath, with optional per-call extra words.
+ */
 @Service
 public class ProfanityFilterService {
 
     private final List<Pattern> patterns = new ArrayList<>();
 
+    /** Loads the profanity word list and compiles each entry into a case-insensitive word-boundary pattern. */
     @PostConstruct
     void init() throws Exception {
         ClassPathResource resource = new ClassPathResource("profanity-list.txt");
@@ -31,11 +36,22 @@ public class ProfanityFilterService {
         }
     }
 
+    /**
+     * Returns {@code true} if {@code text} contains any word from the built-in list.
+     *
+     * @param text the text to check; blank/null is safe and returns {@code false}
+     */
     public boolean containsProfanity(String text) {
         if (text == null || text.isBlank()) return false;
         return patterns.stream().anyMatch(p -> p.matcher(text).find());
     }
 
+    /**
+     * Returns {@code true} if {@code text} contains a word from the built-in list or {@code extraWords}.
+     *
+     * @param text       the text to check
+     * @param extraWords additional words to match (e.g. classroom-specific censor list)
+     */
     public boolean containsProfanity(String text, List<String> extraWords) {
         if (text == null || text.isBlank()) return false;
         if (containsProfanity(text)) return true;
@@ -46,6 +62,12 @@ public class ProfanityFilterService {
                         .matcher(text).find());
     }
 
+    /**
+     * Replaces all profane words in {@code text} with {@code ***}.
+     *
+     * @param text the text to censor; {@code null} returns {@code null}
+     * @return censored copy of {@code text}
+     */
     public String censor(String text) {
         if (text == null) return null;
         String result = text;
@@ -55,6 +77,13 @@ public class ProfanityFilterService {
         return result;
     }
 
+    /**
+     * Replaces profane words (built-in list + {@code extraWords}) in {@code text} with {@code ***}.
+     *
+     * @param text       the text to censor
+     * @param extraWords additional words to censor
+     * @return censored copy of {@code text}
+     */
     public String censor(String text, List<String> extraWords) {
         if (text == null) return null;
         String result = censor(text);

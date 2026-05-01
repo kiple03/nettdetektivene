@@ -4,7 +4,6 @@ import type {
   StudentSummary,
   StudentDetail,
   LevelEntry,
-  NotificationResponse,
   StopSummary,
   CoTeacher,
 } from '../types/classroom';
@@ -61,14 +60,6 @@ import type { RankedStudent } from '@/types/leaderboard';
 export type { MedalionResponse };
 
 // --- Raw response types (internal, not exported) ---
-
-interface RawNotification {
-  type: string;
-  message: string;
-  classroomId: string;
-  studentUsername: string;
-  timestamp: string;
-}
 
 interface RawEquippedItem {
   id: string;
@@ -199,32 +190,6 @@ function mapStudentDetail(raw: RawStudentDetail, userId: string): StudentDetail 
   };
 }
 
-const NOTIFICATION_TYPE_MAP: Record<string, NotificationResponse['type']> = {
-  LEVEL_COMPLETED: 'stop_completed',
-  CO_TEACHER_ADDED: 'co_teacher_added',
-};
-
-/** Stable localStorage key for a notification's read state. */
-export function notifLsKey(username: string, timestamp: string): string {
-  return `notif:${username}:${timestamp}`;
-}
-
-function mapNotification(raw: RawNotification): NotificationResponse {
-  const mapped = NOTIFICATION_TYPE_MAP[raw.type];
-  if (!mapped) {
-    console.warn(`[teacherApi] Unknown notification type from API: "${raw.type}"`);
-  }
-  const type: NotificationResponse['type'] = mapped ?? 'stop_completed';
-  const read = localStorage.getItem(notifLsKey(raw.studentUsername, raw.timestamp)) === 'true';
-  return {
-    type,
-    message: raw.message,
-    classroomId: raw.classroomId,
-    studentUsername: raw.studentUsername,
-    timestamp: raw.timestamp,
-    read,
-  };
-}
 
 function mapCoTeacher(raw: RawCoTeacher): CoTeacher {
   return { userId: raw.userId, username: raw.username, email: raw.email, isOwner: raw.owner };
@@ -249,11 +214,13 @@ function mapClassroomDetail(raw: RawClassroomDetail): ClassroomDetail {
   };
 }
 
+/** Fetches all classrooms the authenticated teacher owns or co-teaches. */
 export async function getClassroomSummaries(): Promise<ClassroomSummary[]> {
   const res = await apiClient.get<RawClassroomSummary[]>('/teacher/classrooms');
   return res.data.map(mapClassroomSummary);
 }
 
+/** Returns classroom detail, or `null` if not found (404). */
 export async function getClassroom(classroomId: string): Promise<ClassroomDetail | null> {
   try {
     const res = await apiClient.get<RawClassroomDetail>(`/teacher/classrooms/${classroomId}`);
@@ -266,25 +233,30 @@ export async function getClassroom(classroomId: string): Promise<ClassroomDetail
   }
 }
 
+/** Creates a new classroom and returns the created detail. */
 export async function createClassroom(title: string, description: string | null): Promise<ClassroomDetail> {
   const res = await apiClient.post<RawClassroomDetail>('/teacher/classrooms', { title, description });
   return mapClassroomDetail(res.data);
 }
 
+/** Updates classroom title/description. */
 export async function updateClassroom(classroomId: string, title: string, description: string | null): Promise<ClassroomDetail> {
   const res = await apiClient.patch<RawClassroomDetail>(`/teacher/classrooms/${classroomId}`, { title, description });
   return mapClassroomDetail(res.data);
 }
 
+/** Permanently deletes the classroom and all its data. */
 export async function deleteClassroom(classroomId: string): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}`);
 }
 
+/** Returns progress summary for every student enrolled in the classroom. */
 export async function getStudentProgress(classroomId: string): Promise<StudentSummary[]> {
   const res = await apiClient.get<RawStudentProgress[]>(`/teacher/classrooms/${classroomId}/students`);
   return res.data.map(mapStudentProgress);
 }
 
+/** Returns detailed progress for a single student, or `null` if not found (404). */
 export async function getStudentDetail(classroomId: string, studentId: string): Promise<StudentDetail | null> {
   try {
     const res = await apiClient.get<RawStudentDetail>(`/teacher/classrooms/${classroomId}/students/${studentId}`);
@@ -297,29 +269,29 @@ export async function getStudentDetail(classroomId: string, studentId: string): 
   }
 }
 
-export async function getNotifications(): Promise<NotificationResponse[]> {
-  const res = await apiClient.get<RawNotification[]>('/teacher/notifications');
-  return res.data.map(mapNotification);
-}
-
+/** Fetches all game stops visible to the teacher. */
 export async function getStops(): Promise<StopSummary[]> {
   const res = await apiClient.get<RawStop[]>('/teacher/stops');
   return res.data.map(mapStop);
 }
 
+/** Removes a student from the classroom. */
 export async function removeStudent(classroomId: string, studentId: string): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}/students/${studentId}`);
 }
 
+/** Updates the display username of a student within a classroom. */
 export async function updateStudentUsername(classroomId: string, studentId: string, username: string): Promise<void> {
   await apiClient.patch(`/teacher/classrooms/${classroomId}/students/${studentId}`, { username });
 }
 
+/** Fetches medals earned by a student in a classroom. */
 export async function getStudentMedalions(classroomId: string, studentId: string): Promise<MedalionResponse[]> {
   const res = await apiClient.get<MedalionResponse[]>(`/teacher/classrooms/${classroomId}/students/${studentId}/medalions`);
   return res.data;
 }
 
+/** Fetches a student's notebook (reflections + level notes) as a keyed map. */
 export async function getStudentNotebook(classroomId: string, studentId: string): Promise<NotesData> {
   type RawNotebook = { reflections?: Parameters<typeof toNotesMap>[0]; levelNotes?: Parameters<typeof toNotesMap>[0] };
   const res = await apiClient.get<RawNotebook>(
@@ -331,20 +303,24 @@ export async function getStudentNotebook(classroomId: string, studentId: string)
   };
 }
 
+/** Returns all co-teachers for the classroom, including the owner. */
 export async function getCoTeachers(classroomId: string): Promise<CoTeacher[]> {
   const res = await apiClient.get<RawCoTeacher[]>(`/teacher/classrooms/${classroomId}/teachers`);
   return res.data.map(mapCoTeacher);
 }
 
+/** Invites a teacher by email to co-teach the classroom. */
 export async function inviteCoTeacher(classroomId: string, email: string): Promise<CoTeacher> {
   const res = await apiClient.post<RawCoTeacher>(`/teacher/classrooms/${classroomId}/teachers`, { email });
   return mapCoTeacher(res.data);
 }
 
+/** Removes a co-teacher from the classroom. */
 export async function removeCoTeacher(classroomId: string, userId: string): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}/teachers/${userId}`);
 }
 
+/** Returns the ranked student leaderboard for a classroom. */
 export async function getClassroomLeaderboard(classroomId: string): Promise<RankedStudent[]> {
   const res = await apiClient.get<RankedStudent[]>(`/leaderboard/classroom/${classroomId}`);
   return res.data;
@@ -356,20 +332,24 @@ export interface CensorWord {
   createdAt: string;
 }
 
+/** Fetches the blocked word list for a classroom. */
 export async function getCensorWords(classroomId: string): Promise<CensorWord[]> {
   const res = await apiClient.get<CensorWord[]>(`/teacher/classrooms/${classroomId}/censor-words`);
   return res.data;
 }
 
+/** Adds a word to the classroom's block list. */
 export async function addCensorWord(classroomId: string, word: string): Promise<CensorWord> {
   const res = await apiClient.post<CensorWord>(`/teacher/classrooms/${classroomId}/censor-words`, { word });
   return res.data;
 }
 
+/** Removes a word from the classroom's block list. */
 export async function deleteCensorWord(classroomId: string, wordId: string): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}/censor-words/${wordId}`);
 }
 
+/** Returns all questions for a level, including classroom-specific overrides. */
 export async function listLevelQuestions(classroomId: string, levelId: number): Promise<TeacherQuestion[]> {
   const res = await apiClient.get<TeacherQuestion[]>(`/teacher/classrooms/${classroomId}/levels/${levelId}/questions`);
   return res.data;
@@ -481,6 +461,7 @@ export interface UpdateTextQuizQuestionPayload {
 // Discriminated union — extend with additional arms as new types are added
 export type UpdateQuestionPayload = UpdateMultipleChoiceQuestionPayload | UpdatePictureQuizQuestionPayload | UpdateClassifyItemsQuestionPayload | UpdatePasswordStrengthQuestionPayload | UpdateTextQuizQuestionPayload;
 
+/** Creates a classroom-specific question for the given level. */
 export async function createQuestion(classroomId: string, levelId: number, payload: CreateQuestionPayload): Promise<TeacherQuestion> {
   const res = await apiClient.post<TeacherQuestion>(
     `/teacher/classrooms/${classroomId}/levels/${levelId}/questions`,
@@ -489,6 +470,7 @@ export async function createQuestion(classroomId: string, levelId: number, paylo
   return res.data;
 }
 
+/** Replaces all fields of an existing question. */
 export async function updateQuestion(classroomId: string, levelId: number, questionId: number, payload: UpdateQuestionPayload): Promise<TeacherQuestion> {
   const res = await apiClient.put<TeacherQuestion>(
     `/teacher/classrooms/${classroomId}/levels/${levelId}/questions/${questionId}`,
@@ -497,6 +479,7 @@ export async function updateQuestion(classroomId: string, levelId: number, quest
   return res.data;
 }
 
+/** Deletes a classroom-specific question. */
 export async function deleteQuestion(classroomId: string, levelId: number, questionId: number): Promise<void> {
   await apiClient.delete(`/teacher/classrooms/${classroomId}/levels/${levelId}/questions/${questionId}`);
 }
@@ -515,17 +498,20 @@ interface RawUploadedImage {
   uploadedAt: string;
 }
 
+/** Resolves a relative image URL to a full URL using the configured API base. */
 export function getImageDisplayUrl(imageUrl: string): string {
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) return imageUrl;
   const base = import.meta.env.VITE_API_URL ?? 'http://localhost:8080/api';
   return `${base}${imageUrl}`;
 }
 
+/** Returns all images uploaded by the authenticated teacher. */
 export async function listMyImages(): Promise<TeacherImage[]> {
   const res = await apiClient.get<TeacherImage[]>('/teacher/images');
   return res.data;
 }
 
+/** Uploads an image file and returns the stored metadata. */
 export async function uploadImage(file: File): Promise<TeacherImage> {
   const formData = new FormData();
   formData.append('file', file);

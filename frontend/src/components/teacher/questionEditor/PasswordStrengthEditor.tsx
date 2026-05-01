@@ -3,9 +3,11 @@ import type { PasswordStrengthQuestionDraft } from './types';
 
 interface Props {
   value: PasswordStrengthQuestionDraft;
+  /** Called whenever any field in the draft changes. */
   onChange: (v: PasswordStrengthQuestionDraft) => void;
 }
 
+/** Form for editing a password-strength question draft, including requirements and feedback text. */
 export function PasswordStrengthEditor({ value, onChange }: Props) {
   const set = (patch: Partial<PasswordStrengthQuestionDraft>) => onChange({ ...value, ...patch });
 

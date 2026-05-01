@@ -28,6 +28,7 @@ const ProfilePage = lazy(() => import("@/pages/student/ProfilePage"));
 const TeacherMapPage = lazy(() => import("@/pages/teacher/TeacherMapPage"));
 const TeacherLevelPreviewPage = lazy(() => import("@/pages/teacher/detail/TeacherLevelPreviewPage"));
 
+/** Application router with all public, student, and teacher routes. */
 export const router = createBrowserRouter([
     // Auth routes (public)
     {

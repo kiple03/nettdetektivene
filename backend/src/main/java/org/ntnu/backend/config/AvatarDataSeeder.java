@@ -7,20 +7,27 @@ import org.ntnu.backend.avatar.model.AvatarItem;
 import org.ntnu.backend.avatar.repository.AvatarItemRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.boot.CommandLineRunner;
+
 /**
- * Config class. It seeds the database with starter items for
- * avatars.
+ * Seeds the database with the default set of avatar items on application startup.
+ * Items are only inserted if they do not already exist (idempotent by name).
  */
 @Component
 public class AvatarDataSeeder implements CommandLineRunner{
     private final AvatarItemRepository itemRepository;
 
+    /**
+     * @param itemRepository repository used to check existing items and persist new ones
+     */
     public AvatarDataSeeder(AvatarItemRepository itemRepository){
         this.itemRepository = itemRepository;
     }
 
     /**
-     * Method that runs automatically with spring boot upon startup.
+     * Inserts any missing avatar items into the database.
+     *
+     * @param args ignored command-line arguments
+     * @throws Exception if persistence fails
      */
     @Override
     public void run(String... args) throws Exception{
@@ -54,7 +61,9 @@ public class AvatarDataSeeder implements CommandLineRunner{
             AvatarItem.builder().name("face_girl_2").category("face").imageFile("face_girl_2.png").build(),
             AvatarItem.builder().name("face_girl_3").category("face").imageFile("girl_face_3.png").build(),
             AvatarItem.builder().name("VR_goggles").category("head").imageFile("boss-goggles.png").unlockCondition("BOSS_DEFEAT").build(),
-            AvatarItem.builder().name("burning_hand").category("accessories").imageFile("burning-hand.gif").build()
+            AvatarItem.builder().name("burning_hand").category("accessories").imageFile("burning-hand.gif").build(),
+            AvatarItem.builder().name("armor").category("body").imageFile("armor.gif").build(),
+            AvatarItem.builder().name("stars").category("head").imageFile("stars.gif").build()
         );
 
         List<AvatarItem> toSave = allItems.stream()

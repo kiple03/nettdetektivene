@@ -34,6 +34,7 @@ function bossPageMusicRef(el: HTMLDivElement | null) {
     }
 }
 
+/** Full-screen boss battle arena managing phase transitions, HP, and result persistence. */
 export default function BossBattlePage() {
     const { data: profile } = useUserProfile();
     const { role } = useAuth();

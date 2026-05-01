@@ -25,6 +25,7 @@ const TYPE_ICONS: Record<TeacherNotificationType, string> = {
 
 const PUSHPIN_PALETTE = ['#c0392b', '#2471a3', '#1e8449', '#d4820a', '#7d3c98', '#117a65', '#c0392b', '#1a5276'];
 
+/** Deterministically picks a pin color from the palette based on the notification id. */
 function getPinColor(id: string): string {
   let h = 0;
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
@@ -40,12 +41,14 @@ const NOTE_TINTS: Record<TeacherNotificationType, string> = {
 };
 
 
+/** Notifications grouped by calendar day. */
 type DateGroup = {
   key: string;
   label: string;
   items: TeacherNotification[];
 };
 
+/** Formats an ISO date string as a full Norwegian weekday + date label. */
 function formatGroupLabel(dateString: string): string {
   return new Date(dateString).toLocaleDateString('nb-NO', {
     weekday: 'long',
@@ -55,10 +58,12 @@ function formatGroupLabel(dateString: string): string {
   });
 }
 
+/** Extracts the YYYY-MM-DD portion of an ISO date string for use as a group key. */
 function formatDayKey(dateString: string): string {
   return new Date(dateString).toISOString().slice(0, 10);
 }
 
+/** Teacher notifications page — shows all alerts grouped by day with filtering by classroom. */
 export default function Notifications() {
   const navigate = useNavigate();
   const [classroomFilter, setClassroomFilter] = useState<string>('all');

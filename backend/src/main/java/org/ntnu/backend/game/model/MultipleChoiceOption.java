@@ -33,16 +33,21 @@ import org.ntnu.backend.game.util.OptionValidator;
 @AllArgsConstructor
 public final class MultipleChoiceOption implements Option {
 
+    /** Unique identifier for this option within its question. */
     @NotNull
     private Integer id;
 
+    /** Display text shown to the student. */
     private String text;
 
+    /** Optional image URL shown alongside the text. */
     private String imageUrl;
 
+    /** Whether this option is the correct answer; never exposed in API responses. */
     @JsonProperty("isCorrect")
     private boolean isCorrect;
 
+    /** Explanation shown after the student answers; never exposed before submission. */
     @NotBlank
     private String explanation;
 }

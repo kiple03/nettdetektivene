@@ -17,9 +17,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedalionResponse {
+    /** Unique identifier of the medalion. */
     private UUID id;
     private String name;
     private String description;
+    /** Timestamp when the user earned this medalion. */
     private LocalDateTime earnedAt;
+    /** URL pointing to the medalion image asset. */
     private String imageUrl;
 }

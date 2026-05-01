@@ -1,13 +1,18 @@
 import type { EquippedItem } from '@/hooks/useUserProfile';
 import { LayeredAvatar } from '@/components/miscellaneous/LayeredAvatar';
 
+/** Props for {@link CarWithAvatar}. */
 interface CarWithAvatarProps {
+    /** Equipped avatar items to display above the car. */
     items: EquippedItem[];
+    /** Overall bounding-box size in pixels. */
     size?: number;
+    /** Avatar size as a fraction of `size`. */
     avatarScale?: number;
     hairColor?: string;
 }
 
+/** Renders a car image with the player's layered avatar floating above it. */
 export function CarWithAvatar({ items, size = 100, avatarScale = 0.7, hairColor }: CarWithAvatarProps) {
     const avatarSize = size * avatarScale;
     const avatarLeft = (size - avatarSize) / 2;

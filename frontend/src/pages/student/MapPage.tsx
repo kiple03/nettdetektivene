@@ -1,5 +1,6 @@
 import { type CSSProperties, useState, useMemo } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { getGameStops } from "@/api/gameApi";
@@ -23,7 +24,9 @@ import LockBadge from "@/components/ui/badges/Lock-Badge.tsx";
 import { StopLevelsModal } from "@/components/map/StopLevelsModal";
 import { MapLoadingOverlay } from "@/components/map/MapLoadingOverlay";
 
+/** Interactive city map where students navigate between stops/stations, with car animation along a path. */
 export default function MapPage() {
+  const { email } = useAuth();
   const { data: profile } = useUserProfile();
   const { data: backendStops = [] } = useQuery({
     queryKey: studentKeys.gameStops,
@@ -49,8 +52,9 @@ export default function MapPage() {
   const [lockedDialogOpen, setLockedDialogOpen] = useState(false);
   const [lockedStopTitle, setLockedStopTitle] = useState("");
   const [adminBypassInput, setAdminBypassInput] = useState("");
+  const carOffsetKey = `carPathOffset_${email ?? "anonymous"}`;
   const [currentPathOffset, setCurrentPathOffset] = useState(
-    () => localStorage.getItem("carPathOffset") ?? "5%"
+    () => localStorage.getItem(`carPathOffset_${email ?? "anonymous"}`) ?? "5%"
   );
   const [animating, setAnimating] = useState(false);
   const [carReversed, setCarReversed] = useState(false);
@@ -79,7 +83,7 @@ export default function MapPage() {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         setCurrentPathOffset(offset);
-        localStorage.setItem("carPathOffset", offset);
+        localStorage.setItem(carOffsetKey, offset);
         setTimeout(() => {
           setAnimating(false);
           setCarReversed(false);

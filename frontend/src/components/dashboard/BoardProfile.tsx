@@ -1,6 +1,7 @@
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { LayeredAvatar } from "../miscellaneous/LayeredAvatar";
 
+/** Displays the current user's avatar and username in the dashboard header. */
 export function Header(){
     const {data: userProfile, isLoading, isError} = useUserProfile();
 

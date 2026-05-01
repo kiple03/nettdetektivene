@@ -7,6 +7,7 @@ import { ATTACK_TO_STOP_NAME, getQuestionsForStopByName } from "@/api/bossBattle
 import type { GameQuestion } from "@/api/gameApi";
 import styles from "./AttackOrchestrator.module.css";
 
+/** Union of all possible boss attack types, each corresponding to a game stop. */
 export type AttackType =
     | "NYHETSKVARTALET"
     | "FOTOGRAFEN"
@@ -51,6 +52,15 @@ interface Props {
     onReplayVictory?: () => void;
 }
 
+/**
+ * Orchestrates the boss battle attack flow: draws attacks from a shuffled pool,
+ * runs the animation phase, then shows a question modal and reports the result.
+ *
+ * @param phase - Current battle phase; attacks only trigger when `"battle"`.
+ * @param onAnswer - Called with `true` if the player answered correctly, `false` otherwise.
+ * @param onSpriteChange - Called with the new sprite name during attack animations.
+ * @param onReplayVictory - Optional callback to replay the victory cutscene (admin use).
+ */
 export function AttackOrchestrator({ phase, onAnswer, onSpriteChange, onReplayVictory }: Props) {
     const [innerPhase, setInnerPhase] = useState<InnerPhase>("waiting");
     const [currentAttackType, setCurrentAttackType] = useState<AttackType | null>(null);

@@ -10,6 +10,11 @@ import {
 } from "@/components/ui/alert-dialog/Alert-Dialog.tsx";
 import { Button } from "@/components/ui/buttons/Button.tsx";
 
+/**
+ * Fixed-position avatar button that navigates to the profile page.
+ * When the user is in an active game or boss level, shows a confirmation dialog
+ * warning that level progress will be lost before navigating.
+ */
 export default function ProfileIconButton() {
     const navigate = useNavigate();
     const isOnGame = useMatch("/game/:levelId");

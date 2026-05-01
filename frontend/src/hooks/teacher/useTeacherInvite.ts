@@ -9,6 +9,12 @@ import {
 } from './useTeacherMutations';
 import { decodeToken } from '@/stores/authStore';
 
+/**
+ * Manages co-teacher invite and leave-classroom flows for a given classroom.
+ *
+ * @param classroomId - The classroom to operate on.
+ * @returns State and handlers for the invite form, the current teacher list, and leaving the classroom.
+ */
 export function useTeacherInvite(classroomId: string) {
     const navigate = useNavigate();
     const coTeachersQuery = useCoTeachers(classroomId);
@@ -21,6 +27,7 @@ export function useTeacherInvite(classroomId: string) {
     const currentUserId = decodeToken()?.userId ?? '';
     const isOwner = teacherList.some((t) => t.userId === currentUserId && t.isOwner);
 
+    /** Submits the invite form, sending an invitation to `inviteEmail`. */
     async function handleInviteTeacher(e: { preventDefault: () => void }) {
         e.preventDefault();
         const email = inviteEmail.trim();
@@ -33,6 +40,7 @@ export function useTeacherInvite(classroomId: string) {
         }
     }
 
+    /** Leaves the classroom as the current user and navigates to /teacher. */
     async function handleLeaveClassroom() {
         try {
             await leaveMutation.mutateAsync(currentUserId);

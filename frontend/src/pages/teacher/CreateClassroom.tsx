@@ -6,6 +6,7 @@ import './CreateClassroom.css';
 
 type ActionResult = { error: string } | null;
 
+/** React Router action that creates a new classroom and redirects to its code page on success. */
 export async function createClassroomAction({
                                               request,
                                             }: ActionFunctionArgs): Promise<Response | ActionResult> {
@@ -23,6 +24,7 @@ export async function createClassroomAction({
   }
 }
 
+/** Page for creating a new classroom with title and optional description. */
 export default function CreateClassroom() {
   const result = useActionData() as ActionResult | undefined;
 

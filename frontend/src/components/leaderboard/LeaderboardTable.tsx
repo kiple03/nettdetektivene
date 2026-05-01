@@ -2,7 +2,9 @@ import styles from './LeaderboardTable.module.css';
 import type { LeaderboardEntry } from '@/hooks/student/useLeaderboard';
 
 interface Props {
+    /** Ranked leaderboard entries to display. */
     entries: LeaderboardEntry[];
+    /** The current user's classroom ID, used to highlight their row. */
     myClassroomId: string | null;
 }
 
@@ -12,6 +14,7 @@ const MEDALS: Record<number, string> = {
     3: '🥉',
 };
 
+/** Renders a ranked table of classrooms, highlighting the current user's classroom. */
 export default function LeaderboardTable({ entries, myClassroomId }: Props) {
     return (
         <div className={styles.tableWrapper}>

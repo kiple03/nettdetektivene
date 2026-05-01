@@ -4,6 +4,7 @@ export type { EquippedItem, UserProfile } from "@/types/user";
 import { fetchUserInventory } from "@/api/userApi";
 import { studentKeys } from "@/hooks/student/queryKeys";
 
+/** Fetches the current user's profile. */
 export function useUserProfile(){
     return useQuery({
         queryKey: studentKeys.userProfile,
@@ -11,6 +12,7 @@ export function useUserProfile(){
     });
 }
 
+/** Fetches the current user's avatar inventory items. */
 export function useUserInventory() {
   return useQuery({
     queryKey: studentKeys.userInventory,
@@ -18,6 +20,10 @@ export function useUserInventory() {
   });
 }
 
+/**
+ * Saves the avatar outfit for the current user.
+ * @param itemIds - List of equipped item IDs to persist.
+ */
 export function useSaveAvatarOutfit(){
     const queryClient = useQueryClient();
 
@@ -29,6 +35,7 @@ export function useSaveAvatarOutfit(){
     });
 }
 
+/** Updates the current user's display name and optional hair color. */
 export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
 

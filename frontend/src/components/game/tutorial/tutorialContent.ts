@@ -1,5 +1,6 @@
 import { STATION_TYPE, type StationType } from "@/types/station";
 
+/** A single step shown in the station tutorial overlay. */
 export type TutorialStep = {
   title: string;
   description: string;
@@ -11,6 +12,7 @@ const LURT = {
       "Usikker på hvordan oppgaven fungerer? Trykk på ?-knappen øverst til høyre for å se denne guiden igjen når som helst.",
 };
 
+/** Ordered tutorial steps for each station type. */
 export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
   [STATION_TYPE.NEWS]: [
     {
@@ -87,10 +89,18 @@ export const TUTORIAL_STEPS: Record<StationType, TutorialStep[]> = {
 const storageKey = (type: StationType, email?: string | null | undefined) =>
     `nettdetektivene_tutorial_${type}_${email ?? "anonymous"}`;
 
+/**
+ * Returns true if the user has already seen the tutorial for this station.
+ * @param email - Scopes the flag to the logged-in user; falls back to "anonymous".
+ */
 export function hasSeenTutorial(type: StationType, email?: string | null): boolean {
   return localStorage.getItem(storageKey(type, email)) === "true";
 }
 
+/**
+ * Persists that the user has seen the tutorial for this station.
+ * @param email - Scopes the flag to the logged-in user; falls back to "anonymous".
+ */
 export function markTutorialSeen(type: StationType, email?: string | null | undefined): void {
   localStorage.setItem(storageKey(type, email), "true");
 }

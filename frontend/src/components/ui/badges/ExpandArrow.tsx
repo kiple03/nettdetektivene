@@ -4,6 +4,7 @@ type ExpandNotesButtonProps = {
     hidden?: boolean;
 };
 
+/** Circular arrow button that toggles between expanded/collapsed state. */
 export default function ExpandArrow({
                                               expanded,
                                               onClick,
