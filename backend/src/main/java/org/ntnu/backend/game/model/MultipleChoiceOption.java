@@ -87,21 +87,4 @@ public final class MultipleChoiceOption implements Option {
     this.explanation = explanation;
   }
 
-  public MultipleChoiceOption(
-      Integer id,
-      String text,
-      String imageUrl,
-      String imageAlt,
-      String responseImageUrl,
-      boolean isCorrect,
-      String explanation
-  ) {
-    this.id = id;
-    this.text = text;
-    this.imageUrl = imageUrl;
-    this.imageAlt = imageAlt;
-    this.responseImageUrl = responseImageUrl;
-    this.isCorrect = isCorrect;
-    this.explanation = explanation;
-  }
 }
