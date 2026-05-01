@@ -39,7 +39,7 @@ export function CensorWordPanel({ classroomId }: Props) {
         <>
             {/* Note card on the corkboard */}
             <div className="classroom-detail__note">
-                <div className="classroom-detail__note-tape" />
+                <div className="classroom-detail__note-tape note-tape" />
                 <h2 className="classroom-detail__section-title">Sensurerte ord</h2>
                 <p className="classroom-detail__censor-desc">
                     Legg til ekstra ord for denne klassen. Disse filtreres i tillegg til den felles ordlisten.
