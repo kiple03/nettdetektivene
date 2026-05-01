@@ -30,6 +30,7 @@ export function mapOptionToStation(option: QuestionOption): StationOption {
     id: option.id,
     label: option.text ?? "",
     imageUrl: option.imageUrl,
+    imageAlt: option.imageAlt ?? option.text ?? "",
     minLength: option.minLength,
     requireDigit:  option.requireDigit,
     requireUpper:  option.requireUpper,

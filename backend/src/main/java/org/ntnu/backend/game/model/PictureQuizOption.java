@@ -20,6 +20,7 @@ import org.ntnu.backend.game.dto.PictureQuizOptionResponse;
  *   "id": 1,
  *   "text": "Ekte",
  *   "imageUrl": "https://example.com/photo.jpg",
+ *   "imageAlt": "Beskrivelse av bildet for skjermleser",
  *   "isCorrect": false,
  *   "explanation": "Dette bildet er faktisk KI-generert."
  * }
@@ -36,10 +37,23 @@ public record PictureQuizOption(
 
         String imageUrl,
 
+        String imageAlt,
+
         @NotNull
         boolean isCorrect,
 
         @NotBlank
         String explanation
 
-) implements Option {}
+) implements Option {
+
+        public PictureQuizOption(
+            int id,
+            String text,
+            String imageUrl,
+            boolean isCorrect,
+            String explanation
+        ) {
+                this(id, text, imageUrl, text, isCorrect, explanation);
+        }
+}

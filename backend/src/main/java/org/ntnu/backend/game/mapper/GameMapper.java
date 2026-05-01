@@ -101,14 +101,16 @@ public class GameMapper {
       case MultipleChoiceOption mc -> new MultipleChoiceOptionResponse(
               mc.getId(),
               mc.getText(),
-              mc.getImageUrl()
+              mc.getImageUrl(),
+          mc.getImageAlt()
       );
       case PostOfficeOption o -> new PostOfficeOptionResponse(o.getId(), o.getType());
 
       case PictureQuizOption pq -> new PictureQuizOptionResponse(
               pq.id(),
               pq.text(),
-              pq.imageUrl()
+              pq.imageUrl(),
+          pq.imageAlt()
       );
       case PasswordStrengthOption p -> new PasswordStrengthOptionResponse(
         p.getId(), p.getMinLength(), p.isRequireDigit(), p.isRequireUpper(), p.isRequireLower(), p.isRequireSymbol(),

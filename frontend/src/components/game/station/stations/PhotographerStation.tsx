@@ -74,7 +74,7 @@ export default function PhotographerStation({ station, levelTitle, onAnswer, dis
                 id: option.id,
                 imageUrl: option.imageUrl ?? null,
                 text: option.label ?? "",
-                altText: option.label ?? `Alternativ ${index + 1}`,
+                altText: option.imageAlt ?? `Alternativ ${index + 1}`,
               }))}
               onSubmit={handleSubmit}
               disabled={disabled || submitted}

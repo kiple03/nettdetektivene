@@ -22,6 +22,7 @@ export interface QuestionOption {
   id: number;
   text?: string
   imageUrl?: string;
+  imageAlt?: string,
 
   key?: string;
   labels?: string[];
