@@ -78,7 +78,7 @@ class TeacherQuestionControllerTest {
         int levelId = 1;
 
         TeacherMultipleChoiceOptionResponse opt = new TeacherMultipleChoiceOptionResponse(
-            1, "Paris", null, true, "Paris is the capital");
+            1, "Paris", null, null, true, "Paris is the capital");
         TeacherQuestionResponse question = new TeacherQuestionResponse(
             42, LevelType.MULTIPLE_CHOICE, "What is the capital of France?",
             List.<TeacherOptionResponse>of(opt), true, null);
@@ -145,7 +145,7 @@ class TeacherQuestionControllerTest {
         int levelId = 1;
 
         TeacherMultipleChoiceOptionResponse opt = new TeacherMultipleChoiceOptionResponse(
-            1, "Paris", null, true, "Paris is the capital");
+            1, "Paris", null, null, true, "Paris is the capital");
         TeacherQuestionResponse created = new TeacherQuestionResponse(
             99, LevelType.MULTIPLE_CHOICE, "What is the capital of France?",
             List.<TeacherOptionResponse>of(opt), false, classroomId);
@@ -305,7 +305,7 @@ class TeacherQuestionControllerTest {
         int questionId = 99;
 
         TeacherMultipleChoiceOptionResponse opt = new TeacherMultipleChoiceOptionResponse(
-            1, "Berlin", null, false, "Berlin is Germany's capital");
+            1, "Berlin", null, null, false, "Berlin is Germany's capital");
         TeacherQuestionResponse updated = new TeacherQuestionResponse(
             questionId, LevelType.MULTIPLE_CHOICE, "Updated question?",
             List.<TeacherOptionResponse>of(opt), false, classroomId);
